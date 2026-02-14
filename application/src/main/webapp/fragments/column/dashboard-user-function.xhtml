@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:outputText value="#{not empty entity.user.image} " />
+  <p:column headerText="#{messages.avatar}" styleClass="avatar">
+    <p:avatar id="image" rendered="#{not empty entity.user.image}" shape="circle">
+      <p:graphicImage value="#{entity.user.image.getStreamedContent()}" stream="false" />
+    </p:avatar>
+  </p:column>
+
+  <p:column headerText="#{messages.name}" styleClass="function">
+    <ui:include src="/fragments/user-link.xhtml">
+      <ui:param name="instance" value="#{entity.user}" />
+    </ui:include>
+    <br />
+    <span>
+      <ui:repeat value="#{entity.functions}" var="item">
+      <h:outputText value="#{item} " styleClass="#{instance.dashboardHelper.functions.contains(item) ? instance.dashboardHelper.getFunctionStyleClass(item) : 'item-disabled'}" />
+    </ui:repeat>
+    </span>
+  </p:column>
+</ui:composition>

@@ -1,0 +1,177 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('dataCleaner')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.duplicates}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="duplicate-list-form">
+      <h:panelGrid columns="2">
+        <h:selectOneMenu
+          id="mergeableClass"
+          value="#{duplicateManager.mergeableClass}">
+          <f:selectItem itemLabel="" />
+          <f:selectItems
+            value="#{classHelper.mergeableEntityClassNamesList}"
+            var="item"
+            itemValue="#{item}"
+            itemLabel="#{item}" />
+          <p:ajax
+            listener="#{duplicateManager.resetLocallyCachedLists()}"
+            process="mergeableClass"
+            global="false"
+            update="@form"
+            oncomplete="fixOversize();" />
+        </h:selectOneMenu>
+        <p:commandButton
+          ajax="false"
+          rendered="#{not empty duplicateManager.mergeableClass and not duplicateManager.proposalsOn}"
+          actionListener="#{duplicateManager.setProposalsOn(true)}"
+          value="#{messages.showProposals}" />
+        <p:commandButton
+          ajax="false"
+          rendered="#{not empty duplicateManager.mergeableClass and duplicateManager.proposalsOn}"
+          actionListener="#{duplicateManager.setProposalsOn(false)}"
+          value="#{messages.showAll}" />
+      </h:panelGrid>
+
+      <h:panelGroup
+        id="merge-entities-options"
+        rendered="#{not duplicateManager.proposalsOn and not empty duplicateManager.entities}">
+        <p:spacer height="10" />
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="entities" />
+          <ui:param
+            name="includeType"
+            value="#{duplicateManager.mergeableClass.toLowerCase()}" />
+          <ui:param
+            name="tableContent"
+            value="#{duplicateManager.entities}" />
+          <ui:param
+            name="include"
+            value="/duplicate/merge-columns.xhtml" />
+          <ui:param
+            name="showColumns"
+            value="addCheckbox" />
+          <ui:param
+            name="lazy"
+            value="true" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="merge-entities-options-selected"
+        rendered="#{not duplicateManager.proposalsOn and not empty duplicateManager.selectedEntities}">
+        <h:panelGroup styleClass="height-10" />
+        <b>#{messages.selected} #{messages.entities} (#{duplicateManager.selectedEntities.size()})</b>
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="selectedEntities" />
+          <ui:param
+            name="includeType"
+            value="#{duplicateManager.mergeableClass.toLowerCase()}" />
+          <ui:param
+            name="tableContent"
+            value="#{duplicateManager.selectedEntities}" />
+          <ui:param
+            name="include"
+            value="/duplicate/merge-columns.xhtml" />
+          <ui:param
+            name="showColumns"
+            value="removeCheckbox" />
+          <ui:param
+            name="editable"
+            value="true" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="potential-duplicates"
+        rendered="#{duplicateManager.proposalsOn}">
+        <h:panelGroup styleClass="height-10" />
+        <h:outputText
+          value="There are no potential duplicates"
+          rendered="#{empty duplicateManager.duplicates}" />
+
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="duplicate" />
+          <ui:param
+            name="tableContent"
+            value="#{duplicateManager.duplicates}" />
+          <ui:param
+            name="include"
+            value="/duplicate/columns.xhtml" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGrid
+        rendered="#{duplicateManager.proposalsOn}"
+        columns="5"
+        styleClass="action">
+        <p:commandButton
+          rendered="#{not empty duplicateManager.mergeableClass}"
+          actionListener="#{duplicateManager.duplicateSync(false)}"
+          value="#{messages.sync}"
+          update="@form" />
+        <p:commandButton
+          rendered="#{empty duplicateManager.mergeableClass}"
+          actionListener="#{duplicateManager.duplicateSync(true)}"
+          value="#{messages.syncAll}"
+          update="@form" />
+        <p:commandButton
+          rendered="#{not empty duplicateManager.mergeableClass}"
+          actionListener="#{duplicateManager.duplicateReset(false)}"
+          value="#{messages.reset}"
+          update="@form" />
+        <p:commandButton
+          rendered="#{empty duplicateManager.mergeableClass}"
+          actionListener="#{duplicateManager.duplicateReset(true)}"
+          value="#{messages.resetAll}"
+          update="@form" />
+        <p:button
+          rendered="#{not empty duplicateManager.mergeableClass}"
+          outcome="/duplicate/ignored.xhtml"
+          value="#{messages.duplicatesIgnored}">
+          <f:param
+            name="merge"
+            value="#{duplicateManager.mergeableClass}" />
+        </p:button>
+      </h:panelGrid>
+      <h:outputText
+        rendered="#{duplicateManager.proposalsOn and not empty duplicateManager.lastDuplicateSync}"
+        value="Last synced #{duplicateManager.lastDuplicateSync}" />
+
+      <h:panelGrid
+        rendered="#{not duplicateManager.proposalsOn and not empty duplicateManager.selectedEntities and duplicateManager.selectedEntities.size() eq 2}"
+        columns="1"
+        styleClass="action">
+        <p:button
+          outcome="/#{duplicateManager.mergeableClass.toLowerCase()}/merge.xhtml"
+          value="#{messages.merge}">
+          <f:param
+            name="type"
+            value="#{duplicateManager.mergeableClass.toLowerCase()}" />
+          <f:param
+            name="id"
+            value="#{duplicateManager.selectedEntities[0].id}" />
+          <f:param
+            name="mergeId"
+            value="#{duplicateManager.selectedEntities[1].id}" />
+        </p:button>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

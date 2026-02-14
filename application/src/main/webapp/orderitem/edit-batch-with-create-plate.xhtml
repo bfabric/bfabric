@@ -1,0 +1,160 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(orderItemPlateBatchManager.order.updatable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.editOrderItems} #{orderItemPlateBatchManager.order.displayName} #{orderItemPlateBatchManager.order.serviceType.name}" />
+  </ui:define>
+
+  <ui:param
+    name="bean"
+    value="#{orderItemPlateBatchManager}" />
+
+  <ui:define name="body">
+    <h:panelGroup>
+      <h:outputText
+        value="#{orderItemPlateBatchManager.order.processesPlates ? messages.editOrderItemsPlateAndSampleNamesUniqueHint : messages.editOrderItemsHint}"
+        styleClass="warn" />
+      <h:outputLink
+        rendered="#{not empty orderItemPlateBatchManager.order.serviceType.instructionLink}"
+        value="#{orderItemPlateBatchManager.order.serviceType.instructionLink}"
+        target="_blank"
+        rel="noopener">
+        <h:outputText value="&#160;#{messages.orderInstructionLinkHint}" />
+      </h:outputLink>
+    </h:panelGroup>
+
+    <script>
+        //<![CDATA[
+        function isValidSubmit(args) {
+            return (args && !args.validationFailed);
+        }
+        //]]>
+    </script>
+    <h:form
+      id="#{constants.EDIT}"
+      styleClass="navigate-away-class">
+      <h:panelGroup id="edit-batch-orderitem-batchtable">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="batch" />
+          <ui:param
+            name="tableContent"
+            value="#{orderItemPlateBatchManager.editList}" />
+          <ui:param
+            name="include"
+            value="/orderitem/edit-batch-columns-plate.xhtml" />
+          <ui:param
+            name="editable"
+            value="true" />
+          <o:methodParam
+            name="pageListener"
+            value="#{orderItemPlateBatchManager.pageListener}" />
+          <ui:param
+            name="pageListenerGlobal"
+            value="true" />
+          <ui:param
+            name="customListingRows"
+            value="#{orderItemPlateBatchManager.customListingRows}" />
+          <ui:param
+            name="customRowsPerPageTemplate"
+            value="5,10,20,50" />
+          <ui:param
+            name="maximumRowsPerPage"
+            value="50" />
+          <ui:param
+            name="styleClass"
+            value="batchEditTable" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup id="samplePlateAssignmentOrderWarning">
+        <p:spacer rendered="#{orderItemPlateBatchManager.samplePlateAssignmentOrderWarningRendered}" height="20" />
+        <h:outputText rendered="#{orderItemPlateBatchManager.samplePlateHasEmptyPositionsInBetweenWarningRendered}" value="#{messages.samplePlateHasEmptyPositionsInBetweenFound}"
+                      styleClass="warning" />
+      </h:panelGroup>
+
+      <c:set
+        var="addNewBatchItemsDisabled"
+        value="#{orderItemPlateBatchManager.addNewBatchItemsDisabled}"
+        scope="request" />
+
+      <h:panelGrid
+        id="addNewItemsPanel"
+        columns="4"
+        styleClass="action">
+        <h:panelGrid
+          columns="4"
+          styleClass="nospace topline">
+          <p:spinner
+            id="addNewItemsSpinner"
+            disabled="#{addNewBatchItemsDisabled}"
+            value="#{orderItemPlateBatchManager.numberOfNewBatchItems}"
+            min="1"
+            max="#{orderItemPlateBatchManager.maxNumberOfNewBatchItems}"
+            size="5"
+            decimalPlaces="0"
+            thousandSeparator="">
+            <p:ajax
+              event="change"
+              global="false" />
+          </p:spinner>
+          <p:commandButton
+            id="addNewItemsButton"
+            disabled="#{addNewBatchItemsDisabled}"
+            action="#{orderItemPlateBatchManager.addNewBatchItems}"
+            value="#{messages.addItems}"
+            title="#{addNewBatchItemsDisabled ? orderItemPlateBatchManager.itemLimitExceededHint : messages.addNewItemsHint}"
+            immediate="true"
+            styleClass="noleftborderselect"
+            update="#{constants.EDIT}:edit-batch-orderitem-batchtable, addNewItemsPanel, buttons"
+            process="@this"
+            oncomplete="fixOversize();" />
+          <h:outputText
+            id="sampleLimit"
+            style="max-width:0;padding:0" />
+          <h:message
+            for="sampleLimit"
+            style="margin-top:2px !important;"
+            styleClass="errorMessage" />
+        </h:panelGrid>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="buttons"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{orderItemPlateBatchManager.save}"
+          disabled="#{empty orderItemPlateBatchManager.editList and empty orderItemPlateBatchManager.deleteList}"
+          value="#{messages.save}"
+          oncomplete="if(!isValidSubmit(args)){hasChanged=true;} fixOversize();"
+          onclick="hasChanged=false;"
+          update="@form">
+          <o:skipValidators />
+        </p:commandButton>
+        <p:commandButton
+          action="#{orderItemPlateBatchManager.cancelEdit}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/plate/assignSamples-to-plate-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

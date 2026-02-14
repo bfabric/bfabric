@@ -1,0 +1,65 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="addCompanyPanel"
+    widgetVar="addCompanyDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.addNew}" />
+    </f:facet>
+    <h:form id="addCompany">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.organizationType}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{callerEntity.organizationType.name}" />
+        </ui:decorate>
+        <h:outputText value="#{messages.company}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="companyName"
+            value="#{callerEntity.companyName}"
+            required="true"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.division}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="divisionName"
+            value="#{callerEntity.divisionName}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+
+      </h:panelGrid>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="saveCompanyButton"
+          action="#{affiliationHelper.saveCompany(callerEntity)}"
+          value="#{messages.save}"
+          global="false"
+          update="addCompany, @([id$=division]), @([id$=companyAutocomplete])"
+          oncomplete="hideDialogOnSuccess(args, 'addCompanyDialog')">
+          <p:resetInput target="#{constants.EDIT}:companyAutocomplete" />
+        </p:commandButton>
+        <p:commandButton
+          id="cancelCompanyButton"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('addCompanyDialog').hide()">
+        </p:commandButton>
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

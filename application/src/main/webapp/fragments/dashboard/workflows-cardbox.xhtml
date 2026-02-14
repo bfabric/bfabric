@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/dashboard-cardbox.xhtml">
+    <ui:param name="enabled" value="#{configuration.workflowEnabled and identityManager.hasCurrentUserRole('containerReader')}" />
+    <ui:param name="content" value="#{content != null ? content : instance.workflows}" />
+    <ui:param name="tab" value="workflows" />
+    <ui:param name="label" value="#{not empty label ? label : messages.workflows}" />
+  </ui:include>
+</ui:composition>

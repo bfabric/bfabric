@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('departments')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="department" />
+      <ui:param
+        name="tableContext"
+        value="#{organization.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{organization.departments}" />
+      <ui:param
+        name="hideColumns"
+        value="organization" />
+    </ui:include>
+  </c:if>
+</ui:composition>

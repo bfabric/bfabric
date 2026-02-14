@@ -1,0 +1,14 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.readCountTotal}">
+    <h:outputText value="#{messages.readCountTotal}" />
+    <h:outputText value="#{instance.readCountTotal}">
+      <h:outputText id="total" value="#{instance.readCountTotal}">
+        <f:convertNumber pattern="###,###" />
+      </h:outputText>
+    </h:outputText>
+  </c:if>
+</ui:composition>

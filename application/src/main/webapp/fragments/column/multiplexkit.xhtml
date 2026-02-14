@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('multiplexKit')}">
+    <p:column
+      field="#{fieldPrefix}multiplexKit.name"
+      headerText="#{messages.multiplexKit}">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.multiplexKit}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

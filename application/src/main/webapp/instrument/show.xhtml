@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <ui:param name="entityManager" value="#{instrumentManager}" />
+  <ui:decorate template="/fragments/sidebar/show.xhtml">
+    <ui:define name="pageTitleExtension">
+      <h:outputText rendered="#{instrument.loan}" value=" (#{messages.loan})" title="#{messages.loanInstrumentHint}" styleClass="warning" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

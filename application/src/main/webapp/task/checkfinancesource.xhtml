@@ -1,0 +1,19 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/checkfinancesourcelist.xhtml">
+    <ui:param
+      name="tasksId"
+      value="checkfinancesource" />
+    <ui:param
+      name="tasks"
+      value="#{messages.checkFinanceSource}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.checkFinanceSourceHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{containerList.financeSourceToBeChecked}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{sidebarHelper.isTab('checkfinancesource') and identityManager.hasCurrentUserRole('reviewManager')}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,104 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <p:column
+    sortBy="#{entity[1]}"
+    filterBy="#{entity[1]}"
+    headerText="#{messages.reservation}  #{messages.days}">
+    <h:outputText
+      value="#{entity[1]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[2]}"
+    filterBy="#{entity[2]}"
+    headerText="#{messages.maintenance} #{messages.days}">
+    <h:outputText
+      value="#{entity[2]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[3]}"
+    filterBy="#{entity[3]}"
+    headerText="#{messages.up} #{messages.days}">
+    <h:outputText
+      value="#{entity[3]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[4]}"
+    filterBy="#{entity[4]}"
+    headerText="#{messages.bookable} #{messages.days}">
+    <h:outputText
+      value="#{entity[4]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[5]}"
+    filterBy="#{entity[5]}"
+    headerText="#{messages.totalBookedCharges} #{messages.chf}">
+    <h:outputText
+      value="#{entity[5]}"
+      style="float:right">
+      <f:convertNumber pattern="#0.00" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[6]}"
+    filterBy="#{entity[6]}"
+    headerText="#{messages.workunits}">
+    <h:outputText
+      value="#{entity[6]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[7]}"
+    filterBy="#{entity[7]}"
+    headerText="#{messages.resources}">
+    <h:outputText
+      value="#{entity[7]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[8]}"
+    filterBy="#{entity[8]}"
+    headerText="#{messages.size}">
+    <h:outputText
+      value="#{numberUtils.getPrintSize(entity[8])}"
+      style="float:right" />
+  </p:column>
+  <p:column
+    visible="false"
+    headerText="#{messages.size} #{messages.bytes}">
+    <h:outputText
+      value="#{entity[8]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity[9]}"
+    filterBy="#{entity[9]}"
+    headerText="#{messages.runs}">
+    <h:outputText
+      value="#{entity[9]}"
+      style="float:right">
+      <f:convertNumber pattern="#0" />
+    </h:outputText>
+  </p:column>
+</ui:composition>

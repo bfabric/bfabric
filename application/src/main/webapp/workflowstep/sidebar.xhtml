@@ -1,0 +1,29 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+
+  <ui:include src="/fragments/sidebar/datasets.xhtml">
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/samples.xhtml">
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/workunits.xhtml">
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/plates.xhtml">
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+  <ui:include src="/fragments/sidebar/mails.xhtml" />
+</ui:composition>

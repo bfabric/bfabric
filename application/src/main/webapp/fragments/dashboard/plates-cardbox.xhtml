@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <!--@elvariable id="instance" type="org.bfabric.entity.Container"-->
+  <ui:include src="/fragments/dashboard-cardbox.xhtml">
+    <ui:param name="enabled" value="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}" />
+    <ui:param name="content" value="#{content != null ? content : instance.associatedPlates}" />
+    <ui:param name="tab" value="plates" />
+    <ui:param name="label" value="#{not empty label ? label : messages.plates}" />
+  </ui:include>
+</ui:composition>

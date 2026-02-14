@@ -1,0 +1,332 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('runManager')}" />
+    <f:event
+      type="preRenderView"
+      listener="#{dataTableHelper.initializeSelectCheckboxColumn(['edit:sourcesampletable', 'edit:targetsampletable'])}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{multiplexedSampleManager.getPageTitle()}" />
+  </ui:define>
+
+  <ui:define name="pageTitleExtension">
+    <h:outputText value="&#160;#{messages.multiplexSampleSuffix}" styleClass="item-disabled" />
+  </ui:define>
+
+  <ui:define name="body">
+    <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+
+    <h:form id="#{constants.EDIT}">
+      <h:panelGrid
+        id="dataTableFilters"
+        columns="2">
+        <h:panelGrid
+          id="selectedSampleTypeGrid"
+          columns="3">
+          <p:selectOneButton
+            disabled="#{!multiplexedSampleManager.created and empty multiplexedSampleManager.clone or not empty multiplexedSampleManager.selectedSamples}"
+            value="#{multiplexedSampleManager.selectedSampleType}"
+            valueChangeListener="#{multiplexedSampleManager.selectedSampleTypeChanged}"
+            unselectable="false">
+            <f:selectItems value="#{sampleTypeList.sampleTypeEnumsLabeled}" var="item" itemLabel="#{item.label}" />
+            <p:ajax event="change" global="true" update="@form" oncomplete="fixOversize(); PF('sourcesample').filter();" />
+          </p:selectOneButton>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="sampleColumnGrid"
+          columns="2">
+          <h:outputText
+            value="#{messages.columns}"
+            title="#{messages.allColumnsHint}"
+            styleClass="bold" />
+          <p:selectOneButton value="#{multiplexedSampleManager.showAllColumns}">
+            <f:selectItem itemLabel="#{messages.min}" itemValue="#{false}" />
+            <f:selectItem itemLabel="#{messages.all}" itemValue="#{true}" />
+            <p:ajax event="change" global="true" process="@this" update="@form"
+                    oncomplete="fixOversize(); PF('#{constants.SOURCE}#{constants.SAMPLE}').filter();" />
+          </p:selectOneButton>
+        </h:panelGrid>
+      </h:panelGrid>
+
+      <p:spacer height="10" />
+
+      <h:panelGroup id="assignGroup">
+        <h:panelGroup id="#{constants.ASSIGN}">
+          <c:set
+            var="sourceTableContent"
+            value="#{empty multiplexedSampleManager.initialSamples ? (not empty multiplexedSampleManager.selectedSampleType ? sampleList.getLabeledSamplesByType(multiplexedSampleManager.selectedSampleType.label) : sampleList.librariesLazyModel) : multiplexedSampleManager.initialSamples}"
+            scope="request" />
+          <h:panelGroup id="#{constants.SOURCE}#{constants.GROUP}">
+            <h:panelGrid id="#{constants.SOURCE}">
+              <h:outputText
+                rendered="#{sourceTableContent.size() > 0}"
+                value="#{messages.available} #{messages.samples} (#{sourceTableContent.size()})"
+                styleClass="bold" />
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="showEmpty"
+                  value="true" />
+                <ui:param
+                  name="tableType"
+                  value="#{constants.SAMPLE}" />
+                <ui:param
+                  name="tableContext"
+                  value="#{constants.SOURCE}" />
+                <ui:param
+                  name="tableContent"
+                  value="#{sourceTableContent}" />
+                <ui:param
+                  name="lazy"
+                  value="true" />
+                <ui:param
+                  name="showColumns"
+                  value="#{constants.ADD}#{constants.BUTTON}#{constants.COLUMN}, #{constants.SELECT_CHECK_BOX_COLUMN}" />
+                <ui:param
+                  name="hideColumns"
+                  value="specific" />
+                <ui:param
+                  name="specificColumns"
+                  value="#{not empty multiplexedSampleManager.showAllColumns and not multiplexedSampleManager.showAllColumns ? sampleAttributeHelper.getAttributeEnumsAssignSamplesToMultiplexSourceTargetColumns() : null}" />
+                <ui:param
+                  name="include"
+                  value="/sample/multiplex-columns.xhtml" />
+                <ui:param
+                  name="addButtonDisabled"
+                  value="#{multiplexedSampleManager.selectedSamples.contains(entity)}" />
+                <o:methodParam
+                  name="addAllButtonListener"
+                  value="#{multiplexedSampleManager.addAllEntitiesFromDataTableToSelection(multiplexedSampleManager.selectedSamples)}" />
+                <ui:param
+                  name="addAllButtonUpdate"
+                  value="@form" />
+                <o:methodParam
+                  name="addButtonListener"
+                  value="#{multiplexedSampleManager.addSampleToSelection(multiplexedSampleManager.selectedSamples, entity)}" />
+                <ui:param
+                  name="addButtonUpdate"
+                  value="@this, #{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:containerGroup, #{constants.EDIT}:#{constants.TARGET}#{constants.GROUP}, #{constants.EDIT}:#{constants.SOURCE}#{constants.BUTTONS}, #{constants.EDIT}:#{constants.BUTTONS}" />
+                <ui:param
+                  name="filterValue"
+                  value="#{multiplexedSampleManager.targetContainerId}" />
+                <ui:param
+                  name="checkUpdate"
+                  value="#{constants.EDIT}:#{constants.SOURCE}#{constants.BUTTONS}" />
+              </ui:include>
+            </h:panelGrid>
+            <h:panelGrid
+              id="#{constants.SOURCE}#{constants.BUTTONS}"
+              columns="1"
+              styleClass="action">
+              <p:commandButton
+                rendered="#{not empty dataTableHelper.tableIdMarkedEntities[(constants.EDIT).concat(':').concat(constants.SOURCE).concat(constants.SAMPLE).concat(constants.TABLE)]}"
+                action="#{multiplexedSampleManager.assignMarkedEntitiesToSelection((constants.EDIT).concat(':').concat(constants.SOURCE).concat(constants.SAMPLE).concat(constants.TABLE), (constants.EDIT).concat(':').concat(constants.TARGET).concat(constants.SAMPLE).concat(constants.TABLE), multiplexedSampleManager.selectedSamples)}"
+                value="#{messages.addMarkedSamples}"
+                process="@this"
+                update="#{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:containerGroup, #{constants.EDIT}:#{constants.TARGET}#{constants.GROUP}, #{constants.EDIT}:#{constants.SOURCE}#{constants.BUTTONS}, #{constants.EDIT}:#{constants.BUTTONS}"
+                oncomplete="fixOversize();" />
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup id="#{constants.TARGET}#{constants.GROUP}">
+            <h:panelGrid id="#{constants.TARGET}">
+              <h:outputText
+                rendered="#{ourceTableContent.size() > 0 or not empty multiplexedSampleManager.selectedSamples}"
+                value="#{messages.selectedSamples} (#{multiplexedSampleManager.selectedSamples.size()})"
+                styleClass="bold" />
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="tableType"
+                  value="#{constants.SAMPLE}" />
+                <ui:param
+                  name="tableContext"
+                  value="#{constants.TARGET}" />
+                <ui:param
+                  name="tableContent"
+                  value="#{multiplexedSampleManager.selectedSamples}" />
+                <ui:param
+                  name="showColumns"
+                  value="#{constants.REMOVE}#{constants.BUTTON}#{constants.COLUMN}, #{constants.SELECT_CHECK_BOX_COLUMN}" />
+                <ui:param
+                  name="hideColumns"
+                  value="specific" />
+                <ui:param
+                  name="specificColumns"
+                  value="#{not empty multiplexedSampleManager.showAllColumns and not multiplexedSampleManager.showAllColumns ? sampleAttributeHelper.getAttributeEnumsAssignSamplesToMultiplexSourceTargetColumns() : null}" />
+                <ui:param
+                  name="include"
+                  value="/sample/multiplex-columns.xhtml" />
+                <o:methodParam
+                  name="removeAllButtonListener"
+                  value="#{multiplexedSampleManager.removeAllEntitiesFromSelection(multiplexedSampleManager.selectedSamples)}" />
+                <ui:param
+                  name="removeAllButtonUpdate"
+                  value="#{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:containerGroup, #{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+                <o:methodParam
+                  name="removeButtonListener"
+                  value="#{multiplexedSampleManager.removeEntityFromSelection(multiplexedSampleManager.selectedSamples, entity)}" />
+                <ui:param
+                  name="removeButtonUpdate"
+                  value="#{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:containerGroup, #{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+                <ui:param
+                  name="customRowsPerPageTemplate"
+                  value="#{configuration.defaultRowsPerPageTemplate}" />
+                <ui:param
+                  name="sourceTableId"
+                  value="#{constants.EDIT}:#{constants.SOURCE}#{constants.SAMPLE}#{constants.TABLE}" />
+                <ui:param
+                  name="checkUpdate"
+                  value="#{constants.EDIT}:#{constants.TARGET}#{constants.BUTTONS}" />
+              </ui:include>
+            </h:panelGrid>
+            <h:panelGrid
+              id="#{constants.TARGET}#{constants.BUTTONS}"
+              columns="1"
+              styleClass="action">
+              <p:commandButton
+                rendered="#{not empty dataTableHelper.tableIdMarkedEntities[(constants.EDIT).concat(':').concat(constants.TARGET).concat(constants.SAMPLE).concat(constants.TABLE)]}"
+                action="#{multiplexedSampleManager.unAssignMarkedEntitiesFromSelection((constants.EDIT).concat(':').concat(constants.TARGET).concat(constants.SAMPLE).concat(constants.TABLE), (constants.EDIT).concat(':').concat(constants.SOURCE).concat(constants.SAMPLE).concat(constants.TABLE), multiplexedSampleManager.selectedSamples)}"
+                value="#{messages.removeMarkedSamples}"
+                process="@this"
+                update="#{constants.EDIT}"
+                oncomplete="fixOversize();" />
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup id="containerGroup">
+            <h:panelGrid
+              rendered="#{multiplexedSampleManager.renderedContainerSelection}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.container}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <ui:param
+                  name="componentId"
+                  value="containerautocomplete" />
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="listContext"
+                    value="container" />
+                  <ui:param
+                    name="title"
+                    value="#{messages.poolCreationContainerAutocompleteHint}" />
+                  <ui:param
+                    name="value"
+                    value="#{multiplexedSampleManager.targetContainer}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{multiplexedSampleManager.getTargetContainers}" />
+                  <ui:param
+                    name="required"
+                    value="true" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{not empty multiplexedSampleManager.targetContainer ? item.entityName.concat(' ').concat(item.id) : constants.EMPTY_STRING}" />
+                  <ui:param
+                    name="itemSelectUpdate"
+                    value="@this" />
+                  <ui:param
+                    name="ajaxClear"
+                    value="true" />
+                  <ui:param
+                    name="clearUpdate"
+                    value="@this" />
+                  <ui:param
+                    name="includeColumns"
+                    value="/container/autocomplete-columns.xhtml" />
+                </ui:include>
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGrid
+            columns="1"
+            rendered="#{not empty multiplexedSampleManager.multiplexIdsCorrectnessErrorMap or not empty not empty multiplexedSampleManager.samplesWithIncompleteMultiplexIds or not empty multiplexedSampleManager.multiplexIdConflictRecords}">
+            <p:spacer height="10" />
+
+            <h:panelGrid
+              columns="2"
+              columnClasses="ttd, ttd"
+              cellspacing="0"
+              cellpadding="0">
+              <h:outputText id="multiplexIdsValidErrorMessage" />
+              <p:message
+                for="multiplexIdsValidErrorMessage"
+                style="white-space: pre-wrap;line-height: 10px; font-size: larger; font-weight: bold"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+
+            <h:panelGroup rendered="#{not empty multiplexedSampleManager.samplesWithIncompleteMultiplexIds}">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="rendered"
+                  value="#{not empty multiplexedSampleManager.samplesWithIncompleteMultiplexIds}" />
+                <ui:param
+                  name="exporters"
+                  value="false" />
+                <ui:param
+                  name="tableType"
+                  value="sample" />
+                <ui:param
+                  name="tableContext"
+                  value="incompleteMultiplexIds" />
+                <ui:param
+                  name="tableContent"
+                  value="#{multiplexedSampleManager.samplesWithIncompleteMultiplexIdsAsList}" />
+                <ui:param
+                  name="include"
+                  value="/sample/incomplete-multiplexids-columns.xhtml" />
+                <ui:param
+                  name="hideColumns"
+                  value="poolName" />
+              </ui:include>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty multiplexedSampleManager.multiplexIdConflictRecords}">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="rendered"
+                  value="#{not empty multiplexedSampleManager.multiplexIdConflictRecords}" />
+                <ui:param
+                  name="exporters"
+                  value="false" />
+                <ui:param
+                  name="tableType"
+                  value="multiplexidconflictrecord" />
+                <ui:param
+                  name="tableContext"
+                  value="conflictingMultiplexIds" />
+                <ui:param
+                  name="tableContent"
+                  value="#{multiplexedSampleManager.multiplexIdConflictRecords}" />
+                <ui:param
+                  name="hideColumns"
+                  value="lanePosition" />
+              </ui:include>
+            </h:panelGroup>
+          </h:panelGrid>
+
+          <h:panelGrid id="#{constants.BUTTONS}" columns="2" styleClass="action">
+            <p:commandButton
+              rendered="#{not empty multiplexedSampleManager.selectedSamples and multiplexedSampleManager.selectedSamples.size() > 1}"
+              action="#{multiplexedSampleManager.saveMultiplexedSample}"
+              value="#{messages.save}"
+              update="#{constants.ASSIGN}" />
+            <p:commandButton
+              action="#{multiplexedSampleManager.cancel}"
+              value="#{messages.cancel}"
+              immediate="true" />
+          </h:panelGrid>
+        </h:panelGroup>
+      </h:panelGroup>
+    </h:form>
+  </ui:define>
+</ui:composition>

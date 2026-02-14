@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('notes')}">
+    <p:column
+      field="#{fieldPrefix}notes"
+      headerText="#{messages.notes}"
+      exportValue="#{entity.notes}">
+      <h:outputText
+        value="#{stringHelper.truncate(entity.notes, 20)}"
+        title="#{entity.notes}"
+        styleClass="#{styleClass}" />
+    </p:column>
+  </c:if>
+</ui:composition>

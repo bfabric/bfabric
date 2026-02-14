@@ -1,0 +1,141 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup id="availableResources">
+    <h:outputText
+      value="#{messages.availableResources}  "
+      styleClass="bold" />
+    <p:commandLink
+      rendered="#{not empty resourceHelper.getAvailableResources(workunit.application)}"
+      action="#{resourceHelper.switchSelectionTable}"
+      value="#{messages.switch} to resource #{resourceHelper.basketSelection ? 'common' : 'basket'} selection"
+      global="false"
+      update="@form" />
+
+    <ui:include src="/fragments/datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="resource" />
+      <ui:param
+        name="tableContext"
+        value="available" />
+      <ui:param
+        name="tableContent"
+        value="#{resourceHelper.getAvailableResources(workunit.application)}" />
+      <ui:param
+        name="showColumns"
+        value="selection" />
+      <ui:param
+        name="hideColumns"
+        value="addToBasket, resourceName, checksum, report, status, size, sample, inputResource, createdBy, createdOn" />
+      <ui:param
+        name="selected"
+        value="false" />
+      <ui:param
+        name="filterValue"
+        value="#{contextManager.containerFilterValue}" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="3"
+      styleClass="action">
+      <p:commandButton
+        actionListener="#{resourceHelper.selectInputResources()}"
+        title="#{messages.selectMarkedResourcesHint}"
+        value="#{messages.selectMarked} #{messages.resources}"
+        update="@form"
+        oncomplete="if(PF('selectedresource')){PF('selectedresource').filter();} fixOversize();" />
+      <p:commandButton
+        actionListener="#{resourceHelper.markInputResources('edit:availableresourcetable', 'edit:selectedresourcetable')}"
+        value="#{messages.selectAll} #{messages.resources}"
+        title="#{messages.selectAllResourcesOnPageHint}"
+        immediate="true"
+        global="false"
+        update="@form"
+        oncomplete="if(PF('selectedresource')){PF('selectedresource').filter();} fixOversize();" />
+      <p:commandButton
+        actionListener="#{resourceHelper.markWorkunitResources('edit:availableresourcetable', 'edit:selectedresourcetable')}"
+        value="#{messages.selectAll} #{messages.workunit} #{messages.resources}"
+        title="#{messages.selectAllWorkunitResourcesOnPageHint}"
+        immediate="true"
+        global="false"
+        update="@form"
+        oncomplete="if(PF('selectedresource')){PF('selectedresource').filter();} fixOversize();" />
+    </h:panelGrid>
+  </h:panelGroup>
+
+  <h:panelGroup
+    id="selectedresources"
+    styleClass="content-subheader-normal"
+    rendered="#{not empty resourceHelper.selectedInputResources}">
+    <h:outputText
+      value="#{messages.selectedResources}"
+      styleClass="bold" />
+
+    <ui:include src="/fragments/datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="resource" />
+      <ui:param
+        name="tableContext"
+        value="selected" />
+      <ui:param
+        name="tableContent"
+        value="#{resourceHelper.selectedInputResources}" />
+      <ui:param
+        name="showColumns"
+        value="selection" />
+      <ui:param
+        name="hideColumns"
+        value="addToBasket, resourceName, checksum, report, status, size, sample, inputResource, createdBy, createdOn" />
+      <ui:param
+        name="selected"
+        value="true" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <p:commandButton
+        actionListener="#{resourceHelper.deselectInputResources(false)}"
+        value="#{messages.deselectMarkedResources}"
+        title="#{messages.deselectMarkedResourcesHint}"
+        update="@form"
+        oncomplete="if(PF('selectedresource')){PF('selectedresource').filter();} fixOversize();" />
+      <p:commandButton
+        actionListener="#{resourceHelper.deselectInputResources(true)}"
+        value="#{messages.deselectAllResources}"
+        update="@form"
+        oncomplete="if(PF('selectedresource')){PF('selectedresource').filter();} fixOversize();" />
+    </h:panelGrid>
+  </h:panelGroup>
+
+  <h:panelGrid
+    id="buttons"
+    columns="2"
+    styleClass="action">
+    <p:commandButton
+      action="#{workunitManager.next}"
+      value="#{messages.next}"
+      rendered="#{resourceHelper.inputResourcesSelected}"
+      oncomplete="fixOversize();"
+      update="pageTitle, @form" />
+    <p:commandButton
+      action="#{workunitManager.cancel}"
+      value="#{messages.cancel}"
+      immediate="true" />
+  </h:panelGrid>
+
+  <h:panelGroup styleClass="action">
+    <h:outputText value="#{messages.fileMissingContactApplicationSupervisorHint} " />
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param
+        name="instance"
+        value="#{workunit.application.supervisor}" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

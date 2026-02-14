@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.order}">
+    <h:outputText value="#{messages.order}" />
+    <ui:include src="/fragments/entity-link-displayname.xhtml">
+      <ui:param
+        name="instance"
+        value="#{instance.order}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

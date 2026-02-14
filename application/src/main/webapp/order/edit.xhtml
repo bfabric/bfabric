@@ -1,0 +1,1741 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{orderManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{orderManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+            <h:outputText value="#{messages.express}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneRadio
+                id="express"
+                value="#{order.express}">
+                <f:selectItem
+                  itemLabel="#{messages.no}"
+                  itemValue="#{false}" />
+                <f:selectItem
+                  itemLabel="#{messages.yes}"
+                  itemValue="#{true}" />
+              </h:selectOneRadio>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.internal}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneRadio
+                id="internal"
+                value="#{order.internal}"
+                valueChangeListener="#{order.internalChanged}">
+                <f:selectItem
+                  itemLabel="#{messages.no}"
+                  itemValue="#{false}" />
+                <f:selectItem
+                  itemLabel="#{messages.yes}"
+                  itemValue="#{true}" />
+                <p:ajax
+                  event="change"
+                  update="#{constants.EDIT}:servicetype, #{constants.EDIT}:selectedservicetype, #{constants.EDIT}:projectgrid"
+                  oncomplete="if(#{order.serviceTypeUpdatable}){PF('serviceSelection').clearFilters();}" />
+              </h:selectOneRadio>
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{currentUser.hasNoOrderAssignableProject()}">
+            <h:outputText />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{messages.userHasNoOrderAssignableProjectsHint}" styleClass="warning bold" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText rendered="#{order.serviceTypeUpdatable}" value="#{messages.serviceType}" />
+          <h:panelGroup id="servicetype" rendered="#{order.serviceTypeUpdatable}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <ui:include src="/fragments/datatable.xhtml">
+                <o:methodParam
+                  name="rowSelectRadioListener"
+                  value="#{orderManager.serviceTypeSelected}" />
+                <ui:param
+                  name="include"
+                  value="/servicetype/select-columns.xhtml" />
+                <ui:param
+                  name="tableContext"
+                  value="#{constants.SERVICE_SELECTION}" />
+                <ui:param
+                  name="tableContent"
+                  value="#{serviceTypeService.getEnabledServiceTypesByOrder(order)}" />
+                <ui:param
+                  name="selectionMode"
+                  value="single" />
+                <ui:param
+                  name="selection"
+                  value="#{order.serviceType}" />
+                <ui:param
+                  name="disabledSelection"
+                  value="#{currentUser.hasNoOrderAssignableProject() and entity.requiresProject}" />
+                <ui:param
+                  name="update"
+                  value="#{constants.EDIT}:selectedservicetype, #{constants.EDIT}:projectgrid" />
+                <ui:param
+                  name="customListingRows"
+                  value="25" />
+                <ui:param
+                  name="customRowsPerPageTemplate"
+                  value="25,50,100,200" />
+                <ui:param
+                  name="rowsPerPageDropdown"
+                  value="all" />
+                <ui:param
+                  name="styleClass"
+                  value="inner" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGroup id="selectedservicetype">
+          <h:panelGrid
+            rendered="#{not empty order.serviceType}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.hasServiceTypeHighThroughputSequencing()}">
+              <h:outputText />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:outputText
+                  value="#{messages.highThroughputSequencingWarning}"
+                  styleClass="warning" />
+              </ui:decorate>
+            </c:if>
+            <h:outputText value="#{messages.selectedServiceType}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:panelGroup>
+                <h:outputText value="#{order.serviceType.name}&#160;" />
+                <h:outputText
+                  rendered="#{not empty order.serviceType.servicesEnabled}"
+                  value="#{messages.offersHint}&#160;" />
+                <p:commandLink
+                  rendered="#{not empty order.serviceType.servicesEnabled}"
+                  value="#{order.serviceType.servicesEnabled.size()} #{messages.services}&#160;"
+                  title="#{collectionHelper.print(order.serviceType.servicesEnabled)}"
+                  global="false"
+                  action="#{orderManager.setServiceTypeShowServices(order.serviceType)}"
+                  process="@this"
+                  update="servicesPanel"
+                  oncomplete="PF('servicesDialog').show();"
+                  styleClass="inline bold" />
+                <h:outputText
+                  rendered="#{not empty order.serviceType.servicesEnabled}"
+                  value="#{messages.editOrderServiceTypeServicesHint}&#160;" />
+                <h:outputText
+                  rendered="#{not empty order.orderItems and not empty order.sampleType}"
+                  value="(#{messages.editOrderServiceTypeHint.replace('{0}', order.sampleType.name)})" />
+                <h:outputText
+                  rendered="#{not empty order.orderItems and empty order.sampleType and not empty order.serviceType.sampleType}"
+                  value="(#{messages.editOrderServiceTypeHint.replace('{0}', order.serviceType.sampleType.name)})" />
+              </h:panelGroup>
+            </ui:decorate>
+
+            <c:if test="#{identityManager.hasCurrentUserRole('containerManager') and technologyList.getTechnologiesEnabledIncludingTechnologies(order.technologies).size() > 1}">
+              <h:outputText
+                value="#{messages.technologies}"
+                title="#{messages.editOrderTechnologiesHint}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectManyCheckbox
+                  id="technologies"
+                  value="#{order.technologies}"
+                  collectionType="java.util.HashSet"
+                  styleClass="rightpadding"
+                  layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(order.technologies))}"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItems
+                    value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(order.technologies)}"
+                    var="item"
+                    itemLabel="#{item.nameWithEnabledMessage}"
+                    itemDescription="#{item.description}" />
+                </h:selectManyCheckbox>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{not empty order.serviceType.instructionLink}">
+              <h:outputText value="#{messages.instructionLink}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:outputLink
+                  value="#{order.serviceType.instructionLink}"
+                  target="_blank"
+                  rel="noopener">
+                  <h:outputText value="#{messages.orderInstructionLinkHint}" />
+                </h:outputLink>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGrid
+            rendered="#{not empty order.orderAttributes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.serviceType.isOrderAttribute('bioSafetyLevel2PrecautionsRequired')}">
+              <h:outputText value="#{messages.bioSafetyLevel2PrecautionsRequired}" title="#{order.getOrderAttributeHint('bioSafetyLevel2PrecautionsRequired')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <ui:param name="componentId" value="bioSafetyLevel2PrecautionsRequired" />
+                <h:selectOneRadio id="bioSafetyLevel2PrecautionsRequired" value="#{order.bioSafetyLevel2PrecautionsRequired}" required="true"
+                                  title="#{order.getOrderAttributeHint('bioSafetyLevel2PrecautionsRequired')}">
+                  <f:selectItem itemValue="false" itemLabel="#{messages.no}" />
+                  <f:selectItem itemValue="true" itemLabel="#{messages.yes}" />
+                </h:selectOneRadio>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('samplesContainTransgenes')}">
+              <h:outputText value="#{messages.samplesContainTransgenes}" title="#{order.getOrderAttributeHint('samplesContainTransgenes')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <ui:param name="componentId" value="samplesContainTransgenes" />
+                <h:selectOneRadio id="samplesContainTransgenes" value="#{order.samplesContainTransgenes}" title="#{order.getOrderAttributeHint('samplesContainTransgenes')}">
+                  <f:selectItem itemValue="false" itemLabel="#{messages.no}" />
+                  <f:selectItem itemValue="true" itemLabel="#{messages.yes}" />
+                </h:selectOneRadio>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGrid
+            id="sampleSubmission"
+            rendered="#{not empty order.orderAttributes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.serviceType.isOrderAttribute('processesPlates')}">
+              <c:if test="#{not empty order.serviceType and (order.serviceType.processesPlates or order.processesPlates)}">
+                <h:outputText
+                  value="#{messages.sampleSubmission}"
+                  title="#{order.getOrderAttributeHint('processesPlates')}" />
+                <h:panelGroup rendered="#{not empty order.orderItems}">
+                  <ui:decorate template="/fragments/display.xhtml">
+                    <h:outputText value="#{order.processesPlates ? messages.plate : messages.tube}" />
+                  </ui:decorate>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{empty order.orderItems}">
+                  <ui:decorate template="/fragments/required.xhtml">
+                    <ui:param
+                      name="componentId"
+                      value="processesPlates" />
+                    <h:panelGrid columns="2">
+                      <h:selectOneRadio
+                        id="processesPlates"
+                        value="#{order.processesPlates}"
+                        valueChangeListener="#{order.processesPlatesChanged}"
+                        title="#{order.getOrderAttributeHint('processesPlates')}">
+                        <f:selectItem
+                          itemValue="false"
+                          itemLabel="#{messages.tube}" />
+                        <f:selectItem
+                          itemValue="true"
+                          itemLabel="#{messages.plate}" />
+                        <p:ajax
+                          event="change"
+                          update="#{''.concat(order.serviceType.isOrderAttribute('sequencingApplication') ? 'edit:sequencingApplication' : '')}, #{constants.EDIT}:instrumentIndependent, #{constants.EDIT}:sampleSubmission" />
+                      </h:selectOneRadio>
+                      <h:outputText
+                        rendered="#{not empty order.serviceType.plateSubmissionProposalLimit}"
+                        value="&#160;#{order.serviceType.plateSubmissionProposalLimitHint}"
+                        styleClass="warning" />
+                    </h:panelGrid>
+                  </ui:decorate>
+                </h:panelGroup>
+              </c:if>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('numberOfPlates') and order.processesPlates}">
+              <h:outputText
+                rendered="#{order.processesPlates and order.serviceType.isOrderAttribute('numberOfPlates')}"
+                value="#{messages.numberOfPlates}"
+                title="#{order.getOrderAttributeHint('numberOfPlates')}" />
+              <h:panelGroup rendered="#{not empty order.orderItems}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{order.numberOfPlates}" />
+                </ui:decorate>
+              </h:panelGroup>
+              <h:panelGroup rendered="#{empty order.orderItems}">
+                <h:panelGroup rendered="#{order.processesPlates and order.serviceType.isOrderAttribute('numberOfPlates')}">
+                  <ui:decorate template="/fragments/required.xhtml">
+                    <ui:param
+                      name="componentId"
+                      value="numberOfPlates" />
+                    <h:panelGrid columns="2">
+                      <p:inputNumber
+                        id="numberOfPlates"
+                        value="#{order.numberOfPlates}"
+                        title="#{order.getOrderAttributeHint('numberOfPlates')}"
+                        thousandSeparator=""
+                        decimalPlaces="0"
+                        styleClass="editWidthExtraLarge" />
+                      <h:outputText
+                        value="&#160;#{messages.orderEnterPlatesHint}"
+                        styleClass="warn" />
+                    </h:panelGrid>
+                  </ui:decorate>
+                </h:panelGroup>
+              </h:panelGroup>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('numberOfSamples') and not order.processesPlates}">
+              <h:outputText
+                rendered="#{order.serviceType.isOrderAttribute('numberOfSamples')}"
+                value="#{messages.numberOfTubes}"
+                title="#{order.getOrderAttributeHint('numberOfSamples')}" />
+              <h:panelGroup rendered="#{not empty order.orderItems and not empty order.numberOfSamples}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{order.numberOfSamples}" />
+                </ui:decorate>
+              </h:panelGroup>
+              <h:panelGroup rendered="#{empty order.orderItems or empty order.numberOfSamples}">
+                <h:panelGroup rendered="#{not order.processesPlates and order.serviceType.isOrderAttribute('numberOfSamples')}">
+                  <ui:decorate template="/fragments/required.xhtml">
+                    <ui:param
+                      name="componentId"
+                      value="numberOfSamples" />
+                    <h:panelGrid columns="2">
+                      <p:inputNumber
+                        id="numberOfSamples"
+                        value="#{order.numberOfSamples}"
+                        title="#{order.getOrderAttributeHint('numberOfSamples')}"
+                        thousandSeparator=""
+                        decimalPlaces="0"
+                        styleClass="editWidthExtraLarge">
+                        <p:ajax
+                          event="change"
+                          update="#{constants.EDIT}:sampleSubmission" />
+                      </p:inputNumber>
+                      <h:outputText
+                        value="&#160;#{messages.orderEnterSamplesHint}"
+                        styleClass="warn" />
+                    </h:panelGrid>
+                  </ui:decorate>
+                </h:panelGroup>
+              </h:panelGroup>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGrid
+            rendered="#{not empty order.orderAttributes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.serviceType.isOrderAttribute('sequencingApplication')}">
+              <h:outputText
+                value="#{messages.sequencingApplication}"
+                title="#{order.getOrderAttributeHint('sequencingApplication')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="sequencingApplication"
+                  value="#{order.sequencingApplication}"
+                  valueChangeListener="#{order.sequencingApplicationChanged}"
+                  title="#{order.getOrderAttributeHint('sequencingApplication')}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem
+                    itemLabel="#{messages.selectAnItem}"
+                    itemDisabled="true" />
+                  <f:selectItems
+                    value="#{not order.processesPlates ? sequencingApplicationList.getResultListEnabledIncludingByServiceType(order.serviceType, order.sequencingApplication) : sequencingApplicationList.getResultListEnabledIncludingExcludingByServiceType(order.serviceType, order.sequencingApplication, 'Ready-made Libraries')}"
+                    var="item"
+                    itemLabel="#{item.name}" />
+                  <p:ajax
+                    event="change"
+                    update="#{constants.EDIT}:instrumentDependent, #{constants.EDIT}:instrumentSpecific, #{constants.EDIT}:libraryProtocolOptionValues" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('instrument')}">
+              <h:outputText
+                value="#{messages.instrument}"
+                title="#{order.getOrderAttributeHint('instrument')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="instrument"
+                  value="#{order.instrument}"
+                  valueChangeListener="#{order.instrumentChanged}"
+                  title="#{order.getOrderAttributeHint('instrument')}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem
+                    itemLabel="#{messages.selectAnItem}"
+                    itemDisabled="true" />
+                  <f:selectItems
+                    value="#{instrumentList.getResultListEnabledIncludingByServiceType(order.instrument, order.serviceType)}"
+                    var="item"
+                    itemLabel="#{item.name}" />
+                  <p:ajax
+                    event="change"
+                    update="#{constants.EDIT}:instrumentDependent, #{constants.EDIT}:instrumentSpecific" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGroup id="instrumentDependent">
+            <h:panelGrid
+              rendered="#{not empty order.orderAttributes}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <c:if
+                test="#{order.serviceType.isOrderAttribute('libraryProtocol') and (not empty order.instrument or not empty order.sequencingApplication) and not order.hasServiceTypeReadyMadeLibrariesSequencingAndSequencingApplicationCustomOther()}">
+                <h:outputText
+                  value="#{messages.libraryProtocol}"
+                  title="#{order.getOrderAttributeHint('libraryProtocol')}" />
+                <ui:decorate template="/fragments/required.xhtml">
+                  <h:selectOneMenu
+                    id="libraryProtocol"
+                    value="#{order.libraryProtocol}"
+                    title="#{order.getOrderAttributeHint('libraryProtocol')}"
+                    valueChangeListener="#{order.libraryProtocolChanged}"
+                    styleClass="editWidthExtraLarge"
+                    converter="omnifaces.SelectItemsConverter">
+                    <f:selectItem
+                      itemLabel="#{messages.selectAnItem}"
+                      itemDisabled="true" />
+                    <f:selectItems
+                      value="#{samplePreparationProtocolList.getEnabledLibraryProtocolsIncludingByInstrumentOrSequencingApplication(order.instrument, order.sequencingApplication, order.libraryProtocol)}"
+                      var="item"
+                      itemLabel="#{item.name}">
+                    </f:selectItems>
+                    <p:ajax
+                      event="change"
+                      global="false"
+                      update="edit:libraryProtocolOptionValues" />
+                  </h:selectOneMenu>
+                </ui:decorate>
+              </c:if>
+            </h:panelGrid>
+
+            <h:panelGroup id="libraryProtocolOptionValues">
+              <c:set var="libraryProtocolOptions" value="#{order.libraryProtocolOptions}" />
+              <h:panelGrid rendered="#{not empty libraryProtocolOptions}" columns="2" columnClasses="rtdm background-grey, ltd background-grey">
+                <c:forEach items="#{libraryProtocolOptions}" var="item">
+                  <c:if test="#{not empty item.enabledOptionValues}">
+                    <h:outputText value="#{item.name}" />
+                    <ui:decorate template="/fragments/#{item.required ? 'required' : 'edit'}.xhtml">
+                      <p:selectOneRadio rendered="#{not item.multiple and item.enabledOptionValues.size() le 10}"
+                                        value="#{item.optionValueHolder}"
+                                        valueChangeListener="#{order.libraryProtocolOptionValueChanged}"
+                                        required="#{item.required}"
+                                        converter="omnifaces.SelectItemsConverter">
+                        <f:selectItems value="#{item.enabledOptionValues}" var="optionValueItem" itemLabel="#{optionValueItem.name}" itemDescription="#{optionValueItem.description}" />
+                        <c:if test="#{not item.required}">
+                          <f:selectItem itemLabel="#{messages.none}" noSelectionOption="true" />
+                        </c:if>
+                        <p:ajax event="change" global="false" />
+                      </p:selectOneRadio>
+                      <p:selectOneMenu rendered="#{not item.multiple and item.enabledOptionValues.size() gt 10}"
+                                       value="#{item.optionValueHolder}"
+                                       valueChangeListener="#{order.libraryProtocolOptionValueChanged}"
+                                       required="#{item.required}"
+                                       converter="omnifaces.SelectItemsConverter">
+                        <f:selectItem itemLabel="" itemDisabled="#{item.required}" />
+                        <f:selectItems value="#{item.enabledOptionValues}" var="optionValueItem" itemLabel="#{optionValueItem.name}" itemDescription="#{optionValueItem.description}" />
+                        <p:ajax event="change" global="false" />
+                      </p:selectOneMenu>
+                      <p:selectManyCheckbox rendered="#{item.multiple}" value="#{item.optionValueHolders}" collectionType="java.util.HashSet"
+                                            valueChangeListener="#{order.libraryProtocolOptionValuesChanged}" required="#{item.required}" converter="omnifaces.SelectItemsConverter">
+                        <f:selectItems value="#{item.enabledOptionValues}" var="optionValueItem" itemLabel="#{optionValueItem.name}" itemDescription="#{optionValueItem.description}" />
+                        <p:ajax event="change" global="false" />
+                      </p:selectManyCheckbox>
+                      <!--
+                      <p:selectManyMenu rendered="#{item.multiple and item.enabledOptionValues.size() gt 5}" value="#{item.optionValueHolders}" collectionType="java.util.HashSet"
+                                       valueChangeListener="#{order.libraryProtocolOptionValuesChanged}" required="#{item.required}" converter="omnifaces.SelectItemsConverter">
+                        <f:selectItem itemLabel="" itemDisabled="#{item.required}" />
+                        <f:selectItems value="#{item.enabledOptionValues}" var="optionValueItem" itemLabel="#{optionValueItem.name}" />
+                        <p:ajax event="change" global="false" />
+                      </p:selectManyMenu>
+                      -->
+                    </ui:decorate>
+                  </c:if>
+                </c:forEach>
+              </h:panelGrid>
+            </h:panelGroup>
+          </h:panelGroup>
+
+          <h:panelGrid
+            id="instrumentIndependent"
+            rendered="#{not empty order.orderAttributes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.serviceType.isOrderAttribute('numberOfRunsSequencing')}">
+              <h:outputText
+                value="#{messages.numberOfRunsSequencing}"
+                title="#{order.getOrderAttributeHint('numberOfRunsSequencing')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <p:inputNumber
+                  id="numberOfRunsSequencing"
+                  value="#{order.numberOfRunsSequencing}"
+                  title="#{order.getOrderAttributeHint('numberOfRunsSequencing')}"
+                  thousandSeparator=""
+                  decimalPlaces="0"
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('numberOfRunsTapeStation')}">
+              <h:outputText
+                value="#{messages.numberOfRunsTapeStation}"
+                title="#{order.getOrderAttributeHint('numberOfRunsTapeStation')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputNumber
+                  id="numberOfRunsTapeStation"
+                  value="#{order.numberOfRunsTapeStation}"
+                  title="#{order.getOrderAttributeHint('numberOfRunsTapeStation')}"
+                  thousandSeparator=""
+                  decimalPlaces="0"
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('userBenchUsage')}">
+              <h:outputText
+                value="#{messages.userBenchUsage}"
+                title="#{order.getOrderAttributeHint('userBenchUsage')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputNumber
+                  id="userBenchUsage"
+                  value="#{order.userBenchUsage}"
+                  title="#{order.getOrderAttributeHint('userBenchUsage')}"
+                  thousandSeparator=""
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('kitsUsed')}">
+              <h:outputText
+                value="#{messages.kitsUsed}"
+                title="#{order.getOrderAttributeHint('kitsUsed')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputText
+                  id="kitsUsed"
+                  value="#{order.kitsUsed}"
+                  title="#{order.getOrderAttributeHint('kitsUsed')}"
+                  styleClass="editWidthExtraLarge"
+                  pt:placeholder="#{order.getOrderAttributeHint('kitsUsed')}" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if
+              test="#{order.serviceType.isOrderAttributeAndEnabled('nuclei') and not (order.serviceType.isOrderAttributeAndEnabled('numberOfCellsNuclei') or not empty order.numberOfCellsNucleiOld)}">
+              <h:outputText
+                value="#{messages.cellsNuclei}"
+                title="#{order.getOrderAttributeHint('nuclei')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneRadio
+                  id="nuclei"
+                  value="#{order.nuclei}"
+                  title="#{order.getOrderAttributeHint('nuclei')}">
+                  <f:selectItem
+                    itemValue="false"
+                    itemLabel="#{messages.cells}" />
+                  <f:selectItem
+                    itemValue="true"
+                    itemLabel="#{messages.nuclei}" />
+                </h:selectOneRadio>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttributeAndEnabled('numberOfCellsNuclei') or not empty order.numberOfCellsNucleiOld}">
+              <h:outputText
+                value="#{messages.numberOfCellsNuclei}"
+                title="#{order.getOrderAttributeHint('numberOfCellsNuclei')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <p:inputNumber
+                  id="numberOfCellsNuclei"
+                  value="#{order.numberOfCellsNuclei}"
+                  title="#{order.getOrderAttributeHint('numberOfCellsNuclei')}"
+                  thousandSeparator=""
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('insertSize')}">
+              <h:outputText
+                value="#{messages.insertSize}"
+                title="#{order.getOrderAttributeHint('insertSize')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputNumber
+                  id="insertSize"
+                  value="#{order.insertSize}"
+                  title="#{order.getOrderAttributeHint('insertSize')}"
+                  thousandSeparator=""
+                  decimalPlaces="0"
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGrid
+            id="instrumentSpecific"
+            rendered="#{not empty order.orderAttributes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.serviceType.isOrderAttribute('consumable')}">
+              <h:outputText
+                value="#{messages.consumable}"
+                title="#{order.getOrderAttributeHint('consumable')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="consumable"
+                  value="#{order.consumable}"
+                  title="#{order.getOrderAttributeHint('consumable')}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemLabel="#{messages.bringOwnConsumables}" />
+                  <f:selectItems
+                    value="#{consumableList.getResultListEnabledIncludingByInstrumentId(order.instrument.id, order.consumable.id)}"
+                    var="item"
+                    itemLabel="#{item.displayName}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('instrumentOptional')}">
+              <h:outputText value="#{messages.instrument}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:selectOneMenu
+                  id="instrumentOptional"
+                  value="#{order.instrument}"
+                  valueChangeListener="#{order.instrumentChanged}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemLabel="I do not know, please suggest the best option" />
+                  <f:selectItems
+                    value="#{instrumentList.getResultListEnabledIncludingByServiceType(order.instrument, order.serviceType)}"
+                    var="item"
+                    itemLabel="#{item.name}" />
+                  <p:ajax
+                    event="change"
+                    update="#{constants.EDIT}:instrumentSpecific" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if
+              test="#{order.serviceType.isOrderAttribute('instrumentDataDelivery') and not empty instrumentDataDeliveryList.getResultListEnabledIncludingByInstrumentId(order.instrument.id, order.instrumentDataDelivery.id)}">
+              <h:outputText
+                value="#{messages.instrumentDataDelivery}"
+                title="#{order.getOrderAttributeHint('instrumentDataDelivery')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="instrumentDataDelivery"
+                  value="#{order.instrumentDataDelivery}"
+                  title="#{order.getOrderAttributeHint('instrumentDataDelivery')}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem
+                    itemLabel="#{messages.selectAnItem}"
+                    itemDisabled="true" />
+                  <f:selectItems
+                    value="#{instrumentDataDeliveryList.getResultListEnabledIncludingByInstrumentId(order.instrument.id, order.instrumentDataDelivery.id)}"
+                    var="dataDelivery"
+                    itemValue="#{dataDelivery}"
+                    itemLabel="#{dataDelivery.name}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('instrumentDataPackage')}">
+              <h:outputText
+                value="#{messages.instrumentDataPackage}"
+                title="#{order.getOrderAttributeHint('instrumentDataPackage')}" />
+              <ui:decorate template="/fragments/#{order.instrumentDataPackageRequired ? 'required' : 'edit'}.xhtml">
+                <h:selectOneMenu
+                  id="instrumentDataPackage"
+                  value="#{order.instrumentDataPackage}"
+                  title="#{order.getOrderAttributeHint('instrumentDataPackage')}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemLabel="#{order.instrumentDataPackageRequired ? messages.selectAnItem : ''}" />
+                  <f:selectItems
+                    value="#{instrumentDataPackageList.getResultListEnabledIncludingByInstrumentIdAndServiceType(order.instrument.id, order.instrumentDataPackage.id, order.serviceType.id, identityManager.hasCurrentUserRole('containerManager'))}"
+                    var="dataPackage"
+                    itemValue="#{dataPackage}"
+                    itemLabel="#{dataPackage.name} #{not empty dataPackage.numberOfReads ? '(~'.concat(dataPackage.numberOfReads).concat(' Reads)') : ''}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('totalNumberOfInstrumentDataPackages')}">
+              <h:outputText
+                value="#{messages.totalNumberOfInstrumentDataPackages}"
+                title="#{order.getOrderAttributeHint('totalNumberOfInstrumentDataPackages')}" />
+              <ui:decorate template="/fragments/#{order.instrumentDataPackageRequired ? 'required' : 'edit'}.xhtml">
+                <p:inputNumber
+                  id="totalNumberOfInstrumentDataPackages"
+                  value="#{order.totalNumberOfInstrumentDataPackages}"
+                  title="#{order.getOrderAttributeHint('totalNumberOfInstrumentDataPackages')}"
+                  thousandSeparator=""
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('instrumentReadConfiguration') and not empty order.instrument.readConfigurations}">
+              <h:outputText
+                value="#{messages.instrumentReadConfiguration}"
+                title="#{messages.instrumentReadConfigurationHint}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="instrumentReadConfiguration"
+                  value="#{order.instrumentReadConfiguration}"
+                  title="#{messages.instrumentReadConfigurationHint}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemLabel="#{messages.selectAnItem}" itemDisabled="true" />
+                  <f:selectItems
+                    value="#{instrumentReadConfigurationList.getResultListEnabledIncludingByInstrumentIdAndServiceType(order.instrument.id, order.instrumentReadConfiguration.id, order.serviceType.id, identityManager.hasCurrentUserRole('containerManager'))}"
+                    var="readConfiguration"
+                    itemLabel="#{readConfiguration.name}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('demultiplexing')}">
+              <h:outputText
+                value="#{messages.demultiplexing}"
+                title="#{order.getOrderAttributeHint('demultiplexing')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="demultiplexing"
+                  value="#{order.demultiplexing}"
+                  title="#{order.getOrderAttributeHint('demultiplexing')}"
+                  valueChangeListener="#{order.demultiplexingChanged}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemLabel="#{messages.no}" />
+                  <f:selectItems
+                    value="#{demultiplexingList.getResultListEnabledIncludingByInstrumentId(order.instrument.id, order.demultiplexing.id)}"
+                    var="item"
+                    itemLabel="#{item.name}" />
+                  <p:ajax
+                    event="change"
+                    process="@this"
+                    update="#{constants.EDIT}:multiplexKitGrid" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGroup id="multiplexKitGrid">
+            <c:if test="#{order.serviceType.isOrderAttribute('multiplexKit')}">
+              <h:panelGrid
+                rendered="#{not empty order.demultiplexing}"
+                columns="2"
+                columnClasses="rtdm, ltd">
+                <h:outputText value="#{messages.multiplexKit}" title="#{order.getOrderAttributeHint('multiplexKit')}" />
+                <ui:decorate template="/fragments/required.xhtml">
+                  <h:selectOneMenu id="multiplexKit" value="#{order.multiplexKit}" title="#{order.getOrderAttributeHint('multiplexKit')}" styleClass="editWidthExtraLarge"
+                                   required="true" converter="omnifaces.SelectItemsConverter">
+                    <f:selectItem itemLabel="#{messages.selectAnItem}" itemDisabled="true" />
+                    <f:selectItems value="#{order.serviceType.multiplexKits}" var="item" itemLabel="#{item.name}" />
+                  </h:selectOneMenu>
+                </ui:decorate>
+              </h:panelGrid>
+            </c:if>
+          </h:panelGroup>
+
+          <h:panelGrid
+            rendered="#{not empty order.orderAttributes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.serviceType.isOrderAttribute('phiX')}">
+              <h:outputText
+                value="#{messages.phiX}"
+                title="#{order.getOrderAttributeHint('phiX')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputNumber
+                  id="phiX"
+                  value="#{order.phiX}"
+                  title="#{order.getOrderAttributeHint('phiX')}"
+                  thousandSeparator=""
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('customOption')}">
+              <h:outputText
+                value="#{messages.customOptions}"
+                title="#{order.getOrderAttributeHint('customOption')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:selectOneRadio
+                  id="customOption"
+                  value="#{order.customOption}"
+                  valueChangeListener="#{order.customOptionChanged}"
+                  title="#{order.getOrderAttributeHint('customOption')}">
+                  <f:selectItem
+                    itemValue="true"
+                    itemLabel="#{messages.yes}" />
+                  <f:selectItem
+                    itemValue="false"
+                    itemLabel="#{messages.no}" />
+                  <p:ajax
+                    event="change"
+                    process="#{'@this'.concat(order.customOption ? ', edit:customOptionDependent' : '')}"
+                    update="#{constants.EDIT}:customOptionDependent" />
+                </h:selectOneRadio>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGroup id="customOptionDependent">
+            <h:panelGrid
+              rendered="#{not empty order.orderAttributes and order.customOption}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <c:if test="#{order.serviceType.isOrderAttribute('customPrimer')}">
+                <h:outputText
+                  value="#{messages.customPrimers}"
+                  title="#{order.getOrderAttributeHint('customPrimer')}" />
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <h:selectOneRadio
+                    id="customPrimer"
+                    value="#{order.customPrimer}"
+                    title="#{order.getOrderAttributeHint('customPrimer')}">
+                    <f:selectItem
+                      itemValue="true"
+                      itemLabel="#{messages.yes}" />
+                    <f:selectItem
+                      itemValue="false"
+                      itemLabel="#{messages.no}" />
+                    <p:ajax
+                      event="change"
+                      process="#{constants.EDIT}:customOptionDependent"
+                      update="#{constants.EDIT}:customOptionDependent" />
+                  </h:selectOneRadio>
+                </ui:decorate>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('index1')}">
+                <h:outputText
+                  rendered="#{order.customPrimer}"
+                  value="#{messages.index1}"
+                  title="#{order.getOrderAttributeHint('index1')}" />
+                <h:panelGroup rendered="#{order.customPrimer}">
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <h:inputText
+                      id="index1"
+                      rendered="#{order.customPrimer}"
+                      value="#{order.index1}"
+                      title="#{order.getOrderAttributeHint('index1')}"
+                      styleClass="editWidthExtraLarge" />
+                  </ui:decorate>
+                </h:panelGroup>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('index2')}">
+                <h:outputText
+                  rendered="#{order.customPrimer}"
+                  value="#{messages.index2}"
+                  title="#{order.getOrderAttributeHint('index2')}" />
+                <h:panelGroup rendered="#{order.customPrimer}">
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <h:inputText
+                      id="index2"
+                      rendered="#{order.customPrimer}"
+                      value="#{order.index2}"
+                      title="#{order.getOrderAttributeHint('index2')}"
+                      styleClass="editWidthExtraLarge" />
+                  </ui:decorate>
+                </h:panelGroup>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('read1')}">
+                <h:outputText
+                  rendered="#{order.customPrimer}"
+                  value="#{messages.read1}"
+                  title="#{order.getOrderAttributeHint('read1')}" />
+                <h:panelGroup rendered="#{order.customPrimer}">
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <h:inputText
+                      id="read1"
+                      rendered="#{order.customPrimer}"
+                      value="#{order.read1}"
+                      title="#{order.getOrderAttributeHint('read1')}"
+                      styleClass="editWidthExtraLarge" />
+                  </ui:decorate>
+                </h:panelGroup>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('read2')}">
+                <h:outputText
+                  rendered="#{order.customPrimer}"
+                  value="#{messages.read2}"
+                  title="#{order.getOrderAttributeHint('read2')}" />
+                <h:panelGroup rendered="#{order.customPrimer}">
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <h:inputText
+                      id="read2"
+                      rendered="#{order.customPrimer}"
+                      value="#{order.read2}"
+                      title="#{order.getOrderAttributeHint('read2')}"
+                      styleClass="editWidthExtraLarge" />
+                  </ui:decorate>
+                </h:panelGroup>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('darkCycle')}">
+                <h:outputText
+                  value="#{messages.darkCycles}"
+                  title="#{order.getOrderAttributeHint('darkCycle')}" />
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <h:selectOneRadio
+                    id="darkCycle"
+                    value="#{order.darkCycle}"
+                    title="#{order.getOrderAttributeHint('darkCycle')}">
+                    <f:selectItem
+                      itemValue="true"
+                      itemLabel="#{messages.yes}" />
+                    <f:selectItem
+                      itemValue="false"
+                      itemLabel="#{messages.no}" />
+                    <p:ajax
+                      event="change"
+                      process="#{constants.EDIT}:customOptionDependent"
+                      update="#{constants.EDIT}:customOptionDependent" />
+                  </h:selectOneRadio>
+                </ui:decorate>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('numberOfCyclesRead1')}">
+                <h:outputText
+                  rendered="#{order.darkCycle}"
+                  value="#{messages.numberOfCyclesRead1}"
+                  title="#{order.getOrderAttributeHint('numberOfCyclesRead1')}" />
+                <h:panelGroup rendered="#{order.darkCycle}">
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <p:inputNumber
+                      id="numberOfCyclesRead1"
+                      rendered="#{order.darkCycle}"
+                      value="#{order.numberOfCyclesRead1}"
+                      title="#{order.getOrderAttributeHint('numberOfCyclesRead1')}"
+                      thousandSeparator=""
+                      decimalPlaces="0"
+                      styleClass="editWidthExtraLarge" />
+                  </ui:decorate>
+                </h:panelGroup>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('numberOfCyclesRead2')}">
+                <h:outputText
+                  rendered="#{order.darkCycle}"
+                  value="#{messages.numberOfCyclesRead2}"
+                  title="#{order.getOrderAttributeHint('numberOfCyclesRead2')}" />
+                <h:panelGroup rendered="#{order.darkCycle}">
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <p:inputNumber
+                      id="numberOfCyclesRead2"
+                      rendered="#{order.darkCycle}"
+                      value="#{order.numberOfCyclesRead2}"
+                      title="#{order.getOrderAttributeHint('numberOfCyclesRead2')}"
+                      thousandSeparator=""
+                      decimalPlaces="0"
+                      styleClass="editWidthExtraLarge" />
+                  </ui:decorate>
+                </h:panelGroup>
+              </c:if>
+
+              <c:if test="#{order.serviceType.isOrderAttribute('requestBclFile')}">
+                <h:outputText
+                  value="#{messages.requestBclFiles}"
+                  title="#{order.getOrderAttributeHint('requestBclFile')}" />
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <h:selectOneRadio
+                    id="requestBclFile"
+                    value="#{order.requestBclFile}"
+                    title="#{order.getOrderAttributeHint('requestBclFile')}">
+                    <f:selectItem
+                      itemValue="true"
+                      itemLabel="#{messages.yes}" />
+                    <f:selectItem
+                      itemValue="false"
+                      itemLabel="#{messages.no}" />
+                  </h:selectOneRadio>
+                </ui:decorate>
+              </c:if>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGrid
+            id="instrumentIndependent2"
+            rendered="#{not empty order.orderAttributes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{order.serviceType.isOrderAttribute('numberOfChips')}">
+              <h:outputText
+                value="#{messages.numberOfChips}"
+                title="#{order.getOrderAttributeHint('numberOfChips')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <p:inputNumber
+                  id="numberOfChips"
+                  value="#{order.numberOfChips}"
+                  title="#{order.getOrderAttributeHint('numberOfChips')}"
+                  thousandSeparator=""
+                  decimalPlaces="0"
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('fastaSequence')}">
+              <h:outputText
+                value="#{messages.fastaSequence}"
+                title="#{order.getOrderAttributeHint('fastaSequence')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputTextarea
+                  id="fastaSequence"
+                  value="#{order.fastaSequence}"
+                  title="#{order.getOrderAttributeHint('fastaSequence')}"
+                  validator="#{order.validateFastaSequence}"
+                  rows="4"
+                  styleClass="editWidthExtraLarge"
+                  pt:placeholder="#{order.getOrderAttributeHint('fastaSequence')}" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('fastaSequenceRequired') and not order.serviceType.isOrderAttribute('fastaSequence')}">
+              <h:outputText
+                value="#{messages.fastaSequence}"
+                title="#{order.getOrderAttributeHint('fastaSequence')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:inputTextarea
+                  id="fastaSequenceRequired"
+                  value="#{order.fastaSequence}"
+                  title="#{order.getOrderAttributeHint('fastaSequenceRequired')}"
+                  validator="#{order.validateFastaSequenceRequired}"
+                  required="true"
+                  rows="4"
+                  styleClass="editWidthExtraLarge"
+                  pt:placeholder="#{order.getOrderAttributeHint('fastaSequenceRequired')}" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('numberOfReplicates')}">
+              <h:outputText
+                value="#{messages.numberOfReplicates}"
+                title="#{order.getOrderAttributeHint('numberOfReplicates')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="numberOfReplicates"
+                  value="#{order.numberOfReplicates}"
+                  title="#{order.getOrderAttributeHint('numberOfReplicates')}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemValue="Single analysis (not for accurate absolute quantification)" />
+                  <f:selectItem itemValue="Triplicate analysis (for absolute quantification)" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('dataProduced')}">
+              <h:outputText
+                value="#{messages.dataProduced}"
+                title="#{order.getOrderAttributeHint('dataProduced')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneRadio
+                  id="dataProduced"
+                  value="#{order.dataProduced}"
+                  title="#{order.getOrderAttributeHint('dataProduced')}">
+                  <f:selectItem
+                    itemValue="true"
+                    itemLabel="#{messages.yes}" />
+                  <f:selectItem
+                    itemValue="false"
+                    itemLabel="#{messages.no}" />
+                </h:selectOneRadio>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('hoursRequested')}">
+              <h:outputText
+                value="#{messages.hoursRequested}"
+                title="#{order.getOrderAttributeHint('hoursRequested')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <p:inputNumber
+                  id="hoursRequested"
+                  value="#{order.hoursRequested}"
+                  title="#{order.getOrderAttributeHint('hoursRequested')}"
+                  required="true"
+                  thousandSeparator=""
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('storageModel')}">
+              <h:outputText
+                value="#{messages.storageModel}"
+                title="#{order.getOrderAttributeHint('storageModel')}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneRadio
+                  id="storageModel"
+                  value="#{order.storageModel}"
+                  title="#{order.getOrderAttributeHint('storageModel')}"
+                  required="true"
+                  converter="omnifaces.SelectItemsConverter"
+                  layout="pageDirection">
+                  <f:selectItems
+                    value="#{storageModelList.getEnabledIncludingOrderByPosition(order.storageModel.id)}"
+                    var="model"
+                    itemLabel="#{model.fullName}" />
+                </h:selectOneRadio>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('remarks')}">
+              <h:outputText
+                value="#{messages.remarks}"
+                title="#{order.getOrderAttributeHint('remarks')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputTextarea
+                  id="remarks"
+                  value="#{order.remarks}"
+                  title="#{order.getOrderAttributeHint('remarks')}"
+                  rows="4"
+                  styleClass="editWidthExtraLarge"
+                  pt:placeholder="#{order.getOrderAttributeHint('remarks')}" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('summary')}">
+              <h:outputText
+                value="#{messages.summary}"
+                title="#{order.getOrderAttributeHint('summary')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputTextarea
+                  id="summary"
+                  value="#{order.summary}"
+                  title="#{order.getOrderAttributeHint('summary')}"
+                  rows="4"
+                  styleClass="editWidthExtraLarge"
+                  pt:placeholder="#{order.getOrderAttributeHint('summary')}" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('sampleRetention')}">
+              <h:outputText
+                value="#{messages.sampleRetention}"
+                title="#{order.getOrderAttributeHint('sampleRetention')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:panelGrid columns="1"><h:selectOneMenu
+                  id="sampleRetention"
+                  value="#{order.sampleRetention}"
+                  valueChangeListener="#{order.sampleRetentionChanged}"
+                  title="#{order.getOrderAttributeHint('sampleRetention')}"
+                  styleClass="editWidthExtraLarge">
+                  <f:selectItem
+                    itemValue="#{messages.sampleRetentionStore}"
+                    itemLabel="#{messages.sampleRetentionStore}" />
+                  <f:selectItem
+                    itemValue="#{messages.sampleRetentionDispose}"
+                    itemLabel="#{messages.sampleRetentionDispose}" />
+                  <f:selectItem
+                    itemValue="#{messages.sampleRetentionReturn}"
+                    itemLabel="#{messages.sampleRetentionReturn}" />
+                  <f:selectItem
+                    itemValue="#{messages.sampleRetentionOther}"
+                    itemLabel="#{messages.sampleRetentionOther}" />
+                  <p:ajax
+                    event="change"
+                    update="#{''.concat(order.serviceType.isOrderAttribute('sampleRetention') ? 'edit:sampleRetention' : '')}, #{constants.EDIT}:sampleRetention, #{constants.EDIT}:sampleRetentionText" />
+                </h:selectOneMenu>
+                  <p:inputText
+                    id="sampleRetentionText"
+                    value="#{order.sampleRetention}"
+                    title="#{order.getOrderAttributeHint('sampleRetention')}"
+                    styleClass="editWidthExtraLarge" />
+                </h:panelGrid>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{order.serviceType.isOrderAttribute('mailTrackingNumber')}">
+              <h:outputText
+                value="#{messages.mailTrackingNumber}"
+                title="#{order.getOrderAttributeHint('mailTrackingNumber')}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputText
+                  id="mailTrackingNumber"
+                  value="#{order.mailTrackingNumber}"
+                  title="#{order.getOrderAttributeHint('mailTrackingNumber')}"
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="1"
+          styleClass="title">
+          <h:panelGroup styleClass="frame">
+            <h:panelGrid
+              id="projectgrid"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.project}" />
+              <h:panelGroup rendered="#{not order.pending and not order.submitted and not identityManager.hasCurrentUserRole('admin') and order.managed}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{order.project.getTruncatedDisplayName(80)}" />
+                </ui:decorate>
+              </h:panelGroup>
+              <h:panelGroup rendered="#{order.pending or order.submitted or identityManager.hasCurrentUserRole('admin') or not order.managed}">
+                <h:panelGroup rendered="#{order.serviceType.requiresProject}">
+                  <ui:include src="/fragments/autocomplete-required.xhtml">
+                    <ui:param
+                      name="clearButtonRendered"
+                      value="true" />
+                    <ui:param
+                      name="listContext"
+                      value="projectrequired" />
+                    <ui:param
+                      name="value"
+                      value="#{order.project}" />
+                    <o:methodParam
+                      name="completeMethod"
+                      value="#{orderManager.getOrderAssignableProjects}" />
+                    <o:methodParam
+                      name="itemSelectListener"
+                      value="#{orderManager.projectSelectListener}" />
+                    <o:methodParam
+                      name="clearListener"
+                      value="#{orderManager.projectClearListener}" />
+                    <ui:param
+                      name="required"
+                      value="true" />
+                    <ui:param
+                      name="ajaxClear"
+                      value="true" />
+                    <ui:param
+                      name="itemLabel"
+                      value="#{item.id}" />
+                    <ui:param
+                      name="includeColumns"
+                      value="/container/autocomplete-columns.xhtml" />
+                  </ui:include>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not order.serviceType.requiresProject}">
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <ui:include src="/fragments/autocomplete.xhtml">
+                      <ui:param
+                        name="clearButtonRendered"
+                        value="true" />
+                      <ui:param
+                        name="listContext"
+                        value="projectoptional" />
+                      <ui:param
+                        name="value"
+                        value="#{order.project}" />
+                      <o:methodParam
+                        name="completeMethod"
+                        value="#{orderManager.getOrderAssignableProjects}" />
+                      <o:methodParam
+                        name="itemSelectListener"
+                        value="#{orderManager.projectSelectListener}" />
+                      <o:methodParam
+                        name="clearListener"
+                        value="#{orderManager.projectClearListener}" />
+                      <ui:param
+                        name="required"
+                        value="false" />
+                      <ui:param
+                        name="ajaxClear"
+                        value="true" />
+                      <ui:param
+                        name="itemLabel"
+                        value="#{item.id}" />
+                      <ui:param
+                        name="includeColumns"
+                        value="/container/autocomplete-columns.xhtml" />
+                    </ui:include>
+                  </ui:decorate>
+                </h:panelGroup>
+              </h:panelGroup>
+            </h:panelGrid>
+
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <c:if test="#{orderManager.offersAssignable}">
+                <h:outputText value="#{messages.offer}" />
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <ui:include src="/fragments/autocomplete.xhtml">
+                    <ui:param
+                      name="clearButtonRendered"
+                      value="true" />
+                    <ui:param
+                      name="listContext"
+                      value="offer" />
+                    <ui:param
+                      name="value"
+                      value="#{order.offer}" />
+                    <ui:param
+                      name="title"
+                      value="#{messages.editOrderOffersHint}" />
+                    <o:methodParam
+                      name="completeMethod"
+                      value="#{orderManager.getSelectableOffersFiltered}" />
+                    <o:methodParam
+                      name="valueChangeListener"
+                      value="#{order.offerChanged}" />
+                    <ui:param
+                      name="includeColumns"
+                      value="/offer/autocomplete-columns.xhtml" />
+                    <ui:param
+                      name="itemLabel"
+                      value="#{item.displayName}" />
+                    <ui:param
+                      name="inputStyleClass"
+                      value="editWidthExtraLarge" />
+                  </ui:include>
+                </ui:decorate>
+              </c:if>
+            </h:panelGrid>
+
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.requester}" />
+              <h:panelGroup rendered="#{order.requesterUpdatable}">
+                <ui:include src="/fragments/autocomplete-required.xhtml">
+                  <ui:param
+                    name="clearButtonRendered"
+                    value="true" />
+                  <ui:param
+                    name="listContext"
+                    value="requester" />
+                  <ui:param
+                    name="value"
+                    value="#{order.requester}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{orderManager.getUsersFiltered}" />
+                  <o:methodParam
+                    name="valueChangeListener"
+                    value="#{order.requesterChangedListener}" />
+                  <ui:param
+                    name="ajaxChange"
+                    value="true" />
+                  <ui:param
+                    name="ajaxClear"
+                    value="true" />
+                  <ui:param
+                    name="itemSelectUpdate"
+                    value="@this, projectgrid" />
+                  <ui:param
+                    name="clearUpdate"
+                    value="projectgrid" />
+                  <ui:param
+                    name="includeColumns"
+                    value="/user/autocomplete-columns.xhtml" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.name}" />
+                  <ui:param
+                    name="inputStyleClass"
+                    value="editWidthExtraLarge" />
+                </ui:include>
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not order.requesterUpdatable}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{order.requester.name}" />
+                </ui:decorate>
+              </h:panelGroup>
+
+              <c:if test="#{order.managed}">
+                <h:outputText
+                  value="#{messages.contact}"
+                  title="#{messages.editOrderContactHint}" />
+                <ui:decorate template="/fragments/required.xhtml">
+                  <ui:param
+                    name="componentId"
+                    value="contactautocomplete" />
+                  <h:panelGrid
+                    id="contactGrid"
+                    columns="2"
+                    styleClass="noborder"
+                    columnClasses="rightpadding,"
+                    title="#{messages.editContactHint}">
+                    <ui:include src="/fragments/autocomplete.xhtml">
+                      <ui:param
+                        name="clearButtonRendered"
+                        value="true" />
+                      <ui:param
+                        name="listContext"
+                        value="contact" />
+                      <ui:param
+                        name="value"
+                        value="#{order.contact}" />
+                      <o:methodParam
+                        name="completeMethod"
+                        value="#{userService.getUsersFiltered}" />
+                      <o:methodParam
+                        name="valueChangeListener"
+                        value="#{order.contactChangedListener}" />
+                      <ui:param
+                        name="itemSelectUpdate"
+                        value="#{constants.EDIT}:editOrderRequesterWarning" />
+                      <ui:param
+                        name="ajaxChange"
+                        value="true" />
+                      <ui:param
+                        name="includeColumns"
+                        value="/user/autocomplete-columns.xhtml" />
+                      <ui:param
+                        name="itemLabel"
+                        value="#{item.name}" />
+                      <ui:param
+                        name="inputStyle"
+                        value="min-width:450px" />
+                      <ui:param
+                        name="styleClass"
+                        value="editWidthExtraLarge" />
+                    </ui:include>
+                    <p:commandLink
+                      onclick="createNewContact();"
+                      title="#{messages.addNewUserHint}"
+                      process="@this"
+                      oncomplete="PF('addUserDialog').show()">
+                      <ui:include src="/fragments/add-button-icon.xhtml" />
+                    </p:commandLink>
+                  </h:panelGrid>
+                </ui:decorate>
+              </c:if>
+            </h:panelGrid>
+
+            <p style="font-weight: normal; padding: 0 10px;">
+              <h:outputText value="#{messages.important}: #{messages.editOrderBudgetOfficerHint} #{messages.editBudgetOfficerHint}" />
+            </p>
+
+            <h:panelGrid
+              id="budgetofficergrid"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText
+                value="#{messages.budgetOfficer}"
+                title="#{messages.editOrderBudgetOfficerHint} #{messages.editBudgetOfficerHint}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <ui:param
+                  name="componentId"
+                  value="budgetofficerautocomplete" />
+                <h:panelGrid
+                  columns="2"
+                  styleClass="noborder"
+                  columnClasses="rightpadding,"
+                  title="#{messages.editOrderBudgetOfficerHint} #{messages.editBudgetOfficerHint}">
+                  <ui:include src="/fragments/autocomplete.xhtml">
+                    <ui:param
+                      name="clearButtonRendered"
+                      value="true" />
+                    <ui:param
+                      name="listContext"
+                      value="budgetOfficer" />
+                    <ui:param
+                      name="value"
+                      value="#{order.budgetOfficer}" />
+                    <o:methodParam
+                      name="completeMethod"
+                      value="#{userService.getUsersFiltered}" />
+                    <o:methodParam
+                      name="valueChangeListener"
+                      value="#{order.budgetOfficerChangedListener}" />
+                    <ui:param
+                      name="ajaxChange"
+                      value="true" />
+                    <ui:param
+                      name="itemSelectUpdate"
+                      value="@this, #{constants.EDIT}:billinginfo, #{constants.EDIT}:editOrderRequesterWarning" />
+                    <!--
+                                      <ui:param
+                                        name="disabled"
+                                        value="#{order.project != null}" />
+                    -->
+                    <ui:param
+                      name="includeColumns"
+                      value="/user/autocomplete-columns.xhtml" />
+                    <ui:param
+                      name="itemLabel"
+                      value="#{item.name}" />
+                    <ui:param
+                      name="inputStyleClass"
+                      value="editWidthExtraLarge" />
+                  </ui:include>
+                  <p:commandLink
+                    onclick="createNewBudgetOfficer();"
+                    title="#{messages.addNewUserHint}"
+                    process="@this"
+                    oncomplete="PF('addUserDialog').show()">
+                    <ui:include src="/fragments/add-button-icon.xhtml" />
+                  </p:commandLink>
+                </h:panelGrid>
+              </ui:decorate>
+            </h:panelGrid>
+
+            <h:panelGroup id="editOrderRequesterWarning">
+              <h:panelGrid
+                rendered="#{order.requesterAccessWarning}"
+                columns="2"
+                columnClasses="rtdm, ltd">
+                <h:outputText value="" />
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <h:outputText value="#{messages.editOrderRequesterWarning}" styleClass="warning" />
+                </ui:decorate>
+              </h:panelGrid>
+            </h:panelGroup>
+
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText
+                value="#{messages.coach}"
+                rendered="#{order.renderedOrderCoach}" />
+              <h:panelGroup rendered="#{order.renderedOrderCoach}">
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <ui:param
+                    name="componentId"
+                    value="coachautocomplete" />
+                  <h:panelGrid
+                    id="coachGrid"
+                    columns="2"
+                    styleClass="noborder"
+                    columnClasses="rightpadding,">
+                    <ui:include src="/fragments/autocomplete.xhtml">
+                      <ui:param
+                        name="clearButtonRendered"
+                        value="true" />
+                      <ui:param
+                        name="listContext"
+                        value="coach" />
+                      <ui:param
+                        name="value"
+                        value="#{order.coach}" />
+                      <o:methodParam
+                        name="completeMethod"
+                        value="#{order.getEmployeesIncludingCoach}" />
+                      <o:methodParam
+                        name="valueChangeListener"
+                        value="#{order.coachChangedListener}" />
+                      <ui:param
+                        name="ajaxChange"
+                        value="true" />
+                      <ui:param
+                        name="itemSelectUpdate"
+                        value="@this, #{constants.EDIT}:billinginfo" />
+                      <ui:param
+                        name="includeColumns"
+                        value="/user/autocomplete-columns.xhtml" />
+                      <ui:param
+                        name="itemLabel"
+                        value="#{item.name}" />
+                      <ui:param
+                        name="inputStyle"
+                        value="min-width:450px" />
+                      <ui:param
+                        name="styleClass"
+                        value="editWidthExtraLarge" />
+                    </ui:include>
+                  </h:panelGrid>
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.coachBackup}"
+                rendered="#{order.renderedOrderCoachBackup}" />
+              <h:panelGroup rendered="#{order.renderedOrderCoachBackup}">
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <ui:param
+                    name="componentId"
+                    value="coachbackupautocomplete" />
+                  <h:panelGrid
+                    id="coachBackupGrid"
+                    columns="2"
+                    styleClass="noborder"
+                    columnClasses="rightpadding,">
+                    <ui:include src="/fragments/autocomplete.xhtml">
+                      <ui:param
+                        name="clearButtonRendered"
+                        value="true" />
+                      <ui:param
+                        name="listContext"
+                        value="coachbackup" />
+                      <ui:param
+                        name="value"
+                        value="#{order.coachBackup}" />
+                      <o:methodParam
+                        name="completeMethod"
+                        value="#{order.getEmployeesIncludingCoachBackup}" />
+                      <o:methodParam
+                        name="valueChangeListener"
+                        value="#{order.coachBackupChangedListener}" />
+                      <ui:param
+                        name="ajaxChange"
+                        value="true" />
+                      <ui:param
+                        name="itemSelectUpdate"
+                        value="@this, #{constants.EDIT}:billinginfo" />
+                      <ui:param
+                        name="includeColumns"
+                        value="/user/autocomplete-columns.xhtml" />
+                      <ui:param
+                        name="itemLabel"
+                        value="#{item.name}" />
+                      <ui:param
+                        name="inputStyle"
+                        value="min-width:450px" />
+                      <ui:param
+                        name="styleClass"
+                        value="editWidthExtraLarge" />
+                    </ui:include>
+                  </h:panelGrid>
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.bioinformatician}"
+                rendered="#{order.renderedOrderCoachBackup}" />
+              <h:panelGroup rendered="#{order.renderedOrderCoachBackup}">
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <ui:param
+                    name="componentId"
+                    value="bioinformaticianautocomplete" />
+                  <h:panelGrid
+                    id="bioinformaticianGrid"
+                    columns="2"
+                    styleClass="noborder"
+                    columnClasses="rightpadding,">
+                    <ui:include src="/fragments/autocomplete.xhtml">
+                      <ui:param
+                        name="clearButtonRendered"
+                        value="true" />
+                      <ui:param
+                        name="listContext"
+                        value="bioinformatician" />
+                      <ui:param
+                        name="value"
+                        value="#{order.bioinformatician}" />
+                      <o:methodParam
+                        name="completeMethod"
+                        value="#{order.getEmployeesIncludingBioinformatician}" />
+                      <o:methodParam
+                        name="valueChangeListener"
+                        value="#{order.bioinformaticianChangedListener}" />
+                      <ui:param
+                        name="ajaxChange"
+                        value="true" />
+                      <ui:param
+                        name="itemSelectUpdate"
+                        value="@this, #{constants.EDIT}:billinginfo" />
+                      <ui:param
+                        name="includeColumns"
+                        value="/user/autocomplete-columns.xhtml" />
+                      <ui:param
+                        name="itemLabel"
+                        value="#{item.name}" />
+                      <ui:param
+                        name="inputStyle"
+                        value="min-width:450px" />
+                      <ui:param
+                        name="styleClass"
+                        value="editWidthExtraLarge" />
+                    </ui:include>
+                  </h:panelGrid>
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.discussedWith}"
+                title="#{messages.discussedWithHint}" />
+              <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('containerManager') or order.pending or order.submitted}">
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <ui:include src="/fragments/autocomplete.xhtml">
+                    <ui:param
+                      name="listContext"
+                      value="discussedWith" />
+                    <ui:param
+                      name="value"
+                      value="#{orderManager.selectedDiscussedWith}" />
+                    <o:methodParam
+                      name="completeMethod"
+                      value="#{orderManager.getEmployeesFiltered}" />
+                    <ui:param
+                      name="itemLabel"
+                      value="#{item.name}" />
+                    <ui:param
+                      name="multiple"
+                      value="true" />
+                  </ui:include>
+                </ui:decorate>
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not (identityManager.hasCurrentUserRole('containerManager') or order.pending or order.submitted)}">
+                <h:outputText value="#{order.discussedWithAsString}" />
+              </h:panelGroup>
+
+              <c:if test="#{not order.billingAddressUpdatable}">
+                <h:outputText value="#{messages.billingEmail}" />
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{order.billingInfo.billingEmail}" />
+                </ui:decorate>
+
+                <h:outputText value="#{messages.billingAddress}" />
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{order.postalAddress}" />
+                </ui:decorate>
+              </c:if>
+            </h:panelGrid>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGroup id="billinginfo">
+          <ui:include src="/fragments/edit-billing-info.xhtml">
+            <ui:param
+              name="callerEntity"
+              value="#{order}" />
+            <ui:param
+              name="caller"
+              value="order" />
+            <ui:param
+              name="clearButtonSpecificTarget"
+              value="vatNumber, referenceNumber" />
+          </ui:include>
+        </h:panelGroup>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <p:commandButton
+            action="#{orderManager.save}"
+            value="#{messages.save}"
+            oncomplete="fixOversize();"
+            update="@form" />
+          <ui:decorate template="/fragments/button/edit-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+      <p:remoteCommand name="createNewContact" actionListener="#{orderManager.createNewContact}" />
+      <p:remoteCommand name="createNewBudgetOfficer" actionListener="#{orderManager.createNewBudgetOfficer}" />
+      <ui:include src="/company/add-modal.xhtml">
+        <ui:param
+          name="callerEntity"
+          value="#{order}" />
+        <ui:param
+          name="caller"
+          value="order" />
+      </ui:include>
+      <ui:include src="/user/add-modal.xhtml">
+        <ui:param
+          name="manager"
+          value="#{orderManager}" />
+      </ui:include>
+      <ui:include src="services-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

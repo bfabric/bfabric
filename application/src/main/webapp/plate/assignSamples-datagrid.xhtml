@@ -1,0 +1,207 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+
+  <h:panelGroup id="assignSamplesGroup">
+    <h:panelGrid
+      columns="6"
+      styleClass="align-middle">
+      <h:outputText
+        value="#{messages.assigned}"
+        title="#{plate.entityInfo}"
+        styleClass="bold" />
+      <h:outputText
+        value="#{plate.plateLayout.capacity - plateManager.emptyPositionIndices.size()} / #{plate.plateLayout.capacity}"
+        style="padding-right: 4px !important;" />
+
+      <h:outputText
+        value="#{messages.additionalAttributeOnTile}"
+        title="#{messages.additionalAttributeOnTileHint}"
+        style="font-weight: bold;"
+        styleClass="warn" />
+      <p:autoComplete
+        value="#{plateManager.tileAttribute}"
+        title="#{messages.autocompleteHint}"
+        placeholder="#{messages.selectAnItemForAutocomplete}"
+        completeMethod="#{plateManager.getSampleAttributeEnumsForTile}"
+        emptyMessage="#{messages.noResultFound}"
+        var="item"
+        itemValue="#{item}"
+        itemLabel="#{item.label}"
+        forceSelection="true"
+        queryDelay="200"
+        scrollHeight="200"
+        autoHighlight="false"
+        style="padding-right: 4px !important;"
+        styleClass="editWidthLarge"
+        inputStyleClass="editWidthLarge">
+        <p:ajax
+          event="query"
+          global="false" />
+        <p:ajax
+          event="itemSelect"
+          global="false"
+          update="@this, assignSamplesGroup" />
+        <p:ajax
+          event="clear"
+          global="false"
+          update="@this, assignSamplesGroup" />
+      </p:autoComplete>
+
+      <h:outputText
+        rendered="#{plate.updatable}"
+        value="#{messages.samplePlateAssignmentOrder}"
+        title="#{messages.samplePlateAssignmentOrderWarning}"
+        styleClass="bold" />
+      <!-- Note: Do not replace the selectOneRadio with selectOneButton as there is a validation error which needs further investigation if the functionality is reactivated for all users -->
+      <h:selectOneRadio
+        rendered="#{plate.updatable}"
+        value="#{plate.sampleAssignmentPerRow}"
+        disabled="#{plate.plateTypeUserSubmitted or plate.hasFixedSamplePlateAssignmentOrder()}">
+        <f:selectItem
+          itemLabel="#{constants.COLUMN}"
+          itemValue="#{false}" />
+        <f:selectItem
+          itemLabel="#{constants.ROW}"
+          itemValue="#{true}" />
+        <p:ajax
+          event="change"
+          global="false" />
+      </h:selectOneRadio>
+    </h:panelGrid>
+
+    <c:set
+      var="multiplexIdsAssignability"
+      value="#{sampleAttributeHelper.getMultiplexIdsAssignability(null, plateManager.typesNonCached)}"
+      scope="request" />
+
+    <h:panelGrid
+      columns="5"
+      styleClass="action">
+      <c:if test="#{not empty sampleSelectionTableId}">
+        <o:resolveComponent
+          name="tableReference"
+          for="#{sampleSelectionTableId}" />
+      </c:if>
+      <p:commandButton
+        id="removeSelectedButton"
+        rendered="#{not empty plateManager.selectedSamples and plate.sampleAssignmentEditable}"
+        disabled="#{empty plateManager.markedSamples}"
+        action="#{plateManager.deselectMarkedSamples}"
+        value="#{messages.removeMarkedSamples}"
+        title="#{messages.removeMarkedSamplesHint}"
+        oncomplete="fixOversize();"
+        update="#{removeButtonProcessAndUpdate}"
+        process="#{removeButtonProcessAndUpdate}">
+        <c:if test="#{not empty sampleSelectionTableId}">
+          <f:attribute
+            name="#{constants.TABLE_CLIENT_ID}"
+            value="#{tableReference.clientId}" />
+        </c:if>
+      </p:commandButton>
+      <p:commandButton
+        rendered="#{not empty plateManager.selectedSamples and plate.sampleAssignmentEditable}"
+        disabled="#{empty plateManager.selectedSamplesIds}"
+        action="#{plateManager.deselectAllSamples}"
+        value="#{messages.removeAllSamples}"
+        title="#{messages.removeAllSamplesHint}"
+        oncomplete="fixOversize();"
+        update="#{removeButtonProcessAndUpdate}"
+        process="#{removeButtonProcessAndUpdate}">
+        <c:if test="#{not empty sampleSelectionTableId}">
+          <f:attribute
+            name="#{constants.TABLE_CLIENT_ID}"
+            value="#{tableReference.clientId}" />
+        </c:if>
+      </p:commandButton>
+      <p:commandButton
+        rendered="#{not empty plateManager.selectedSamples and plateManager.gridView and plate.sampleAssignmentEditable}"
+        disabled="#{plateManager.emptyPositionIndices.size() eq plate.plateLayout.capacity}"
+        value="#{messages.shiftEmptyPositions}"
+        title="#{messages.shiftEmptyPositionsHint}"
+        action="#{plateManager.shiftEmptyPositions}"
+        oncomplete="fixOversize();"
+        update="assignSamplesGroup" />
+      <p:commandButton
+        rendered="#{not empty plateManager.selectedSamples and plateManager.gridView and plate.updatable and !(empty plateManager.selectedSamples or (not multiplexIdsAssignability[0] and not multiplexIdsAssignability[1]))}"
+        value="#{messages.assignMultiplexIds}"
+        title="#{messages.assignMultiplexIdsSamplePlateHint}"
+        actionListener="#{plateManager.prepareMultiplexIdsModalPanel(plateManager.samplesForMultiplexIdAssignment, multiplexIdsAssignability, plate.sampleAssignmentPerRow)}"
+        immediate="true"
+        oncomplete="PF('assignMultiplexIdsModalDialog').show();"
+        update="assignMultiplexIdsModalPanel" />
+    </h:panelGrid>
+
+    <p:dataGrid
+      rendered="#{plate != null and not empty plateManager.selectedSamples}"
+      id="availableSamples"
+      rowIndexVar="rowIndex"
+      var="entity"
+      value="#{plateManager.selectedSamples}"
+      columns="#{plate.plateLayout.columns}"
+      layout="tabular">
+      <div>
+        <p:panel
+          id="samplePanel"
+          styleClass="#{not empty entity ? 'background-cell' : ''}">
+          <f:facet name="header">
+            <h:panelGroup styleClass="nowrap">
+              <c:if test="#{renderCheckbox}">
+                <h:selectBooleanCheckbox
+                  rendered="#{not empty entity and plate.sampleAssignmentEditable}"
+                  value="#{entity.checked}"
+                  title="#{messages.selectSampleCheckHint}">
+                  <p:ajax
+                    listener="#{plateManager.markSample(entity)}"
+                    update="#{checkboxUpdate}"
+                    global="false" />
+                </h:selectBooleanCheckbox>
+              </c:if>
+              <h:outputText value="#{plate.plateLayout.getGridPosition(rowIndex + 1)}" />
+            </h:panelGroup>
+          </f:facet>
+          <h:panelGrid rendered="#{not empty entity}">
+            <p:link
+              outcome="#{entity.urlShowScreen}"
+              value="#{entity.plateTileInfo}"
+              title="#{entity.entitySpecifics}"
+              target="_blank"
+              style="white-space: pre-wrap;">
+              <f:param
+                name="id"
+                value="#{entity.id}" />
+              <f:param
+                name="tab"
+                value="#{constants.DETAILS}" />
+            </p:link>
+            <h:outputText
+              value="#{entity.getPlateTileInfoAdditional(plateManager.tileAttribute)}"
+              styleClass="warn" />
+          </h:panelGrid>
+          <h:outputText
+            value="&#160;&#160;&#160;&#160;"
+            rendered="#{empty entity}"
+            styleClass="pending" />
+        </p:panel>
+      </div>
+      <p:draggable
+        disabled="#{empty entity or not plate.sampleAssignmentEditable}"
+        zindex="9999"
+        for="samplePanel"
+        revert="true" />
+      <p:droppable
+        for="samplePanel"
+        datasource="availableSamples">
+        <p:ajax
+          listener="#{plateManager.onSampleDrop}"
+          oncomplete="fixOversize();"
+          update="#{droppableUpdate}" />
+      </p:droppable>
+    </p:dataGrid>
+  </h:panelGroup>
+</ui:composition>

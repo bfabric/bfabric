@@ -1,0 +1,97 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('samples')}">
+    <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+    <h:form>
+      <h:panelGrid columns="2" styleClass="action">
+        <p:commandButton value="#{sampleTreeTableManager.treeTableView ? ''.concat(messages.table.concat(' ').concat(messages.view)) : ''.concat(messages.tree.concat(' ').concat(messages.view))}"
+                         action="#{sampleTreeTableManager.switchTreeTableView()}"
+                         process="@this"
+                         update="@this, samples-tab-content, selectedSampleTypeGroup"
+                         oncomplete="fixOversize();" />
+        <h:panelGroup id="selectedSampleTypeGroup">
+          <p:selectOneButton value="#{order.selectedSampleType}" unselectable="true" valueChangeListener="#{dataTableHelper.clear(order.tableContext.concat('sampletable'))}"
+                             rendered="#{identityManager.hasCurrentUserRole('employee') and not sampleTreeTableManager.treeTableView and sampleList.getLazyModelByContainerIdAndTypes(order.id, sampleTypeList.sampleTypeMultiplexedLabels).size() > 0}">
+            <f:selectItems value="#{sampleTypeList.sampleTypeEnumsMultiplexed}" var="item" itemLabel="#{item.label}" />
+            <p:ajax event="change" global="true" process="@this" update="@form, samples-tab-content"
+                    oncomplete="fixOversize(); if(PF('#{order.tableContext}#{constants.SAMPLE}')){PF('#{order.tableContext}#{constants.SAMPLE}').filter()};" />
+          </p:selectOneButton>
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:form>
+
+    <h:panelGroup id="samples-tab-content">
+      <h:panelGroup
+        id="tableView"
+        rendered="#{not sampleTreeTableManager.treeTableView}">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="showEmpty"
+            value="true" />
+          <ui:param
+            name="showOnlySampleTypeSpecificColumns"
+            value="#{not empty order.selectedSampleType}" />
+          <ui:param
+            name="types"
+            value="#{not empty order.selectedSampleType ? {order.selectedSampleType.getLabel()} : null}" />
+          <ui:param
+            name="tableType"
+            value="sample" />
+          <ui:param
+            name="tableContext"
+            value="#{order.tableContext}" />
+          <ui:param
+            name="tableContent"
+            value="#{sampleList.getLazyModelByContainerIdAndTypes(order.id, empty order.selectedSampleType ? null : {order.selectedSampleType.getLabel()})}" />
+          <ui:param
+            name="hideColumns"
+            value="container" />
+          <ui:param
+            name="lazy"
+            value="true" />
+          <ui:param
+            name="rowStyleClass"
+            value="#{entity.rowStyleClass}" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="treeTableView"
+        rendered="#{sampleTreeTableManager.treeTableView}">
+        <c:if test="#{sampleTreeTableManager.treeTableView}">
+          <ui:include src="/fragments/show-treetable.xhtml">
+            <ui:param
+              name="tableType"
+              value="sample" />
+            <ui:param
+              name="tableContext"
+              value="#{order.tableContext}" />
+            <ui:param
+              name="treeTableContent"
+              value="#{sampleTreeTableManager.getTreeTableContent(order.samples, null, false)}" />
+            <ui:param
+              name="contentSize"
+              value="#{order.samples.size()}" />
+            <ui:param
+              name="rowStyleClass"
+              value="#{entity.rowStyleClass}" />
+            <ui:param
+              name="hideColumns"
+              value="container" />
+            <o:methodParam
+              name="nodeExpandListener"
+              value="#{sampleTreeTableManager.nodeExpandListener}" />
+            <o:methodParam
+              name="nodeCollapseListener"
+              value="#{sampleTreeTableManager.nodeCollapseListener}" />
+          </ui:include>
+        </c:if>
+      </h:panelGroup>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

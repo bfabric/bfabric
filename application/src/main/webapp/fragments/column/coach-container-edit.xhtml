@@ -1,0 +1,37 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui">
+  <p:column field="coach.name" headerText="#{messages.coach}">
+    <!--
+    <f:facet name="header">
+      <h:panelGrid columns="1" styleClass="nospace noborder">
+        <h:outputText value="#{messages.coach}" />
+        <ui:include src="/fragments/autocomplete.xhtml">
+          <ui:param name="componentId" value="reassign-coach-all" />
+          <ui:param name="value" value="#{dutyManager.selectedUser}" />
+          <o:methodParam name="completeMethod" value="#{dutyManager.getEmployees}" />
+          <o:methodParam name="valueChangeListener" value="#{dutyManager.reassignCoachForAllListener}" />
+          <ui:param name="ajaxChange" value="true" />
+          <ui:param name="forceSelection" value="true" />
+          <ui:param name="itemSelectUpdate" value="@this, @([id$=reassign-coach])" />
+          <ui:param name="itemLabel" value="#{item.firstLastName}" />
+          <ui:param name="styleClass" value="editWidth" />
+          <ui:param name="inputStyleClass" value="editWidth" />
+        </ui:include>
+      </h:panelGrid>
+    </f:facet>
+    -->
+    <ui:include src="/fragments/autocomplete.xhtml">
+      <ui:param name="componentId" value="reassign-coach" />
+      <ui:param name="value" value="#{entity.coach}" />
+      <o:methodParam name="completeMethod" value="#{dutyManager.getEmployees}" />
+      <o:methodParam name="valueChangeListener" value="#{entity.coachChangedListener}" />
+      <ui:param name="required" value="true" />
+      <ui:param name="forceSelection" value="true" />
+      <ui:param name="clearButtonRendered" value="false" />
+      <ui:param name="itemLabel" value="#{item.firstLastName}" />
+      <ui:param name="styleClass" value="editWidth" />
+      <ui:param name="inputStyleClass" value="editWidth" />
+    </ui:include>
+  </p:column>
+</ui:composition>

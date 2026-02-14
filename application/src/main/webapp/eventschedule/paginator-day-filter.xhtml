@@ -1,0 +1,43 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <tr>
+    <td class="agendafirstcolumn"><h:selectOneMenu
+      value="#{agendaEventManager.userGroupFilter}"
+      valueChangeListener="#{agendaEventManager.userGroupFilterChanged}"
+      immediate="true"
+      converter="omnifaces.SelectItemsConverter"
+      style="width:140px">
+      <f:selectItem itemLabel="#{messages.noFilter}" />
+      <f:selectItems
+        value="#{userGroupList.allEnabledInternalOrderByName}"
+        var="item"
+        itemLabel="#{item.getNameWithUserNames()}" />
+      <p:ajax
+        event="change"
+        immediate="true"
+        update="agendaBody"
+        oncomplete="fixOversize();" />
+    </h:selectOneMenu></td>
+    <ui:repeat
+      var="slot"
+      value="#{agendaEventHelper.headSlots}">
+      <ui:fragment rendered="#{slot.weekend}">
+        <td>&#160;</td>
+      </ui:fragment>
+      <ui:fragment rendered="#{not slot.weekend and slot.morningSlot}">
+        <td
+          colspan="2"
+          class="slotHeader"
+          style="#{slot.dayColor}">
+          <h:outputText
+            value="#{slot.dayOfMonth}" />
+          <br />
+          <h:outputText value="#{slot.weekday}" />
+        </td>
+      </ui:fragment>
+    </ui:repeat>
+  </tr>
+</ui:composition>

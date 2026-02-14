@@ -1,0 +1,98 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{orderAttributeManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{orderAttributeManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+              <h:inputText
+                id="#{constants.NAME}"
+                value="#{orderAttribute.name}"
+                styleClass="editWidthExtraLarge" />
+            </c:if>
+            <c:if test="#{not identityManager.hasCurrentUserRole('admin')}">
+              <h:outputText value="#{orderAttribute.name}" />
+            </c:if>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.label}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+              <h:inputText
+                id="label"
+                value="#{orderAttribute.label}"
+                styleClass="editWidthExtraLarge" />
+            </c:if>
+            <c:if test="#{not identityManager.hasCurrentUserRole('admin')}">
+              <h:outputText value="#{orderAttribute.label}" />
+            </c:if>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.hint}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputTextarea
+              id="hint"
+              value="#{orderAttribute.hint}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.serviceTypes}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="servicetypes" />
+              <ui:param
+                name="value"
+                value="#{orderAttribute.serviceTypesAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{orderAttributeManager.getPossibleServiceTypes}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="enabled"
+                value="#{orderAttribute.enabled}" />
+            </ui:decorate>
+          </c:if>
+          <c:if test="#{not identityManager.hasCurrentUserRole('admin')}">
+            <h:outputText value="#{orderAttribute.enabled}" />
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

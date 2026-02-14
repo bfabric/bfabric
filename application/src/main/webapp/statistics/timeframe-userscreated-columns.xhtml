@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column width="75" headerText="#{messages.id}">
+    <p:link
+      outcome="/user/show.xhtml"
+      value="#{entity[0]}">
+      <f:param
+        name="id"
+        value="#{entity[0]}" />
+    </p:link>
+  </p:column>
+  <p:column width="700" headerText="#{messages.name}">
+    <p:link
+      outcome="/user/show.xhtml"
+      value="#{entity[3]} #{entity[4]} #{entity[5]}">
+      <f:param
+        name="id"
+        value="#{entity[0]}" />
+    </p:link>
+  </p:column>
+  <p:column width="65" headerText="#{messages.created}">
+    <h:outputText value="#{entity[2]}" />
+  </p:column>
+  <p:column width="100" headerText="#{messages.login}">
+    <h:outputText value="#{entity[1]}" />
+  </p:column>
+</ui:composition>

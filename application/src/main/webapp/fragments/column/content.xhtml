@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('content')}">
+    <p:column field="#{fieldPrefix}content" headerText="#{messages.content}" exportValue="#{entity.content}">
+      <h:outputText value="#{stringHelper.truncate(entity.content, 80)}" title="#{entity.content}" styleClass="#{styleClass}" />
+    </p:column>
+  </c:if>
+</ui:composition>

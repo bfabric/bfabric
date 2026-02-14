@@ -1,0 +1,149 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeCompanies}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{companyManager.company}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{companyManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{companyManager.company.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{companyManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{companyManager.company.name}" />
+          <f:selectItem itemValue="#{companyManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{companyManager.merged.name}" />
+
+        <h:outputText value="#{messages.organizationType}" />
+        <h:outputText value="#{companyManager.company.organizationType.name}" />
+        <h:selectOneRadio
+          id="organizationType"
+          layout="lineDirection"
+          value="#{companyManager.mergeSelection.organizationType}"
+          converter="omnifaces.SelectItemsConverter">
+          <f:selectItem itemValue="#{companyManager.company.organizationType}" />
+          <f:selectItem itemValue="#{companyManager.merged.organizationType}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{companyManager.merged.organizationType.name}" />
+
+        <c:if test="#{not empty companyManager.company.billingOrganizationType or not empty companyManager.merged.billingOrganizationType}">
+          <h:outputText value="#{messages.billingOrganizationType}" />
+          <h:outputText value="#{companyManager.company.billingOrganizationType.name}" />
+          <h:selectOneRadio
+            id="billingOrganizationType"
+            layout="lineDirection"
+            required="true"
+            value="#{companyManager.mergeBillingOrganizationTypeCompanyId}">
+            <f:selectItem itemValue="#{companyManager.company.id}" />
+            <f:selectItem itemValue="#{companyManager.merged.id}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{companyManager.merged.billingOrganizationType.name}" />
+        </c:if>
+
+        <c:if test="#{not empty companyManager.company.defaultBookingType or not empty companyManager.merged.defaultBookingType}">
+          <h:outputText value="#{messages.defaultBookingType}" />
+          <h:outputText value="#{companyManager.company.defaultBookingType.name} - #{companyManager.company.defaultBookingType.booker.name}" />
+          <h:selectOneRadio
+            id="defaultBookingType"
+            layout="lineDirection"
+            required="true"
+            value="#{companyManager.mergeSelection.defaultBookingType}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{companyManager.company.defaultBookingType}" />
+            <f:selectItem itemValue="#{companyManager.merged.defaultBookingType}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{companyManager.merged.defaultBookingType.name} - #{companyManager.merged.defaultBookingType.booker.name}" />
+        </c:if>
+
+        <c:if test="#{not empty companyManager.company.debitorNumber or not empty companyManager.merged.debitorNumber}">
+          <h:outputText value="#{messages.debitorNumber}" />
+          <h:outputText value="#{companyManager.company.debitorNumber}" />
+          <h:selectOneRadio
+            id="debitorNumber"
+            layout="lineDirection"
+            value="#{companyManager.mergeSelection.debitorNumber}">
+            <f:selectItem itemValue="#{companyManager.company.debitorNumber}" />
+            <f:selectItem itemValue="#{companyManager.merged.debitorNumber}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{companyManager.merged.debitorNumber}" />
+        </c:if>
+
+        <c:if test="#{not empty companyManager.company.vatNumber or not empty companyManager.merged.vatNumber}">
+          <h:outputText value="#{messages.vatNumber}" />
+          <h:outputText value="#{companyManager.company.vatNumber}" />
+          <h:selectOneRadio
+            id="vatNumber"
+            layout="lineDirection"
+            value="#{companyManager.mergeSelection.vatNumber}">
+            <f:selectItem itemValue="#{companyManager.company.vatNumber}" />
+            <f:selectItem itemValue="#{companyManager.merged.vatNumber}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{companyManager.merged.vatNumber}" />
+        </c:if>
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.divisions}" />
+        <h:outputText value="#{companyManager.company.divisions.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{companyManager.merged.divisions.size()}" />
+
+        <h:outputText value="#{messages.members}" />
+        <h:outputText value="#{companyManager.company.members.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{companyManager.merged.members.size()}" />
+
+        <h:outputText value="#{messages.projects}" />
+        <h:outputText value="#{projectList.getLazyModelByCompanyId(companyManager.company.id).size}" />
+        <h:outputText value="" />
+        <h:outputText value="#{projectList.getLazyModelByCompanyId(companyManager.merged.id).size}" />
+
+        <h:outputText value="#{messages.orders}" />
+        <h:outputText value="#{orderList.getLazyModelByCompanyId(companyManager.company.id).size}" />
+        <h:outputText value="" />
+        <h:outputText value="#{orderList.getLazyModelByCompanyId(companyManager.merged.id).size}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{companyManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{companyManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

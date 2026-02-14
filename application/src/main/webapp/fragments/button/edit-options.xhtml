@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <p:button outcome="/option/edit-batch-with-create.xhtml"
+            value="#{empty instance.options ? messages.addOptions : messages.editOptions}"
+            title="#{title}">
+    <f:param name="parentId" value="#{instance.id}" />
+    <f:param name="parentClassName" value="#{instance.trimmedClassName}" />
+  </p:button>
+</ui:composition>

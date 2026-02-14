@@ -1,0 +1,19 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-project-items.xhtml">
+    <ui:param
+      name="tasksId"
+      value="reviewprojectreport" />
+    <ui:param
+      name="tasks"
+      value="#{messages.taskReviewExtensionReport}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskReviewExtensionReportHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{projectList.extensionReportApproveTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{sidebarHelper.isTab('reviewprojectreport') and identityManager.hasCurrentUserRole('reviewManager')}" />
+  </ui:include>
+</ui:composition>

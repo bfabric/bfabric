@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/container.xhtml" />
+  <p:column
+    field="#{fieldPrefix}name"
+    headerText="#{messages.status}">
+    <h:outputText value="#{entity.name}" styleClass="#{entity.name}" />
+  </p:column>
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

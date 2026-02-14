@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('serviceCode')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}serviceCode.name"
+        headerText="#{messages.serviceCode}">
+        <p:link
+          rendered="#{not empty entity.serviceCode}"
+          outcome="#{entity.serviceCode.urlShowScreen}"
+          value="#{entity.serviceCode.name}">
+          <f:param
+            name="id"
+            value="#{entity.serviceCode.id}" />
+        </p:link>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}serviceCode.name"
+        headerText="#{messages.serviceCode}" />
+    </c:if>
+  </c:if>
+</ui:composition>

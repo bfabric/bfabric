@@ -1,0 +1,67 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGroup id="show-contract">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id-name-status-supervisor.xhtml" />
+        <ui:include src="/fragments/details/technologies.xhtml" />
+        <ui:include src="/fragments/details/contracttype.xhtml" />
+        <ui:include src="/fragments/details/instruments.xhtml" />
+        <ui:include src="/fragments/details/description.xhtml" />
+        <ui:include src="/fragments/details/referencenumber.xhtml" />
+
+        <c:if test="#{not empty contract.startDate}">
+          <h:outputText value="#{messages.startDate}" />
+          <h:outputText value="#{contract.startDate}" />
+        </c:if>
+
+        <c:if test="#{not empty contract.expiryDate}">
+          <h:outputText value="#{messages.expiryDate}" />
+          <h:outputText
+            value="#{contract.expiryDate}"
+            styleClass="#{contract.expiryDateStatus}" />
+        </c:if>
+
+        <c:if test="#{not empty contract.price}">
+          <h:outputText value="#{messages.price}" />
+          <h:panelGroup>
+            <h:outputText value="#{contract.price}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+            <h:outputText value="&#160;#{contract.currency.code}" />
+          </h:panelGroup>
+        </c:if>
+
+        <ui:include src="/fragments/details/approvaldate.xhtml" />
+        <ui:include src="/fragments/details/approvedby.xhtml" />
+        <ui:include src="/fragments/details/approvalnote.xhtml" />
+        <ui:include src="/fragments/details/purchases.xhtml" />
+        <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="6"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit-clone-links-delete-list.xhtml" />
+        <h:form>
+          <p:commandButton
+            rendered="#{not contract.obsolete}"
+            action="#{contractManager.obsolete}"
+            value="#{messages.obsolete}"
+            title="#{messages.contractObsoleteHint}" />
+          <p:commandButton
+            rendered="#{contract.obsolete}"
+            action="#{contractManager.enable}"
+            value="#{messages.enable}"
+            title="#{messages.contractEnableHint}" />
+        </h:form>
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+
+      <h:outputText value="#{messages.accountable}" />
+      <h:outputText
+        value="#{eventType.accountable}"
+        styleClass="#{eventType.accountable}" />
+
+      <h:outputText value="#{messages.freeEvent}" />
+      <h:outputText
+        value="#{eventType.freeEvent}"
+        styleClass="#{eventType.freeEvent}" />
+
+      <h:outputText value="#{messages.publicEvent}" />
+      <h:outputText
+        value="#{eventType.publicEvent}"
+        styleClass="#{eventType.publicEvent}" />
+
+      <ui:include src="/fragments/details/color.xhtml" />
+      <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="3"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

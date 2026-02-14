@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('containerReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.samples}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist-with-create.xhtml">
+      <ui:param
+        name="tableType"
+        value="sample" />
+      <ui:param
+        name="tableContent"
+        value="#{sampleList.lazyModel}" />
+      <ui:param
+        name="showColumns"
+        value="oldExtractId, oldSampleId" />
+      <ui:param
+        name="buttonRendered"
+        value="#{contextContainer.extensible}" />
+      <ui:param
+        name="includeContextContainerParam"
+        value="true" />
+      <ui:param
+        name="hideColumns"
+        value="specific, userDecision, replaces" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

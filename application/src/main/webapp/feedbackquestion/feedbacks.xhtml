@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('feedbacks')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="feedbackanswer" />
+      <ui:param
+        name="tableContext"
+        value="#{feedbackQuestion.tableContext}" />
+      <ui:param
+        name="showColumns"
+        value="showForQuestion" />
+      <ui:param
+        name="styleClass"
+        value="extraBottomMargin" />
+      <ui:param
+        name="tableContent"
+        value="#{feedbackQuestion.answers}" />
+      <ui:param
+        name="showColumns"
+        value="showForQuestion, showForStatistics" />
+    </ui:include>
+  </c:if>
+</ui:composition>

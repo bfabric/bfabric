@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.hidden}">
+    <h:outputText value="#{messages.hidden}" />
+    <h:outputText value="#{instance.hidden}" styleClass="#{stringHelper.toGreenRed(instance.hidden)}" />
+  </c:if>
+</ui:composition>

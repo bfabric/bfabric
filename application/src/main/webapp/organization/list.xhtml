@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('affiliationReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.organizations}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist-with-create.xhtml">
+      <ui:param
+        name="tableType"
+        value="organization" />
+      <ui:param
+        name="showColumns"
+        value="billingOrganizationType" />
+      <ui:param
+        name="buttonRendered"
+        value="#{identityManager.hasCurrentUserRole('affiliationManager')}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

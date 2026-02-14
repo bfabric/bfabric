@@ -1,0 +1,757 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  xmlns:o="http://omnifaces.org/ui"
+  template="order-confirmation-form-template.xhtml">
+  <ui:define name="pageHeader">
+    <ui:include src="header-fop.xhtml">
+      <ui:param name="coach" value="#{order.coach}" />
+      <ui:param name="reportPageLayoutLandscape" value="true" />
+      <ui:param name="footerGenerationInfo" value="false" />
+    </ui:include>
+  </ui:define>
+
+  <ui:define name="masterPage">
+    <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+    <c:if test="#{not order.hasBeenAccepted()}">
+      <fo:block-container space-before="10px" font-size="9pt">
+        <fo:block background-color="#FF0000" color="#ffffff" padding="4px">
+          <h:outputText value="#{messages.samplesDoNotSentBeforeOrderIsAccepted} #{messages.samplesDoNotSentBeforeOrderIsAcceptedMessageHint}" />
+        </fo:block>
+      </fo:block-container>
+    </c:if>
+    <fo:block-container space-before="10px" font-size="9pt">
+      <fo:table table-layout="fixed" width="100%">
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block font-weight="bold">
+                <h:outputText value="#{messages.orderInformation}" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block font-weight="bold">
+                <h:outputText value="#{messages.billingInformation}" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block font-weight="bold">
+                <h:outputText
+                  value="#{messages.billingAccount}"
+                  rendered="#{order.renderedFinanceSource}" />
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="&#160;" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="&#160;" />
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:table
+                table-layout="fixed"
+                width="100%">
+                <fo:table-column column-width="27mm" />
+                <fo:table-column column-width="3mm" />
+                <fo:table-column column-width="50mm" />
+                <fo:table-body>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{messages.orderId}" />
+                      </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value=":" />
+                      </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{order.id}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <c:if test="#{not empty order.offers}">
+                    <fo:table-row>
+                      <fo:table-cell>
+                        <fo:block>
+                          <h:outputText value="#{messages.offerId}" />
+                        </fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:block>
+                          <h:outputText value=":" />
+                        </fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:block>
+                          <h:outputText value="#{collectionHelper.printIds(order.offers)}" />
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <c:if test="#{not empty order.project}">
+                    <fo:table-row>
+                      <fo:table-cell>
+                        <fo:block>
+                          <h:outputText value="#{messages.projectId}" />
+                        </fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:block>
+                          <h:outputText value=":" />
+                        </fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:block>
+                          <h:outputText value="#{order.project.id}" />
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{messages.submissionDate}" />
+                      </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value=":" />
+                      </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{order.modified}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{messages.requester}" />
+                      </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value=":" />
+                      </fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{order.requester.name}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:table table-layout="fixed" width="100%">
+                <fo:table-body>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{order.billingInfo.billingCustomerName}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{order.billingInfo.billingAddressStreet}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <c:if test="#{not empty order.billingInfo.billingAddressSupplement}">
+                    <fo:table-row>
+                      <fo:table-cell>
+                        <fo:block>
+                          <h:outputText value="#{order.billingInfo.billingAddressSupplement}" />
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{order.billingInfo.billingAddressZipCity}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText value="#{order.billingInfo.billingAddressCountry.name}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:table table-layout="fixed" width="100%">
+                <fo:table-body>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText
+                          value="#{order.billingAccountDisplay}"
+                          rendered="#{order.renderedFinanceSource}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText
+                          value="#{messages.euGrant} : #{order.euGrant}"
+                          rendered="#{order.euGrant and order.renderedFinanceSource}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText
+                          value="#{messages.vatNumber} : #{order.billingInfo.vatNumber}"
+                          rendered="#{not empty order.billingInfo.vatNumber}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block>
+                        <h:outputText
+                          value="#{messages.referenceNumber} : #{order.billingInfo.referenceNumber}"
+                          rendered="#{not empty order.billingInfo.referenceNumber}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:table table-layout="fixed" width="100%">
+        <fo:table-column column-width="50mm" />
+        <fo:table-column column-width="3mm" />
+        <fo:table-column column-width="220mm" />
+        <fo:table-body>
+          <fo:table-row border-bottom="0.1mm solid">
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="&#160;" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="&#160;" />
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="&#160;" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="&#160;" />
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="#{messages.serviceType}" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value=":" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="#{order.serviceType.name}" />
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+
+          <c:forEach items="#{order.orderAttributesMapped}" var="item">
+            <c:if test="#{order.isOrderAttributeConfirmationFormRendered(item.attributeName) and not empty order[item.attributeName]}">
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText value="#{item.label}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText value=":" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText
+                      rendered="#{order[item.attributeName].class.enum or classHelper.isProxied(order[item.attributeName].class)}"
+                      value="#{order[item.attributeName].name}" />
+                    <h:outputText
+                      rendered="#{not (order[item.attributeName].class.enum or classHelper.isProxied(order[item.attributeName].class))}"
+                      value="#{order[item.attributeName]}" />
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </c:if>
+          </c:forEach>
+          <c:if test="#{not empty order.libraryProtocolOptionValueList}">
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <h:outputText value="#{messages.libraryProtocolOptions}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block>
+                  <h:outputText value=":" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:table table-layout="fixed" width="100%">
+                  <fo:table-column column-width="50mm" />
+                  <fo:table-column column-width="3mm" />
+                  <fo:table-column />
+                  <fo:table-body>
+                    <c:forEach items="#{order.libraryProtocolOptionValueList}" var="item">
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block background-color="#eee">
+                            <h:outputText value="#{item.option.name}" />
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block background-color="#eee">
+                            <h:outputText value=":" />
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block background-color="#eee">
+                            <h:outputText value="#{item.name}" />
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </c:forEach>
+                  </fo:table-body>
+                </fo:table>
+              </fo:table-cell>
+            </fo:table-row>
+          </c:if>
+        </fo:table-body>
+      </fo:table>
+    </fo:block-container>
+  </ui:define>
+
+  <ui:define name="detailPage">
+    <!-- Items Block-->
+    <c:if test="#{!order.processesPlates and order.serviceType.processesSamples}">
+      <fo:block-container space-before="5mm" font-size="9pt" font-family="Arial, Helvetica, sans-serif">
+        <fo:block font-weight="bold">
+          <h:outputText value="#{messages.orderItem}" />
+        </fo:block>
+        <fo:block font-weight="bold">
+          <h:outputText value="&#160;" />
+        </fo:block>
+
+        <fo:table table-layout="fixed" width="100%" font-size="8pt">
+          <fo:table-body>
+            <fo:table-row>
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.SERVICE)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.service}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{messages.tubeId}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{messages.sampleName}" />
+                </fo:block>
+              </fo:table-cell>
+
+              <c:forEach
+                items="#{sampleAttributeHelper.getAttributeEnumsExcluding(order.sampleType.name, true, true, [SampleAttributeEnum.TUBE_ID])}"
+                var="sampleAttributeEnum">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{sampleAttributeEnum.labelWithUnit}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:forEach>
+
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_REGION)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.region}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_INSERT_SIZE)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.insertSize}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_MULTIPLEXING)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.multiplexing}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+            </fo:table-row>
+            <ui:repeat
+              value="#{order.orderItems}"
+              var="item">
+              <fo:table-row>
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.SERVICE)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{item.service.nameBreakable}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block>
+                    <h:outputText value="#{item.tubeIdDisplay}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block>
+                    <h:outputText value="#{item.sample.nameBreakable}" />
+                  </fo:block>
+                </fo:table-cell>
+
+                <c:forEach
+                  items="#{sampleAttributeHelper.getAttributeEnumsExcluding(order.sampleType.name, true, true, [SampleAttributeEnum.TUBE_ID])}"
+                  var="sampleAttributeEnum">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText
+                        rendered="#{sampleAttributeEnum.annotationTypeSingleValued}"
+                        value="#{item.sample[sampleAttributeEnum.name].nameBreakable}" />
+                      <h:outputText
+                        rendered="#{sampleAttributeEnum.annotationTypeMultiValued}"
+                        value="#{collectionHelper.print(item.sample[sampleAttributeEnum.name])}" />
+                      <c:if test="#{not sampleAttributeEnum.annotationType}">
+                        <h:outputText
+                          value="#{item.sample[sampleAttributeEnum.name].label}"
+                          rendered="#{sampleAttributeEnum.enumType}" />
+                        <h:outputText
+                          rendered="#{sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.enumType}"
+                          value="#{item.sample[sampleAttributeEnum.name].nameBreakable}" />
+                        <h:outputText
+                          value="#{stringHelper.convertToBreakable(item.sample[sampleAttributeEnum.name])}"
+                          rendered="#{not sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.localDateType and not sampleAttributeEnum.localDateTimeType}" />
+                        <h:outputText
+                          value="#{item.sample[sampleAttributeEnum.name]}"
+                          rendered="#{sampleAttributeEnum.localDateType}" />
+                        <h:outputText
+                          value="#{item.sample[sampleAttributeEnum.name]}"
+                          rendered="#{sampleAttributeEnum.localDateTimeType}" />
+                      </c:if>
+                    </fo:block>
+                  </fo:table-cell>
+                </c:forEach>
+
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_REGION)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{stringHelper.convertToBreakable(item.region)}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_INSERT_SIZE)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{item.insertSize}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_MULTIPLEXING)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{item.multiplexing}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+              </fo:table-row>
+            </ui:repeat>
+          </fo:table-body>
+        </fo:table>
+      </fo:block-container>
+    </c:if>
+
+    <c:if test="#{order.processesPlates}">
+      <fo:block-container space-before="5mm" font-size="9pt" font-family="Arial, Helvetica, sans-serif">
+
+        <fo:block font-weight="bold">
+          <h:outputText value="#{messages.orderItem}" />
+        </fo:block>
+        <fo:block font-weight="bold">
+          <h:outputText value="&#160;" />
+        </fo:block>
+
+        <fo:table table-layout="fixed" width="100%" font-size="8pt">
+          <fo:table-body>
+            <fo:table-row>
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.SERVICE)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.service}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{messages.tubeId}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{messages.plateName}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{messages.plateLayout}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{messages.samplePlateAssignmentOrder}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{messages.samples}" />
+                </fo:block>
+              </fo:table-cell>
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_REGION)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.region}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_INSERT_SIZE)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.insertSize}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_MULTIPLEXING)}">
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block font-weight="bold">
+                    <h:outputText value="#{messages.multiplexing}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+            </fo:table-row>
+
+            <ui:repeat
+              value="#{order.orderItems}"
+              var="item">
+              <fo:table-row>
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.SERVICE)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{item.service.nameBreakable}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block>
+                    <h:outputText value="#{item.tubeIdDisplay}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block>
+                    <h:outputText value="#{item.plate.nameBreakable}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block>
+                    <h:outputText value="#{item.plate.plateLayout.nameBreakable}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block>
+                    <h:outputText value="#{item.plate.sampleAssignmentDirection}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                  <fo:block>
+                    <h:outputText value="#{item.plate.samples.size()}" />
+                  </fo:block>
+                </fo:table-cell>
+
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_REGION)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{stringHelper.convertToBreakable(item.region)}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_INSERT_SIZE)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{item.insertSize}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+                <c:if test="#{sampleAttributeHelper.isRenderedColumn(order, constants.ORDER_ITEM_MULTIPLEXING)}">
+                  <fo:table-cell padding="1mm" border-style="solid" border-width="0.2mm">
+                    <fo:block>
+                      <h:outputText value="#{item.multiplexing}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </c:if>
+              </fo:table-row>
+            </ui:repeat>
+          </fo:table-body>
+        </fo:table>
+      </fo:block-container>
+    </c:if>
+
+    <!-- Comment Block -->
+    <fo:block-container space-before="1cm" font-size="8pt" font-style="italic" text-align="justify">
+      <fo:block>
+        <h:outputText
+          value="The #{configuration.deployerName} will carry out the service offered herein undertaking reasonable effort using acknowledged scientific standards but shall only be liable for direct damage caused by gross negligence or willful intent. If you are in agreement with the content and conditions of the offer provided or the prices published on our web site, we kindly ask you to submit a duly signed original to the following address: #{configuration.deployerName}, #{configuration.deployerFullAddress}. For acceleration, please upload the duly signed original in advance as comment of this order." />
+      </fo:block>
+    </fo:block-container>
+
+    <c:if test="#{order.renderedFinanceSource}">
+      <fo:block-container space-before="2cm" font-size="9pt">
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="90mm" />
+          <fo:table-column column-width="90mm" />
+          <fo:table-column column-width="93mm" />
+          <fo:table-body>
+            <fo:table-row border-bottom="0.2mm solid">
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Place, Date" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Signature (Requester)" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Signature (Budget Officer, PI)" />
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block-container>
+    </c:if>
+
+    <c:if test="#{not order.renderedFinanceSource}">
+      <fo:block-container space-before="2cm" font-size="9pt">
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="140mm" />
+          <fo:table-column column-width="133mm" />
+          <fo:table-body>
+            <fo:table-row border-bottom="0.2mm solid">
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Place, Date" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Signature" />
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block-container>
+    </c:if>
+  </ui:define>
+
+  <ui:define name="contactPage">
+    <c:if test="#{order.serviceType.processesSamples}">
+      <h:outputText value="#{messages.samplesArrived}" />
+      <c:if test="#{not order.hasBeenAccepted()}">
+        <p style="background-color: #FF0000; color: white; padding: 10px;"><h:outputText value="#{messages.samplesDoNotSentBeforeOrderIsAccepted}" /></p>
+      </c:if>
+      <p>#{messages.sampleDelivery}:</p>
+      <ul>
+        <li><h:outputText value="#{order.serviceType.serviceArea.contactInfo.fullAddress}" styleClass="preformat" /></li>
+        <li>#{order.serviceType.serviceArea.contactInfo.officeHours}</li>
+        <li>#{order.serviceType.serviceArea.contactInfo.phone}</li>
+        <li>#{order.serviceType.serviceArea.contactInfo.email}</li>
+        <li><a href="#{order.serviceType.serviceArea.contactInfo.mapUrl}">#{order.serviceType.serviceArea.contactInfo.mapUrl}</a></li>
+      </ul>
+
+      <fo:block-container page-break-before="always" space-before="5mm" font-size="9pt" font-family="Arial, Helvetica, sans-serif">
+        <fo:block space-before="5mm" font-weight="bold">
+          <h:outputText value="#{messages.sampleDelivery}" />
+        </fo:block>
+        <fo:block space-before="5mm" white-space-collapse="false" linefeed-treatment="preserve">
+          <h:outputText value="#{order.serviceType.serviceArea.contactInfo.fullAddress}" />
+        </fo:block>
+        <fo:block space-before="5mm">
+          <h:outputText value="#{order.serviceType.serviceArea.contactInfo.officeHours}" />
+        </fo:block>
+        <fo:block space-before="5mm">
+          <h:outputText value="#{order.serviceType.serviceArea.contactInfo.phone}" />
+        </fo:block>
+        <fo:block space-before="5mm">
+          <h:outputText value="#{order.serviceType.serviceArea.contactInfo.email}" />
+        </fo:block>
+        <fo:block space-before="5mm">
+          <h:outputText value="#{order.serviceType.serviceArea.contactInfo.mapUrl}" />
+        </fo:block>
+
+        <c:if test="#{configuration.deployerFGCZ}">
+          <fo:block margin-top="-65mm" margin-left="110mm" position="absolute">
+            <fo:external-graphic display-align="before" src="images/fgcz_campus_plan.jpg" width="170mm" scaling="uniform" content-width="scale-to-fit" />
+          </fo:block>
+        </c:if>
+      </fo:block-container>
+    </c:if>
+  </ui:define>
+
+  <ui:define name="lastpageblock">
+    <fo:block id="last-page" />
+  </ui:define>
+</ui:composition>

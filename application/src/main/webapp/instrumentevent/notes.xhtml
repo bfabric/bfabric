@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+
+  <c:if test="#{sidebarHelper.isTab('notes') and identityManager.hasCurrentUserRole('instrumentReader')}">
+    <o:importConstants type="org.bfabric.enums.CommentDiscriminator" />
+    <ui:include src="/comment/list-by-parent-with-create.xhtml">
+      <ui:param name="category" value="#{constants.COMMENT_CATEGORY_NOTE}" />
+      <ui:param name="type" value="#{CommentDiscriminator.INSTRUMENT_EVENT_NOTE}" />
+      <ui:param name="parent" value="#{instrumentEvent}" />
+      <ui:param name="comments" value="#{instrumentEvent.notesCurrentUser}" />
+      <ui:param name="showform" value="#{instrumentEvent.updatable}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

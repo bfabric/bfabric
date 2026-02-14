@@ -1,0 +1,59 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.Attachment"-->
+  <p:column>
+    <p:commandLink
+      ajax="false"
+      value="#{stringHelper.truncate(entity.name, 100)}"
+      title="#{messages.download} #{entity.name}"
+      rendered="#{entity.available}"
+      immediate="true"
+      onclick="hasChanged=false;"
+      onblur="hasChanged=true;">
+      <p:fileDownload value="#{entity.defaultStreamedContent}" contentDisposition="inline" store="true" />
+    </p:commandLink>
+    <h:outputText
+      value="#{stringHelper.truncate(entity.name, 100)}"
+      title="#{entity.name}"
+      rendered="#{not entity.available}"
+      styleClass="#{entity.checked ? 'removed' : ''}" />
+  </p:column>
+  <p:column>
+    <h:outputText
+      value="#{entity.status.label}"
+      styleClass="#{entity.checked ? 'removed' : entity.status.label}" />
+  </p:column>
+  <p:column>
+    <p:commandLink ajax="false" title="#{entity.name}" rendered="#{entity.available}" immediate="true">
+      <i class="fas fa-file-download download-icon" />
+      <p:fileDownload value="#{entity.defaultStreamedContent}" />
+    </p:commandLink>
+    <p:commandLink ajax="false" title="#{entity.name}" rendered="#{entity.available}" immediate="true">
+      <i class="fas fa-eye download-icon" />
+      <p:fileDownload value="#{entity.defaultStreamedContent}" contentDisposition="inline" store="true" />
+    </p:commandLink>
+  </p:column>
+  <p:column>
+    <h:outputText
+      value="#{entity.printSize}"
+      styleClass="#{entity.checked ? 'removed' : ''}" />
+  </p:column>
+  <p:column rendered="#{showColumns.contains('buttons')}">
+    <p:commandButton
+      action="#{entity.check}"
+      value="#{messages.markForDeletion}"
+      title="#{messages.markForDeletionHint}"
+      rendered="#{not entity.checked}"
+      update="#{tableContext}#{tableType}table"
+      styleClass="inline" />
+    <p:commandButton
+      action="#{entity.uncheck}"
+      value="#{messages.unmarkForDeletion}"
+      title="#{messages.unmarkForDeletionHint}"
+      rendered="#{entity.checked}"
+      update="#{tableContext}#{tableType}table"
+      styleClass="inline" />
+  </p:column>
+</ui:composition>

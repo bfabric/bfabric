@@ -1,0 +1,413 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(workunit.editable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText rendered="#{not empty workunitManager.pageflowStep}" value="#{messages.run} #{workunit.application.name} : #{messages[workunitManager.pageflowStep.name]}" />
+    <h:outputText rendered="#{empty workunitManager.pageflowStep}" value="#{messages.editWorkunit} : #{workunit.displayName}" />
+    <ui:include src="/application/help.xhtml">
+      <ui:param
+        name="instance"
+        value="#{workunit.application}" />
+    </ui:include>
+  </ui:define>
+
+  <ui:define name="body">
+    <o:importConstants type="org.bfabric.enums.ExecutableContextEnum" />
+    <h:panelGroup
+      id="uploadWorkunit-form"
+      rendered="#{not workunit.managed and not empty workunitManager.pageflowStep and workunitManager.pageflowStep.uploadWorkunit}">
+      <ui:include src="/pageflowstep/uploadWorkunit.xhtml" />
+    </h:panelGroup>
+    <h:form
+      id="#{constants.EDIT}"
+      rendered="#{empty workunitManager.pageflowStep or not workunitManager.pageflowStep.uploadWorkunit}">
+      <h:panelGroup rendered="#{empty workunitManager.pageflowStep or workunitManager.pageflowStep.editWorkunit}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{workunit.name}"
+              size="80"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/select-container.xhtml">
+          <ui:param
+            name="componentId"
+            value="containerautocomplete" />
+          <ui:param
+            name="entity"
+            value="#{workunit}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{containerList.getExtensibleReadableContainers}" />
+          <ui:param
+            name="required"
+            value="true" />
+          <ui:param
+            name="containerEditable"
+            value="#{not workunit.managed}" />
+        </ui:include>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{workunit.managed}">
+            <h:outputText value="#{messages.application}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText
+                id="application"
+                value="#{workunit.application.displayName}" />
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{workunit.description}"
+              rows="10"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{not empty workunit.inputDataset}">
+          <h:outputText value="#{messages.inputDataset}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <ui:include src="/fragments/entity-link-displayname.xhtml">
+              <ui:param
+                name="instance"
+                value="#{workunit.inputDataset}" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          rendered="#{identityManager.hasCurrentUserRole('containerManager')}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.workflows}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="workflows" />
+              <ui:param
+                name="value"
+                value="#{workunit.workflowsAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workunitManager.getWorkflows}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.id} - #{item.workflowTemplate.name}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthHuge" />
+              <ui:param
+                name="includeColumns"
+                value="/workflow/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.workflowSteps}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="workflowSteps" />
+              <ui:param
+                name="value"
+                value="#{workunit.workflowStepsAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workunitManager.getWorkflowSteps}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.id} - #{item.workflowTemplateStep.name}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthHuge" />
+              <ui:param
+                name="includeColumns"
+                value="/workflowstep/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+            <h:outputText value="#{messages.archiving}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox id="archiving" value="#{workunit.archiving}" />
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml">
+          <ui:param
+            name="instance"
+            value="#{workunit}" />
+        </ui:include>
+
+        <h:panelGroup
+          id="applicationExecutableParameters"
+          rendered="#{not empty workunit.getParameters(ExecutableContextEnum.APPLICATION)}">
+          <ui:repeat
+            value="#{workunit.getParametersRequired(ExecutableContextEnum.APPLICATION)}"
+            var="parameter">
+            <ui:include src="/fragments/show-parameters-grid.xhtml" />
+          </ui:repeat>
+
+          <ui:repeat
+            value="#{workunit.getParametersOptional(ExecutableContextEnum.APPLICATION)}"
+            var="parameter">
+            <ui:include src="/fragments/show-parameters-grid.xhtml" />
+          </ui:repeat>
+        </h:panelGroup>
+
+        <h:panelGroup
+          id="wrapperCreator"
+          rendered="#{workunit.wrapperCreatorVisibleEditScreen}"
+          styleClass="content-subheader-normal">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.wrapperCreator}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <p:commandButton
+                value="#{messages.select}"
+                update="wrapperCreator"
+                immediate="true"
+                oncomplete="PF('selectWrapperCreatorModalDialog').show();"
+                styleClass="inlinemiddle"
+                rendered="#{empty workunit.wrapperCreator}" />
+              <h:panelGrid
+                columns="2"
+                styleClass="noborder-rightpadding align-middle"
+                rendered="#{not empty workunit.wrapperCreator}">
+                <ui:include src="/fragments/entity-link-newtab.xhtml">
+                  <ui:param
+                    name="instance"
+                    value="#{workunit.wrapperCreator}" />
+                  <ui:param
+                    name="entityValue"
+                    value="#{workunit.wrapperCreator.displayName}" />
+                </ui:include>
+                <p:commandButton
+                  value="#{messages.replace}"
+                  update="wrapperCreator"
+                  immediate="true"
+                  oncomplete="PF('selectWrapperCreatorModalDialog').show()"
+                  styleClass="inlinemiddle"
+                  rendered="#{workunit.replacingWrapperCreatorAllowed}" />
+              </h:panelGrid>
+            </ui:decorate>
+          </h:panelGrid>
+
+          <ui:repeat
+            value="#{workunit.getParametersRequired(ExecutableContextEnum.WRAPPERCREATOR)}"
+            var="parameter">
+            <ui:include src="/fragments/show-parameters-grid.xhtml" />
+          </ui:repeat>
+          <ui:repeat
+            value="#{workunit.getParametersOptional(ExecutableContextEnum.WRAPPERCREATOR)}"
+            var="parameter">
+            <ui:include src="/fragments/show-parameters-grid.xhtml" />
+          </ui:repeat>
+        </h:panelGroup>
+
+        <h:panelGroup
+          id="submitter"
+          rendered="#{workunit.submitterVisibleEditScreen}"
+          styleClass="content-subheader-normal">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.submitter}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <p:commandButton
+                value="#{messages.select}"
+                update="submitter"
+                immediate="true"
+                oncomplete="PF('selectSubmitterModalDialog').show();"
+                styleClass="inlinemiddle"
+                rendered="#{empty workunit.submitter}" />
+              <h:panelGrid
+                columns="2"
+                styleClass="noborder-rightpadding align-middle"
+                rendered="#{not empty workunit.submitter}">
+                <ui:include src="/fragments/entity-link-newtab.xhtml">
+                  <ui:param
+                    name="instance"
+                    value="#{workunit.submitter}" />
+                  <ui:param
+                    name="entityValue"
+                    value="#{workunit.submitter.displayName}" />
+                </ui:include>
+                <p:commandButton
+                  value="#{messages.replace}"
+                  update="submitter"
+                  immediate="true"
+                  oncomplete="PF('selectSubmitterModalDialog').show()"
+                  styleClass="inlinemiddle"
+                  rendered="#{workunit.replacingSubmitterAllowed}" />
+              </h:panelGrid>
+            </ui:decorate>
+          </h:panelGrid>
+
+          <ui:repeat
+            value="#{workunit.getParametersRequired(ExecutableContextEnum.SUBMITTER)}"
+            var="parameter">
+            <ui:include src="/fragments/show-parameters-grid.xhtml" />
+          </ui:repeat>
+          <ui:repeat
+            value="#{workunit.getParametersOptional(ExecutableContextEnum.SUBMITTER)}"
+            var="parameter">
+            <ui:include src="/fragments/show-parameters-grid.xhtml" />
+          </ui:repeat>
+        </h:panelGroup>
+      </h:panelGroup>
+
+      <h:panelGroup id="pageflowstep">
+        <c:if test="#{not empty workunitManager.pageflowStep and not empty workunitManager.pageflowStep.name}">
+          <ui:include src="/pageflowstep/#{workunitManager.pageflowStep.name}.xhtml" />
+        </c:if>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="6"
+        styleClass="action">
+        <p:commandButton
+          action="#{workunitManager.save}"
+          value="#{messages.save}"
+          rendered="#{empty workunitManager.pageflowStep or workunitManager.pageflowStep.editWorkunit}"
+          process="uploadWorkunit-form, #{constants.EDIT}"
+          update="uploadWorkunit-form, #{constants.EDIT}" />
+        <p:commandButton
+          action="#{workunitManager.back}"
+          value="#{messages.editResourceSelection}"
+          immediate="true"
+          oncomplete="fixOversize();"
+          rendered="#{not empty workunitManager.pageflowStep and workunitManager.pageflowStep.editWorkunit and empty workunit.inputDataset}"
+          update="pageTitle, @form" />
+        <p:commandButton
+          action="#{workunitManager.back}"
+          value="#{messages.editDatasetSelection}"
+          immediate="true"
+          oncomplete="fixOversize();"
+          rendered="#{not empty workunitManager.pageflowStep and workunitManager.pageflowStep.editWorkunit and not empty workunit.inputDataset}"
+          update="pageTitle, @form" />
+        <c:if test="#{workunitManager.creationType.equals(constants.CREATION_FROM_SCRATCH) and workunitManager.workunit.application.analysis and workunitManager.workunit.application.pageflow.dataset}">
+          <p:button outcome="/dataset/edit.xhtml" value="#{messages.createInputDataset} #{messages.fromExistingData}">
+            <f:param name="fromExistingData" value="true" />
+            <f:param name="applicationId" value="#{workunit.application.id}" />
+            <c:if test="#{not empty workunit.application.datasetTemplate}">
+              <f:param name="datasetTemplateId" value="#{workunit.application.datasetTemplate.id}" />
+            </c:if>
+          </p:button>
+          <p:button outcome="/dataset/edit.xhtml" value="#{messages.createInputDataset} #{messages.fromScratch}">
+            <f:param name="fromExistingData" value="false" />
+            <f:param name="applicationId" value="#{workunit.application.id}" />
+            <c:if test="#{not empty workunit.application.datasetTemplate}">
+              <f:param name="datasetTemplateId" value="#{workunit.application.datasetTemplate.id}" />
+            </c:if>
+          </p:button>
+        </c:if>
+        <p:commandButton
+          action="#{workunitManager.cancel}"
+          value="#{messages.cancel}"
+          immediate="true"
+          rendered="#{empty workunitManager.pageflowStep or workunitManager.pageflowStep.editWorkunit}" />
+      </h:panelGrid>
+
+      <h:panelGroup
+        rendered="#{not empty resourceHelper.selectedImportResources and not empty workunitManager.pageflowStep and workunitManager.pageflowStep.editWorkunit}"
+        styleClass="content-subheader-normal">
+        <h:outputText
+          value="#{messages.selected} #{messages.resources} (#{resourceHelper.selectedImportResources.size()})"
+          styleClass="bold" />
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="include"
+            value="/workunit/importresource-columns.xhtml" />
+          <ui:param
+            name="tableContext"
+            value="#{constants.APPLICATION_TYPE_IMPORT}" />
+          <ui:param
+            name="tableContent"
+            value="#{resourceHelper.selectedImportResources}" />
+          <ui:param
+            name="paginator"
+            value="false" />
+          <ui:param
+            name="styleClass"
+            value="inner" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        rendered="#{not empty resourceHelper.selectedInputResources and not empty workunitManager.pageflowStep and workunitManager.pageflowStep.editWorkunit}"
+        styleClass="content-subheader-normal">
+        <h:outputText
+          value="#{messages.selected} #{messages.resources} (#{resourceHelper.selectedInputResources.size()})"
+          styleClass="bold" />
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="include"
+            value="/pageflowstep/selectResources-columns.xhtml" />
+          <ui:param
+            name="tableContext"
+            value="input" />
+          <ui:param
+            name="tableContent"
+            value="#{resourceHelper.selectedInputResources}" />
+          <ui:param
+            name="paginator"
+            value="false" />
+          <ui:param
+            name="styleClass"
+            value="inner" />
+        </ui:include>
+      </h:panelGroup>
+    </h:form>
+
+    <ui:include src="/sample/assign-modal.xhtml" />
+    <ui:include src="/wrappercreator/select-modal.xhtml">
+      <ui:param
+        name="parent"
+        value="#{workunit}" />
+    </ui:include>
+    <ui:include src="/submitter/select-modal.xhtml">
+      <ui:param
+        name="parent"
+        value="#{workunit}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

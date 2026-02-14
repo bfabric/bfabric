@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master
+      master-name="A4-landscape"
+      page-height="217mm"
+      page-width="290mm"
+      margin-top="0mm"
+      margin-bottom="0mm"
+      margin-left="0mm"
+      margin-right="0mm">
+      <!-- Make space for header and user rest for body -->
+      <fo:region-body
+        margin-top="40mm"
+        margin-bottom="10mm"
+        margin-left="5mm"
+        margin-right="5mm" />
+      <fo:region-before extent="40mm" />
+      <fo:region-after extent="10mm" />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+</ui:composition>

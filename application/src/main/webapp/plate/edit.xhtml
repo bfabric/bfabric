@@ -1,0 +1,115 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{plateManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{plateManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{plate.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGroup id="supervisorGroup">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <ui:include src="#{plate.plateTypeUserSubmitted ? '/fragments/supervisor-autocomplete.xhtml' : '/fragments/supervisor-autocomplete-required.xhtml'}">
+              <ui:param
+                name="instance"
+                value="#{plate}" />
+            </ui:include>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.plateLayout}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              value="#{plate.plateLayout}"
+              disabled="#{plate.notEmpty}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{plateLayoutList.resultList}"
+                var="item"
+                itemLabel="#{item.displayName}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.plateType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              value="#{plate.plateType}"
+              disabled="#{plate.notEmpty}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{plateTypeList.getResultListIncludingExcludingUserSubmitted(plate.plateType.id)}"
+                var="item"
+                itemLabel="#{item.displayName}" />
+              <p:ajax
+                event="change"
+                process="@this, #{constants.EDIT}:supervisorGroup"
+                update="@this, #{constants.EDIT}:supervisorGroup"
+                global="false" />
+              <o:skipValidators />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <c:if test="#{not empty plate.nameGiven}">
+            <h:outputText value="#{messages.nameGiven}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText id="nameGiven" value="#{plate.nameGiven}" disabled="true" styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.location}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText id="location" value="#{plate.location}" styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              value="#{plate.description}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

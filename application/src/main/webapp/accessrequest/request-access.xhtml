@@ -1,0 +1,218 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(user.isAccessRequestable())}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.requestAccess}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="request-access-form">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.user}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{user.name}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.email}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{user.email}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{user.fullAddress}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.phone}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{user.phone}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.homeAddress}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{user.fullHomeAddress}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.homePhone}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{user.homePhone}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.birthDate}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{user.birthDate}" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:outputText
+        value="#{messages.completeProfile}"
+        rendered="#{not user.complete}" />
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        rendered="#{user.complete}">
+        <span />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectBooleanCheckbox
+            value="#{user.affiliationAcknowledged}"
+            immediate="true">
+            <p:ajax
+              event="change"
+              update="request-access-form" />
+          </h:selectBooleanCheckbox>
+          <h:outputText value="#{messages.acknowledgeInfo}" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        rendered="#{user.affiliationAcknowledged}">
+        <h:outputText
+          value="#{messages.requestAccessCardQuestion}"
+          rendered="#{user.login.equals(currentUser.login)}" />
+        <h:outputText
+          value="#{messages.requestAccessCardQuestionOnBehalf}"
+          rendered="#{not user.login.equals(currentUser.login)}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneRadio
+            value="#{user.affiliatedWithUZH}"
+            valueChangeListener="#{user.affiliatedWithUZHChanged}"
+            required="true">
+            <f:selectItem
+              itemValue="true"
+              itemLabel="#{messages.yes}" />
+            <f:selectItem
+              itemValue="false"
+              itemLabel="#{messages.no}" />
+            <p:ajax
+              event="change"
+              update="request-access-form" />
+          </h:selectOneRadio>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        rendered="#{user.affiliatedWithUZH and user.affiliationAcknowledged}">
+        <h:outputText
+          value="#{messages.accessCardNumber}"
+          title="#{messages.accessCardNumberHint}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="accessCardNumber"
+            value="#{user.accessCardNumber}"
+            title="#{messages.accessCardNumberHint}"
+            valueChangeListener="#{user.accessCardNumberChanged}"
+            validator="#{user.validateAccessCardNumber}"
+            required="true"
+            styleClass="editWidthSmall">
+            <p:ajax
+              event="change"
+              update="request-access-form" />
+          </h:inputText>
+        </ui:decorate>
+
+        <h:outputText
+          value="#{messages.accessCardCode}"
+          title="#{messages.accessCardCodeHint}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="accessCardCode"
+            value="#{user.accessCardCode}"
+            title="#{messages.accessCardCodeHint}"
+            valueChangeListener="#{user.accessCardCodeChanged}"
+            validator="#{user.validateAccessCardCode}"
+            required="true"
+            styleClass="editWidthSmall">
+            <p:ajax
+              event="change"
+              update="request-access-form" />
+          </h:inputText>
+        </ui:decorate>
+
+        <h:outputText
+          value="#{messages.accessCardExpiryDate}"
+          title="#{messages.accessCardExpiryDateHint}"
+          rendered="#{not empty user.accessCardExpiryDate}" />
+        <h:panelGroup rendered="#{not empty user.accessCardExpiryDate}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{user.accessCardExpiryDate}" />
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        rendered="#{not user.affiliationAcknowledged}">
+        <p:commandButton
+          action="#{userManager.setCompleteRequired}"
+          value="#{messages.edit} #{messages.user}">
+          <f:param
+            name="id"
+            value="#{user.id}" />
+          <f:param
+            name="completeRequired"
+            value="true" />
+        </p:commandButton>
+        <p:button
+          outcome="#{user.urlShowScreen}"
+          value="#{messages.cancel}">
+          <f:param
+            name="id"
+            value="#{user.id}" />
+        </p:button>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <span />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:panelGroup
+            id="accessRequestTypeMessage"
+            rendered="#{user.affiliationAcknowledged and not empty user.affiliatedWithUZH}">
+            <h:outputText
+              value="#{messages.requestAccessPersonalAccessCardHint}"
+              rendered="#{user.affiliatedWithUZH and user.hasPersonalAccessCard()}" />
+            <h:outputText
+              value="#{messages.requestAccessGuestAccessCardExtensionHint}"
+              rendered="#{user.affiliatedWithUZH and user.hasGuestAccessCard()}" />
+            <h:outputText
+              value="#{messages.requestAccessGuestAccessCardHint}"
+              rendered="#{not user.affiliatedWithUZH}" />
+          </h:panelGroup>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        rendered="#{user.affiliationAcknowledged}">
+        <p:commandButton
+          action="#{userManager.requestAccess}"
+          value="#{messages.submit}"
+          rendered="#{not empty user.affiliatedWithUZH}"
+          update="request-access-form" />
+        <p:button
+          outcome="#{user.urlShowScreen}"
+          value="#{messages.cancel}">
+          <f:param
+            name="id"
+            value="#{user.id}" />
+        </p:button>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

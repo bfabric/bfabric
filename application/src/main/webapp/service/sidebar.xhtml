@@ -1,0 +1,29 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/notes.xhtml" />
+  <ui:include src="/fragments/sidebar/parents.xhtml" />
+  <ui:include src="/fragments/sidebar/children.xhtml" />
+  <ui:include src="/fragments/sidebar/offeredcharges.xhtml" />
+  <ui:include src="/fragments/sidebar/charges.xhtml" />
+  <ui:include src="/fragments/sidebar/chargesParents.xhtml" />
+
+  <ui:include src="/fragments/sidebar/orders.xhtml">
+    <ui:param
+      name="content"
+      value="#{orderList.getLazyModelByServiceId(service.id)}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/trackingusers.xhtml">
+    <ui:param
+      name="hint"
+      value="#{messages.trackingServiceUsersHint}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/instruments.xhtml" />
+  <ui:include src="/fragments/sidebar/mails.xhtml" />
+  <ui:include src="/fragments/sidebar/statistics.xhtml">
+    <ui:param
+      name="showAlways"
+      value="#{not empty service.charges}" />
+  </ui:include>
+</ui:composition>

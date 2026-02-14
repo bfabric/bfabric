@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+
+  <p:column
+    rendered="#{showColumns.contains('required')}"
+    field="isAttributeRequired(sampleAttribute)"
+    headerText="#{messages.required}">
+    <ui:include src="/fragments/boolean-filter.xhtml">
+      <ui:param
+        name="idPrefix"
+        value="required" />
+    </ui:include>
+    <h:outputText value="#{stringHelper.toYesNo(entity.isAttributeRequired(sampleAttribute))}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/sample-count.xhtml" />
+  <ui:include src="/fragments/column/servicetype-count.xhtml" />
+  <ui:include src="/fragments/column/samplepreparationprotocol-count.xhtml" />
+  <ui:include src="/fragments/column/color.xhtml" />
+  <ui:include src="/fragments/column/userDecisionOnParent.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+  <!--
+  <p:column field="name" headerText="name">
+    <h:outputText value="('#{entity.name}', #{entity.id})," />
+  </p:column>
+  -->
+</ui:composition>

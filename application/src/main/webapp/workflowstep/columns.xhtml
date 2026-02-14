@@ -1,0 +1,61 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:include src="/fragments/column/edit-icon.xhtml" />
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/workflowtemplatestep.xhtml" />
+  <ui:include src="/fragments/column/workflowtemplate.xhtml">
+    <ui:param
+      name="entity"
+      value="#{entity.workflowTemplateStep}" />
+    <ui:param
+      name="fieldPrefix"
+      value="workflowTemplateStep." />
+  </ui:include>
+  <ui:include src="/fragments/column/workflow.xhtml" />
+
+  <o:importConstants type="org.bfabric.enums.StatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{workflowStepList.statusEnums}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/supervisor.xhtml" />
+  <ui:include src="/fragments/column/startdatetime.xhtml" />
+  <ui:include src="/fragments/column/enddatetime.xhtml" />
+  <ui:include src="/fragments/column/expectedduration.xhtml" />
+  <ui:include src="/fragments/column/samplepreparationprotocol.xhtml" />
+
+  <p:column headerText="#{messages.comments}">
+    <ui:repeat
+      value="#{entity.comments}"
+      var="item">
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+        <ui:param
+          name="entityValue"
+          value="#{item.commentOrAttachmentsInfo}" />
+        <ui:param
+          name="entityHint"
+          value="#{item.commentWithAttachmentsInfo}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+
+  <ui:include src="/fragments/column/comment-count.xhtml" />
+  <ui:include src="/fragments/column/datasets.xhtml" />
+  <ui:include src="/fragments/column/dataset-count.xhtml" />
+  <ui:include src="/fragments/column/samples.xhtml" />
+  <ui:include src="/fragments/column/sample-count.xhtml" />
+  <ui:include src="/fragments/column/workunits.xhtml" />
+  <ui:include src="/fragments/column/workunit-count.xhtml" />
+  <ui:include src="/fragments/column/plates.xhtml" />
+  <ui:include src="/fragments/column/plate-count.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

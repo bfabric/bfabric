@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('listOrders')}">
+    <p:column
+      sortBy="#{collectionHelper.printIds(entity.orders)}"
+      sortable="#{not tableReference.lazy}"
+      filterBy="#{collectionHelper.printIds(entity.orders)}"
+      filterable="#{not tableReference.lazy}"
+      headerText="#{messages.orders}"
+      exportValue="#{collectionHelper.printIds(entity.orders)}">
+      <ui:repeat
+        value="#{entity.orders}"
+        var="item">
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+        </ui:include>
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

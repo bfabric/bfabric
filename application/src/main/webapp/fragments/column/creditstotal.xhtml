@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('creditsTotal')}">
+    <p:column
+      field="#{fieldPrefix}creditsTotal"
+      headerText="#{messages.credits} (#{now.year+1900})" />
+  </c:if>
+</ui:composition>

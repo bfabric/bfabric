@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('paymentDate')}">
+    <p:column field="#{fieldPrefix}paymentDate" headerText="#{messages.paymentDate}" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('action')}">
+    <p:column
+      field="#{fieldPrefix}action"
+      headerText="#{messages.action}"
+      filterMatchMode="exact">
+      <f:facet name="filter">
+        <h:selectOneMenu
+          id="action"
+          onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{externalJobList.distinctActions}"
+            var="item"
+            itemLabel="#{item}" />
+        </h:selectOneMenu>
+      </f:facet>
+    </p:column>
+  </c:if>
+</ui:composition>

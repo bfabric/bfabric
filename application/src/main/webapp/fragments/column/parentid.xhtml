@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('parent')}">
+    <p:column
+      field="#{fieldPrefix}parentId"
+      headerText="#{not empty headerText ? headerText : messages.parentId}">
+      <h:outputText
+        rendered="#{empty entity.parentUrlShowScreen}"
+        value="#{entityValue != null ? entityValue : entity.parentId}" />
+      <p:link
+        rendered="#{not empty entity.parentUrlShowScreen and not empty entity.parentId}"
+        outcome="#{entity.parentUrlShowScreen}"
+        value="#{entityValue != null ? entityValue : entity.parentId}">
+        <f:param
+          name="id"
+          value="#{entity.parentId}" />
+        <f:param
+          name="tab"
+          value="#{constants.DETAILS}" />
+      </p:link>
+    </p:column>
+  </c:if>
+</ui:composition>

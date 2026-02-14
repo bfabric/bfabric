@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty service.parents}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{content != null ? content : chargeList.getLazyModelByServiceIdParents(service.id)}" />
+      <ui:param
+        name="label"
+        value="#{not empty label ? label : messages.chargesParents}" />
+      <ui:param
+        name="tab"
+        value="#{not empty tab ? tab : 'chargesParents'}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

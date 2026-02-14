@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/show-datatable.xhtml">
+    <ui:param name="include" value="/status/columns.xhtml" />
+    <ui:param name="tableContext" value="order" />
+    <ui:param name="tableContent" value="#{instance.states}" />
+    <ui:param name="paginator" value="false" />
+  </ui:include>
+</ui:composition>

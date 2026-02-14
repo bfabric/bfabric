@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/dashboard-cardbox.xhtml">
+    <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+    <ui:param name="content" value="#{content != null ? content : instance.notesCurrentUser}" />
+    <ui:param name="tab" value="notes" />
+    <ui:param name="label" value="#{not empty label ? label : messages.notes}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('clientEntityId')}">
+    <p:column
+      field="#{fieldPrefix}clientEntityId"
+      headerText="#{messages.entityId}">
+      <p:link
+        outcome="#{entity.clientEntityLink}"
+        value="#{entity.clientEntityId}">
+        <f:param
+          name="id"
+          value="#{entity.clientEntityId}" />
+        <f:param
+          name="tab"
+          value="#{constants.DETAILS}" />
+      </p:link>
+    </p:column>
+  </c:if>
+</ui:composition>

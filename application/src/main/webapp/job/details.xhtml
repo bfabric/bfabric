@@ -1,0 +1,47 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid columns="2" columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+      <ui:include src="/fragments/details/parent.xhtml" />
+      <ui:include src="/fragments/details/action.xhtml" />
+      <ui:include src="/fragments/details/status.xhtml" />
+      <ui:include src="/fragments/details/requester.xhtml" />
+      <ui:include src="/fragments/details/url.xhtml" />
+      <ui:include src="/fragments/details/log.xhtml" />
+      <ui:include src="/fragments/details/created-modified.xhtml" />
+    </h:panelGrid>
+    <h:panelGrid columns="5" styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.status}" />
+    </h:panelGrid>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="include" value="/status/columns.xhtml" />
+      <ui:param name="tableContext" value="job" />
+      <ui:param name="tableContent" value="#{job.states}" />
+      <ui:param name="paginator" value="false" />
+    </ui:include>
+
+    <h:form>
+      <h:panelGrid columns="10" styleClass="action">
+        <c:forEach items="#{job.nextStates}" var="nextStatus">
+          <p:commandButton action="#{jobManager.changeStatus(nextStatus)}" value="#{messages[nextStatus.action]}" />
+        </c:forEach>
+        <p:commandButton
+          action="#{jobManager.rollbackStatus}"
+          value="#{messages.rollbackStatus}"
+          title="#{messages.rollbackStatusHint}"
+          rendered="#{job.rollbackable}" />
+      </h:panelGrid>
+    </h:form>
+  </c:if>
+</ui:composition>

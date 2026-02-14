@@ -1,0 +1,80 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(event.readable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.schedule} : #{messages.user} #{event.user.displayName}" />
+  </ui:define>
+
+  <ui:define name="pageTitleExtension">
+    <p:link
+      rendered="#{not empty event.user.urlShowScreen}"
+      outcome="#{event.user.urlShowScreen}"
+      title="#{event.user.displayName}">
+      <f:param
+        name="id"
+        value="#{event.user.id}" />
+      <i class="fas fa-user icon-button-padding" />
+      <ui:include src="/fragments/context-container-param.xhtml" />
+    </p:link>
+
+    <p:link outcome="list.xhtml">
+      <i class="far fa-calendar-alt icon-button-padding" />
+      <ui:include src="/fragments/context-container-param.xhtml" />
+    </p:link>
+  </ui:define>
+
+  <ui:define name="body">
+    <style type="text/css">
+        .value {
+            width: 1000px;
+        }
+    </style>
+
+    <h:form id="#{constants.EDIT}">
+      <p:growl id="messages" showDetail="true" />
+      <h:panelGrid columnClasses="value">
+        <p:schedule
+          id="schedule"
+          widgetVar="scheduleWidgetVar"
+          value="#{eventManager.lazyEventModel}"
+          slotDuration="01:00"
+          slotLabelFormat="['HH:mm']"
+          columnHeaderFormat="week:'dddd DD MMM', month:'dddd'"
+          rightHeaderTemplate="timeGridDay timeGridWeek dayGridMonth"
+          leftHeaderTemplate="prev next today"
+          height="auto"
+          tooltip="true"
+          allDaySlot="false"
+          nextDayThreshold="00:00"
+          view="timeGridWeek"
+          extender="initSchedule">
+        </p:schedule>
+        <h:outputScript>
+          function initSchedule() {
+            // Configure fullCalendar
+            // this.cfg.options.contentHeight: 'auto';
+            this.cfg.options.firstDay = 1;
+            this.cfg.options.buttonText = {today: 'today'};
+            this.cfg.views = {
+              week: {
+                displayEventTime: false
+              },
+              day: {
+                displayEventTime: false
+              }
+            };
+          }
+        </h:outputScript>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

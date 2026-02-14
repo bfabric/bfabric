@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param name="content" value="#{content != null ? content : instance.workunitExecutables}" />
+    <ui:param name="label" value="#{not empty label ? label : messages.workunitExecutables}" />
+    <ui:param name="tab" value="#{not empty tab ? tab : 'workunitExecutables'}" />
+  </ui:include>
+</ui:composition>

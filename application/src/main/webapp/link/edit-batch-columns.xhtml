@@ -1,0 +1,65 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column headerText="#{messages.linkUrl}">
+    <h:panelGrid
+      columns="2"
+      styleClass="nospace noborder">
+      <h:inputText
+        id="url"
+        value="#{entity.url}"
+        style="width: 600px">
+        <p:ajax event="change" global="false" />
+      </h:inputText>
+      <p:message
+        for="url"
+        styleClass="errorMessage" />
+    </h:panelGrid>
+  </p:column>
+  <p:column headerText="#{messages.linkName}">
+    <h:inputText
+      id="#{constants.NAME}"
+      value="#{entity.name}"
+      maxlength="32"
+      style="width: 300px">
+      <p:ajax event="change" global="false" />
+    </h:inputText>
+  </p:column>
+  <p:column>
+    <f:facet name="header">
+      <p:commandLink
+        rendered="#{empty parent.links}"
+        actionListener="#{parent.addLink}"
+        title="#{messages.addLinkHint}"
+        process="@form"
+        update="@form"
+        styleClass="font-larger">
+        <i class="fas fa-plus-square" />
+      </p:commandLink>
+    </f:facet>
+    <h:panelGrid
+      columns="2"
+      styleClass="noborder-rightpadding align-middle">
+      <p:commandLink
+        actionListener="#{parent.addLink}"
+        title="#{messages.addLinkHint}"
+        immediate="true"
+        process="@form"
+        update="@form"
+        styleClass="font-larger">
+        <i class="fas fa-plus-square" />
+      </p:commandLink>
+      <p:commandLink
+        actionListener="#{parent.removeLink(entity)}"
+        immediate="true"
+        title="#{messages.removeLinkHint}"
+        process="@form"
+        update="@form"
+        styleClass="font-larger">
+        <i class="fas fa-minus-square" />
+      </p:commandLink>
+    </h:panelGrid>
+  </p:column>
+</ui:composition>

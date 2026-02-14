@@ -1,0 +1,6 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/details/repeat-fragment.xhtml">
+    <ui:param name="content" value="#{instance.plates}" />
+    <ui:param name="label" value="#{messages.plates}" />
+  </ui:include>
+</ui:composition>

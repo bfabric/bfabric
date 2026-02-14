@@ -1,0 +1,225 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(plate.sampleAssignmentEditable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="Assign Samples to Plate #{plate.displayName} (#{plate.plateLayout.name}, #{plate.plateType.name})" />
+  </ui:define>
+
+  <ui:define name="body">
+    <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleQCTypeEnum" />
+
+    <h:form
+      id="assignSamples"
+      onsubmit="#{plateManager.resetRefererURL()}">
+      <h:panelGrid
+        columns="10"
+        columnClasses="align-middle, noborder-rightpadding, align-middle, noborder-rightpadding, align-middle, noborder-rightpadding">
+        <h:outputText
+          value="#{messages.extracts}"
+          title="#{messages.allExtractsHint}"
+          styleClass="bold" />
+        <p:selectOneButton value="#{plateManager.showOrphansOnly}">
+          <f:selectItem
+            itemLabel="#{messages.none}"
+            itemValue="#{true}" />
+          <f:selectItem
+            itemLabel="#{messages.all}"
+            itemValue="#{false}" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, assignSamples:assignsamplessampletable"
+            oncomplete="fixOversize(); PF('assignsamplessample').filter();" />
+        </p:selectOneButton>
+        <h:outputText
+          value="#{messages.controlOnly}"
+          title="#{messages.showOnlyControlSamples}"
+          styleClass="bold" />
+        <p:selectOneButton value="#{plateManager.showControlOnly}">
+          <f:selectItem
+            itemLabel="#{messages.no}"
+            itemValue="#{false}" />
+          <f:selectItem
+            itemLabel="#{messages.yes}"
+            itemValue="#{true}" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, assignSamples:assignsamplessampletable"
+            oncomplete="fixOversize(); PF('assignsamplessample').filter();" />
+        </p:selectOneButton>
+        <h:outputText
+          value="#{messages.columns}"
+          title="#{messages.allColumnsHint}"
+          styleClass="bold" />
+        <p:selectOneButton value="#{plateManager.showAllColumns}">
+          <f:selectItem
+            itemLabel="#{messages.min}"
+            itemValue="#{false}" />
+          <f:selectItem
+            itemLabel="#{messages.all}"
+            itemValue="#{true}" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, assignSamples:sampleGrid"
+            oncomplete="fixOversize(); PF('assignsamplessample').filter();" />
+        </p:selectOneButton>
+        <h:outputText
+          value="#{messages.qcPassed}"
+          styleClass="bold" />
+        <p:selectOneButton value="#{plateManager.filterQcPassed}">
+          <f:selectItem
+            itemLabel="#{messages.no}"
+            itemValue="#{false}" />
+          <f:selectItem
+            itemLabel="#{messages.yes}"
+            itemValue="#{true}" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, assignSamples:assignsamplessampletable"
+            oncomplete="fixOversize(); PF('assignsamplessample').filter();" />
+        </p:selectOneButton>
+        <h:outputText
+          value="#{messages.userDecision}"
+          styleClass="bold" />
+        <p:selectOneButton value="#{plateManager.filterUserDecision}">
+          <f:selectItem
+            itemLabel="#{messages.emptyOrProceed}"
+            itemValue="#{true}" />
+          <f:selectItem
+            itemLabel="#{messages.required}/#{messages.excluded}/#{messages.replaced}"
+            itemValue="#{false}" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, assignSamples:assignsamplessampletable"
+            oncomplete="fixOversize(); PF('assignsamplessample').filter();" />
+        </p:selectOneButton>
+      </h:panelGrid>
+
+      <p:spacer height="10" />
+
+      <h:panelGrid id="sampleGrid">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="showEmpty"
+            value="true" />
+          <ui:param
+            name="tableType"
+            value="sample" />
+          <ui:param
+            name="tableContext"
+            value="assignsamples" />
+          <ui:param
+            name="include"
+            value="/plate/assignSamples-select-columns.xhtml" />
+          <ui:param
+            name="specificColumns"
+            value="#{not empty plateManager.showAllColumns and not plateManager.showAllColumns ? plateManager.getAttributeEnumsAssignSamplesSelectColumns() : null}" />
+          <ui:param
+            name="tableContent"
+            value="#{sampleList.getLazyModelByOrphansOnlyAndControlOnly(plateManager.showOrphansOnly, plateManager.showControlOnly, plateManager.filterQcPassed, plateManager.filterUserDecision)}" />
+          <ui:param
+            name="lazy"
+            value="true" />
+          <ui:param
+            name="hideColumns"
+            value="parents, parentsSize, childrenSize, resourceCount, workflows, workflowSteps, listOrders" />
+          <ui:param
+            name="rowStyleClass"
+            value="#{entity.rowStyleClass}" />
+        </ui:include>
+      </h:panelGrid>
+
+      <p:spacer height="10" />
+
+      <h:panelGrid id="plateGrid">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{plate.plateType.sampleType.name eq SampleTypeEnum.QUALITY_CONTROL.label}">
+            <h:outputText value="#{messages.qualityControlType}" />
+            <h:selectOneMenu
+              id="qcType"
+              value="#{plateManager.qualityControlType}"
+              title="#{messages.qualityControlTypeSamplePlateAssignmentHint}"
+              styleClass="editWidthLarge">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{SampleQCTypeEnum.values()}"
+                var="item"
+                itemLabel="#{item.label}" />
+              <p:ajax
+                event="change"
+                global="false" />
+            </h:selectOneMenu>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGrid>
+          <ui:include src="/plate/assignSamples-datagrid.xhtml">
+            <ui:param
+              name="renderCheckbox"
+              value="true" />
+            <ui:param
+              name="checkboxUpdate"
+              value="@this, assignSamples:removeSelectedButton" />
+            <ui:param
+              name="droppableUpdate"
+              value="assignSamples:plateGrid" />
+            <ui:param
+              name="removeButtonProcessAndUpdate"
+              value="assignSamples:plateGrid, @([id$=#{constants.ADD}#{constants.ALL}#{constants.BUTTON}])" />
+            <ui:param
+              name="sampleSelectionTableId"
+              value="assignSamples:assignsamplessampletable" />
+          </ui:include>
+        </h:panelGrid>
+
+        <h:outputText
+          id="validationErrorMsg"
+          style="max-width:0;padding:0" />
+        <h:message
+          for="validationErrorMsg"
+          style="margin-top:2px !important;"
+          styleClass="errorMessage" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{plateManager.assignSamples}"
+          value="#{messages.save}"
+          update="@form"
+          oncomplete="fixOversize();" />
+        <p:commandButton
+          action="#{plateManager.cancel}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+
+    </h:form>
+    <ui:include src="/plate/assign-multiplexids-modal.xhtml" />
+    <ui:include src="/plate/assignSamples-modal.xhtml" />
+  </ui:define>
+</ui:composition>

@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  template="/layout/template.xhtml">
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.workunits} ETHZ-UZH" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="all" />
+      <ui:param
+        name="tableContent"
+        value="#{statisticsList.workunitsETHZUZHPerYear}" />
+      <ui:param
+        name="include"
+        value="/statistics/workunits-ethz-uzh-columns.xhtml" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="all" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

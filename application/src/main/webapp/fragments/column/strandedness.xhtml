@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('strandedness')}">
+    <p:column
+      field="#{fieldPrefix}strandedness"
+      headerText="#{messages.strandedness}"
+      filterMatchMode="exact">
+      <f:facet name="filter">
+        <h:selectOneMenu
+          id="strandedness"
+          onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{annotationList.getAnnotationsByType('Strandedness')}"
+            var="item"
+            itemLabel="#{item.name}" />
+        </h:selectOneMenu>
+      </f:facet>
+      <h:outputText value="#{entity.strandedness.name}" />
+    </p:column>
+  </c:if>
+</ui:composition>

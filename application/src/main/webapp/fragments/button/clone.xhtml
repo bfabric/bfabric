@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:button
+    rendered="#{rendered != null ? rendered : instance.creatable}"
+    outcome="#{outcome != null ? outcome : 'edit.xhtml'}"
+    value="#{messages.clone}">
+    <f:param
+      name="id"
+      value="#{instance.id}" />
+    <f:param
+      name="clone"
+      value="true" />
+  </p:button>
+</ui:composition>

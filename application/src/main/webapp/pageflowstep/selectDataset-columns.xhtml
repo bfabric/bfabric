@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column exportable="false">
+    <p:commandButton
+      value="#{messages.select}"
+      action="#{workunitManager.navigateSelect(entity)}"
+      update="pageTitle, @form"
+      styleClass="inline" />
+  </p:column>
+  <ui:include src="/dataset/columns.xhtml" />
+</ui:composition>

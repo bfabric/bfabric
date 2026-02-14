@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('operatorRequired')}">
+    <p:column
+      field="#{fieldPrefix}operatorRequired"
+      headerText="#{messages.operatorRequired}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="operatorRequired" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.operatorRequired)}"
+        styleClass="#{stringHelper.toGreenRed(entity.operatorRequired)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

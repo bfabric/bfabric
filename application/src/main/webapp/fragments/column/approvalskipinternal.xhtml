@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('approvalSkipInternal')}">
+    <p:column
+      field="#{fieldPrefix}approvalSkipInternal"
+      headerText="#{messages.approvalSkipInternal}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="approvalSkipInternal" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.approvalSkipInternal)}"
+        styleClass="#{stringHelper.toGreenRed(entity.approvalSkipInternal)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

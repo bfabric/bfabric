@@ -1,0 +1,86 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{runUnitTypeManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{runUnitTypeManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{runUnitType.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.instrument}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="instrument" />
+            <ui:param
+              name="value"
+              value="#{runUnitType.instrument}" />
+            <ui:param
+              name="disabled"
+              value="#{not empty runUnitType.runUnits}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{runUnitTypeManager.getInstruments}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.capacity}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:inputNumber
+              disabled="#{not empty runUnitType.runUnits}"
+              thousandSeparator=""
+              value="#{runUnitType.capacity}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.numberOfLanes}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:inputNumber
+              disabled="#{not empty runUnitType.runUnits}"
+              value="#{runUnitType.numberOfLanes}"
+              thousandSeparator=""
+              decimalPlaces="0"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.physicalSeparation}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              disabled="#{not empty runUnitType.runUnits}"
+              title="#{messages.physicalSeparationHint}"
+              value="#{runUnitType.physicalSeparation}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox value="#{runUnitType.enabled}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

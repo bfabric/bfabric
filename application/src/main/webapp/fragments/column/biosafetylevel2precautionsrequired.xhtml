@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('bioSafetyLevel2PrecautionsRequired')}">
+    <p:column
+      field="#{fieldPrefix}bioSafetyLevel2PrecautionsRequired"
+      headerText="#{messages.bioSafetyLevel2PrecautionsRequired}"
+      filterMatchMode="exact">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="bioSafetyLevel2PrecautionsRequired" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.bioSafetyLevel2PrecautionsRequired)}"
+        styleClass="#{stringHelper.toGreenRed(not entity.bioSafetyLevel2PrecautionsRequired)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,4 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+  <p:commandButton rendered="#{workunit.renderedUnarchive and identityManager.hasCurrentUserRole('containerManager')}" action="#{workunitManager.unarchive}" value="#{messages.unarchive}" />
+</ui:composition>

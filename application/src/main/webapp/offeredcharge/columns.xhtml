@@ -1,0 +1,29 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.charge} #{messages.id}" />
+  </ui:include>
+  <ui:include src="/fragments/column/servicename.xhtml" />
+  <ui:include src="/fragments/column/servicecodename.xhtml" />
+  <ui:include src="/fragments/column/offer.xhtml" />
+  <ui:include src="/fragments/column/total.xhtml" />
+  <ui:include src="/fragments/column/accounted.xhtml" />
+  <ui:include src="/fragments/column/notaccounted.xhtml" />
+  <ui:include src="/fragments/column/discountedprice.xhtml" />
+  <ui:include src="/fragments/column/discount.xhtml" />
+  <ui:include src="/fragments/column/offerdiscount.xhtml" />
+  <ui:include src="/fragments/column/basicprice.xhtml" />
+  <ui:include src="/fragments/column/additionalprice.xhtml" />
+  <ui:include src="/fragments/column/price.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.totalPrice}" />
+  </ui:include>
+  <ui:include src="/fragments/column/taxtype.xhtml" />
+  <ui:include src="/fragments/column/charger.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/notes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+  <ui:include src="/fragments/column/modified.xhtml" />
+</ui:composition>

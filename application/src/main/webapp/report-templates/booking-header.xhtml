@@ -1,0 +1,28 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:block-container
+    font-size="9pt"
+    font-family="Arial, Helvetica, sans-serif">
+    <fo:block>
+      <fo:table
+        table-layout="fixed"
+        width="100%"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="9pt">
+        <fo:table-column column-width="150mm" />
+        <fo:table-column column-width="60mm" />
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell>
+              <ui:include src="header-logo.xhtml" />
+            </fo:table-cell>
+            <fo:table-cell>
+              <ui:include src="booking-header-issuer.xhtml" />
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:block>
+  </fo:block-container>
+</ui:composition>

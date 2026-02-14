@@ -1,0 +1,55 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+
+  <ui:include src="/fragments/column/group-count.xhtml" />
+  <p:column
+    rendered="#{not hideColumns.contains('groups')}"
+    headerText="#{messages.groups}"
+    exportValue="#{collectionHelper.printNames(entity.groups)}">
+    <ui:repeat
+      value="#{entity.groups}"
+      var="item">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+  <p:column
+    rendered="#{not hideColumns.contains('descendants')}"
+    headerText="#{messages.descendants}"
+    exportValue="#{collectionHelper.printNames(entity.descendants)}">
+    <ui:repeat
+      value="#{entity.descendants}"
+      var="item">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+  <ui:include src="/fragments/column/parent-count.xhtml" />
+  <p:column
+    rendered="#{not hideColumns.contains('parents')}"
+    headerText="#{messages.parents}"
+    exportValue="#{collectionHelper.printNames(entity.parents)}">
+    <ui:repeat
+      value="#{entity.parents}"
+      var="item">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

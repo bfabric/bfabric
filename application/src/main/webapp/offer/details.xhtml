@@ -1,0 +1,184 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      id="offerDetailsPanel"
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+      <ui:include src="/fragments/details/coach.xhtml" />
+      <ui:include src="/fragments/details/coachbackup.xhtml" />
+
+      <h:outputText value="#{messages.requester}" />
+      <h:outputText
+        rendered="#{empty offer.requester}"
+        value="#{offer.requesterName}" />
+      <ui:include
+        rendered="#{not empty offer.requester}"
+        src="/fragments/user-link.xhtml">
+        <ui:param
+          name="entityValue"
+          value="#{offer.requesterName}" />
+        <ui:param
+          name="instance"
+          value="#{offer.requester}" />
+      </ui:include>
+
+      <c:if test="#{not empty offer.requesterEmailDisplay}">
+        <h:outputText value="#{messages.email}" />
+        <h:outputText value="#{offer.requesterEmailDisplay}" />
+      </c:if>
+
+      <c:if test="#{not empty offer.requesterAddressDisplay}">
+        <h:outputText value="#{messages.address}" />
+        <h:outputText value="#{offer.requesterAddressDisplay}" styleClass="preformat" />
+      </c:if>
+
+      <c:if test="#{not empty offer.requester.affiliation}">
+        <h:outputText value="#{messages.affiliation}" />
+        <h:outputText value="#{offer.requester.affiliation}" />
+      </c:if>
+
+      <c:if test="#{not empty offer.organizationType}">
+        <h:outputText value="#{messages.billingOrganizationType}" />
+        <h:outputText value="#{offer.organizationType.name}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/description.xhtml" />
+
+      <c:if test="#{offer.discounted}">
+        <h:outputText value="#{messages.offerDiscount}" />
+        <h:outputText value="#{offer.discount} %">
+          <f:convertNumber pattern="0.00" />
+        </h:outputText>
+      </c:if>
+
+      <c:if test="#{not empty offer.totalDiscountedPrice}">
+        <h:outputText value="#{messages.offeredTotal}" />
+        <h:outputText value="#{offer.totalDiscountedPrice}">
+          <f:convertNumber pattern="0.00" />
+        </h:outputText>
+      </c:if>
+
+      <ui:include src="/fragments/details/containers.xhtml" />
+      <ui:include src="/fragments/details/eugrant.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      id="buttons"
+      columns="7"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <p:button
+        rendered="#{not empty offer.charges}"
+        value="#{messages.pdfExport}"
+        href="#{offer.getReportPDFLink('offer-fop')}" />
+      <p:commandButton rendered="#{offer.sendButtonRendered}" action="#{offerManager.sendOffer}" value="#{messages.send}">
+        <p:confirm header="#{messages.warning}" message="#{messages.offerSendConfirm}" icon="ui-icon-alert" />
+        <ui:include src="/fragments/confirm-dialog.xhtml" />
+      </p:commandButton>
+      <h:form rendered="#{offer.updatable and not empty offer.charges}">
+        <p:commandButton
+          action="#{offerManager.lock}"
+          value="#{messages.lock}"
+          title="#{messages.offerLockHint}" />
+      </h:form>
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <p:button
+        rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+        outcome="list.xhtml"
+        value="#{messages.list}" />
+    </h:panelGrid>
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText
+        id="showOfferedChargesCount"
+        value="#{messages.charges} (#{offer.charges.size()})" />
+    </h:panelGrid>
+
+    <h:panelGroup id="offeredChargesPanel">
+      <h:outputText
+        rendered="#{empty offer.charges}"
+        value="No charge has been added to the offer yet!"
+        styleClass="pending" />
+
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/offeredcharge/columns-with-create.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="offeredCharge" />
+        <ui:param
+          name="tableContent"
+          value="#{offer.charges}" />
+        <ui:param
+          name="paginator"
+          value="false" />
+      </ui:include>
+
+      <h:panelGrid
+        columns="5"
+        styleClass="action">
+        <p:button
+          outcome="/offeredcharge/edit-batch-with-create.xhtml"
+          value="#{empty offer.charges ? messages.add : messages.edit} #{messages.charges}"
+          rendered="#{offer.updatable}">
+          <f:param
+            name="id"
+            value="#{offer.id}" />
+        </p:button>
+        <p:button
+          outcome="/offeredcharge/edit.xhtml"
+          value="#{messages.addCharge}"
+          rendered="#{offer.updatable}">
+          <f:param
+            name="offerId"
+            value="#{offer.id}" />
+        </p:button>
+        <p:button
+          outcome="copy-from-charges.xhtml"
+          value="#{messages.copyFromCharges}"
+          rendered="#{offer.updatable}">
+          <f:param
+            name="id"
+            value="#{offer.id}" />
+        </p:button>
+        <p:button
+          outcome="copy-to-charges.xhtml"
+          value="#{messages.copyToCharges}"
+          rendered="#{offer.chargesCopyable}">
+          <f:param
+            name="id"
+            value="#{offer.id}" />
+        </p:button>
+        <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+      </h:panelGrid>
+    </h:panelGroup>
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.status}" />
+    </h:panelGrid>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="include" value="/status/columns.xhtml" />
+      <ui:param name="tableContext" value="offer" />
+      <ui:param name="tableContent" value="#{offer.states}" />
+      <ui:param name="paginator" value="false" />
+    </ui:include>
+
+    <h:form>
+      <h:panelGrid columns="10" styleClass="action">
+        <c:forEach items="#{offer.nextStates}" var="nextStatus">
+          <p:commandButton action="#{offerManager.changeStatus(nextStatus)}" value="#{messages[nextStatus.action]}" />
+        </c:forEach>
+      </h:panelGrid>
+    </h:form>
+  </c:if>
+</ui:composition>

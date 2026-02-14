@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('users')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="user" />
+      <ui:param
+        name="tableContext"
+        value="#{technology.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{technology.users}" />
+      <ui:param
+        name="include"
+        value="/user/columns-reduced.xhtml" />
+      <ui:param
+        name="styleClass"
+        value="column-width-auto" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

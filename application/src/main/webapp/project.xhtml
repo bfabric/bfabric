@@ -1,0 +1,76 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <!-- Executes the statements in sequential order -->
+    <f:event type="preRenderView" listener="#{identityManager.redirectOnCondition(loggedIn, '/project/show.xhtml?id='.concat(project.id))}" />
+    <f:event type="preRenderView" listener="#{identityManager.restrict(project.published)}" />
+  </f:metadata>
+
+  <ui:param
+    name="entityManager"
+    value="#{projectManager}" />
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.project} #{project.getDisplayName()}" />
+  </ui:define>
+
+  <ui:define name="pageTitle">
+    <ui:include src="/fragments/show-page-title.xhtml" />
+  </ui:define>
+
+  <ui:param name="sidebar" value="true" />
+
+  <ui:define name="sidebar" />
+
+  <ui:define name="body">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name-status.xhtml" />
+
+      <c:if test="#{not empty project.coach}">
+        <h:outputText value="#{messages.coach}" />
+        <h:outputText value="#{project.coach.name}" />
+      </c:if>
+
+      <c:if test="#{not empty project.institute}">
+        <c:if test="#{not empty project.institute.department}">
+          <c:if test="#{not empty project.institute.department.organization}">
+            <h:outputText value="#{messages.organization}" />
+            <h:outputText value="#{project.institute.department.organization.name}" />
+          </c:if>
+          <h:outputText value="#{messages.department}" />
+          <h:outputText value="#{project.institute.department.name}" />
+        </c:if>
+        <h:outputText value="#{messages.institute}" />
+        <h:outputText value="#{project.institute.name}" />
+      </c:if>
+
+      <h:outputText value="#{messages.budgetOfficer}" />
+      <h:outputText value="#{project.budgetOfficer.name}" />
+
+      <h:outputText value="#{messages.leader}" />
+      <h:outputText value="#{project.leader.name}" />
+
+      <h:outputText value="#{messages.contact}" />
+      <h:outputText value="#{project.contact.name}" />
+
+      <h:outputText value="#{messages.requester}" />
+      <h:outputText value="#{project.requester.name}" />
+
+      <ui:include src="/fragments/details/technologies.xhtml" />
+      <ui:include src="/fragments/details/summary.xhtml" />
+      <ui:include src="/fragments/details/startdate.xhtml" />
+      <ui:include src="/fragments/details/enddate.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid styleClass="content-subheader-normal">
+      <p>For more details, please enter with your #{configuration.applicationName} login and password! Register if you have no #{configuration.applicationName} account yet.</p>
+    </h:panelGrid>
+  </ui:define>
+</ui:composition>

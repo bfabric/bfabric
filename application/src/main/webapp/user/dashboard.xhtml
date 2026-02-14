@@ -1,0 +1,276 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('dashboard')}">
+    <div class="cardBox">
+      <c:if test="#{user.identityUserOrUserManager}">
+        <ui:include src="/fragments/dashboard/orders-cardbox.xhtml">
+          <ui:param name="content" value="#{orderList.getLazyModelByUserId(user.id)}" />
+        </ui:include>
+        <ui:include src="/fragments/dashboard/projects-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/formerprojects-cardbox.xhtml" />
+
+        <ui:include src="/fragments/dashboard/charges-cardbox.xhtml">
+          <ui:param name="content" value="#{chargeList.getLazyModelByContainerBudgetOfficerId(user.id)}" />
+          <ui:param name="enabled" value="#{(identityManager.hasCurrentUserRole('containerManager') or user.equals(currentUser))}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/samples-cardbox.xhtml">
+          <ui:param name="content" value="#{sampleList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+        </ui:include>
+        <ui:include src="/fragments/dashboard/workunits-cardbox.xhtml">
+          <ui:param name="content" value="#{workunitList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+        </ui:include>
+        <ui:include src="/fragments/dashboard/resources-cardbox.xhtml">
+          <ui:param name="content" value="#{resourceList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+        </ui:include>
+        <ui:include src="/fragments/dashboard/datasets-cardbox.xhtml">
+          <ui:param name="content" value="#{datasetList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/plates-cardbox.xhtml">
+          <ui:param name="content" value="#{user.plates}" />
+        </ui:include>
+        <ui:include src="/fragments/dashboard/runs-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/offers-cardbox.xhtml" />
+
+        <ui:include src="/fragments/dashboard/charges-cardbox.xhtml">
+          <ui:param name="content" value="#{user.chargerCharges}" />
+          <ui:param name="label" value="#{messages.chargerCharges}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/instrumentreservations-cardbox.xhtml">
+          <ui:param name="content" value="#{instrumentReservationList.getLazyModelByUserId(user.id)}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/instruments-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/instruments-cardbox.xhtml">
+          <ui:param name="content" value="#{user.trainedInstruments}" />
+          <ui:param name="label" value="#{messages.trainedInstruments}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/comments-cardbox.xhtml">
+          <ui:param name="content" value="#{commentList.getLazyModelByCreatedByUser(user)}" />
+          <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/comments-cardbox.xhtml">
+          <ui:param name="content" value="#{commentList.getLazyModelAssociatedCommentByUser(user)}" />
+          <ui:param name="label" value="#{messages.associatedComments}" />
+          <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('admin')}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/comments-cardbox.xhtml">
+          <ui:param name="content" value="#{commentList.getLazyModelByUserIdStarred(user.id)}" />
+          <ui:param name="label" value="#{messages.starredComments}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/comments-cardbox.xhtml">
+          <ui:param name="content" value="#{commentList.getLazyModelByUserIdViewed(user.id)}" />
+          <ui:param name="label" value="#{messages.viewedComments}" />
+        </ui:include>
+        <ui:include src="/fragments/dashboard/contracts-cardbox.xhtml" />
+
+        <c:if test="#{user.extensibleByCurrentUser}">
+          <ui:include src="/fragments/dashboard/roles-cardbox.xhtml">
+            <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+          </ui:include>
+        </c:if>
+
+        <c:if test="#{(identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser)) and user.hasRoleEmployee()}">
+          <ui:include src="/fragments/dashboard/events-cardbox.xhtml" />
+          <ui:include src="/fragments/dashboard/credits-cardbox.xhtml" />
+        </c:if>
+
+        <c:if test="#{(identityManager.hasCurrentUserRole('bookingManager') or user.equals(currentUser)) and user.hasRoleEmployee()}">
+          <ui:include src="/fragments/dashboard/purchases-cardbox.xhtml" />
+        </c:if>
+
+        <ui:include src="/fragments/dashboard/mails-cardbox.xhtml">
+          <ui:param name="enabled" value="#{user.mailsRendered}" />
+        </ui:include>
+
+        <ui:include src="/fragments/dashboard/services-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/servicetypes-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/serviceareas-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/trackedcontainers-cardbox.xhtml" />
+
+        <c:if test="#{identityManager.hasCurrentUserRole('serviceReader')}">
+          <ui:include src="/fragments/dashboard/trackedservices-cardbox.xhtml" />
+        </c:if>
+
+        <ui:include src="/fragments/dashboard/usergroups-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/supervisedusergroups-cardbox.xhtml" />
+
+        <ui:include src="/fragments/dashboard/accessrequests-cardbox.xhtml" />
+
+        <c:if test="#{user.actionsRendered}">
+          <ui:include src="/fragments/dashboard/actions-cardbox.xhtml" />
+        </c:if>
+      </c:if>
+    </div>
+
+    <c:if test="#{(identityManager.hasCurrentUserRole('containerManager') or user.equals(currentUser)) and not empty user.getLastCommentsCurrentUser(5)}">
+      <div class="hide-table-header dashboard-grid-min-content">
+        <div class="cardBoxShadow">
+          <div class="card-header">
+            <h3>
+              <h:outputText value="#{messages.lastComments}" />
+              <p:link styleClass="iconBox">
+                <f:param name="id" value="#{user.id}" />
+                <f:param name="tab" value="comments" />
+                <i class="fas fa-up-right-from-square" />
+              </p:link>
+            </h3>
+          </div>
+          <ui:include src="/fragments/dashboard/lastcomment-table.xhtml" />
+        </div>
+      </div>
+    </c:if>
+
+    <div class="hide-table-header dashboard-grid">
+      <div class="cardBoxDetails cardBoxShadow">
+        <div class="card-header">
+          <h3>
+            <h:outputText value="#{messages.affiliation}" title="#{messages.affiliation}" />
+            <p:link styleClass="iconBox">
+              <f:param name="id" value="#{user.id}" />
+              <f:param name="tab" value="details" />
+              <i class="fas fa-up-right-from-square" />
+            </p:link>
+          </h3>
+        </div>
+        <table class="content-table">
+          <ui:include src="/fragments/dashboard-box.xhtml">
+            <ui:param name="messages" value="#{messages.name}" />
+            <ui:param name="value" value="#{user.getFullName()}" />
+          </ui:include>
+
+          <c:if test="#{not empty user.institute}">
+            <c:if test="#{not empty user.institute.department}">
+              <c:if test="#{not empty user.institute.department.organization}">
+                <tr>
+                  <td class="header-table">
+                    <h:outputText value="#{messages.organization}" />
+                  </td>
+                  <td>
+                    <ui:include src="/fragments/entity-link-name.xhtml">
+                      <ui:param name="instance" value="#{user.institute.department.organization}" />
+                    </ui:include>
+                  </td>
+                </tr>
+              </c:if>
+              <tr>
+                <td class="header-table">
+                  <h:outputText value="#{messages.department}" />
+                </td>
+                <td>
+                  <ui:include src="/fragments/entity-link-name.xhtml">
+                    <ui:param name="instance" value="#{user.institute.department}" />
+                  </ui:include>
+                </td>
+              </tr>
+            </c:if>
+            <tr>
+              <td class="header-table">
+                <h:outputText value="#{messages.institute}" />
+              </td>
+              <td>
+                <ui:include src="/fragments/entity-link-name.xhtml">
+                  <ui:param name="instance" value="#{user.institute}" />
+                </ui:include>
+              </td>
+            </tr>
+          </c:if>
+
+          <tr>
+            <td class="header-table">
+              <h:outputText value="#{messages.address}" />
+            </td>
+            <td>
+              <h:outputLink value="#{user.address.mapLink}" target="_blank" rel="noopener">
+                <h:outputText value="#{user.fullAddress}" />
+              </h:outputLink>
+            </td>
+          </tr>
+
+          <c:if test="#{not empty user.address.room}">
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.room}" />
+              <ui:param name="value" value="#{user.address.room}" />
+            </ui:include>
+          </c:if>
+        </table>
+      </div>
+      <c:if test="#{not empty user.image.content}">
+        <div class="cardBoxDetails cardBoxShadow">
+          <p:graphicImage value="#{user.image.streamedContent}" stream="false" />
+        </div>
+      </c:if>
+
+      <div class="cardBoxDetails cardBoxShadow">
+        <div class="card-header">
+          <h3>
+            <h:outputText value="#{messages.contact}" title="#{messages.contact}" />
+          </h3>
+        </div>
+
+        <table class="content-table">
+          <tr>
+            <td class="header-table">
+              <h:outputText value="#{messages.email}" />
+            </td>
+            <td>
+              <h:outputText value="#{user.email}" />
+              <ui:include src="/fragments/user-hints.xhtml">
+                <ui:param name="instance" value="#{user}" />
+              </ui:include>
+            </td>
+          </tr>
+          <ui:include src="/fragments/dashboard-box.xhtml">
+            <ui:param name="messages" value="#{messages.phone}" />
+            <ui:param name="value" value="#{user.phone}" />
+          </ui:include>
+
+          <c:if test="#{not empty user.privateEmail and (user.equals(currentUser) or identityManager.hasCurrentUserRole('admin'))}">
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.privateEmail}" />
+              <ui:param name="value" value="#{user.privateEmail}" />
+            </ui:include>
+          </c:if>
+          <c:if
+            test="#{not empty user.homePhone and (identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser) or identityManager.hasCurrentUserRole('employee') and user.employee)}">
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.homePhone}" />
+              <ui:param name="value" value="#{user.homePhone}" />
+            </ui:include>
+          </c:if>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser)}">
+            <c:if test="#{not empty user.fullHomeAddress}">
+              <tr>
+                <td class="header-table">
+                  <h:outputText value="#{messages.homeAddress}" />
+                </td>
+                <td>
+                  <h:outputLink value="#{user.homeAddress.mapLink}" target="_blank" rel="noopener">
+                    <h:outputText value="#{user.fullHomeAddress}" />
+                  </h:outputLink>
+                </td>
+              </tr>
+            </c:if>
+
+            <c:if test="#{not empty user.birthDate}">
+              <ui:include src="/fragments/dashboard-box.xhtml">
+                <ui:param name="messages" value="#{messages.birthDate}" />
+                <ui:param name="value" value="#{user.birthDate}" />
+              </ui:include>
+            </c:if>
+          </c:if>
+        </table>
+      </div>
+    </div>
+  </c:if>
+</ui:composition>

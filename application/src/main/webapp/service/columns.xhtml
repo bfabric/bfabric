@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/servicetype.xhtml" />
+  <ui:include src="/fragments/column/servicetype-area.xhtml" />
+  <ui:include src="/fragments/column/servicecode.xhtml" />
+  <ui:include src="/fragments/column/user-count.xhtml" />
+  <ui:include src="/fragments/column/fullcost.xhtml" />
+  <ui:include src="/fragments/column/parent-count.xhtml" />
+  <ui:include src="/fragments/column/children-count.xhtml" />
+  <ui:include src="/fragments/column/orderitem-count.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <c:if test="#{not hideColumns.contains('created')}">
+    <ui:include src="/fragments/column/created-modified.xhtml" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,114 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <c:if test="#{showColumns.contains('export') and (identityManager.hasCurrentUserRole('admin') or identityManager.hasCurrentUserRole('bookingManager')) and configuration.bookerETHEnabled}">
+    <p:column
+      id="#{constants.SELECT_CHECK_BOX_COLUMN}"
+      exportable="false">
+      <f:facet name="header">
+        <h:panelGrid
+          columns="1"
+          styleClass="nospace noborder">
+          <h:outputText value="#{messages.select}" />
+          <h:panelGrid
+            columns="2"
+            styleClass="select-icon">
+            <p:commandLink
+              actionListener="#{bookingExportManager.checkAll(true)}"
+              immediate="true"
+              global="false"
+              update="@form"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <i class="far fa-check-square" />
+            </p:commandLink>
+            <p:commandLink
+              actionListener="#{bookingExportManager.checkAll(false)}"
+              immediate="true"
+              global="false"
+              update="@form"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <i class="far fa-square" />
+            </p:commandLink>
+          </h:panelGrid>
+        </h:panelGrid>
+      </f:facet>
+      <h:selectBooleanCheckbox
+        id="#{constants.SELECT_CHECK_BOX}"
+        disabled="#{not entity.isCSVExportableForETHIS()}"
+        value="#{bookingExportManager.selectedBookingsMap[entity]}"
+        title="#{entity.isCSVExportableForETHIS() ? messages.selectBookingHint : messages.selectBookingDisabledHint}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          listener="#{bookingExportManager.selectBooking(entity, bookingExportManager.selectedBookingsMap[entity])}"
+          update="@this, @([id$=buttons])"
+          oncomplete="fixOversize();" />
+      </h:selectBooleanCheckbox>
+    </p:column>
+  </c:if>
+
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/bookingnr.xhtml" />
+  <ui:include src="/fragments/column/bookingdate.xhtml" />
+
+  <c:if test="#{identityManager.hasCurrentUserRole('bookingManager') or identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/fragments/column/booker.xhtml" />
+    <ui:include src="/fragments/column/costcentre.xhtml" />
+    <ui:include src="/fragments/column/account.xhtml" />
+  </c:if>
+
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/orderdate.xhtml" />
+  <ui:include src="/fragments/column/executionperiodstartdate.xhtml" />
+  <ui:include src="/fragments/column/executionperiodenddate.xhtml" />
+  <ui:include src="/fragments/column/total.xhtml" />
+  <ui:include src="/fragments/column/charge-count.xhtml" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('billingCustomerName')}"
+    field="#{fieldPrefix}billingInfo.billingCustomerName"
+    headerText="#{messages.billingCustomer}" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('billingEmail')}"
+    field="#{fieldPrefix}billingInfo.billingEmail"
+    headerText="#{messages.billingEmail}" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('billingAddress')}"
+    field="#{fieldPrefix}billingInfo.billingAddress"
+    headerText="#{messages.billingAddress}">
+    <h:outputText value="#{entity.billingInfo.billingAddress}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/sapNumber.xhtml" />
+  <ui:include src="/fragments/column/sapNumberNext.xhtml" />
+  <ui:include src="/fragments/column/sapRecordedBy.xhtml" />
+  <ui:include src="/fragments/column/debitornumber.xhtml">
+    <ui:param name="fieldPrefix" value="billingInfo." />
+  </ui:include>
+  <ui:include src="/fragments/column/vatnumber.xhtml">
+    <ui:param name="fieldPrefix" value="billingInfo." />
+  </ui:include>
+  <ui:include src="/fragments/column/referencenumber.xhtml">
+    <ui:param name="fieldPrefix" value="billingInfo." />
+  </ui:include>
+
+  <ui:include src="/fragments/column/paid.xhtml" />
+  <ui:include src="/fragments/column/paymentDate.xhtml" />
+  <ui:include src="/fragments/column/cancellationDate.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

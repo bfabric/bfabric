@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+  version="2.2"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+  <persistence-unit
+    name="bfabric"
+    transaction-type="JTA">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <!--Add java:/ prefix for WildFly Deploy -->
+    <jta-data-source>jdbc/bfabric_datasource</jta-data-source>
+    <!--
+      <jta-data-source>java:/jdbc/bfabric_datasource</jta-data-source>
+    -->
+
+    <!-- Validation modes: AUTO, CALLBACK, NONE -->
+    <validation-mode>NONE</validation-mode>
+    <properties>
+      <!--Comment the property for GlassFish deploy -->
+      <!--
+        <property
+        name="packagesToScan"
+        value="org.bfabric" />
+      -->
+      <!--Comment the property for WildFly deploy -->
+      <property
+        name="hibernate.transaction.jta.platform"
+        value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform" />
+      <!-- Fixes "failed to lazily initialize a collection of role" exception -->
+      <property
+        name="hibernate.enable_lazy_load_no_trans"
+        value="true" />
+      <property
+        name="hibernate.cache.use_second_level_cache"
+        value="true" />
+      <property
+        name="hibernate.cache.region.factory_class"
+        value="org.hibernate.cache.ehcache.EhCacheRegionFactory" />
+      <property
+        name="hibernate.id.new_generator_mappings"
+        value="false" />
+      <property
+        name="hibernate.jdbc.use_streams_for_binary"
+        value="false" />
+      <property
+        name="hibernate.jdbc.lob.non_contextual_creation"
+        value="true" />
+      <property
+        name="hibernate.event.merge.entity_copy_observer"
+        value="allow" />
+      <property
+        name="hibernate.dialect"
+        value="org.hibernate.dialect.PostgreSQL10Dialect" />
+      <!--
+        <property
+        name="hibernate.connection.driver"
+        value="org.postgresql.Driver" />
+        <property
+        name="hibernate.show_sql"
+        value="false" />
+        <property
+        name="hibernate.format_sql"
+        value="true" />
+        <property
+        name="hibernate.hbm2ddl.auto"
+        value="update" />
+      -->
+    </properties>
+  </persistence-unit>
+</persistence>

@@ -1,0 +1,212 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="java.lang.Integer" />
+  <p:dialog
+    id="assignMultiplexIdsModalPanel"
+    widgetVar="assignMultiplexIdsModalDialog"
+    draggable="false"
+    resizable="false"
+    modal="true"
+    closable="false"
+    onShow="repositionDialog()">
+    <p:ajax
+      event="close"
+      global="false"
+      listener="#{sampleMultiplexIdBatchManager.resetAssignMultiplexIdsModalPanel}" />
+    <f:facet name="header">
+      <h:outputText value="#{messages.assignMultiplexIds}" />
+    </f:facet>
+    <h:form
+      id="assignMultiplexIds"
+      style="width: auto;">
+      <h:panelGrid
+        id="multiplexIdsGrid"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.multiplexKit}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="multiplexKit" />
+          <ui:param
+            name="required"
+            value="true" />
+          <ui:param
+            name="value"
+            value="#{sampleMultiplexIdBatchManager.selectedMultiplexKit}" />
+          <o:methodParam
+            name="valueChangeListener"
+            value="#{sampleMultiplexIdBatchManager.selectedMultiplexKitChanged}" />
+          <ui:param
+            name="ajaxChange"
+            value="true" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{multiplexKitService.getFilteredOrderedByName}" />
+          <o:methodParam
+            name="itemSelectListener"
+            value="#{sampleMultiplexIdBatchManager.selectedMultiplexIdKitForMultiplexIdAssignmentSelect}" />
+          <ui:param
+            name="itemSelectUpdate"
+            value="assignMultiplexIds" />
+          <ui:param
+            name="ajaxClear"
+            value="true" />
+          <o:methodParam
+            name="clearListener"
+            value="#{sampleMultiplexIdBatchManager.resetInitialMultiplexIdForMultiplexIdAssignmentAndMultiplexIdAssignmentLimit}" />
+          <ui:param
+            name="clearUpdate"
+            value="assignMultiplexIds" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.name}" />
+        </ui:include>
+      </h:panelGrid>
+
+      <h:panelGroup id="multiplexIdGroup">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            rendered="#{not empty sampleMultiplexIdBatchManager.selectedMultiplexKit}"
+            value="#{messages.initialMultiplexId}"
+            title="#{messages.initialMultiplexIdHint}" />
+          <h:panelGroup rendered="#{not empty sampleMultiplexIdBatchManager.selectedMultiplexKit}">
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="listContext"
+                value="initialMultiplexId" />
+              <ui:param
+                name="required"
+                value="true" />
+              <ui:param
+                name="value"
+                value="#{sampleMultiplexIdBatchManager.selectedInitialMultiplexIdForMultiplexIdAssignment}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{sampleMultiplexIdBatchManager.getMultiplexIdsEnabledByMultiplexIdFiltered}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="assignMultiplexIds:remarkGroup" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <ui:param
+                name="clearUpdate"
+                value="assignMultiplexIds:remarkGroup" />
+              <o:methodParam
+                name="clearButtonListener"
+                value="#{sampleMultiplexIdBatchManager.resetInitialMultiplexIdForMultiplexIdAssignmentAndMultiplexIdAssignmentLimit}" />
+              <ui:param
+                name="clearButtonSpecificUpdate"
+                value="@([id$=remarkGroup])" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="includeColumns"
+                value="/multiplexid/autocomplete-columns.xhtml" />
+            </ui:include>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.startPosition}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="startPosition"
+              value="#{sampleMultiplexIdBatchManager.startSampleForMultiplexIdAssignment}"
+              title="#{messages.startPositionsForLabelAssignmentHint}"
+              required="true"
+              styleClass="editWidthExtraLarge"
+              converter="notManagedSelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{sampleMultiplexIdBatchManager.samplesForMultiplexIdAssignment}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="@this, remarkGroup" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.blockCounter}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:inputNumber
+              id="blockCounter"
+              value="#{sampleMultiplexIdBatchManager.blockCounter}"
+              decimalPlaces="0"
+              thousandSeparator=""
+              minValue="1"
+              maxValue="#{Integer.MAX_VALUE}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.blockCounterPrefix}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="blockCounterPrefix"
+              maxlength="#{32 - Integer.MAX_VALUE.toString().length()}"
+              value="#{sampleMultiplexIdBatchManager.blockCounterPrefix}" />
+          </ui:decorate>
+
+          <h:outputText
+            value="#{messages.repeatUntilEnd}"
+            title="#{messages.repeatUntilEndHint}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneRadio value="#{sampleMultiplexIdBatchManager.multiplexIdAssignmentRepeatUntilEnd}">
+              <f:selectItem
+                itemLabel="#{messages.NO}"
+                itemValue="#{false}" />
+              <f:selectItem
+                itemLabel="#{messages.YES}"
+                itemValue="#{true}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="@this, remarkGroup" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <h:panelGroup id="remarkGroup">
+            <h:panelGrid
+              rendered="#{not empty sampleMultiplexIdBatchManager.selectedInitialMultiplexIdForMultiplexIdAssignment and not empty sampleMultiplexIdBatchManager.startSampleForMultiplexIdAssignment}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.remark}:" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:outputText value="#{sampleMultiplexIdBatchManager.getRemarkForMultiplexIdAssignment(sampleMultiplexIdBatchManager.startSampleForMultiplexIdAssignment)}" />
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{sampleMultiplexIdBatchManager.assignMultiplexIdsToSelectedSamples}"
+          value="#{messages.assign}"
+          global="true"
+          update="assignMultiplexIds, #{constants.EDIT}:batchtable"
+          oncomplete="hideDialogOnSuccess(args, 'assignMultiplexIdsModalDialog'); fixOversize();" />
+        <p:commandButton
+          action="#{sampleMultiplexIdBatchManager.cancelAssignMultiplexIds}"
+          value="#{messages.cancel}"
+          resetValues="true"
+          process="@this"
+          update="assignMultiplexIds, @([id$=#{constants.EDIT}])"
+          global="false"
+          oncomplete="PF('assignMultiplexIdsModalDialog').hide(); fixOversize();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

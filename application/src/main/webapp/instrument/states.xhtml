@@ -1,0 +1,85 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('states')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/instrument/state-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="#{instrument.tableContext}_states" />
+      <ui:param
+        name="tableContent"
+        value="#{instrument.states}" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="none" />
+      <ui:param
+        name="paginatorLinks"
+        value="none" />
+      <ui:param
+        name="customListingRows"
+        value="#{instrument.states.size()}" />
+    </ui:include>
+
+    <div style="margin: 20px 0">
+      <h:panelGrid
+        id="status"
+        columns="5"
+        columnClasses="padding-right-small, padding-right-small, padding-right-small, padding-right-small, padding-right-small">
+        <p:column>#{messages.status}</p:column>
+        <p:column />
+        <p:column>#{messages.since}</p:column>
+        <p:column>#{messages.duration}</p:column>
+        <p:column>#{messages.total}</p:column>
+        <p:column><h:outputText value="#{messages.up}" /></p:column>
+        <p:column><h:outputText
+          value="#{instrument.instrumentStatusInfo.up} "
+          styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.up)}" /></p:column>
+        <p:column><h:outputText value="#{instrument.startDateStatusUp}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationUpTimeNowAsText}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationUpTimeTotalNowAsText}" /></p:column>
+        <p:column><h:outputText value="#{messages.bookable}" /></p:column>
+        <p:column><h:outputText
+          value="#{instrument.instrumentStatusInfo.bookable} "
+          styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.bookable)}" /></p:column>
+        <p:column><h:outputText value="#{instrument.startDateStatusBookable}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationBookableTimeNowAsText}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationBookableTimeTotalNowAsText}" /></p:column>
+        <p:column><h:outputText value="#{messages.userVisible}" /></p:column>
+        <p:column><h:outputText
+          value="#{instrument.instrumentStatusInfo.userVisible} "
+          styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.userVisible)}" /></p:column>
+        <p:column><h:outputText value="#{instrument.startDateStatusUserVisible}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationUserVisibleTimeNowAsText}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationUserVisibleTimeTotalNowAsText}" /></p:column>
+        <p:column><h:outputText value="#{messages.userBookable}" /></p:column>
+        <p:column><h:outputText
+          value="#{instrument.instrumentStatusInfo.userBookable} "
+          styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.userBookable)}" /></p:column>
+        <p:column><h:outputText value="#{instrument.startDateStatusUserBookable}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationUserBookableTimeNowAsText}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationUserBookableTimeTotalNowAsText}" /></p:column>
+        <p:column><h:outputText value="#{messages.runEnabled}" /></p:column>
+        <p:column><h:outputText
+          value="#{instrument.instrumentStatusInfo.runEnabled} "
+          styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.runEnabled)}" /></p:column>
+        <p:column><h:outputText value="#{instrument.startDateStatusRunEnabled}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationRunEnabledTimeNowAsText}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationRunEnabledTimeTotalNowAsText}" /></p:column>
+        <p:column><h:outputText value="#{messages.available}" /></p:column>
+        <p:column><h:outputText
+          value="#{instrument.instrumentStatusInfo.available} "
+          styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.available)}" /></p:column>
+        <p:column><h:outputText value="#{instrument.startDateStatusAvailable}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationAvailableTimeNowAsText}" /></p:column>
+        <p:column><h:outputText style="float:right" value="#{instrument.durationAvailableTimeTotalNowAsText}" /></p:column>
+      </h:panelGrid>
+    </div>
+
+    <ui:include src="/fragments/button/switchinstrumentstatus.xhtml" />
+  </c:if>
+</ui:composition>

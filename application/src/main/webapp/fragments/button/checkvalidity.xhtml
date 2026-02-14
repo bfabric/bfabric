@@ -1,0 +1,8 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:commandButton
+    action="#{entityManager.checkValidity()}"
+    value="#{messages.checkValidity}"
+    title="#{messages.checkValidityHint}" />
+</ui:composition>

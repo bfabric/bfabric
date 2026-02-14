@@ -1,0 +1,15 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:button
+    rendered="#{not empty rendered ? rendered : instance.updatable}"
+    outcome="#{not empty outcome ? outcome : 'edit.xhtml'}"
+    value="#{messages.edit}"
+    title="#{title}"
+    styleClass="#{styleClass}">
+    <f:param
+      name="id"
+      value="#{instance.id}" />
+  </p:button>
+</ui:composition>

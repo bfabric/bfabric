@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('failedWorkunitsCount')}">
+    <p:column
+      field="#{fieldPrefix}failedWorkunitsCount"
+      headerText="#{messages.failedWorkunitsCount}" />
+  </c:if>
+</ui:composition>

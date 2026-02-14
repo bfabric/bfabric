@@ -1,0 +1,194 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(instrumentReservation.instrument.visibleByCurrentUser)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.schedule} : #{messages.instrument} #{instrumentReservation.instrument.displayName}" />
+  </ui:define>
+
+  <ui:define name="pageTitleExtension">
+    <p:link
+      rendered="#{not empty instrumentReservation.instrument.urlShowScreen}"
+      outcome="#{instrumentReservation.instrument.urlShowScreen}"
+      title="#{instrumentReservation.instrument.entityInfo}">
+      <f:param
+        name="id"
+        value="#{instrumentReservation.instrument.id}" />
+      <i class="fas fa-microscope icon-button-padding" />
+      <ui:include src="/fragments/context-container-param.xhtml" />
+    </p:link>
+    <p:link
+      rendered="#{not empty instrumentReservation.instrumentReservationSetting.urlShowScreen}"
+      outcome="#{instrumentReservation.instrumentReservationSetting.urlShowScreen}"
+      title="#{instrumentReservation.instrumentReservationSetting.entityInfo}">
+      <f:param
+        name="id"
+        value="#{instrumentReservation.instrumentReservationSetting.id}" />
+      <i class="fas fa-wrench icon-button-padding" />
+      <ui:include src="/fragments/context-container-param.xhtml" />
+    </p:link>
+    <p:link outcome="list.xhtml" title="#{messages.instrumentReservationsOverview}">
+      <i class="far fa-calendar-alt icon-button-padding" />
+      <ui:include src="/fragments/context-container-param.xhtml" />
+    </p:link>
+  </ui:define>
+
+  <ui:define name="body">
+    <style type="text/css">
+        .value {
+            width: 1000px;
+        }
+    </style>
+
+    <h:form id="#{constants.EDIT}">
+      <p:growl id="messages" showDetail="true" />
+
+      <h:panelGroup id="schedule">
+        <h:panelGroup id="approvalStatus">
+          <h:panelGroup rendered="#{instrumentReservationManager.instrumentReservationSetting.approvalRequired}">
+            <ui:include src="/fragments/instrument-reservation-approval-view.xhtml">
+              <ui:param
+                name="id"
+                value="approvalStatusView" />
+              <ui:param
+                name="value"
+                value="#{instrumentReservationManager.view}" />
+              <ui:param
+                name="valueChangeUpdate"
+                value="#{constants.EDIT}:approvalStatus" />
+              <ui:param
+                name="scheduleWidgetVar"
+                value="scheduleWidgetVar" />
+            </ui:include>
+          </h:panelGroup>
+        </h:panelGroup>
+
+        <h:panelGrid columnClasses="value">
+          <p:schedule
+            id="scheduleGrid"
+            widgetVar="scheduleWidgetVar"
+            value="#{instrumentReservationManager.lazyEventModel}"
+            initialDate="#{instrumentReservationManager.initialDate}"
+            showWeekends="#{instrumentReservationManager.instrumentReservationSetting.weekends}"
+            minTime="#{instrumentReservationManager.instrumentReservationSetting.minTimeFormat}"
+            maxTime="#{instrumentReservationManager.instrumentReservationSetting.maxTimeFormat}"
+            slotLabelInterval="#{instrumentReservationManager.instrumentReservationSetting.scheduleSlotLabelInterval}"
+            slotDuration="#{instrumentReservationManager.instrumentReservationSetting.scheduleSlotDuration}"
+            slotEventOverlap="false"
+            slotLabelFormat="['HH:mm']"
+            columnHeaderFormat="week:'dddd DD MMM', month:'dddd'"
+            rightHeaderTemplate="timeGridDay timeGridWeek dayGridMonth"
+            leftHeaderTemplate="prev next today"
+            height="auto"
+            tooltip="true"
+            allDaySlot="false"
+            nextDayThreshold="00:00"
+            view="timeGridWeek"
+            extender="initSchedule">
+            <p:ajax
+              event="dateSelect"
+              listener="#{instrumentReservationManager.onDateSelect}"
+              disabled="#{!instrumentReservation.creatable}"
+              update="eventDetails" />
+            <p:ajax
+              event="eventSelect"
+              listener="#{instrumentReservationManager.onEventSelect}"
+              disabled="#{!instrumentReservation.updatable}" />
+            <p:ajax
+              event="eventMove"
+              listener="#{instrumentReservationManager.onEventMove}"
+              update="schedule, messages" />
+            <p:ajax
+              event="eventResize"
+              listener="#{instrumentReservationManager.onEventResize}"
+              update="schedule, messages" />
+          </p:schedule>
+          <p:remoteCommand
+            name="refreshSchedule"
+            global="false"
+            actionListener="#{instrumentReservationManager.refreshScheduleListener()}"
+            immediate="true"
+            update="@none" />
+          <h:outputScript>
+            function initSchedule() {
+              // Configure fullCalendar
+              // this.cfg.options.contentHeight: 'auto';
+              this.cfg.options.firstDay = 1;
+              this.cfg.options.buttonText = {today: 'today'};
+              this.cfg.views = {
+                week: {
+                  displayEventTime: false
+                },
+                day: {
+                  displayEventTime: false
+                }
+              };
+
+              // Intercept prev/next/today click to refresh schedule!
+              $(document).ready(
+                function () {
+                  $(".fc-prev-button, .fc-next-button, .fc-today-button").on('click.schedule',
+                    function () {
+                      try {
+                        refreshSchedule();
+                      } catch (err) {
+                        console.log(err);
+                      }
+                    }
+                  );
+                }
+              );
+            }
+          </h:outputScript>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <p:dialog
+        header="#{messages.instrumentReservation}"
+        closable="false"
+        widgetVar="eventDialog">
+        <h:panelGroup id="eventDetails">
+          <ui:include src="/instrumentreservation/edit-model.xhtml" />
+          <h:panelGrid
+            columns="2"
+            styleClass="action">
+            <p:commandButton
+              value="#{messages.save}"
+              action="#{instrumentReservationManager.save}"
+              update="eventDetails" />
+            <p:commandButton
+              value="#{messages.cancel}"
+              oncomplete="PF('eventDialog').hide();"
+              process="@this" />
+          </h:panelGrid>
+        </h:panelGroup>
+      </p:dialog>
+
+      <p:dialog
+        header="#{messages.notBookable}"
+        closable="false"
+        id="notBookableWarning"
+        widgetVar="eventNotBookableDialog">
+        <h:outputText value="#{instrumentReservationManager.warningDisabledScheduleMessage}" />
+        <h:panelGroup id="warningPopup">
+          <h:panelGrid
+            columns="1"
+            styleClass="action">
+            <p:commandButton
+              value="#{messages.close}"
+              oncomplete="PF('eventNotBookableDialog').hide();"
+              process="@this" />
+          </h:panelGrid>
+        </h:panelGroup>
+      </p:dialog>
+    </h:form>
+  </ui:define>
+</ui:composition>

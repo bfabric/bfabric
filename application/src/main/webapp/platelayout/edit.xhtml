@@ -1,0 +1,71 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{plateLayoutManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{plateLayout.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.capacity}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:inputNumber
+              id="capacity"
+              value="#{plateLayout.capacity}"
+              thousandSeparator=""
+              decimalPlaces="0"
+              inputStyleClass="editWidthExtraLarge">
+              <p:ajax
+                process="@this"
+                global="false" />
+            </p:inputNumber>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.columns}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:inputNumber
+              id="columns"
+              value="#{plateLayout.columns}"
+              thousandSeparator=""
+              padControl="false"
+              inputStyleClass="editWidthExtraLarge">
+              <p:ajax
+                process="@this"
+                global="false" />
+            </p:inputNumber>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{plateLayout.description}"
+              rows="10"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

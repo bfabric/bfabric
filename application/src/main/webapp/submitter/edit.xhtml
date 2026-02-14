@@ -1,0 +1,133 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{submitterManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{submitter.name}"
+              title="#{messages.submitterNameHint}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{submitter.supervisorEditable}">
+            <ui:include src="/fragments/supervisor-autocomplete-required.xhtml">
+              <ui:param
+                name="instance"
+                value="#{submitter}" />
+            </ui:include>
+          </c:if>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{submitter.enabled}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.valid}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneRadio
+              id="valid"
+              value="#{submitter.valid}"
+              title="#{messages.submitterValidHint}">
+              <f:selectItem
+                id="itemTrue"
+                itemLabel="True"
+                itemValue="true" />
+              <f:selectItem
+                id="itemFalse"
+                itemLabel="False"
+                itemValue="false" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{submitter.description}"
+              title="#{messages.submitterDescriptionHint}"
+              rows="10"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="executable"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.submitter} #{messages.executable}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:panelGrid
+              columns="3"
+              styleClass="noborder-rightpadding">
+              <h:outputText
+                value="#{submitter.executable.displayName}"
+                rendered="#{not empty submitter.executable}" />
+              <p:commandButton
+                value="#{messages.replace}"
+                immediate="true"
+                oncomplete="PF('selectSubmitterExecutableModalDialog').show()"
+                styleClass="inlinemiddle"
+                rendered="#{not empty submitter.executable}"
+                update="#{constants.EDIT}:executable" />
+              <p:commandButton
+                value="#{messages.select}"
+                immediate="true"
+                oncomplete="PF('selectSubmitterExecutableModalDialog').show()"
+                styleClass="inlinemiddle"
+                rendered="#{empty submitter.executable}"
+                update="#{constants.EDIT}:executable" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText
+            value="#{messages.parameters}"
+            rendered="#{not empty submitter.parametersInUse}" />
+          <h:panelGroup rendered="#{not empty submitter.parametersInUse}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="tableType"
+                  value="parameter" />
+                <ui:param
+                  name="tableContext"
+                  value="submitterExecutable" />
+                <ui:param
+                  name="tableContent"
+                  value="#{submitter.parametersInUse}" />
+                <ui:param
+                  name="include"
+                  value="/parameter/edit-columns.xhtml" />
+                <ui:param
+                  name="styleClass"
+                  value="inner" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-edit-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+      <ui:include src="/submitter/select-executable-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

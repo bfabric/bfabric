@@ -1,0 +1,185 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{systemPropertyManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <o:importConstants type="org.bfabric.enums.SystemPropertyDiscriminator" />
+
+      <h:form id="add-systemproperty">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <h:panelGroup rendered="#{not systemProperty.discriminatorEditable}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{systemProperty.name}" />
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{systemProperty.discriminatorEditable}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText
+                value="#{systemProperty.name}"
+                validator="#{stringHelper.validateNameValue}"
+                maxlength="256"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.value}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid id="value" columns="2">
+              <p:colorPicker id="valueC"
+                             rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.C)}" value="#{systemProperty.value}" mode="popup" />
+              <h:inputText id="valueS"
+                           rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.S)}"
+                           value="#{systemProperty.value}"
+                           maxlength="256"
+                           styleClass="editWidthExtraLarge" />
+              <p:selectOneButton id="valueB"
+                                 rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.B)}"
+                                 value="#{systemProperty.value}">
+                <f:selectItem itemLabel="#{messages.yes}" itemValue="#{true}" />
+                <f:selectItem itemLabel="#{messages.no}" itemValue="#{false}" />
+              </p:selectOneButton>
+              <p:inputNumber id="valueL"
+                             rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.L)}"
+                             value="#{systemProperty.value}"
+                             maxValue="9223372036854775808"
+                             minValue="-9223372036854775808"
+                             decimalPlaces="0"
+                             thousandSeparator=""
+                             styleClass="editWidthExtraLarge" />
+              <p:inputNumber id="valueI"
+                             rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.I)}"
+                             value="#{systemProperty.value}"
+                             maxValue="2147483647"
+                             minValue="-2147483648"
+                             decimalPlaces="0"
+                             thousandSeparator=""
+                             styleClass="editWidthExtraLarge" />
+              <p:inputNumber id="valueN"
+                             rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.N)}"
+                             value="#{systemProperty.value}"
+                             thousandSeparator=""
+                             styleClass="editWidthExtraLarge" />
+              <p:datePicker id="valueD"
+                            rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.D)}"
+                            value="#{systemProperty.valueDate}" />
+              <p:message for="valueB" rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.B)}" styleClass="errorMessage" />
+              <p:message for="valueC" rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.C)}" styleClass="errorMessage" />
+              <p:message for="valueD" rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.D)}" styleClass="errorMessage" />
+              <p:message for="valueI" rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.I)}" styleClass="errorMessage" />
+              <p:message for="valueL" rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.L)}" styleClass="errorMessage" />
+              <p:message for="valueN" rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.N)}" styleClass="errorMessage" />
+              <p:message for="valueS" rendered="#{systemProperty.discriminator.equals(SystemPropertyDiscriminator.S)}" styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.discriminator}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              value="#{systemProperty.discriminator}"
+              required="true"
+              valueChangeListener="#{systemProperty.systemPropertyDiscriminatorChanged}"
+              disabled="#{not systemProperty.discriminatorEditable}"
+              immediate="true"
+              styleClass="editWidthExtraLarge">
+              <f:selectItems
+                value="#{SystemPropertyDiscriminator.values()}"
+                var="item"
+                itemLabel="#{item.label}"
+                itemValue="#{item}" />
+              <p:ajax
+                event="change"
+                update="value"
+                global="false" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('configurationManager')}">
+            <h:outputText value="#{messages.environment}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                value="#{systemProperty.environment}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" />
+                <f:selectItems
+                  value="#{contextPropertyManager.allEnvironment}"
+                  var="item"
+                  itemLabel="#{item.value}"
+                  itemValue="#{item.value}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.deployer}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                value="#{systemProperty.deployer}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" />
+                <f:selectItems
+                  value="#{contextPropertyManager.allDeployer}"
+                  var="item"
+                  itemLabel="#{item.value}"
+                  itemValue="#{item.value}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.instance}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                value="#{systemProperty.instance}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" />
+                <f:selectItems
+                  value="#{contextPropertyManager.allInstance}"
+                  var="item"
+                  itemLabel="#{item.value}"
+                  itemValue="#{item.value}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.requiredRole}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                value="#{systemProperty.requiredRole}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" />
+                <f:selectItems
+                  value="#{roleList.resultListOrderByName}"
+                  var="item"
+                  itemLabel="#{item.name}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.comment}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              value="#{systemProperty.comment}"
+              maxlength="64"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

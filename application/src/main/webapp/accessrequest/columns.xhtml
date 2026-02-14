@@ -1,0 +1,99 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.accessRequest} #{messages.id}"
+    exportValue="#{entity.id}">
+    <h:panelGrid
+      columns="3"
+      columnClasses="min-width-37,,"
+      styleClass="noborder noverticalpadding">
+      <h:outputText
+        value="#{entity.id} "
+        title="#{entity.entityInfo}" />
+      <p:commandButton
+        action="#{accessRequestManager.rejectAccessRequest}"
+        value="#{messages.cancel}"
+        rendered="#{entity.pending and not identityManager.hasCurrentUserRole('accessRequestManager') and currentUser.equals(entity.user)}"
+        styleClass="inlinemiddle">
+        <f:param
+          name="id"
+          value="#{entity.id}" />
+      </p:commandButton>
+      <p:button
+        rendered="#{entity.guestCardApplicationPdfRendered}"
+        value="#{messages.pdf}"
+        styleClass="inlinemiddle min-width-60"
+        href="#{entity.getReportPDFLink('user-access-request-fop')}" />
+      <p:button
+        rendered="#{entity.guestCardExtensionPdfRendered}"
+        value="#{messages.pdf}"
+        styleClass="inlinemiddle min-width-60"
+        global="false"
+        href="#{entity.getReportPDFLink('user-access-request-extension-fop')}" />
+      <p:button
+        outcome="/accessrequest/process.xhtml"
+        value="#{messages.process}"
+        styleClass="inlinemiddle min-width-60"
+        rendered="#{entity.pending and identityManager.hasCurrentUserRole('accessRequestManager')}">
+        <f:param
+          name="id"
+          value="#{entity.id}" />
+      </p:button>
+    </h:panelGrid>
+  </p:column>
+
+  <ui:include src="/fragments/column/accessrequesttype.xhtml" />
+
+  <o:importConstants type="org.bfabric.enums.AccessRequestStatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{AccessRequestStatusEnum.values()}" />
+  </ui:include>
+  <ui:include src="/fragments/column/user.xhtml">
+    <ui:param
+      name="entityHint"
+      value="#{entity.userFullContactDetails}" />
+  </ui:include>
+  <p:column
+    field="#{fieldPrefix}address.address"
+    headerText="#{messages.address}"
+    exportValue="#{entity.address.getFullAddress()}">
+    <h:outputLink
+      value="#{entity.address.mapLink}"
+      target="_blank"
+      rel="noopener">
+      <h:outputText value="#{entity.address.getFullAddress()}" />
+    </h:outputLink>
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}accessCardExpiryDate"
+    headerText="#{messages.accessCardExpiryDate}" />
+  <p:column
+    field="#{fieldPrefix}accessCardCode"
+    headerText="#{messages.accessCardCode}" />
+  <p:column
+    field="#{fieldPrefix}accessCardNumber"
+    headerText="#{messages.accessCardNumber}" />
+  <p:column
+    field="#{fieldPrefix}accessProfile"
+    headerText="#{messages.accessProfile}" />
+  <p:column
+    field="#{fieldPrefix}accessGranted"
+    headerText="#{messages.accessGranted}" />
+  <p:column
+    field="#{fieldPrefix}accessRevoked"
+    headerText="#{messages.accessRevoked}" />
+  <p:column
+    rendered="#{identityManager.hasCurrentUserRole('accessRequestManager')}"
+    field="#{fieldPrefix}description"
+    headerText="#{messages.comment}">
+  </p:column>
+
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

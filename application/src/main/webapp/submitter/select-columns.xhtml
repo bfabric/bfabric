@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column exportable="false">
+    <p:commandButton
+      actionListener="#{parent.setSubmitterAndParameters(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      global="false"
+      oncomplete="PF('selectSubmitterModalDialog').hide()"
+      update="@([id$=submitter])" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.submitter} #{messages.id}" />
+  <p:column
+    field="#{fieldPrefix}name"
+    headerText="#{messages.name}">
+    <p:link
+      outcome="#{entity.urlShowScreen}"
+      value="#{entity.name}"
+      target="_blank"
+      rel="noopener">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+    </p:link>
+  </p:column>
+</ui:composition>

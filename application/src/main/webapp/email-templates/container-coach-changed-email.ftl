@@ -1,0 +1,1 @@
+<#include "coach-changed-email.ftl"/>

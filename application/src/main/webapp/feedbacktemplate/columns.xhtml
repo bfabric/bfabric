@@ -1,0 +1,43 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{showColumns.contains('addTemplateButton')}"
+    exportable="false"
+    headerText="#{messages.available}">
+    <p:commandButton
+      id="addTemplateButton"
+      value="#{messages.add}"
+      title="#{messages.addFeedbackQuestionToTemplateHint}"
+      action="#{feedbackQuestion.addTemplate(entity)}"
+      disabled="#{feedbackQuestion.templates.contains(entity)}"
+      disableOnAjax="false"
+      immediate="true"
+      update="@([id$=feedback-templates])"
+      process="@this"
+      styleClass="inline" />
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('removeTemplateButton')}"
+    exportable="false"
+    headerText="#{messages.selected}">
+    <p:commandButton
+      id="removeTemplateButton"
+      value="#{messages.remove}"
+      title="#{messages.removeFeedbackQuestionFromTemplateHint}"
+      action="#{feedbackQuestion.removeTemplate(entity)}"
+      immediate="true"
+      update="@([id$=feedback-templates])"
+      process="@this"
+      styleClass="inline" />
+  </p:column>
+
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/feedbacktemplatetype.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/defaultfortype.xhtml" />
+  <ui:include src="/fragments/column/templatequestion-count.xhtml" />
+  <ui:include src="/fragments/column/feedback-count.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

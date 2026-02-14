@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('help')}">
+    <p:column
+      field="#{fieldPrefix}help"
+      headerText="#{messages.help}">
+      <h:outputText value="#{entity.help}" />
+      <ui:include src="/application/help.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

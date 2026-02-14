@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('instruments') and identityManager.hasCurrentUserRole('annotationManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="instrument" />
+      <ui:param name="tableContext" value="#{annotation.tableContext}" />
+      <ui:param name="tableContent" value="#{instrumentList.getLazyModelByAnnotation(annotation)}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

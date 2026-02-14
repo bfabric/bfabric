@@ -1,0 +1,38 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.entity} #{messages.count}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/fragments/database-query-table-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="viewList" />
+      <ui:param
+        name="tableContent"
+        value="#{viewList.entityCountOverview}" />
+      <ui:param
+        name="tableColumns"
+        value="#{viewList.entityCountOverview.columns}" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="none" />
+      <ui:param
+        name="paginatorLinks"
+        value="none" />
+      <ui:param
+        name="customListingRows"
+        value="#{viewList.entityCountOverview.size()}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

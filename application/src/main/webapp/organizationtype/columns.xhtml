@@ -1,0 +1,14 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/academic.xhtml" />
+  <ui:include src="/fragments/column/domestic.xhtml" />
+  <c:if test="#{identityManager.hasCurrentUserRole('bookingReader')}">
+    <ui:include src="/fragments/column/extensible.xhtml" />
+    <ui:include src="/fragments/column/color.xhtml" />
+    <ui:include src="/fragments/column/organization-count.xhtml" />
+    <ui:include src="/fragments/column/company-count.xhtml" />
+    <ui:include src="/fragments/column/booking-size.xhtml" />
+  </c:if>
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

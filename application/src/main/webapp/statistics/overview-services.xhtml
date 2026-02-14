@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.services} #{messages.overview}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form>
+      <p:spacer height="10" />
+      <h:panelGrid columns="1">
+        <h:panelGroup>
+          <p:lineChart
+            model="#{lineChart.get([statisticsList.getServicesOverviewYearly(), statisticsList.getSamplesOverviewYearly()], messages.kpiServices, messages.year, messages.total, null, [messages.services, messages.samples])}"
+            style="height:600px; width:1400px" />
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

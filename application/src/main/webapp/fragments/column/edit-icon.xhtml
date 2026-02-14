@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('editIcon')}">
+    <p:column
+      exportable="false"
+      headerText="#{not empty headerText ? headerText : messages.edit}">
+      <p:link
+        rendered="#{not empty entity.urlEditScreen}"
+        outcome="#{entity.urlEditScreen}"
+        title="#{entityHint}">
+        <f:param
+          name="id"
+          value="#{entity.id}" />
+        <i class="fas fa-edit" />
+      </p:link>
+    </p:column>
+  </c:if>
+</ui:composition>

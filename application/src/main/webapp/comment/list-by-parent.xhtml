@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.CommentDiscriminator" />
+  <c:if test="#{not empty addForm and addForm}">
+    <h:form id="enclosingForm">
+      <ui:include src="list-by-parent-content.xhtml">
+        <ui:param
+          name="enclosingFormId"
+          value="enclosingForm" />
+      </ui:include>
+    </h:form>
+  </c:if>
+  <c:if test="#{empty addForm or not addForm}">
+    <ui:include src="list-by-parent-content.xhtml">
+      <ui:param
+        name="enclosingFormId"
+        value="#{enclosingFormId}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

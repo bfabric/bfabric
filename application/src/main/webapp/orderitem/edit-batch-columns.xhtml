@@ -1,0 +1,241 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+
+  <c:set
+    var="orderEntity"
+    value="#{orderItemBatchManager.order}"
+    scope="request" />
+  <c:set
+    var="serviceTypeEntity"
+    value="#{orderItemBatchManager.order.serviceType}"
+    scope="request" />
+  <c:set
+    var="type"
+    value="#{orderItemBatchManager.order.sampleType.name}"
+    scope="request" />
+  <c:set
+    var="sampleEntity"
+    value="#{entity.sample}" />
+
+  <p:column
+    exportable="false"
+    style="text-align:center">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.delete}" />
+      </div>
+    </f:facet>
+    <p:commandButton
+      actionListener="#{orderItemBatchManager.deleteChanged(entity)}"
+      value="#{messages.delete}"
+      global="true"
+      process="@this"
+      update="#{constants.EDIT}:edit-batch-orderitem-batchtable, #{constants.EDIT}:addNewItemsPanel, #{constants.EDIT}:buttons"
+      oncomplete="fixOversize();"
+      styleClass="inline"
+      style="width:50px;min-width:50px" />
+  </p:column>
+
+  <ui:include src="/fragments/batch/clone-column.xhtml" />
+
+  <ui:include src="/fragments/batch/select-one-menu-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.SERVICE}" />
+    <ui:param
+      name="rendered"
+      value="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.SERVICE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.service}" />
+    <ui:param
+      name="displayRequired"
+      value="true" />
+    <ui:param
+      name="value"
+      value="#{entity.service}" />
+    <ui:param
+      name="title"
+      value="#{entity.service.name}. #{entity.service.description}" />
+    <ui:param
+      name="items"
+      value="#{serviceTypeEntity.servicesEnabled}" />
+  </ui:include>
+
+  <p:column
+    rendered="#{orderEntity.orderItemTubeIdRendered}"
+    id="#{constants.ORDER_ITEM_TUBE_ID}#{constants.COLUMN}"
+    exportValue="#{entity.tubeId}">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.tubeIdOrderItem}" />
+      </div>
+    </f:facet>
+    <div class="display">
+      <h:panelGroup id="#{constants.ORDER_ITEM_TUBE_ID}#{constants.GROUP}#{constants.COLUMN}#{constants.INPUT}">
+        <h:outputText
+          id="#{constants.ORDER_ITEM_TUBE_ID}#{constants.COLUMN}#{constants.INPUT}"
+          value="#{entity.tubeId}"
+          styleClass="#{entity.rowStyleClassCoupled}" />
+        <h:panelGroup rendered="#{not empty entity.rowStyleClassCoupled}">
+          <i class="fas fa-exclamation warn" />
+        </h:panelGroup>
+        <p:tooltip
+          rendered="#{not empty entity.rowStyleClassCoupled}"
+          for="#{constants.ORDER_ITEM_TUBE_ID}#{constants.GROUP}#{constants.COLUMN}#{constants.INPUT}"
+          value="#{entity.rowTitleCoupled}" />
+      </h:panelGroup>
+    </div>
+  </p:column>
+
+  <p:column
+    rendered="#{orderEntity.sampleTubeIdRendered}"
+    id="#{constants.SAMPLE_TUBE_ID}#{constants.COLUMN}"
+    exportValue="#{entity.sample.tubeId}">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.tubeId}" />
+      </div>
+    </f:facet>
+    <div class="display">
+      <h:panelGroup id="#{constants.SAMPLE_TUBE_ID}#{constants.GROUP}#{constants.COLUMN}#{constants.INPUT}">
+        <h:outputText
+          id="#{constants.SAMPLE_TUBE_ID}#{constants.COLUMN}#{constants.INPUT}"
+          value="#{entity.sample.tubeId}"
+          styleClass="#{entity.rowStyleClassCoupled}" />
+        <h:panelGroup rendered="#{not empty entity.rowStyleClassCoupled}">
+          <i class="fas fa-exclamation warn" />
+        </h:panelGroup>
+        <p:tooltip
+          rendered="#{not empty entity.rowStyleClassCoupled}"
+          for="#{constants.SAMPLE_TUBE_ID}#{constants.GROUP}#{constants.COLUMN}#{constants.INPUT}"
+          value="#{entity.rowTitleCoupled}" />
+      </h:panelGroup>
+    </div>
+  </p:column>
+
+  <p:column
+    id="#{constants.SAMPLE_NAME}#{constants.COLUMN}"
+    styleClass="#{constants.SAMPLE_NAME}#{rowIndex}"
+    exportHeaderValue="#{messages.sampleName}"
+    exportValue="#{entity.sample.name}">
+    <f:facet name="header">
+      <h:panelGrid
+        id="generate-button"
+        columns="3"
+        styleClass="nobordernospace">
+        <p:inputText
+          id="samplePrefixInput"
+          value="#{orderItemBatchManager.sampleNamePrefix}"
+          title="#{messages.generateSampleNamePrefixHint} #{messages.orderSampleNameHint}"
+          disabled="#{empty orderItemBatchManager.createdList or orderItemBatchManager.sampleNamesGenerated}"
+          maxlength="250"
+          style="width:70px;min-width:70px;">
+          <p:keyFilter regEx="/#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}/i" />
+        </p:inputText>
+        <p:commandButton
+          action="#{orderItemBatchManager.generateSampleNames}"
+          value="#{messages.generate}"
+          title="#{messages.generateSampleNameHint}"
+          disabled="#{empty orderItemBatchManager.createdList or orderItemBatchManager.sampleNamesGenerated}"
+          disableOnAjax="false"
+          styleClass="noleftborderselect"
+          style="width:70px;min-width:70px;"
+          oncomplete="fixOversize();"
+          process="@this, samplePrefixInput"
+          update="#{tableContext}#{tableType}table, #{constants.EDIT}:assignSampleValuesButton, #{constants.EDIT}:buttons, #{constants.EDIT}:batchtable:generate-button" />
+      </h:panelGrid>
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.sampleName}" />
+        <ui:param
+          name="required"
+          value="true" />
+      </ui:include>
+    </f:facet>
+    <p:inputText
+      id="#{constants.SAMPLE_NAME}#{constants.INPUT}"
+      value="#{entity.sample.name}"
+      valueChangeListener="#{orderItemBatchManager.sampleNameChanged}"
+      title="#{messages.orderSampleNameHint}"
+      maxlength="#{constants.MAX_LENGTH_NAME}"
+      styleClass="inline-input #{constants.SAMPLE_NAME}#{constants.INPUT}#{rowIndex}"
+      style="width:140px;min-width:140px;">
+      <f:validateRegex pattern="#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}" />
+      <p:keyFilter regEx="/#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}/i" preventPaste="false" />
+      <p:ajax
+        event="change"
+        global="false"
+        process="@this"
+        update="#{constants.SAMPLE_NAME}#{constants.MESSAGE}"
+        listener="#{orderItemBatchManager.updateCoupling(entity, constants.SAMPLE_NAME)}" />
+    </p:inputText>
+    <div>
+      <h:message
+        id="#{constants.SAMPLE_NAME}#{constants.MESSAGE}"
+        for="#{constants.SAMPLE_NAME}#{constants.INPUT}"
+        styleClass="errorMessageField" />
+    </div>
+  </p:column>
+
+  <c:forEach
+    items="#{sampleAttributeHelper.getAttributeEnumsExcluding(type, true, false, [SampleAttributeEnum.TUBE_ID])}"
+    var="sampleAttributeEnum">
+    <ui:decorate template="/fragments/batch/sample-attribute-column.xhtml">
+      <ui:param
+        name="columnId"
+        value="#{sampleAttributeEnum.name}" />
+      <ui:param
+        name="rendered"
+        value="#{sampleAttributeHelper.isAttributeRenderedForBatchOrderItemScreen(type, sampleAttributeEnum, orderEntity)}" />
+      <ui:param
+        name="headerText"
+        value="#{sampleAttributeEnum.labelWithUnit}" />
+      <ui:param
+        name="displayRequired"
+        value="#{not empty orderItemBatchManager.types ? false : sampleAttributeHelper.isDisplayRequired(sampleAttributeEnum, type)}" />
+      <ui:param
+        name="displayRequiredCell"
+        value="#{sampleAttributeHelper.isDisplayRequiredCell(sampleAttributeEnum, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="cellInputEnabled"
+        value="#{sampleAttributeHelper.isCellInputEnabled(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="watermarkValue"
+        value="#{sampleAttributeHelper.getWatermarkValueForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="watermarkValueHint"
+        value="#{sampleAttributeHelper.getWatermarkValueHintForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="value"
+        value="#{sampleEntity[fn:replace(sampleAttributeEnum.name.concat('DELIMITER_VALUE'),'DELIMITER_VALUE','')]}" />
+      <ui:param
+        name="sampleAttributeEnum"
+        value="#{sampleAttributeEnum}" />
+      <ui:param
+        name="attributeCouplingEnabled"
+        value="true" />
+    </ui:decorate>
+  </c:forEach>
+
+  <ui:include src="edit-batch-columns-item-specific.xhtml" />
+</ui:composition>

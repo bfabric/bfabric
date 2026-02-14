@@ -1,0 +1,145 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGroup>
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id.xhtml" />
+        <ui:include src="/fragments/details/instrument.xhtml">
+          <ui:param
+            name="tab"
+            value="reservationsettings" />
+        </ui:include>
+
+        <h:outputText value="#{messages.validInterval}"
+                      title="#{messages.validIntervalHint}" />
+        <h:outputText value="#{instrumentReservationSetting.validIntervalAsString}" />
+
+        <h:outputText value="#{messages.weekends}"
+                      title="#{messages.weekendsHint}" />
+        <h:outputText value="#{instrumentReservationSetting.weekends}" />
+
+        <c:if test="#{not empty instrumentReservationSetting.slotDuration}">
+          <h:outputText value="#{messages.slotDuration}"
+                        title="#{messages.slotDurationHint}" />
+          <h:outputText value="#{instrumentReservationSetting.slotDurationTimeFormat}" />
+
+          <h:outputText value="#{messages.slotShiftTime}"
+                        title="#{messages.slotShiftTimeHint}" />
+          <h:outputText value="#{instrumentReservationSetting.slotShiftTimeFormat}" />
+        </c:if>
+
+        <h:outputText value="#{messages.slotLabelInterval}"
+                      title="#{messages.slotLabelIntervalHint}" />
+        <h:outputText value="#{instrumentReservationSetting.slotLabelIntervalTimeFormat}" />
+
+        <h:outputText value="#{messages.minDuration}"
+                      title="#{messages.minDurationHint}" />
+        <h:outputText value="#{instrumentReservationSetting.minDurationTimeFormat}" />
+
+        <c:if test="#{not empty instrumentReservationSetting.maxDuration}">
+          <h:outputText value="#{messages.maxDuration}"
+                        title="#{messages.maxDurationHint}" />
+          <h:outputText value="#{instrumentReservationSetting.maxDurationTimeFormat}" />
+        </c:if>
+
+        <c:if test="#{not empty instrumentReservationSetting.slotMinTime}">
+          <h:outputText value="#{messages.slotMinTime}"
+                        title="#{messages.slotMinTimeHint}" />
+          <h:outputText value="#{instrumentReservationSetting.slotMinTimeFormat}" />
+        </c:if>
+
+        <c:if test="#{not empty instrumentReservationSetting.slotMaxTime}">
+          <h:outputText value="#{messages.slotMaxTime}"
+                        title="#{messages.slotMaxTimeHint}" />
+          <h:outputText value="#{instrumentReservationSetting.slotMaxTimeFormat}" />
+        </c:if>
+
+        <c:if test="#{not empty instrumentReservationSetting.dayDuration}">
+          <h:outputText value="#{messages.dayDuration}"
+                        title="#{messages.dayDurationHint}" />
+          <h:outputText value="#{instrumentReservationSetting.dayDurationFormat}" />
+        </c:if>
+
+        <c:if test="#{not empty instrumentReservationSetting.bookingAheadMaxDuration}">
+          <h:outputText value="#{messages.bookingAheadMaxDuration}"
+                        title="#{messages.bookingAheadMaxDurationHint}" />
+          <h:outputText value="#{instrumentReservationSetting.bookingAheadMaxDurationFormat}" />
+        </c:if>
+
+        <c:if test="#{not empty instrumentReservationSetting.bookingAheadMinDuration}">
+          <h:outputText value="#{messages.bookingAheadMinDuration}"
+                        title="#{messages.bookingAheadMinDurationHint}" />
+          <h:outputText value="#{instrumentReservationSetting.bookingAheadMinDurationFormat}" />
+        </c:if>
+
+        <h:outputText value="#{messages.operatorRequired}"
+                      title="#{messages.operatorRequiredHint}" />
+        <h:outputText value="#{instrumentReservationSetting.operatorRequired}" />
+
+        <h:outputText value="#{messages.approvalRequired}"
+                      title="#{messages.approvalRequiredHint}" />
+        <h:outputText value="#{instrumentReservationSetting.approvalRequired}" />
+
+        <h:outputText value="#{messages.approvalSkipInternal}"
+                      title="#{messages.approvalSkipInternalHint}" />
+        <h:outputText value="#{instrumentReservationSetting.approvalSkipInternal}" />
+
+        <h:outputText value="#{messages.chargeTimeUnit}"
+                      title="#{messages.chargeTimeUnitHint}" />
+        <h:outputText value="#{instrumentReservationSetting.chargeTimeUnit}" />
+
+        <h:outputText value="#{messages.reminderDays}"
+                      title="#{messages.reminderDaysHint}" />
+        <h:outputText value="#{instrumentReservationSetting.reminderDays}" />
+
+        <h:outputText value="#{messages.notifyInstrumentSupervisor}"
+                      title="#{messages.notifyInstrumentSupervisorHint}" />
+        <h:outputText value="#{instrumentReservationSetting.notifyInstrumentSupervisor}" />
+
+        <h:outputText value="#{messages.chargeable}"
+                      title="#{messages.chargeableHint}" />
+        <h:outputText value="#{instrumentReservationSetting.chargeable}" />
+
+        <h:outputText value="#{messages.notifyCoach}"
+                      title="#{messages.notifyCoachHint}" />
+        <h:outputText value="#{instrumentReservationSetting.notifyCoach}" />
+
+        <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="4"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit.xhtml" />
+        <ui:include src="/fragments/button/delete.xhtml" />
+        <p:button
+          outcome="/instrumentschedule/show.xhtml"
+          value="#{messages.schedule}"
+          rendered="#{instrumentReservationSetting.instrument.bookableByCurrentUser}">
+          <f:param
+            name="instrumentId"
+            value="#{instrumentReservationSetting.instrument.id}" />
+          <f:param
+            name="slot"
+            value="#{instrumentReservationSetting.validFromDateSlot}" />
+        </p:button>
+        <p:button
+          outcome="/instrument/show.xhtml"
+          value="#{messages.list}">
+          <f:param
+            name="id"
+            value="#{instrumentReservationSetting.instrument.id}" />
+          <f:param
+            name="tab"
+            value="reservationsettings" />
+        </p:button>
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

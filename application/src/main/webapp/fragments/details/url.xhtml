@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.url}">
+    <h:outputText value="#{messages.url}" />
+    <h:panelGroup rendered="#{instance.validUrl}">
+      <h:outputLink
+        value="#{instance.url}"
+        target="_blank"
+        rel="noopener">
+        <h:outputText value="#{stringHelper.truncate(instance.url, 80)}" title="#{instance.url}" />
+      </h:outputLink>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{not instance.validUrl}">
+      <div title="#{messages.invalidUrl}">
+        <h:outputText value="#{instance.url} " />
+        <i class="fas fa-exclamation-circle warning" />
+      </div>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

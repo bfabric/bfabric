@@ -1,0 +1,206 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{feedbackQuestionManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.question}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputTextarea
+              id="questionText"
+              value="#{feedbackQuestion.value}"
+              rows="5"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="typeGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.answerType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="type"
+              value="#{feedbackQuestion.feedbackQuestionType}"
+              title="#{messages.answerTypeHint}"
+              converter="omnifaces.SelectItemsConverter"
+              styleClass="editWidthExtraLarge">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true"
+                noSelectionOption="true" />
+              <f:selectItems
+                value="#{feedbackQuestionTypeList.resultList}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                listener="#{feedbackQuestionManager.addCustomOption(feedbackQuestion.feedbackQuestionType)}"
+                update="typeGrid"
+                global="false" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText
+            value="#{messages.customOptions}"
+            rendered="#{feedbackQuestion.feedbackQuestionType.requiresCustomOptions}" />
+          <h:panelGroup
+            id="customOptions"
+            rendered="#{feedbackQuestion.feedbackQuestionType.requiresCustomOptions}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:panelGrid
+                columns="3">
+                <p:commandLink
+                  rendered="#{empty feedbackQuestion.customOptions}"
+                  action="#{feedbackQuestion.addCustomOption}"
+                  title="#{messages.addCustomAttributeHint}"
+                  process="#{constants.EDIT}:customOptions"
+                  update="#{constants.EDIT}:customOptions"
+                  styleClass="font-larger">
+                  <i class="fas fa-plus-square" />
+                </p:commandLink>
+                <ui:repeat
+                  id="customOption"
+                  value="#{feedbackQuestion.customOptions}"
+                  var="item">
+                  <h:panelGrid
+                    id="wtf"
+                    columns="6"
+                    styleClass="repeatform align-middle">
+                    <h:inputText
+                      id="optionValue"
+                      value="#{item.value}"
+                      valueChangeListener="#{item.customOptionValueChanged}"
+                      styleClass="editWidthExtraLarge" />
+                    <p:commandLink
+                      action="#{feedbackQuestion.addCustomOption}"
+                      title="#{messages.addCustomOptionHint}"
+                      process="#{constants.EDIT}:customOptions"
+                      update="#{constants.EDIT}:customOptions"
+                      styleClass="font-larger">
+                      <i class="fas fa-plus-square" />
+                    </p:commandLink>
+                    <p:commandLink
+                      action="#{feedbackQuestion.removeCustomOption(item)}"
+                      immediate="true"
+                      title="#{messages.removeCustomOptionHint}"
+                      process="#{constants.EDIT}:customOptions"
+                      update="#{constants.EDIT}:customOptions"
+                      styleClass="font-larger">
+                      <i class="fas fa-minus-square" />
+                    </p:commandLink>
+                    <p:commandLink
+                      action="#{item.moveOrderPositionUp(feedbackQuestion.customOptions)}"
+                      title="#{messages.moveOrderPositionUpHint}"
+                      update="#{constants.EDIT}:customOptions"
+                      styleClass="font-larger">
+                      <i class="fas fa-chevron-circle-up" />
+                    </p:commandLink>
+                    <p:commandLink
+                      action="#{item.moveOrderPositionDown(feedbackQuestion.customOptions)}"
+                      title="#{messages.moveOrderPositionDownHint}"
+                      update="#{constants.EDIT}:customOptions"
+                      styleClass="font-larger">
+                      <i class="fas fa-chevron-circle-down" />
+                    </p:commandLink>
+                    <p:message for="optionValue" />
+                  </h:panelGrid>
+                </ui:repeat>
+                <p:message for="customOptions" />
+              </h:panelGrid>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.answerRequired}"
+            title="#{messages.answerRequiredHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneRadio
+              id="answerRequired"
+              value="#{feedbackQuestion.required}">
+              <f:selectItem
+                itemLabel="True"
+                itemValue="true" />
+              <f:selectItem
+                itemLabel="False"
+                itemValue="false" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.templates}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:panelGroup id="feedback-templates">
+              <h:panelGroup>
+                <h:outputText
+                  value="No template selected yet!"
+                  rendered="#{empty feedbackQuestion.templates}" />
+                <h:panelGroup rendered="#{not empty feedbackQuestion.templates}">
+                  <ui:include src="/fragments/datatable.xhtml">
+                    <ui:param
+                      name="tableContext"
+                      value="selectedtemplates" />
+                    <ui:param
+                      name="tableType"
+                      value="feedbacktemplate" />
+                    <ui:param
+                      name="tableContent"
+                      value="#{feedbackQuestion.templates}" />
+                    <ui:param
+                      name="showColumns"
+                      value="removeTemplateButton" />
+                    <ui:param
+                      name="paginator"
+                      value="false" />
+                    <ui:param
+                      name="styleClass"
+                      value="inner" />
+                  </ui:include>
+                </h:panelGroup>
+              </h:panelGroup>
+              <h:panelGroup styleClass="margin-top-4">
+                <ui:include src="/fragments/datatable.xhtml">
+                  <ui:param
+                    name="tableContext"
+                    value="all" />
+                  <ui:param
+                    name="tableType"
+                    value="feedbacktemplate" />
+                  <ui:param
+                    name="tableContent"
+                    value="#{feedbackTemplateList.updatableFeedbackTemplates}" />
+                  <ui:param
+                    name="showColumns"
+                    value="addTemplateButton" />
+                  <ui:param
+                    name="styleClass"
+                    value="inner" />
+                </ui:include>
+              </h:panelGroup>
+            </h:panelGroup>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

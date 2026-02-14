@@ -1,0 +1,145 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <!-- Header info -->
+  <fo:static-content flow-name="xsl-region-before">
+    <fo:table
+      table-layout="fixed"
+      width="100%"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="9pt">
+      <c:if test="#{reportPageLayoutLandscape}">
+        <fo:table-column column-width="230mm" />
+        <fo:table-column column-width="60mm" />
+      </c:if>
+      <c:if test="#{not reportPageLayoutLandscape}">
+        <fo:table-column column-width="145mm" />
+        <fo:table-column column-width="60mm" />
+      </c:if>
+      <fo:table-body>
+        <fo:table-row>
+          <fo:table-cell>
+            <ui:include src="header-logo.xhtml" />
+          </fo:table-cell>
+          <fo:table-cell>
+            <fo:table
+              table-layout="fixed"
+              width="100%">
+              <fo:table-column column-width="60mm" />
+              <fo:table-body>
+                <c:if test="#{not empty configuration.deployerAddressSupplement}">
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:block
+                        font-weight="bold"
+                        padding-top="2mm"
+                        padding-bottom="3mm">
+                        <h:outputText value="#{configuration.deployerAddressSupplement}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </c:if>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-size="7.5pt">
+                      <h:outputText value="#{configuration.deployerAddressStreet}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-size="7.5pt">
+                      <h:outputText value="#{configuration.deployerAddressCityZip}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-size="7.5pt">
+                      <h:outputText value="#{configuration.deployerAddressCountry}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <c:if test="#{not empty configuration.deployerPhoneNumber}">
+                  <fo:table-row>
+                    <fo:table-cell>
+                      <fo:table
+                        table-layout="fixed"
+                        width="100%">
+                        <fo:table-column column-width="10mm" />
+                        <fo:table-column column-width="50mm" />
+                        <fo:table-body>
+                          <fo:table-row>
+                            <fo:table-cell>
+                              <fo:block font-size="7.5pt">
+                                <h:outputText value="Phone " />
+                              </fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell>
+                              <fo:block font-size="7.5pt">
+                                <h:outputText value="#{configuration.deployerPhoneNumber}" />
+                              </fo:block>
+                            </fo:table-cell>
+                          </fo:table-row>
+                        </fo:table-body>
+                      </fo:table>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </c:if>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-size="7.5pt">
+                      <h:outputText value="&#160;" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-size="7.5pt">
+                      <h:outputText value="#{coach.name} #{coach.phone}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-size="7.5pt">
+                      <h:outputText value="&#160;" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:table-cell>
+        </fo:table-row>
+      </fo:table-body>
+    </fo:table>
+  </fo:static-content>
+
+  <!--Footer-->
+  <fo:static-content flow-name="xsl-region-after">
+    <fo:block font-size="8">
+      <c:if test="#{not footerGenerationInfo}">
+        <fo:block-container
+          position="absolute"
+          left="#{reportPageLayoutLandscape ? '230mm' : '140mm'}"
+          width="50mm"
+          top="0mm">
+          <fo:block text-align="right">
+            <h:outputText value="Page " />
+            <fo:page-number />/<fo:page-number-citation ref-id="last-page" />
+          </fo:block>
+        </fo:block-container>
+      </c:if>
+      <c:if test="#{footerGenerationInfo}">
+        <fo:block-container top="0mm">
+          <fo:block text-align="center">
+            Page&#160;<fo:page-number />&#160;created&#160;by&#160;#{identityManager.currentUser.name}&#160;(#{identityManager.currentUser.login})&#160;
+            <h:outputText value="#{identityManager.now}" />
+          </fo:block>
+        </fo:block-container>
+      </c:if>
+    </fo:block>
+  </fo:static-content>
+</ui:composition>

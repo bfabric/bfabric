@@ -1,0 +1,45 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid columns="2" columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/description-enabled-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid columns="5" styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+        <ui:include src="/fragments/button/switchenabled.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.steps} (#{instance.pageflowStepPositions.size()})" />
+    </h:panelGrid>
+
+    <h:panelGroup>
+      <h:outputText value="#{messages.noStepsYet}" styleClass="pending" rendered="#{empty instance.pageflowStepPositions}" />
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param name="include" value="/pageflow/step-position-columns.xhtml" />
+        <ui:param name="tableContext" value="pageflow" />
+        <ui:param name="tableContent" value="#{instance.pageflowStepPositions}" />
+      </ui:include>
+      <h:panelGrid columns="2" styleClass="action">
+        <p:button outcome="/pageflow/addStep.xhtml" value="#{messages.add}" rendered="#{instance.updatable}">
+          <f:param name="id" value="#{instance.id}" />
+        </p:button>
+        <h:form rendered="#{not empty instance.pageflowStepPositions}">
+          <p:commandButton rendered="#{instance.lastPageflowStepPosition.deletable}"
+                           action="#{pageflowManager.removePageflowStepPosition(instance.lastPageflowStepPosition)}"
+                           value="#{messages.delete} #{messages.step} '#{instance.lastPageflowStepPosition.pageflowStep.name}'" />
+        </h:form>
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

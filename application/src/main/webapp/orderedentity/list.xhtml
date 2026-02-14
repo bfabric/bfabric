@@ -1,0 +1,95 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('containerManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText
+      value="#{messages.dropdownPositions}"
+      rendered="#{empty orderedEntityManager.entityClassName}" />
+    <h:outputText
+      value="#{messages.dropdownPositions}: #{orderedEntityManager.entityClassName}"
+      rendered="#{not empty orderedEntityManager.entityClassName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:outputText rendered="#{empty orderedEntityManager.entityClassNames}" value="#{messages.noDropdownClassesAccessible}" />
+    <h:form rendered="#{not empty orderedEntityManager.entityClassNames}">
+      <h:selectOneMenu
+        value="#{orderedEntityManager.entityClassName}"
+        valueChangeListener="#{orderedEntityManager.entityClassNameChanged}">
+        <f:selectItem itemLabel="" />
+        <f:selectItems
+          value="#{orderedEntityManager.entityClassNames}"
+          var="item"
+          itemLabel="#{item}" />
+        <p:ajax
+          event="change"
+          update="entitiesTableForm" />
+      </h:selectOneMenu>
+    </h:form>
+
+    <p:spacer height="10" />
+
+    <h:form id="entitiesTableForm">
+      <p:dataTable
+        id="entitiesTable"
+        rendered="#{not empty orderedEntityManager.entityClassName}"
+        value="#{orderedEntityManager.entities}"
+        var="entity">
+        <p:column
+          exportable="false"
+          styleClass="nowrap"
+          headerText="#{messages.move}">
+          <p:commandLink
+            action="#{orderedEntityManager.moveOrderPositionStart(entity)}"
+            title="#{messages.moveOrderPositionStartHint}"
+            update="entitiesTable">
+            <i class="fas fa-arrow-circle-up" />
+          </p:commandLink>
+          <p:commandLink
+            action="#{orderedEntityManager.moveOrderPositionUp(entity)}"
+            title="#{messages.moveOrderPositionUpHint}"
+            update="entitiesTable">
+            <i class="fas fa-chevron-circle-up" />
+          </p:commandLink>
+          <p:commandLink
+            action="#{orderedEntityManager.moveOrderPositionDown(entity)}"
+            title="#{messages.moveOrderPositionDownHint}"
+            update="entitiesTable">
+            <i class="fas fa-chevron-circle-down" />
+          </p:commandLink>
+          <p:commandLink
+            action="#{orderedEntityManager.moveOrderPositionEnd(entity)}"
+            title="#{messages.moveOrderPositionEndHint}"
+            update="entitiesTable">
+            <i class="fas fa-arrow-circle-down" />
+          </p:commandLink>
+        </p:column>
+        <p:column headerText="#{messages.name}">
+          <h:outputText value="#{entity.name}" />
+        </p:column>
+        <p:column headerText="#{messages.groupingAttributes}">
+          <h:outputText value="#{entity.groupingAttributes}" />
+        </p:column>
+        <p:column headerText="#{messages.enabled}">
+          <h:outputText value="#{entity.enabled}" />
+        </p:column>
+
+        <ui:include src="/fragments/column/created.xhtml">
+          <ui:param
+            name="sortable"
+            value="false" />
+          <ui:param
+            name="filterable"
+            value="false" />
+        </ui:include>
+      </p:dataTable>
+    </h:form>
+  </ui:define>
+</ui:composition>

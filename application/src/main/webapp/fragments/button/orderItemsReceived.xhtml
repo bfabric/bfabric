@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+  <p:commandButton rendered="#{entityManager.orderItemsReceivedButtonEnabled}"
+                   action="#{entityManager.orderItemsReceived()}"
+                   value="#{messages.orderItemsReceived}"
+                   title="#{messages.orderItemsReceivedHint}" />
+</ui:composition>

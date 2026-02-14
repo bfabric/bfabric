@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('workflowTemplateParent')}"
+    field="#{fieldPrefix}workflowTemplate.name"
+    headerText="#{messages.workflowTemplate}">
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity.workflowTemplate}" />
+    </ui:include>
+  </p:column>
+
+  <ui:include src="/fragments/column/expectedduration.xhtml" />
+  <ui:include src="/fragments/column/runsperprocess.xhtml" />
+  <ui:include src="/fragments/column/samplesperprocess.xhtml" />
+  <ui:include src="/fragments/column/samplepreparationprotocol.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

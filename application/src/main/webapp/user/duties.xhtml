@@ -1,0 +1,66 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('employee')}" />
+    <f:viewAction action="#{sessionManager.printFacesMessages}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.duties}: #{dutyManager.user.fullName} " />
+    <p:link outcome="/user/show.xhtml"><f:param name="id" value="#{dutyManager.user.id}" />
+      <i class="fas fa-user icon-button" />
+    </p:link>
+  </ui:define>
+
+  <ui:define name="body">
+    <c:if test="#{dutyManager.renderedDuties}">
+      <p><h:outputText value="#{messages.reassignDutiesHint}" styleClass="warn" /></p>
+      <p><h:outputText value="#{messages.reassignDutiesImportantHint}" styleClass="warning" /></p>
+
+      <h:form>
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param name="tableContext" value="reassignCoaching" />
+          <ui:param name="tableContent" value="#{dutyManager.containers}" />
+          <ui:param name="include" value="/user/duties-coaching-columns.xhtml" />
+          <ui:param name="styleClass" value="line-height-initial" />
+        </ui:include>
+
+        <p:spacer height="10" rendered="#{not empty dutyManager.supervisorDuties}" />
+
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param name="tableContext" value="reassignSupervisor" />
+          <ui:param name="tableContent" value="#{dutyManager.supervisorDuties}" />
+          <ui:param name="include" value="/user/duties-supervisor-columns.xhtml" />
+          <ui:param name="styleClass" value="line-height-initial" />
+        </ui:include>
+
+        <p:spacer height="10" rendered="#{not empty dutyManager.instruments}" />
+
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param name="tableContext" value="reassignAdmin" />
+          <ui:param name="tableContent" value="#{dutyManager.instruments}" />
+          <ui:param name="include" value="/user/duties-admin-columns.xhtml" />
+          <ui:param name="styleClass" value="line-height-initial" />
+        </ui:include>
+
+        <p:spacer height="10" rendered="#{not empty dutyManager.offers}" />
+
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param name="tableContext" value="reassignCoachOffer" />
+          <ui:param name="tableContent" value="#{dutyManager.offers}" />
+          <ui:param name="include" value="/user/duties-coach-offer-columns.xhtml" />
+          <ui:param name="styleClass" value="line-height-initial" />
+        </ui:include>
+
+        <h:panelGrid id="buttons" columns="2" styleClass="action">
+          <p:commandButton action="#{dutyManager.reassign}" value="#{messages.save}" update="@form" />
+          <p:commandButton action="#{dutyManager.cancel}" value="#{messages.cancel}" immediate="true" />
+        </h:panelGrid>
+      </h:form>
+    </c:if>
+  </ui:define>
+</ui:composition>

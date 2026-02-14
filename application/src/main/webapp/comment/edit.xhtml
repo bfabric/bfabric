@@ -1,0 +1,472 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(comment.editable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <c:if test="#{not comment.managed}">
+      <h:outputText value="#{messages.add} #{comment.category}" />
+    </c:if>
+    <c:if test="#{comment.managed}">
+      <h:outputText value="#{messages.edit} #{comment.category}" />
+    </c:if>
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form
+      id="#{constants.EDIT}"
+      styleClass="navigate-away-class"
+      enctype="multipart/form-data">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        styleClass="noborder">
+        <h:outputText value="#{messages.parent}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText
+            id="parent"
+            value="#{comment.parent}" />
+        </ui:decorate>
+
+        <c:if test="#{not empty comment.replyToId}">
+          <h:outputText value="#{messages.replyToId}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{comment.replyToId}" />
+          </ui:decorate>
+        </c:if>
+
+        <c:if test="#{identityManager.hasCurrentUserRole('commentManager') and comment.categoryComment}">
+          <h:outputText value="#{messages.internal}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="internal"
+              value="#{comment.internal}"
+              valueChangeListener="#{comment.internalFlagChanged}"
+              title="#{messages.internalCommentHint}"
+              disabled="#{not empty comment.replyTo or commentHelper.isPlateOrRunComment(comment.discriminator)}">
+              <p:ajax
+                event="change"
+                update="@([id$=mailTarget]), #{constants.EDIT}:recipients"
+                global="false" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+        </c:if>
+
+        <h:outputText value="#{messages.subject}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="listContext"
+              value="subject" />
+            <ui:param
+              name="placeholder"
+              value="#{messages.subjectAutocompletePlaceholder}" />
+            <ui:param
+              name="noConverter"
+              value="true" />
+            <ui:param
+              name="forceSelection"
+              value="false" />
+            <ui:param
+              name="value"
+              value="#{comment.subject}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{commentManager.getSubjectFiltered}" />
+            <ui:param
+              name="itemLabel"
+              value="#{stringHelper.truncate(item, 32)}" />
+            <ui:param
+              name="styleClass"
+              value="editWidthHuge" />
+            <ui:param
+              name="inputStyleClass"
+              value="editWidthHuge" />
+            <ui:param
+              name="disabled"
+              value="#{not empty comment.replyTo}" />
+          </ui:include>
+        </ui:decorate>
+
+        <c:if test="#{identityManager.hasCurrentUserRole('commentManager')}">
+          <h:outputText value="#{messages.commentTemplate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:autoComplete value="#{comment.commentTemplate}" title="#{comment.commentTemplate.content}"
+                            valueChangeListener="#{comment.commentTemplateChanged}" completeMethod="#{commentManager.getEnabledCommentTemplates}"
+                            converter="customListConverter" dropdown="true" var="item" itemValue="#{item}" itemLabel="#{item.name}"
+                            forceSelection="true" queryDelay="200" styleClass="editWidthHuge">
+              <p:column styleClass="align-top"><h:outputText value="#{item.name}" /></p:column>
+              <p:column><h:outputText value="#{stringHelper.truncate(item.content, 80)}" /></p:column>
+              <p:ajax event="itemSelect" global="false" update="@this, commenttemplate" />
+              <f:facet name="itemtip">
+                <h:panelGrid columns="2" cellpadding="5" columnClasses="bold nowrap," styleClass="align-top textleft">
+                  <h:outputText value="#{messages.name}" />
+                  <h:outputText value="#{item.name}" />
+                  <h:outputText value="#{messages.content}" />
+                  <h:outputText value="#{item.content}" styleClass="preformat editWidthLarge" />
+                  <h:outputText value="#{messages.createdBy}" />
+                  <h:outputText value="#{item.createdByFull}" />
+                </h:panelGrid>
+              </f:facet>
+            </p:autoComplete>
+          </ui:decorate>
+        </c:if>
+
+        <h:outputText value="#{messages.comment}" />
+        <h:panelGroup id="commenttemplate">
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="comment"
+              value="#{comment.comment}"
+              style="height: 200px; width: 600px;" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.attachments}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:panelGrid id="attachmentsGrid" style="margin-top: 1px">
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="include"
+                value="/comment/attachment-columns.xhtml" />
+              <ui:param
+                name="tableContext"
+                value="comment" />
+              <ui:param
+                name="tableContent"
+                value="#{comment.attachments}" />
+              <ui:param
+                name="showColumns"
+                value="buttons" />
+              <ui:param
+                name="styleClass"
+                value="noborder hide-table-header" />
+              <ui:param
+                name="style"
+                value="margin-left: -4px;" />
+              <ui:param
+                name="paginator"
+                value="false" />
+              <ui:param
+                name="editable"
+                value="true" />
+            </ui:include>
+            <ui:include src="/fragments/edit/fileupload.xhtml">
+              <o:methodParam name="listener" value="#{fileUploadHelper.listener}" />
+              <ui:param name="update" value="attachmentsGrid" />
+              <ui:param name="multiple" value="true" />
+              <ui:param name="style" value="width:600px" />
+            </ui:include>
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="include"
+                value="/fragments/column/uploadfile.xhtml" />
+              <ui:param
+                name="tableContext"
+                value="uploadfile" />
+              <ui:param
+                name="tableContent"
+                value="#{fileUploadHelper.uploadedFiles}" />
+              <ui:param
+                name="showColumns"
+                value="buttons" />
+              <ui:param
+                name="styleClass"
+                value="noborder hide-table-header" />
+              <ui:param
+                name="paginator"
+                value="false" />
+              <ui:param
+                name="updateOnDelete"
+                value="@([id$=attachmentsGrid])" />
+            </ui:include>
+          </h:panelGrid>
+        </ui:decorate>
+
+        <c:if test="#{comment.containerComment and not empty comment.parent.workunits}">
+          <h:outputText value="#{messages.workunits}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="workunit" />
+              <ui:param
+                name="value"
+                value="#{comment.workunitsAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{commentManager.getWorkunits}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthHuge" />
+              <ui:param
+                name="includeColumns"
+                value="/workunit/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+        </c:if>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="mailTarget"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:panelGroup>
+          <h:outputText value="#{messages.sendEmailNotification} " />
+          <p:selectBooleanButton
+            rendered="#{comment.mailRecipientsEditingEnabled}"
+            value="#{comment.mailRecipientHelper.sendMail}"
+            valueChangeListener="#{comment.mailRecipientHelper.sendMailChanged}"
+            onLabel="#{messages.yes}"
+            offLabel="#{messages.no}">
+            <p:ajax
+              event="change"
+              update="@this, #{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget"
+              global="false" />
+          </p:selectBooleanButton>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{comment.mailRecipientHelper.renderedFunctionsInitSelect}">
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid
+              id="functionsChecked"
+              columns="4"
+              styleClass="rightpadding">
+              <h:panelGroup styleClass="align-middle">
+                <h:panelGroup rendered="#{comment.mailRecipientHelper.renderedFunctionsUserInitSelect}">
+                  <p:selectBooleanCheckbox
+                    id="functionsUserChecked"
+                    value="#{comment.mailRecipientHelper.functionsUserChecked}"
+                    valueChangeListener="#{comment.mailRecipientHelper.functionsUserCheckedChanged}">
+                    <p:ajax
+                      event="change"
+                      update="@this, #{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget"
+                      global="false" />
+                  </p:selectBooleanCheckbox>
+                  <h:panelGroup styleClass="ui-selectmanycheckbox">
+                    <h:outputLabel
+                      for="functionsUserChecked"
+                      value="#{comment.mailRecipientHelper.functionsUserInit}"
+                      styleClass="#{comment.mailRecipientHelper.functionsUserStyleClass}" />
+                  </h:panelGroup>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{comment.mailRecipientHelper.renderedFunctionsSupporterInitSelect}">
+                  <p:selectBooleanCheckbox
+                    id="functionsSupporterChecked"
+                    value="#{comment.mailRecipientHelper.functionsSupporterChecked}"
+                    valueChangeListener="#{comment.mailRecipientHelper.functionsSupporterCheckedChanged}"
+                    disabled="#{not comment.mailRecipientsEditingEnabled}">
+                    <p:ajax
+                      event="change"
+                      update="@this, #{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget"
+                      global="false" />
+                  </p:selectBooleanCheckbox>
+                  <h:panelGroup styleClass="ui-selectmanycheckbox">
+                    <h:outputLabel
+                      for="functionsUserChecked"
+                      value="#{comment.mailRecipientHelper.functionsSupporterInit}"
+                      styleClass="#{comment.mailRecipientHelper.functionsSupporterStyleClass}" />
+                  </h:panelGroup>
+                </h:panelGroup>
+              </h:panelGroup>
+            </h:panelGrid>
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{comment.mailRecipientHelper.renderedFunctionsInitSelect}" />
+        <h:panelGroup rendered="#{comment.mailRecipientHelper.renderedFunctionsSelect}">
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:selectManyCheckbox
+              id="functions"
+              value="#{comment.mailRecipientHelper.functions}"
+              valueChangeListener="#{comment.mailRecipientHelper.functionsChanged}"
+              layout="grid"
+              columns="5">
+              <f:selectItems
+                value="#{comment.mailRecipientHelper.functionsInitList}"
+                var="item"
+                itemValue="#{item}"
+                itemDisabled="#{not comment.mailRecipientsEditingEnabled and comment.mailRecipientHelper.isFunctionsSupporter(item)}"
+                styleClass="#{comment.mailRecipientHelper.getFunctionStyleClass(item)}" />
+              <p:ajax
+                event="change"
+                update="@this, #{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget"
+                global="false" />
+            </p:selectManyCheckbox>
+          </ui:decorate>
+        </h:panelGroup>
+
+        <c:if test="#{comment.mailRecipientsEditingEnabled}">
+          <c:if test="#{not empty userGroupList.resultListOrderByName}">
+            <h:outputText value="&#160;" rendered="#{comment.mailRecipientHelper.renderedFunctionsSelect}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="userGroup"
+                value="#{comment.mailRecipientHelper.userGroup}"
+                styleClass="editWidthHuge"
+                valueChangeListener="#{comment.mailRecipientHelper.userGroupChanged}"
+                immediate="true"
+                converter="omnifaces.SelectItemsConverter">
+                <p:ajax
+                  event="change"
+                  update="@this, #{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget"
+                  global="false" />
+                <f:selectItem itemLabel="#{messages.selectUserGroup}" />
+                <f:selectItems
+                  value="#{userGroupList.resultListOrderByName}"
+                  var="item"
+                  itemLabel="#{item.getNameWithUserNamesTrunc(120)}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{not empty comment.discriminator.mailTargetExternal or comment.categoryNote or commentHelper.isPlateOrRunComment(comment.discriminator)}">
+            <h:outputText value="&#160;" rendered="#{not empty userGroupList.resultListOrderByName}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="recipient" />
+                <ui:param
+                  name="value"
+                  value="#{comment.mailRecipientHelper.usersCustom}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{commentManager.getEmployeesOrUsersFiltered}" />
+                <o:methodParam
+                  name="itemSelectListener"
+                  value="#{comment.mailRecipientHelper.userFunctionCustomSelectListener}" />
+                <ui:param
+                  name="itemSelectUpdate"
+                  value="@this, #{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget" />
+                <o:methodParam
+                  name="itemUnselectListener"
+                  value="#{comment.mailRecipientHelper.userFunctionCustomUnselectListener}" />
+                <ui:param
+                  name="itemUnselectUpdate"
+                  value="@this, #{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.name}" />
+                <ui:param
+                  name="multiple"
+                  value="true" />
+                <ui:param
+                  name="styleClass"
+                  value="editWidthHuge" />
+              </ui:include>
+            </ui:decorate>
+          </c:if>
+        </c:if>
+      </h:panelGrid>
+
+      <h:panelGroup id="recipients">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{not empty comment.mailRecipientHelper.userFunctions}">
+          <h:outputText value="#{messages.recipients} (#{comment.mailRecipientHelper.userFunctionsChecked.size()})" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="listContext"
+                value="comment" />
+              <ui:param
+                name="tableContent"
+                value="#{comment.mailRecipientHelper.userFunctions}" />
+              <ui:param
+                name="include"
+                value="/comment/recipients-columns.xhtml" />
+              <ui:param
+                name="showEmpty"
+                value="true" />
+              <ui:param
+                name="paginator"
+                value="#{comment.mailRecipientHelper.userFunctions.size() gt 50}" />
+              <ui:param
+                name="styleClass"
+                value="inner" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <span />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:panelGrid
+            columns="2"
+            styleClass="action"
+            columnClasses="rightpadding">
+            <p:commandButton
+              action="#{commentManager.save}"
+              value="#{messages.save}"
+              onclick="hasChanged=false;"
+              update="@form" />
+            <p:commandButton
+              action="#{commentManager.cancel}"
+              value="#{messages.cancel}"
+              immediate="true" />
+          </h:panelGrid>
+        </ui:decorate>
+      </h:panelGrid>
+    </h:form>
+
+    <h:form id="history-form">
+      <h:panelGroup rendered="#{not empty comment.historyList}">
+        <h:selectOneRadio
+          rendered="#{not empty comment.replyToTransitive}"
+          value="#{comment.replyHistoryFlag}"
+          valueChangeListener="#{comment.changeReplyHistoryFlag}"
+          required="true">
+          <f:selectItem
+            itemLabel="#{messages.replyHistory}"
+            itemValue="#{true}" />
+          <f:selectItem
+            itemLabel="#{messages.entireHistory}"
+            itemValue="#{false}" />
+          <p:ajax
+            event="change"
+            update="history-form" />
+        </h:selectOneRadio>
+        <h:panelGroup styleClass="height-20" />
+        <ui:include src="list-by-parent.xhtml">
+          <ui:param
+            name="skipLoadListener"
+            value="true" />
+          <ui:param
+            name="addForm"
+            value="false" />
+          <ui:param
+            name="enclosingFormId"
+            value="history-form" />
+          <ui:param
+            name="comments"
+            value="#{comment.historyList}" />
+          <ui:param
+            name="hideColumns"
+            value="headerbuttons" />
+          <ui:param
+            name="includeDataScrollerListeners"
+            value="true" />
+        </ui:include>
+      </h:panelGroup>
+    </h:form>
+  </ui:define>
+</ui:composition>

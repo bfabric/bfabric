@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.workflowEnabled and sidebarHelper.isTab('workflowsteps') and identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="workflowstep" />
+      <ui:param
+        name="tableContext"
+        value="#{dataset.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{dataset.workflowSteps}" />
+      <ui:param
+        name="hideColumns"
+        value="workflowstep, datasets, datasetCount, sampleCount, workunitCount" />
+    </ui:include>
+  </c:if>
+</ui:composition>

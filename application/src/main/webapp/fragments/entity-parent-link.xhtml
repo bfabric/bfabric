@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <i class="fas fa-angle-right" />
+  <ui:include src="/fragments/entity-link.xhtml">
+    <ui:param name="entityValue" value="#{parent.trimmedClassName} #{parent.id}" />
+    <ui:param name="instance" value="#{parent}" />
+  </ui:include>
+</ui:composition>

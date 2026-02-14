@@ -1,0 +1,8 @@
+Permissions: all-permissions
+Codebase: *
+Application-Name: B-Fabric Download Manager
+Application-Library-Allowable-Codebase: *
+Caller-Allowable-Codebase: *
+Trusted-Only: true
+Trusted-Library: true
+Main-Class: org.bfabric.DownloadManager

@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!-- Note: Do not change "content.size() > 0" to "not empty content" since the latter does not work for lazy models. -->
+  <c:if test="#{showAlways or (empty enabled or enabled) and content.size() > 0}">
+    <p:link
+      value="#{label}"
+      title="#{hint}"
+      styleClass="#{sidebarHelper.tabStyleClass(tab)}">
+      <f:param
+        name="tab"
+        value="#{tab}" />
+    </p:link>
+    <h:outputText
+      value="#{content.size()}"
+      styleClass="#{sidebarHelper.tabStyleClass(tab)}" />
+  </c:if>
+</ui:composition>

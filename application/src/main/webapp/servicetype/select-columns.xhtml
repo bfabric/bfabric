@@ -1,0 +1,37 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    exportable="false"
+    selectionMode="#{selectionMode}" />
+  <ui:include src="/fragments/column/servicetype-servicearea.xhtml" />
+  <p:column
+    field="name"
+    headerText="#{messages.serviceType}" />
+  <p:column
+    headerText="#{messages.services}">
+    <p:commandButton
+      rendered="#{not empty entity.servicesEnabled}"
+      value="#{entity.servicesEnabled.size()}"
+      title="#{collectionHelper.print(entity.servicesEnabled)}"
+      global="false"
+      action="#{orderManager.setServiceTypeShowServices(entity)}"
+      process="@this"
+      update="servicesPanel"
+      oncomplete="PF('servicesDialog').show();"
+      styleClass="inline editWidthSmaller"
+      style="font-weight: bold;" />
+  </p:column>
+  <p:column
+    rendered="#{identityManager.hasCurrentUserRole('containerManager')}"
+    field="sampleType.name"
+    headerText="#{messages.sampleType}" />
+  <p:column
+    field="requiresProject"
+    headerText="#{messages.requiresProject}">
+    <h:outputText
+      value="#{stringHelper.toYesNo(entity.requiresProject)}"
+      styleClass="#{stringHelper.toGreenRed(not entity.requiresProject)}" />
+  </p:column>
+</ui:composition>

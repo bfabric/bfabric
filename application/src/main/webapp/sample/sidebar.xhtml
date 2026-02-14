@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+
+  <ui:include src="/fragments/sidebar/children.xhtml">
+    <ui:param
+      name="label"
+      value="#{messages.childSamples}" />
+  </ui:include>
+
+  <c:if test="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}">
+    <ui:include src="/fragments/sidebar/family.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/workunits.xhtml" />
+  <ui:include src="/fragments/sidebar/resources.xhtml" />
+
+  <c:if test="#{configuration.orderEnabled}">
+    <ui:include src="/fragments/sidebar/orders.xhtml" />
+  </c:if>
+
+  <c:if test="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}">
+    <ui:include src="/fragments/sidebar/runsamples.xhtml" />
+    <ui:include src="/fragments/sidebar/rununitlanes.xhtml" />
+    <ui:include src="/fragments/sidebar/runs.xhtml" />
+    <ui:include src="/fragments/sidebar/plates.xhtml" />
+  </c:if>
+
+  <c:if test="#{configuration.workflowEnabled and identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/fragments/sidebar/workflows.xhtml" />
+    <ui:include src="/fragments/sidebar/workflowsteps.xhtml" />
+    <ui:include src="/fragments/sidebar/charges.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/mails.xhtml" />
+  <ui:include src="/fragments/sidebar/tree.xhtml" />
+</ui:composition>

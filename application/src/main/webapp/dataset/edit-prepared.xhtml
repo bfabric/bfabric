@@ -1,0 +1,385 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:panelGroup
+    id="editTable"
+    rendered="#{dataset.prepared}">
+    <c:if test="#{dataset.forApplicationRun}">
+      <h:panelGrid columns="2" columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.forRunningApplication}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{dataset.application.displayName}" />
+        </ui:decorate>
+
+        <c:if test="#{not empty dataset.container}">
+          <h:outputText value="#{messages.container}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{dataset.container.displayName}" />
+          </ui:decorate>
+        </c:if>
+
+        <c:if test="#{not empty dataset.datasetTemplate}">
+          <h:outputText value="#{messages.datasetTemplate}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{dataset.datasetTemplate.displayName}" />
+          </ui:decorate>
+        </c:if>
+      </h:panelGrid>
+    </c:if>
+
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtdm, ltd">
+      <h:outputText value="#{messages.name}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <h:inputText
+          id="#{constants.NAME}"
+          value="#{dataset.name}"
+          styleClass="editWidthExtraLarge">
+        </h:inputText>
+      </ui:decorate>
+
+      <h:outputText value="#{messages.description}" />
+      <ui:decorate template="/fragments/edit.xhtml">
+        <h:inputTextarea
+          id="description"
+          value="#{dataset.description}"
+          rows="3"
+          styleClass="editWidthExtraLarge">
+        </h:inputTextarea>
+      </ui:decorate>
+    </h:panelGrid>
+
+    <c:if test="#{not dataset.forApplicationRun or empty dataset.container}">
+      <ui:include src="/fragments/select-container.xhtml">
+        <ui:param
+          name="entity"
+          value="#{dataset}" />
+        <o:methodParam
+          name="completeMethod"
+          value="#{containerList.getExtensibleReadableContainers}" />
+        <ui:param
+          name="requiredTemplate"
+          value="true" />
+        <ui:param
+          name="containerEditable"
+          value="#{dataset.movable}" />
+      </ui:include>
+    </c:if>
+
+    <h:panelGrid columns="2" columnClasses="rtdm, ltd" rendered="#{not dataset.forApplicationRun}">
+      <h:outputText value="#{messages.run}" />
+      <ui:decorate template="/fragments/edit.xhtml">
+        <ui:include src="/fragments/autocomplete.xhtml">
+          <ui:param
+            name="listContext"
+            value="run" />
+          <ui:param
+            name="value"
+            value="#{dataset.run}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{runService.getFiltered}" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.displayName}" />
+        </ui:include>
+      </ui:decorate>
+
+      <h:outputText value="#{messages.datasetTemplate}" />
+      <h:panelGroup id="datasettemplate">
+        <ui:decorate template="/fragments/edit.xhtml">
+          <p:autoComplete
+            value="#{dataset.datasetTemplate}" title="#{messages.autocompleteHint}" placeholder="#{messages.selectAnItemForAutocomplete}"
+            completeMethod="#{datasetManager.getEnabledDatasetTemplates}" valueChangeListener="#{dataset.datasetTemplateChanged}"
+            converter="customListConverter" dropdown="true" var="item" itemValue="#{item}" itemLabel="#{item.name}" forceSelection="true"
+            queryDelay="200" styleClass="editWidthExtraLarge">
+            <p:column styleClass="align-top"><h:outputText value="#{item.name}" /></p:column>
+            <p:column><h:outputText value="#{not empty item.getIncompatibleHint(dataset) ? messages.incompatible : ''}" styleClass="bold warning" /></p:column>
+            <p:ajax event="itemSelect" global="false" update="@this, datasetTemplatePanel" />
+            <p:ajax event="itemUnselect" global="false" update="@this, datasetTemplatePanel" />
+            <p:ajax event="clear" global="false" update="@this, datasetTemplatePanel" />
+            <f:facet name="itemtip">
+              <h:panelGrid columns="2" cellpadding="5" columnClasses="bold nowrap," styleClass="align-top textleft">
+                <h:outputText value="#{messages.name}" />
+                <h:outputText value="#{item.name}" />
+                <h:outputText value="#{messages.createdBy}" />
+                <h:outputText value="#{item.createdByFull}" />
+                <h:outputText value="#{messages.enabled}" />
+                <h:outputText value="#{item.enabled}" />
+                <h:outputText value="#{messages.attributes}" />
+                <h:outputText value="#{item.datasetTemplateAttributesAsString}" styleClass="preformat editWidthLarge" />
+                <h:outputText value="#{messages.type}" />
+                <h:outputText value="#{item.datasetTemplateAttributeTypesAsString}" styleClass="preformat editWidthLarge" />
+                <h:outputText value="" />
+                <h:outputText value="#{item.getIncompatibleHint(dataset)}" styleClass="bold warning" />
+              </h:panelGrid>
+            </f:facet>
+          </p:autoComplete>
+        </ui:decorate>
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <h:panelGroup id="datasetTemplatePanel">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.items} (#{dataset.items.size()})" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <p:dataTable
+            rendered="#{not empty dataset.items}"
+            id="datasetItems"
+            value="#{dataset.items}"
+            var="item"
+            styleClass="inner">
+            <p:column rendered="#{dataset.attributes.size() > 3}" styleClass="align-middle background-cell">
+              <f:facet name="header">
+                <h:panelGrid
+                  columns="1"
+                  styleClass="nowrap noborder normal-font-weight textleft">
+                  <h:outputText value="#{messages.attributePosition}" />
+                  <h:outputText value="#{messages.attributeName}" />
+                  <h:outputText value="#{messages.attributeType}" />
+                  <h:outputText value="#{messages.required}" />
+                </h:panelGrid>
+              </f:facet>
+              <h:panelGrid
+                columns="3"
+                styleClass="icon-table noborder">
+                <h:outputText value="#{item.position}" />
+                <p:commandLink
+                  rendered="#{dataset.renderedRemoveItem}"
+                  actionListener="#{dataset.removeItem(item)}"
+                  title="#{messages.removeItemHint}"
+                  global="false"
+                  process="edit:datasetItems"
+                  update="@form"
+                  oncomplete="fixOversize()"
+                  styleClass="font-larger">
+                  <i class="fas fa-minus-square" />
+                </p:commandLink>
+                <p:commandLink
+                  rendered="#{item.movable}"
+                  actionListener="#{item.move}"
+                  title="#{messages.moveItemHint}"
+                  global="false"
+                  process="edit:datasetItems"
+                  update="edit:datasetItems"
+                  oncomplete="fixOversize()"
+                  styleClass="font-larger">
+                  <i class="fas fa-caret-square-down" />
+                </p:commandLink>
+              </h:panelGrid>
+            </p:column>
+            <c:forEach
+              items="#{dataset.attributes}"
+              var="attribute"
+              varStatus="status">
+              <p:column>
+                <f:facet name="header">
+                  <h:panelGrid
+                    columns="4"
+                    styleClass="icon-table noborder">
+                    <h:outputText
+                      value="#{attribute.position}"
+                      title="#{messages.position}"
+                      styleClass="normal-font-weight" />
+                    <p:commandLink
+                      rendered="#{dataset.isRenderedRemoveAttribute(attribute)}"
+                      actionListener="#{dataset.removeAttribute(attribute)}"
+                      title="#{messages.removeAttributeHint}"
+                      global="false"
+                      process="edit:datasetItems,edit:datasettemplate"
+                      update="edit:datasetItems,edit:datasettemplate"
+                      oncomplete="fixOversize();"
+                      styleClass="font-larger">
+                      <i class="fas fa-minus-square" />
+                    </p:commandLink>
+                    <p:commandLink
+                      rendered="#{attribute.movable}"
+                      actionListener="#{dataset.switchAttributePositions(attribute)}"
+                      title="#{messages.moveAttributeHint}"
+                      global="false"
+                      process="edit:datasetItems"
+                      update="edit:datasetItems"
+                      oncomplete="fixOversize();"
+                      styleClass="font-larger">
+                      <i class="fas fa-caret-square-right" />
+                    </p:commandLink>
+                    <p:message
+                      id="attribute#{status.index}message"
+                      for="attribute#{status.index}"
+                      styleClass="errorMessage" />
+                  </h:panelGrid>
+                  <h:panelGrid
+                    columns="1"
+                    styleClass="dataset-header">
+                    <h:inputText
+                      id="attribute#{status.index}"
+                      value="#{attribute.name}"
+                      valueChangeListener="#{datasetManager.attributeNameChanged}"
+                      title="#{messages.datasetNameOfAttribute} #{attribute.position}"
+                      disabled="#{dataset.datasetTemplateFixed}"
+                      styleClass="datasetField">
+                      <f:attribute
+                        name="index"
+                        value="#{status.index}" />
+                      <p:ajax
+                        event="change"
+                        update="edit:datasetItems"
+                        process="edit:datasetItems" />
+                    </h:inputText>
+                    <ui:include src="/fragments/autocomplete.xhtml">
+                      <ui:param
+                        name="forceSelection"
+                        value="false" />
+                      <ui:param
+                        name="clearButtonRendered"
+                        value="false" />
+                      <ui:param
+                        name="componentId"
+                        value="attributetype#{status.index}" />
+                      <ui:param
+                        name="value"
+                        value="#{attribute.type}" />
+                      <ui:param
+                        name="disabled"
+                        value="#{dataset.datasetTemplateFixed}" />
+                      <ui:param
+                        name="noConverter"
+                        value="true" />
+                      <o:methodParam
+                        name="completeMethod"
+                        value="#{datasetTemplateAttributeManager.getTypesFiltered}" />
+                      <ui:param
+                        name="itemLabel"
+                        value="#{item}" />
+                      <ui:param
+                        name="styleClass"
+                        value="editWidthMedium" />
+                      <ui:param
+                        name="title"
+                        value="#{messages.datasetTypeOfAttribute} #{attribute.position}" />
+                    </ui:include>
+                    <p:selectOneButton id="required" value="#{attribute.required}" disabled="#{dataset.datasetTemplateFixed}" styleClass="editWidthMedium">
+                      <f:selectItem itemLabel="#{messages.no}" itemValue="#{false}" />
+                      <f:selectItem itemLabel="#{messages.yes}" itemValue="#{true}" />
+                    </p:selectOneButton>
+                    <p:message
+                      id="attributetype#{status.index}message"
+                      for="attributetype#{status.index}"
+                      styleClass="errorMessage" />
+                  </h:panelGrid>
+                </f:facet>
+                <p:inputTextarea
+                  id="field_#{status.index}"
+                  value="#{item.getField(attribute).value}"
+                  title="#{item.getField(attribute).title}"
+                  autoResize="false"
+                  maxlength="4096"
+                  styleClass="datasetField #{item.getField(attribute).typeInvalid ? 'border-red' : ''}" />
+                <p:message
+                  id="field_#{status.index}message"
+                  for="field_#{status.index}"
+                  styleClass="errorMessage" />
+              </p:column>
+            </c:forEach>
+            <p:column
+              styleClass="align-middle background-cell"
+              style="width:104px">
+              <f:facet name="header">
+                <h:panelGrid
+                  columns="1"
+                  styleClass="nowrap noborder normal-font-weight textleft">
+                  <h:outputText value="#{messages.attributePosition}" />
+                  <h:outputText value="#{messages.attributeName}" />
+                  <h:outputText value="#{messages.attributeType}" />
+                  <h:outputText value="#{messages.required}" />
+                </h:panelGrid>
+              </f:facet>
+              <h:panelGrid
+                columns="3"
+                styleClass="icon-table noborder">
+                <h:outputText value="#{item.position}" />
+                <p:commandLink
+                  rendered="#{dataset.renderedRemoveItem}"
+                  actionListener="#{dataset.removeItem(item)}"
+                  title="#{messages.removeItemHint}"
+                  global="false"
+                  process="edit:datasetItems"
+                  update="@form"
+                  oncomplete="fixOversize()"
+                  styleClass="font-larger">
+                  <i class="fas fa-minus-square" />
+                </p:commandLink>
+                <p:commandLink
+                  rendered="#{item.movable}"
+                  actionListener="#{item.move}"
+                  title="#{messages.moveItemHint}"
+                  global="false"
+                  process="edit:datasetItems"
+                  update="edit:datasetItems"
+                  oncomplete="fixOversize()"
+                  styleClass="font-larger">
+                  <i class="fas fa-caret-square-down" />
+                </p:commandLink>
+              </h:panelGrid>
+            </p:column>
+          </p:dataTable>
+
+        </ui:decorate>
+        <h:outputText value="&#160;" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:panelGrid
+            id="buttons"
+            columns="5"
+            styleClass="action">
+            <h:panelGrid columns="3" styleClass="nospace">
+              <p:spinner value="#{dataset.numberOfNewItems}" min="1" max="#{dataset.maxNumberOfNewItems}" size="2" decimalPlaces="0" thousandSeparator="">
+                <p:ajax event="change" global="false" />
+              </p:spinner>
+              <p:commandButton action="#{dataset.addItems}"
+                               value="#{messages.addItems}"
+                               title="#{messages.addItemHint}"
+                               update="@form"
+                               global="false"
+                               oncomplete="fixOversize();" />
+            </h:panelGrid>
+            <p:commandButton
+              rendered="#{not dataset.datasetTemplateFixed}"
+              actionListener="#{dataset.addAttribute}"
+              value="#{messages.addAttribute}"
+              title="#{messages.addAttributeHint}"
+              update="@form"
+              global="false"
+              oncomplete="fixOversize();" />
+            <p:commandButton
+              rendered="#{dataset.hasEmptyItems()}"
+              actionListener="#{dataset.removeEmptyItems}"
+              value="#{messages.removeEmptyItems}"
+              update="@form"
+              oncomplete="fixOversize();" />
+            <p:commandButton
+              rendered="#{not dataset.datasetTemplateFixed}"
+              actionListener="#{dataset.prettyPrint}"
+              value="#{messages.datasetPrettyPrint}"
+              title="#{messages.datasetPrettyPrintHint}"
+              update="@form"
+              oncomplete="fixOversize();" />
+            <p:commandButton
+              actionListener="#{datasetManager.typeCheck}"
+              value="#{messages.typeCheck}"
+              title="#{messages.typeCheckDatasetFieldsHint}"
+              update="@form"
+              oncomplete="fixOversize();" />
+          </h:panelGrid>
+        </ui:decorate>
+      </h:panelGrid>
+    </h:panelGroup>
+    <ui:include src="/fragments/edit/customattributes.xhtml" />
+  </h:panelGroup>
+</ui:composition>

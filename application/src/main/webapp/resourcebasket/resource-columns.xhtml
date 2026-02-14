@@ -1,0 +1,90 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:column
+    id="selectCOL"
+    exportable="false">
+    <f:facet name="header">
+      <h:panelGrid
+        columns="1"
+        styleClass="nospace noborder">
+        <h:outputText value="#{messages.select}" />
+        <h:panelGrid
+          columns="2"
+          styleClass="select-icon">
+          <p:commandLink
+            actionListener="#{dataTableHelper.checkAll(true)}"
+            immediate="true"
+            global="false"
+            update="@form"
+            oncomplete="fixOversize();">
+            <f:attribute
+              name="#{constants.TABLE_CLIENT_ID}"
+              value="#{tableReference.clientId}" />
+            <i class="far fa-check-square" />
+          </p:commandLink>
+          <p:commandLink
+            actionListener="#{dataTableHelper.checkAll(false)}"
+            immediate="true"
+            global="false"
+            update="@form"
+            oncomplete="fixOversize();">
+            <f:attribute
+              name="#{constants.TABLE_CLIENT_ID}"
+              value="#{tableReference.clientId}" />
+            <i class="far fa-square" />
+          </p:commandLink>
+        </h:panelGrid>
+      </h:panelGrid>
+    </f:facet>
+    <h:selectBooleanCheckbox
+      value="#{entity.checked}"
+      title="#{messages.selectResourceInBasketHint}">
+      <p:ajax
+        event="change"
+        global="false"
+        update="resourcebasketform:buttons" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <p:column exportable="false">
+    <f:facet name="header">
+      <h:panelGrid
+        columns="1"
+        styleClass="nospace noborder">
+        <h:outputText value="&#160;#{messages.remove}" />
+        <p:commandButton
+          id="removeAll"
+          value="#{messages.all}"
+          title="#{messages.removeAllResourcesHint}"
+          action="#{resourceBasketManager.removeAll}"
+          rendered="#{not empty resourceBasket.resources}"
+          styleClass="select width-auto"
+          style="width:60px;margin-top:2px"
+          update="@form"
+          oncomplete="fixOversize();">
+          <f:attribute
+            name="#{constants.TABLE_CLIENT_ID}"
+            value="#{tableReference.clientId}" />
+        </p:commandButton>
+      </h:panelGrid>
+    </f:facet>
+    <p:commandButton
+      id="removeResource"
+      value="#{messages.remove}"
+      title="#{messages.removeFromBasketHint}"
+      action="#{resourceBasketManager.remove(entity)}"
+      styleClass="inline width-auto"
+      style="width:60px"
+      update="@form"
+      oncomplete="fixOversize();" />
+  </p:column>
+
+  <ui:include src="/resource/columns.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="addToBasket" />
+  </ui:include>
+</ui:composition>

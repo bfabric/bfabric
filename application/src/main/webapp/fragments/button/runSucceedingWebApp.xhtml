@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+  <p:commandButton rendered="#{workunit.succeedingWebAppRunnable}" value="#{workunit.succeedingWebApp.name}"
+                   action="#{workunit.runSucceedingWebApp}" styleClass="#{empty styleClass ? 'app' : styleClass}">
+    <p:autoUpdate />
+  </p:commandButton>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('accesses') and identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/resource/access-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="#{resourceManager.resource.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{resourceManager.resource.enabledAccesses}" />
+      <ui:param
+        name="resourceEntity"
+        value="#{resourceManager.resource}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

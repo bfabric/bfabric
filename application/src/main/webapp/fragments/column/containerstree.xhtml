@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('containers')}">
+    <p:column
+      field="containers.size()"
+      headerText="#{not empty label ? label : messages.containers}">
+      <p:tree
+        id="containersTree"
+        value="#{treeHelper.getTree(entity.containers, messages.containers)}"
+        var="item"
+        style="border:0; padding:0!important;"
+        styleClass="internal-tree-node">
+        <p:treeNode>
+          <h:outputText
+            rendered="#{item.class.simpleName eq 'String'}"
+            value="#{treeHelper.getTree(entity.containers, messages.containers)}" />
+          <p:link
+            rendered="#{item.class.simpleName ne 'String'}"
+            outcome="#{item.urlShowScreen}"
+            value="#{item.id} #{item.internal ? ' internal' : ''}"
+            title="#{item.entityInfo}">
+            <f:param
+              name="id"
+              value="#{item.id}" />
+            <f:param
+              name="tab"
+              value="#{constants.DETAILS}" />
+          </p:link>
+        </p:treeNode>
+      </p:tree>
+    </p:column>
+  </c:if>
+</ui:composition>

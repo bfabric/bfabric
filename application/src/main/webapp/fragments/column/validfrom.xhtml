@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('validFrom')}">
+    <p:column
+      field="#{fieldPrefix}validFrom"
+      headerText="#{messages.validFrom}">
+      <h:outputText value="#{entity.validFromAsText}" />
+    </p:column>
+  </c:if>
+</ui:composition>

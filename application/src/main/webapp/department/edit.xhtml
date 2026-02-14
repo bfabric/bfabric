@@ -1,0 +1,80 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{departmentManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.organization}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <ui:param
+              name="componentId"
+              value="organizationautocomplete" />
+            <h:panelGrid
+              columns="3"
+              columnClasses="rightpadding,"
+              styleClass="noborder">
+              <h:panelGroup>
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="listContext"
+                    value="organization" />
+                  <ui:param
+                    name="value"
+                    value="#{department.organization}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{organizationService.getOrganizationsFiltered}" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.name}" />
+                  <ui:param
+                    name="styleClass"
+                    value="editWidthExtraLarge" />
+                </ui:include>
+              </h:panelGroup>
+              <p:commandLink
+                id="addOrganizationButton"
+                action="#{departmentManager.createParentOrganization}"
+                title="#{messages.addNewOrganizationHint}"
+                immediate="true"
+                oncomplete="PF('addOrganizationForDepartmentDialog').show()"
+                update="addOrganizationForDepartmentForm">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+              </p:commandLink>
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{department.name}"
+              styleClass="editWidthExtraLarge">
+              <f:attribute
+                name="organizationautocomplete"
+                value="#{constants.EDIT}:organizationautocomplete" />
+            </h:inputText>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/organization/add-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

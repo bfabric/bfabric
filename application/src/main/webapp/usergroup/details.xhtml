@@ -1,0 +1,60 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+
+      <h:outputText value="#{messages.supervisor}" />
+      <h:panelGrid
+        columns="2"
+        styleClass="rightpadding">
+        <ui:include src="/fragments/user-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{userGroup.supervisor}" />
+        </ui:include>
+        <h:form rendered="#{not userGroup.supervisorMember}">
+          <p:commandButton
+            id="addSupervisorAsMember"
+            action="#{userGroupManager.addSupervisorAsMember}"
+            value="#{messages.addMember}"
+            title="#{messages.addUserAsMemberHint}">
+          </p:commandButton>
+        </h:form>
+      </h:panelGrid>
+
+      <ui:include src="/fragments/details/users-table.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.members}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/institute.xhtml" />
+      <c:if test="#{not empty userGroup.division and userGroup.updatable}">
+        <ui:include src="/fragments/details/division.xhtml" />
+      </c:if>
+
+      <ui:include src="/fragments/details/foremployeesonly.xhtml" />
+      <ui:include src="/fragments/details/enabled.xhtml" />
+      <ui:include src="/fragments/details/internal.xhtml" />
+      <ui:include src="/fragments/details/hidden.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid columns="5" styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <c:if test="#{identityManager.hasCurrentUserRole('userGroupManager')}">
+        <ui:include src="/fragments/button/switchenabled.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

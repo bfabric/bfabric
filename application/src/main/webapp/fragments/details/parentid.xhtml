@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.parentId}">
+    <h:outputText value="#{messages.parentId}" />
+    <h:outputText value="#{instance.parentId}" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,46 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entityManager" type="org.bfabric.manager.AbstractEntityManager"-->
+  <script>
+      function resetFilter() {
+          if (PF(#{widgetVarName})) {
+              PF(#{widgetVarName}).clearFilters();
+          }
+      }</script>
+  <h:panelGrid
+    id="switchButtons"
+    columns="3"
+    styleClass="action">
+    <p:commandButton
+      action="#{entityManager.setContainerAll(true)}"
+      value="#{entityManager.getSwitchButtonLabel(constants.SWITCH_BUTTON_SHOW, type, '')}"
+      title="#{entityManager.getSwitchButtonHint(constants.SWITCH_BUTTON_SHOW_TITLE, type)}"
+      global="true"
+      oncomplete="resetFilter(); fixOversize()"
+      update="switchButtons, #{update}"
+      rendered="#{not entityManager.containerAll}">
+    </p:commandButton>
+    <p:commandButton
+      action="#{entityManager.setContainerAll(false)}"
+      value="#{entityManager.getSwitchButtonLabel(constants.SWITCH_BUTTON_HIDE, type, '')}"
+      title="#{entityManager.getSwitchButtonHint(constants.SWITCH_BUTTON_HIDE_TITLE, type)}"
+      global="true"
+      oncomplete="resetFilter(); fixOversize()"
+      update="switchButtons, #{update}"
+      rendered="#{entityManager.containerAll}">
+    </p:commandButton>
+    <p:spacer width="6" />
+    <h:outputText
+      style="position:relative; top:4px;"
+      value="#{entityManager.getSwitchButtonLabel(constants.SWITCH_INCLUDED, type, count)}"
+      rendered="#{entityManager.containerAll}"
+      styleClass="info" />
+    <h:outputText
+      style="position:relative; top:4px;"
+      value="#{entityManager.getSwitchButtonLabel(constants.SWITCH_INCLUDE, type, count)}"
+      rendered="#{not entityManager.containerAll}"
+      styleClass="info" />
+  </h:panelGrid>
+</ui:composition>

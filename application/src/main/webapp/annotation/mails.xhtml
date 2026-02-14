@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/list/mails.xhtml">
+    <ui:param
+      name="parentEntity"
+      value="#{annotation}" />
+    <ui:param
+      name="rendered"
+      value="#{annotation.readable}" />
+  </ui:include>
+</ui:composition>

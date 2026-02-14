@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:forEach
+    items="#{entity.qualityControlValues}"
+    var="attribute">
+    <h:outputText value="#{attribute.name}" />
+    <h:outputText value="#{attribute.value}" />
+  </c:forEach>
+</ui:composition>

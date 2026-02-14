@@ -1,0 +1,52 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <!--@elvariable id="instance" type="org.bfabric.entity.Container"-->
+  <c:if test="#{sidebarHelper.isTab('costs') and instance.renderedCosts}">
+    <h:panelGrid columns="2" columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/budgetLimit.xhtml" />
+
+      <c:if test="#{not empty instance.totalPriceBookedBillableCharges}">
+        <h:outputText value="#{messages.booked} #{messages.costs}" />
+        <h:panelGrid columns="2" styleClass="noborder rightpadding">
+          <h:outputText title="#{messages.totalBookedChargesHint}" value="#{instance.totalPriceBookedBillableCharges}">
+            <f:convertNumber pattern="0.00" />
+          </h:outputText>
+          <h:outputText value="#{configuration.getDefaultCurrencyCode()}" />
+        </h:panelGrid>
+      </c:if>
+
+      <c:if test="#{not empty instance.totalPriceBillableCharges}">
+        <h:outputText value="#{messages.billable} #{messages.costs}" />
+        <h:panelGrid columns="2" styleClass="noborder rightpadding">
+          <h:outputText title="#{messages.totalBillableChargesHint}" value="#{instance.totalPriceBillableCharges}" styleClass="#{instance.nonBookedCharges}">
+            <f:convertNumber pattern="0.00" />
+          </h:outputText>
+          <h:outputText value="#{configuration.getDefaultCurrencyCode()}" />
+        </h:panelGrid>
+      </c:if>
+
+      <h:outputText value="#{messages.resources} #{messages.size}" />
+      <h:outputText value="#{instance.printResourcesTotalSize}" />
+
+      <h:outputText value="#{messages.importResources} #{messages.size}" />
+      <h:outputText value="#{instance.printImportResourcesTotalSize}" />
+
+      <h:outputText value="#{messages.comments} #{messages.size}" />
+      <h:outputText value="#{instance.commentsPrintSize}" />
+    </h:panelGrid>
+
+    <c:if test="#{not empty instance.resources}">
+      <h:panelGrid styleClass="content-subheader">
+        <h:outputText value="#{messages.resources} #{messages.summary}" />
+      </h:panelGrid>
+
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param name="include" value="/container/storage-columns.xhtml" />
+        <ui:param name="tableContext" value="#{instance.tableContext}" />
+        <ui:param name="tableContent" value="#{instance.storageInfo}" />
+      </ui:include>
+    </c:if>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('importResourcesRequired')}">
+    <p:column
+      field="#{fieldPrefix}importResourcesRequired"
+      headerText="#{messages.importResources} #{messages.required}"
+      filterMatchMode="exact">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="importResourcesRequired" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.importResourcesRequired)}"
+        styleClass="#{not entity.importResourcesRequired and entity.import}" />
+    </p:column>
+  </c:if>
+</ui:composition>

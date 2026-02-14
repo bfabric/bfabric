@@ -1,0 +1,111 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{empty itemSelectListener}">
+    <o:methodParam
+      name="itemSelectListener"
+      value="#{null}" />
+  </c:if>
+  <c:if test="#{empty itemSelectListenerHeader}">
+    <o:methodParam
+      name="itemSelectListenerHeader"
+      value="#{null}" />
+  </c:if>
+  <c:if test="#{empty clearListener}">
+    <o:methodParam
+      name="clearListener"
+      value="#{null}" />
+  </c:if>
+  <c:if test="#{empty clearListenerHeader}">
+    <o:methodParam
+      name="clearListenerHeader"
+      value="#{null}" />
+  </c:if>
+
+  <p:column
+    id="#{columnId}#{constants.COLUMN}"
+    rendered="#{rendered}"
+    exportable="false"
+    styleClass="nopadding">
+    <f:facet name="header">
+      <h:panelGroup id="#{columnId}#{constants.HEADER_INPUT}">
+        <ui:include src="/fragments/autocomplete.xhtml">
+          <ui:param
+            name="listContext"
+            value="#{columnId}#{constants.HEADER}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{completeMethodHeader}" />
+          <o:methodParam
+            name="valueChangeListener"
+            value="#{bean.valueChangedAll}" />
+          <o:methodParam
+            name="itemSelectListener"
+            value="#{itemSelectListenerHeader}" />
+          <o:methodParam
+            name="clearListener"
+            value="#{clearListenerHeader}" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.displayName}" />
+          <ui:param
+            name="styleClass"
+            value="#{not empty styleClassHeader ? styleClassHeader : 'editWidthExtraLarge'}" />
+        </ui:include>
+      </h:panelGroup>
+      <div>
+        <h:outputText value="#{headerText}" />
+        <h:outputText
+          rendered="#{displayRequired}"
+          value="&#160;*"
+          title="#{messages.requiredHint}"
+          styleClass="required" />
+      </div>
+    </f:facet>
+
+    <h:panelGroup id="#{columnId}#{constants.INPUT}">
+      <ui:include src="/fragments/autocomplete.xhtml">
+        <ui:param
+          name="listContext"
+          value="#{columnId}" />
+        <ui:param
+          name="value"
+          value="#{entityValue}" />
+        <o:methodParam
+          name="completeMethod"
+          value="#{completeMethodHeader}" />
+        <o:methodParam
+          name="valueChangeListener"
+          value="#{bean.valueChanged}" />
+        <o:methodParam
+          name="itemSelectListener"
+          value="#{itemSelectListener}" />
+        <o:methodParam
+          name="clearListener"
+          value="#{clearListener}" />
+        <ui:param
+          name="itemLabel"
+          value="#{item.displayName}" />
+        <ui:param
+          name="styleClass"
+          value="#{not empty styleClass ? styleClass : 'editWidthExtraLarge'}" />
+      </ui:include>
+    </h:panelGroup>
+  </p:column>
+
+  <ui:include src="/fragments/column/export-column.xhtml">
+    <ui:param
+      name="rendered"
+      value="#{rendered}" />
+    <ui:param
+      name="headerText"
+      value="#{headerText}" />
+    <ui:param
+      name="value"
+      value="#{entityValue.displayName}" />
+  </ui:include>
+</ui:composition>

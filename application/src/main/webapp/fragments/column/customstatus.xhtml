@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('customStatus')}">
+    <p:column
+      field="#{fieldPrefix}customStatus"
+      headerText="#{messages.customStatus}"
+      sortable="#{empty sortable or sortable}"
+      filterable="#{empty filterable or filterable}"
+      filterMatchMode="exact"
+      exportValue="#{entity.customStatus}">
+      <ui:include src="autocomplete-filter-string.xhtml">
+        <ui:param
+          name="completeMethod"
+          value="#{completeMethod}" />
+      </ui:include>
+      <h:outputText value="#{entity.customStatus}" />
+    </p:column>
+  </c:if>
+</ui:composition>

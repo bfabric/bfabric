@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('homeCity') and identityManager.hasCurrentUserRole('employeeManager')}">
+    <p:column
+      field="#{fieldPrefix}homeAddress.city"
+      headerText="#{messages.homeCity}" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/replies.xhtml" />
+  <ui:include src="/fragments/sidebar/workunits.xhtml" />
+  <c:if test="#{currentUser.hasRoleEmployeeImplicit()}">
+    <ui:include src="/fragments/sidebar/viewedby.xhtml" />
+    <ui:include src="/fragments/sidebar/starredby.xhtml" />
+  </c:if>
+</ui:composition>

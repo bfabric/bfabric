@@ -1,0 +1,41 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/supervisor.xhtml" />
+  <ui:include src="/fragments/column/containerfolderprefix.xhtml" />
+  <ui:include src="/fragments/column/local.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <p:column headerText="#{messages.accesses}" exportValue="#{entity.accessesAsString}">
+    <p:dataTable
+      rendered="#{not empty entity.accesses}"
+      value="#{entity.accessesAsList}"
+      var="item"
+      styleClass="subtable nowrap">
+      <p:column headerText="#{messages.id}">
+        <h:outputText value="#{item.id}" />
+      </p:column>
+      <p:column headerText="#{messages.accessType}">
+        <h:outputText value="#{item.accessType.name}" />
+      </p:column>
+      <p:column headerText="#{messages.accessProtocol}">
+        <h:outputText value="#{item.accessProtocol.name}" />
+      </p:column>
+      <p:column headerText="#{messages.host}">
+        <h:outputText value="#{item.host}" />
+      </p:column>
+      <p:column headerText="#{messages.basePath}">
+        <h:outputText value="#{item.basePath}" />
+      </p:column>
+      <p:column headerText="#{messages.enabled}">
+        <h:outputText
+          value="#{item.enabled}"
+          styleClass="#{not item.enabled}" />
+      </p:column>
+    </p:dataTable>
+  </p:column>
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

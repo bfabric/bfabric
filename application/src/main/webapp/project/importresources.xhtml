@@ -1,0 +1,20 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('importresources') and project.accepted and identityManager.hasCurrentUserRole('containerReader')}">
+    <c:if test="#{project.orders.size() > 0 and importResourceList.getLazyModelByContainers(project.associatedContainers).size() > 0}">
+      <ui:include src="/fragments/switch.xhtml">
+        <ui:param name="widgetVarName" value="'projectimportResource'" />
+        <ui:param name="type" value="importresource" />
+        <ui:param name="count" value="#{importResourceList.getLazyModelByContainers(project.associatedContainers).size()}" />
+        <ui:param name="update" value="#{project.tableContext}importresourcetableform" />
+      </ui:include>
+    </c:if>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="importresource" />
+      <ui:param name="tableContext" value="#{project.tableContext}" />
+      <ui:param name="tableContent"
+                value="#{importResourceList.getLazyModelByContainerId(project.id, project.associatedContainers, projectManager.containerAll)}" />
+      <ui:param name="hideColumns" value="#{not entityManager.containerAll ? 'container' : ''}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

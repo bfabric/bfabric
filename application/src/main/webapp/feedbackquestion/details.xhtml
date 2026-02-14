@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <h:outputText value="#{messages.id}" />
+      <h:outputText value="#{feedbackQuestion.id}" />
+
+      <h:outputText rendered="#{not empty feedbackQuestion.value}" value="#{messages.question}" />
+      <h:outputText rendered="#{not empty feedbackQuestion.value}" value="#{feedbackQuestion.value}" />
+
+      <ui:include src="/fragments/details/feedbackquestiontype.xhtml" />
+
+      <h:outputText rendered="#{feedbackQuestion.feedbackQuestionType.requiresCustomOptions}" value="#{messages.customOptions}" />
+      <h:outputText rendered="#{feedbackQuestion.feedbackQuestionType.requiresCustomOptions}" value="#{feedbackQuestion.customOptionsList}" />
+
+      <h:outputText value="#{messages.required}" />
+      <h:outputText value="#{feedbackQuestion.required}" />
+
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="5"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-clone-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

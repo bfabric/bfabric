@@ -1,0 +1,148 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.CommentDiscriminator" />
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('containerManager')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="label"
+      value="#{messages.computerLogin}" />
+    <ui:param
+      name="tab"
+      value="sync" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('containerManager') and order.statusSyncable}" />
+    <ui:param
+      name="showAlways"
+      value="#{identityManager.hasCurrentUserRole('containerManager') and order.statusSyncable}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/costs.xhtml" />
+
+  <c:if test="#{order.project == null and order.memberShowState}">
+    <ui:include src="/fragments/sidebar/members.xhtml">
+      <ui:param
+        name="content"
+        value="#{membershipList.getCurrentLazyModel(order)}" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+
+  <ui:include src="/fragments/sidebar/notes.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/results.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('containerReader') or commentList.getCountByParentAndType(order, CommentDiscriminator.ORDER_RESULT) > 0}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/samples.xhtml" />
+  <ui:include src="/fragments/sidebar/workunits.xhtml" />
+  <ui:include src="/fragments/sidebar/resources.xhtml" />
+  <ui:include src="/fragments/sidebar/importresources.xhtml">
+    <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/datasets.xhtml">
+    <ui:param name="showAlways"
+              value="#{identityManager.hasCurrentUserRole('containerReader') and order.hasBeenAcceptedButNotFinished()}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/runnableApplications.xhtml" />
+
+  <c:if test="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}">
+    <ui:include src="/fragments/sidebar/plates.xhtml">
+      <ui:param
+        name="content"
+        value="#{order.associatedPlates}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/runs.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/workflows.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{configuration.workflowEnabled and identityManager.hasCurrentUserRole('containerReader')}" />
+    <ui:param
+      name="showAlways"
+      value="#{configuration.workflowEnabled and identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/offers.xhtml" />
+
+  <ui:include src="/fragments/sidebar/charges.xhtml">
+    <ui:param
+      name="showAlways"
+      value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/bookings.xhtml">
+    <ui:param
+      name="showAlways"
+      value="#{order.renderedBookings}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/instrumentreservations.xhtml">
+    <ui:param
+      name="showAlways"
+      value="#{configuration.instrumentReservationEnabled}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/feedbacks.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{order.feedbacksRendered}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/mails.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{order.mailsUserReadable}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/timeline.xhtml" />
+  <ui:include src="/fragments/sidebar/tree.xhtml" />
+
+  <c:if test="#{not configuration.environmentProduction and identityManager.hasCurrentUserRole('containerManager')}">
+    <p:commandLink
+      value="#{messages.results}"
+      onclick="location.href='#{order.resultPDFLink}'; return false;" />
+    <span />
+  </c:if>
+
+  <c:if test="#{order.renderedPrintOrderConfirmationButton}">
+    <p:commandLink
+      value="#{messages.confirmationForm}"
+      onclick="location.href='#{order.confirmationPDFLink}'; return false;" />
+    <span />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="label"
+      value="#{messages.instructions}" />
+    <ui:param
+      name="hint"
+      value="#{messages.instructionsHint}" />
+    <ui:param
+      name="tab"
+      value="instructions" />
+    <ui:param
+      name="showAlways"
+      value="#{order.renderedInstructions}" />
+  </ui:include>
+</ui:composition>

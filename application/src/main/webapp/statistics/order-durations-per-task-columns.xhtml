@@ -1,0 +1,92 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+  <p:columnGroup type="header">
+    <p:row>
+      <p:column colspan="1" headerText="#{messages.year}" />
+      <p:column colspan="1" headerText="#{messages.order} #{messages.count}" />
+      <p:column colspan="1" headerText="#{messages.accepting}" />
+      <p:column colspan="1" headerText="#{messages.arriving}" />
+      <p:column colspan="1" headerText="#{messages.processing}" />
+      <p:column colspan="1" headerText="#{messages.analyzing}" />
+      <p:column colspan="1" headerText="#{messages.finalizing}" />
+      <p:column colspan="1" headerText="#{messages.closing}" />
+      <p:column colspan="1" headerText="#{messages.total}" />
+    </p:row>
+    <p:row>
+      <p:column headerText="&#160;" sortBy="#{entity[0]}" filterBy="#{entity[0]}" />
+      <p:column headerText="&#160;" sortBy="#{entity[1]}" filterBy="#{entity[1]}" />
+      <p:column headerText="#{messages.submittedToAccepted}" sortBy="#{entity[2]}" filterBy="#{entity[2]}" />
+      <p:column headerText="#{messages.acceptedToArrived}" sortBy="#{entity[3]}" filterBy="#{entity[3]}" />
+      <p:column headerText="#{messages.arrivedToProcessed}" sortBy="#{entity[4]}" filterBy="#{entity[4]}" />
+      <p:column headerText="#{messages.processedToAnalyzed}" sortBy="#{entity[5]}" filterBy="#{entity[5]}" />
+      <p:column headerText="#{messages.analyzedToFinished}" sortBy="#{entity[6]}" filterBy="#{entity[6]}" />
+      <p:column headerText="#{messages.finishedToClosed}" sortBy="#{entity[7]}" filterBy="#{entity[7]}" />
+      <p:column headerText="#{messages.submittedToClosed}" sortBy="#{entity[8]}" filterBy="#{entity[8]}" />
+    </p:row>
+  </p:columnGroup>
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.order} #{messages.count}" />
+    <ui:param
+      name="value"
+      value="#{entity[1]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.accepting}" />
+    <ui:param
+      name="value"
+      value="#{entity[2]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.arriving}" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.processing}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.analyzing}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.finalizing}" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.closing}" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.total}" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,106 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:include src="/fragments/column/checked.xhtml" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('basket')}"
+    exportable="false"
+    headerText="#{messages.basket}">
+    <p:commandButton
+      value="#{messages.add}"
+      actionListener="#{resourceBasketHelper.addResourcesToBasket(currentUser.selectedResourceBasket, entity.resources)}"
+      title="#{messages.addAllWorkunitResourcesToBasket}"
+      disabled="#{resourceBasketHelper.isAddWorkunitToBasketDisabled(currentUser.selectedResourceBasket, entity)}"
+      disableOnAjax="false"
+      styleClass="inline"
+      update="@this" />
+  </p:column>
+
+  <ui:include src="/fragments/column/assign-with-button.xhtml">
+    <ui:param
+      name="tableType"
+      value="#{constants.WORKUNIT}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/id-name.xhtml" />
+
+  <o:importConstants type="org.bfabric.enums.WorkunitStatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{WorkunitStatusEnum.values()}" />
+    <ui:param
+      name="workunitDownloadButton"
+      value="true" />
+  </ui:include>
+
+  <p:column
+    rendered="#{not hideColumns.contains('size')}"
+    sortBy="#{entity.size}"
+    headerText="#{messages.size}">
+    <h:outputText value="#{entity.printSize}" />
+  </p:column>
+
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/application.xhtml" />
+  <ui:include src="/fragments/column/dataset.xhtml" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('report')}"
+    headerText="#{messages.report}">
+    <h:outputLink
+      value="#{entity.reportResourceLink}"
+      rendered="#{entity.reportResourceAccessible}">
+      <h:outputText value="#{entity.reportResourceName}" />
+    </h:outputLink>
+  </p:column>
+
+  <p:column
+    rendered="#{showColumns.contains('coach')}"
+    field="#{fieldPrefix}container.coach.name"
+    headerText="#{messages.coach}"
+    exportValue="#{entity.container.coach.fullName}">
+    <ui:include src="/fragments/user-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity.container.coach}" />
+    </ui:include>
+  </p:column>
+
+  <p:column
+    rendered="#{not hideColumns.contains('inputResources')}"
+    field="#{fieldPrefix}inputResources.size()"
+    headerText="#{messages.inputResources}" />
+
+  <ui:include src="/fragments/column/workflows.xhtml" />
+  <ui:include src="/fragments/column/workflowsteps.xhtml" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('inputDataset')}"
+    field="#{fieldPrefix}inputDataset.name"
+    headerText="#{messages.inputDataset}">
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity.inputDataset}" />
+    </ui:include>
+  </p:column>
+
+  <ui:include src="/fragments/column/resourcescount.xhtml" />
+  <ui:include src="/fragments/column/availableresourcescount.xhtml" />
+  <ui:include src="/fragments/column/annotatedresourcescount.xhtml" />
+  <ui:include src="/fragments/column/succeedingWorkunitsCount.xhtml" />
+  <ui:include src="/fragments/column/succeedingDatasetsCount.xhtml" />
+  <ui:include src="/fragments/column/progress.xhtml" />
+
+  <p:column rendered="#{identityManager.hasCurrentUserRole('applicationManager')}" field="#{fieldPrefix}container.budgetOfficer.name" headerText="#{messages.budgetOfficer}" />
+  <p:column rendered="#{identityManager.hasCurrentUserRole('applicationManager')}" field="#{fieldPrefix}container.budgetOfficer.email" headerText="#{messages.budgetOfficer} #{messages.email}" />
+  <c:if test="#{identityManager.hasCurrentUserRole('itManager')}">
+    <ui:include src="/fragments/column/archiving.xhtml" />
+  </c:if>
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

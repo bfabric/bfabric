@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('childrenSize')}">
+    <p:column
+      field="#{fieldPrefix}children.size()"
+      headerText="#{messages.children}"
+      filterMatchMode="exact" />
+  </c:if>
+</ui:composition>

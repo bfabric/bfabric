@@ -1,0 +1,42 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{showColumns.contains('addCheckbox')}"
+    exportable="false">
+    <h:selectBooleanCheckbox disabled="#{roleManager.selectedUsers.contains(entity)}">
+      <p:ajax
+        listener="#{roleManager.selectUser(entity)}"
+        update="@([id$=assign-roles-users-options]), @([id$=assign-roles-users-options-selected]), @([id$=assign-roles-users-options-selected-text]) @([id$=buttons])"
+        process="@([id$=assign-roles-users-options]), @([id$=assign-roles-users-options-selected])"
+        immediate="true"
+        oncomplete="if(PF('selectedUser')){PF('selectedUser').filter();} fixOversize();"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('removeCheckbox')}"
+    exportable="false">
+    <h:selectBooleanCheckbox value="#{roleManager.userSelected}">
+      <p:ajax
+        listener="#{roleManager.deselectUser(entity)}"
+        update="@([id$=assign-roles-users-options]), @([id$=assign-roles-users-options-selected]), @([id$=assign-roles-users-options-selected-text]) @([id$=buttons])"
+        process="@([id$=assign-roles-users-options]), @([id$=assign-roles-users-options-selected])"
+        immediate="true"
+        oncomplete="if(PF('selectedUser')){PF('selectedUser').filter();} fixOversize();"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <ui:include src="/user/columns.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="company, institute, emailActive, emailAddress, emailVerified, computerLoginEnabled, dataAccessEnabled, computerLoginActivated, massMailEnabled, invalidLoginAttempts, LastLoginDate, LastActionTime, createdBy, createdOn" />
+    <ui:param
+      name="firstNameStyleClass"
+      value="min-width-150" />
+    <ui:param
+      name="lastNameStyleClass"
+      value="min-width-150" />
+  </ui:include>
+</ui:composition>

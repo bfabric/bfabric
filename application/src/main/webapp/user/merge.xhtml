@@ -1,0 +1,786 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeUsers}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/user-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{userMergeManager.userLeft}" />
+        </ui:include>
+        <h:outputText value="" />
+        <ui:include src="/fragments/user-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{userMergeManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.login}" />
+        <h:outputText value="#{userMergeManager.userLeft.login}" />
+        <h:selectOneRadio
+          id="login"
+          layout="lineDirection"
+          value="#{userMergeManager.mergeSelection.login}">
+          <f:selectItem itemValue="#{userMergeManager.userLeft.login}" />
+          <f:selectItem itemValue="#{userMergeManager.merged.login}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{userMergeManager.merged.login}" />
+
+        <h:outputText value="#{messages.password}" />
+        <h:outputText value="#{stringHelper.truncate(userMergeManager.userLeft.password, 32)}" title="#{userMergeManager.userLeft.password}" />
+        <h:outputText value="" />
+        <h:outputText value="#{stringHelper.truncate(userMergeManager.merged.password, 32)}" title="#{userMergeManager.merged.password}" />
+
+        <h:outputText value="#{messages.accountEnabled}" />
+        <h:outputText value="#{userMergeManager.userLeft.accountEnabled}" />
+        <h:selectOneRadio
+          id="accountEnabled"
+          layout="lineDirection"
+          value="#{userMergeManager.mergeSelection.accountEnabled}"
+          disabled="#{userMergeManager.userLeft.accountEnabled == userMergeManager.merged.accountEnabled}">
+          <f:selectItem itemValue="#{userMergeManager.userLeft.accountEnabled}" />
+          <f:selectItem itemValue="#{userMergeManager.merged.accountEnabled}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{userMergeManager.merged.accountEnabled}" />
+
+        <c:if test="#{not empty userMergeManager.userLeft.title or not empty userMergeManager.merged.title}">
+          <h:outputText value="#{messages.title}" />
+          <h:outputText value="#{userMergeManager.userLeft.title}" />
+          <h:selectOneRadio
+            id="title"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.title}"
+            disabled="#{userMergeManager.userLeft.title == userMergeManager.merged.title}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.title}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.title}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.title}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.salutation or not empty userMergeManager.merged.salutation}">
+          <h:outputText value="#{messages.salutation}" />
+          <h:outputText value="#{userMergeManager.userLeft.salutation}" />
+          <h:selectOneRadio
+            id="salutation"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.salutation}"
+            disabled="#{userMergeManager.userLeft.salutation == userMergeManager.merged.salutation}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.salutation}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.salutation}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.salutation}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.firstName and not empty userMergeManager.merged.firstName}">
+          <h:outputText value="#{messages.firstName}" />
+          <h:outputText value="#{userMergeManager.userLeft.firstName}" />
+          <h:selectOneRadio
+            id="firstName"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.firstName}"
+            disabled="#{userMergeManager.userLeft.firstName == userMergeManager.merged.firstName}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.firstName}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.firstName}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.firstName}" />
+        </c:if>
+
+        <h:outputText value="#{messages.lastName}" />
+        <h:outputText value="#{userMergeManager.userLeft.lastName}" />
+        <h:selectOneRadio
+          id="lastName"
+          layout="lineDirection"
+          value="#{userMergeManager.mergeSelection.lastName}"
+          disabled="#{userMergeManager.userLeft.lastName == userMergeManager.merged.lastName}">
+          <f:selectItem itemValue="#{userMergeManager.userLeft.lastName}" />
+          <f:selectItem itemValue="#{userMergeManager.merged.lastName}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{userMergeManager.merged.lastName}" />
+
+        <c:if test="#{not empty userMergeManager.userLeft.birthDate and not empty userMergeManager.merged.birthDate}">
+          <h:outputText value="#{messages.birthDate}" />
+          <h:outputText value="#{userMergeManager.userLeft.birthDate}" />
+          <h:selectOneRadio
+            id="birthDate"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.birthDate}"
+            disabled="#{userMergeManager.userLeft.birthDate == userMergeManager.merged.birthDate}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.birthDate}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.birthDate}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.birthDate}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.empDegree or not empty userMergeManager.merged.empDegree}">
+          <h:outputText value="#{messages.empDegree}" />
+          <h:outputText value="#{not empty userMergeManager.userLeft.empDegree ? userMergeManager.userLeft.empDegree : 0}" />
+          <h:selectOneRadio
+            id="empDegree"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.empDegree}"
+            disabled="#{userMergeManager.userLeft.empDegree == userMergeManager.merged.empDegree}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.empDegree}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.empDegree}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{not empty userMergeManager.merged.empDegree ? userMergeManager.merged.empDegree : 0}" />
+        </c:if>
+
+        <!-- Division or Institute -->
+
+        <h:outputText value="#{messages.instituteDivision}" />
+
+        <!-- Division or Institute Link for User -->
+
+        <c:if test="#{not empty userMergeManager.userLeft.division}">
+          <ui:include src="/fragments/entity-link.xhtml">
+            <ui:param
+              name="instance"
+              value="#{userMergeManager.userLeft.division}" />
+            <ui:param
+              name="entityValue"
+              value="(#{messages.division}) #{userMergeManager.userLeft.division.displayName}" />
+          </ui:include>
+        </c:if>
+        <c:if test="#{not empty userMergeManager.userLeft.institute}">
+          <ui:include src="/fragments/entity-link.xhtml">
+            <ui:param
+              name="instance"
+              value="#{userMergeManager.userLeft.institute}" />
+            <ui:param
+              name="entityValue"
+              value="(#{messages.institute}) #{userMergeManager.userLeft.institute.displayName}" />
+          </ui:include>
+        </c:if>
+
+        <h:selectOneRadio
+          id="instituteOrDivision"
+          layout="lineDirection"
+          value="#{userMergeManager.mergeSelection.mergeAffiliationUserId}">
+          <f:selectItem itemValue="#{userMergeManager.userLeft.id}" />
+          <f:selectItem itemValue="#{userMergeManager.merged.id}" />
+        </h:selectOneRadio>
+
+        <c:if test="#{not empty userMergeManager.merged.division}">
+          <ui:include src="/fragments/entity-link.xhtml">
+            <ui:param
+              name="instance"
+              value="#{userMergeManager.merged.division}" />
+            <ui:param
+              name="entityValue"
+              value="#{userMergeManager.merged.division.displayName} (#{messages.division})" />
+          </ui:include>
+        </c:if>
+        <c:if test="#{not empty userMergeManager.merged.institute}">
+          <ui:include src="/fragments/entity-link.xhtml">
+            <ui:param
+              name="instance"
+              value="#{userMergeManager.merged.institute}" />
+            <ui:param
+              name="entityValue"
+              value="#{userMergeManager.merged.institute.displayName} (#{messages.institute})" />
+          </ui:include>
+        </c:if>
+
+        <!-- END Division or Institute -->
+
+        <h:outputText value="#{messages.email}" />
+        <h:outputText value="#{userMergeManager.userLeft.email}" />
+        <h:selectOneRadio
+          id="email"
+          layout="lineDirection"
+          value="#{userMergeManager.mergeSelection.email}">
+          <f:selectItem itemValue="#{userMergeManager.userLeft.email}" />
+          <f:selectItem itemValue="#{userMergeManager.merged.email}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{userMergeManager.merged.email}" />
+
+        <h:outputText value="#{messages.phone}" />
+        <h:outputText value="#{userMergeManager.userLeft.phoneNumber.getFullNumber()}" />
+        <h:selectOneRadio
+          id="phoneNumber"
+          layout="lineDirection"
+          value="#{userMergeManager.mergeSelection.phoneNumber}"
+          disabled="#{userMergeManager.userLeft.phoneNumber.getFullNumber().equals(userMergeManager.merged.phoneNumber.getFullNumber())}"
+          converter="omnifaces.SelectItemsConverter">
+          <f:selectItem itemValue="#{userMergeManager.userLeft.phoneNumber}" />
+          <f:selectItem itemValue="#{userMergeManager.merged.phoneNumber}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{userMergeManager.merged.phoneNumber.getFullNumber()}" />
+
+        <h:outputText value="#{messages.address}" />
+        <h:outputText value="#{userMergeManager.userLeft.address.getFullAddress()}" />
+        <h:selectOneRadio
+          id="address"
+          layout="lineDirection"
+          value="#{userMergeManager.mergeSelection.address}"
+          disabled="#{userMergeManager.userLeft.address.getFullAddressRoom().equals(userMergeManager.merged.address.getFullAddressRoom())}"
+          converter="omnifaces.SelectItemsConverter">
+          <f:selectItem itemValue="#{userMergeManager.userLeft.address}" />
+          <f:selectItem itemValue="#{userMergeManager.merged.address}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{userMergeManager.merged.address.getFullAddress()}" />
+
+        <c:if test="#{not empty userMergeManager.userLeft.privateEmail or not empty userMergeManager.merged.privateEmail}">
+          <h:outputText value="#{messages.privateEmail}" />
+          <h:outputText value="#{not empty userMergeManager.userLeft.privateEmail ? userMergeManager.userLeft.privateEmail : ''}" />
+          <h:selectOneRadio
+            id="privateEmail"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.privateEmail}"
+            disabled="#{userMergeManager.userLeft.privateEmail.equals(userMergeManager.merged.privateEmail)}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.privateEmail}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.privateEmail}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{not empty userMergeManager.merged.privateEmail ? userMergeManager.merged.privateEmail : ''}" />
+        </c:if>
+
+        <c:if test="#{userMergeManager.userLeft.homePhoneNumber.notEmpty or userMergeManager.merged.homePhoneNumber.notEmpty}">
+          <h:outputText value="#{messages.homePhone}" />
+          <h:outputText value="#{userMergeManager.userLeft.homePhoneNumber.getFullNumber()}" />
+          <h:selectOneRadio
+            id="homePhoneNumber"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.homePhoneNumber}"
+            disabled="#{userMergeManager.userLeft.homePhoneNumber.getFullNumber().equals(userMergeManager.merged.homePhoneNumber.getFullNumber())}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.homePhoneNumber}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.homePhoneNumber}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.homePhoneNumber.getFullNumber()}" />
+        </c:if>
+
+        <c:if test="#{userMergeManager.userLeft.homeAddress.notEmpty or userMergeManager.merged.homeAddress.notEmpty}">
+          <h:outputText value="#{messages.homeAddress}" />
+          <h:outputText value="#{userMergeManager.userLeft.homeAddress.getFullAddress()}" />
+          <h:selectOneRadio
+            id="homeAddress"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.homeAddress}"
+            disabled="#{userMergeManager.userLeft.homeAddress == userMergeManager.merged.homeAddress}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.homeAddress}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.homeAddress}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.homeAddress.getFullAddress()}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.accessCardNumber or not empty userMergeManager.merged.accessCardNumber}">
+          <h:outputText value="#{messages.accessCardNumber}" />
+          <h:outputText value="#{userMergeManager.userLeft.accessCardNumber}" />
+          <h:selectOneRadio
+            id="accessCardNumber"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.accessCardNumber}"
+            disabled="#{userMergeManager.userLeft.accessCardNumber == userMergeManager.merged.accessCardNumber}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.accessCardNumber}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.accessCardNumber}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.accessCardNumber}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.massMailEnabled or not empty userMergeManager.merged.massMailEnabled}">
+          <h:outputText value="#{messages.massMailEnabled}" />
+          <h:outputText value="#{userMergeManager.userLeft.massMailEnabled}" />
+          <h:selectOneRadio
+            id="massMailEnabled"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.massMailEnabled}"
+            disabled="#{userMergeManager.userLeft.massMailEnabled == userMergeManager.merged.massMailEnabled}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.massMailEnabled}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.massMailEnabled}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.massMailEnabled}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.technology or not empty userMergeManager.merged.technology}">
+          <h:outputText value="#{messages.technology}" />
+          <h:outputText value="#{userMergeManager.userLeft.technology.name}" />
+          <h:selectOneRadio
+            id="technology"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.technology}"
+            disabled="#{userMergeManager.userLeft.technology == userMergeManager.merged.technology}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.technology}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.technology}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.technology.name}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.technologyHead or not empty userMergeManager.merged.technologyHead}">
+          <h:outputText value="#{messages.technologyHead}" />
+          <h:outputText value="#{userMergeManager.userLeft.technologyHead.name}" />
+          <h:selectOneRadio
+            id="technologyHead"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.technologyHead}"
+            disabled="#{userMergeManager.userLeft.technologyHead == userMergeManager.merged.technologyHead}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.technologyHead}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.technologyHead}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.technologyHead.name}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.defaultTechnology or not empty userMergeManager.merged.defaultTechnology}">
+          <h:outputText value="#{messages.defaultTechnology}" />
+          <h:outputText value="#{userMergeManager.userLeft.defaultTechnology.name}" />
+          <h:selectOneRadio
+            id="defaultTechnology"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.defaultTechnology}"
+            disabled="#{userMergeManager.userLeft.defaultTechnology == userMergeManager.merged.defaultTechnology}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.defaultTechnology}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.defaultTechnology}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.defaultTechnology.name}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.defaultUserGroup or not empty userMergeManager.merged.defaultUserGroup}">
+          <h:outputText value="#{messages.defaultUserGroup}" />
+          <h:outputText value="#{userMergeManager.userLeft.defaultUserGroup.name}" />
+          <h:selectOneRadio
+            id="defaultUserGroup"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.defaultUserGroup}"
+            disabled="#{userMergeManager.userLeft.defaultUserGroup == userMergeManager.merged.defaultUserGroup}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.defaultUserGroup}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.defaultUserGroup}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.defaultUserGroup.name}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.downloadManagerEnabled or not empty userMergeManager.merged.downloadManagerEnabled}">
+          <h:outputText value="#{messages.downloadManagerEnabled}" />
+          <h:outputText value="#{userMergeManager.userLeft.downloadManagerEnabled}" />
+          <h:selectOneRadio
+            id="downloadManagerEnabled"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.downloadManagerEnabled}"
+            disabled="#{userMergeManager.userLeft.downloadManagerEnabled == userMergeManager.merged.downloadManagerEnabled}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.downloadManagerEnabled}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.downloadManagerEnabled}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.downloadManagerEnabled}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.downloadDirectoryStructure or not empty userMergeManager.merged.downloadDirectoryStructure}">
+          <h:outputText value="#{messages.downloadDirectoryStructure}" />
+          <h:outputText value="#{userMergeManager.userLeft.downloadDirectoryStructure}" />
+          <h:selectOneRadio
+            id="downloadDirectoryStructure"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.downloadDirectoryStructure}"
+            disabled="#{userMergeManager.userLeft.downloadDirectoryStructure == userMergeManager.merged.downloadDirectoryStructure}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.downloadDirectoryStructure}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.downloadDirectoryStructure}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.downloadDirectoryStructure}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.downloadDirectoryPath or not empty userMergeManager.merged.downloadDirectoryPath}">
+          <h:outputText value="#{messages.downloadDirectoryPath}" />
+          <h:outputText value="#{userMergeManager.userLeft.downloadDirectoryPath}" />
+          <h:selectOneRadio
+            id="downloadDirectoryPath"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.downloadDirectoryPath}"
+            disabled="#{userMergeManager.userLeft.downloadDirectoryPath == userMergeManager.merged.downloadDirectoryPath}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.downloadDirectoryPath}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.downloadDirectoryPath}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.downloadDirectoryPath}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.downloadDirectoryEditable or not empty userMergeManager.merged.downloadDirectoryEditable}">
+          <h:outputText value="#{messages.downloadDirectoryEditable}" />
+          <h:outputText value="#{userMergeManager.userLeft.downloadDirectoryEditable}" />
+          <h:selectOneRadio
+            id="downloadDirectoryEditable"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.downloadDirectoryEditable}"
+            disabled="#{userMergeManager.userLeft.downloadDirectoryEditable == userMergeManager.merged.downloadDirectoryEditable}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.downloadDirectoryEditable}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.downloadDirectoryEditable}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.downloadDirectoryEditable}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.disableNotificationExclusion or not empty userMergeManager.merged.disableNotificationExclusion}">
+          <h:outputText value="#{messages.disableNotificationExclusion}" />
+          <h:outputText value="#{userMergeManager.userLeft.disableNotificationExclusion}" />
+          <h:selectOneRadio
+            id="disableNotificationExclusion"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.disableNotificationExclusion}"
+            disabled="#{userMergeManager.userLeft.disableNotificationExclusion == userMergeManager.merged.disableNotificationExclusion}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.disableNotificationExclusion}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.disableNotificationExclusion}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.disableNotificationExclusion}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.description or not empty userMergeManager.merged.description}">
+          <h:outputText value="#{messages.description}" />
+          <h:outputText value="#{userMergeManager.userLeft.getDescriptionTrunc(40)}" title="#{userMergeManager.userLeft.description}" />
+          <h:selectOneRadio
+            id="description"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.description}">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.description}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.description}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.getDescriptionTrunc(40)}" title="#{userMergeManager.merged.description}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.userBillingInfo or not empty userMergeManager.merged.userBillingInfo}">
+          <h:outputText value="#{messages.userBillingInfo}" />
+          <h:outputText value="#{userMergeManager.userLeft.userBillingInfo}" title="#{userMergeManager.userLeft.userBillingInfo.entitySpecifics}" />
+          <h:selectOneRadio
+            id="userbillinginfo"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.userBillingInfo}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.userBillingInfo}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.userBillingInfo}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.userBillingInfo}" title="#{userMergeManager.merged.userBillingInfo.entitySpecifics}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.image or not empty userMergeManager.merged.image}">
+          <h:outputText value="#{messages.image}" />
+          <h:outputText value="#{userMergeManager.userLeft.image}" />
+          <h:selectOneRadio
+            id="image"
+            layout="lineDirection"
+            value="#{userMergeManager.mergeSelection.image}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{userMergeManager.userLeft.image}" />
+            <f:selectItem itemValue="#{userMergeManager.merged.image}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{userMergeManager.merged.image}" />
+        </c:if>
+
+        <c:if test="#{not empty userMergeManager.userLeft.image or not empty userMergeManager.merged.image}">
+          <h:outputText value="" />
+          <h:panelGroup>
+            <p:graphicImage
+              rendered="#{not empty userMergeManager.userLeft.image}"
+              value="#{userMergeManager.userLeft.image.streamedContent}"
+              stream="false" />
+          </h:panelGroup>
+          <h:outputText value="" />
+          <h:panelGroup>
+            <p:graphicImage
+              rendered="#{not empty userMergeManager.merged.image}"
+              value="#{userMergeManager.merged.image.streamedContent}"
+              stream="false" />
+          </h:panelGroup>
+        </c:if>
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.accessRequests}" />
+        <h:outputText value="#{userMergeManager.userLeft.accessRequests.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.accessRequests.size()}" />
+
+        <h:outputText value="#{messages.acknowledgedFeedbacks}" />
+        <h:outputText value="#{userMergeManager.userLeft.acknowledgedFeedbacks.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.acknowledgedFeedbacks.size()}" />
+
+        <h:outputText value="#{messages.adminInstruments}" />
+        <h:outputText value="#{userMergeManager.userLeft.adminInstruments.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.adminInstruments.size()}" />
+
+        <h:outputText value="#{messages.approvedContracts}" />
+        <h:outputText value="#{userMergeManager.userLeft.approvedContracts.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.approvedContracts.size()}" />
+
+        <h:outputText value="#{messages.backupOf}" />
+        <h:outputText value="#{userMergeManager.userLeft.backupOf.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.backupOf.size()}" />
+
+        <h:outputText value="#{messages.bioinformaticianContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.bioinformaticianContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.bioinformaticianContainers.size()}" />
+
+        <h:outputText value="#{messages.bookableInstruments}" />
+        <h:outputText value="#{userMergeManager.userLeft.bookableInstruments.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.bookableInstruments.size()}" />
+
+        <h:outputText value="#{messages.bookedInstrumentReservations}" />
+        <h:outputText value="#{userMergeManager.userLeft.bookedInstrumentReservations.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.bookedInstrumentReservations.size()}" />
+
+        <h:outputText value="#{messages.bookings}" />
+        <h:outputText value="#{userMergeManager.userLeft.bookings.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.bookings.size()}" />
+
+        <h:outputText value="#{messages.budgetOfficerContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.budgetOfficerContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.budgetOfficerContainers.size()}" />
+
+        <h:outputText value="#{messages.chargerCharges}" />
+        <h:outputText value="#{userMergeManager.userLeft.chargerCharges.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.chargerCharges.size()}" />
+
+        <h:outputText value="#{messages.coachBackupContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.coachBackupContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.coachBackupContainers.size()}" />
+
+        <h:outputText value="#{messages.coachContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.coachContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.coachContainers.size()}" />
+
+        <h:outputText value="#{messages.contactContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.contactContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.contactContainers.size()}" />
+
+        <h:outputText value="#{messages.containersRequested}" />
+        <h:outputText value="#{userMergeManager.userLeft.containersRequested.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.containersRequested.size()}" />
+
+        <h:outputText value="#{messages.credits}" />
+        <h:outputText value="#{userMergeManager.userLeft.credits.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.credits.size()}" />
+
+        <h:outputText value="#{messages.discussedContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.discussedContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.discussedContainers.size()}" />
+
+        <h:outputText value="#{messages.events}" />
+        <h:outputText value="#{userMergeManager.userLeft.events.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.events.size()}" />
+
+        <h:outputText value="#{messages.feedbacks}" />
+        <h:outputText value="#{userMergeManager.userLeft.feedbacks.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.feedbacks.size()}" />
+
+        <h:outputText value="#{messages.instrumentReservations}" />
+        <h:outputText value="#{userMergeManager.userLeft.instrumentReservations.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.instrumentReservations.size()}" />
+
+        <h:outputText value="#{messages.leaderContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.leaderContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.leaderContainers.size()}" />
+
+        <h:outputText value="#{messages.mails}" />
+        <h:outputText value="#{userMergeManager.userLeft.mails.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.mails.size()}" />
+
+        <h:outputText value="#{messages.userGroups}" />
+        <h:outputText value="#{userMergeManager.userLeft.userGroups.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.userGroups.size()}" />
+
+        <h:outputText value="#{messages.supervisedUserGroups}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedUserGroups.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedUserGroups.size()}" />
+
+        <h:outputText value="#{messages.membershipsCurrent}" />
+        <h:outputText value="#{userMergeManager.userLeft.membershipsCurrent.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.membershipsCurrent.size()}" />
+
+        <h:outputText value="#{messages.membershipsFormer}" />
+        <h:outputText value="#{userMergeManager.userLeft.membershipsFormer.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.membershipsFormer.size()}" />
+
+        <h:outputText value="#{messages.offeredCharges}" />
+        <h:outputText value="#{userMergeManager.userLeft.offeredCharges.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.offeredCharges.size()}" />
+
+        <h:outputText value="#{messages.offers}" />
+        <h:outputText value="#{userMergeManager.userLeft.offers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.offers.size()}" />
+
+        <h:outputText value="#{messages.operatorInstruments}" />
+        <h:outputText value="#{userMergeManager.userLeft.operatorInstruments.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.operatorInstruments.size()}" />
+
+        <h:outputText value="#{messages.plates}" />
+        <h:outputText value="#{userMergeManager.userLeft.plates.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.plates.size()}" />
+
+        <h:outputText value="#{messages.purchases}" />
+        <h:outputText value="#{userMergeManager.userLeft.purchases.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.purchases.size()}" />
+
+        <h:outputText value="#{messages.orderItemReceivedByPurchases}" />
+        <h:outputText value="#{userMergeManager.userLeft.orderItemReceivedByPurchases.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.orderItemReceivedByPurchases.size()}" />
+
+        <h:outputText value="#{messages.userPurchases}" />
+        <h:outputText value="#{userMergeManager.userLeft.userPurchases.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.userPurchases.size()}" />
+
+        <h:outputText value="#{messages.resourceBaskets}" />
+        <h:outputText value="#{userMergeManager.userLeft.resourceBaskets.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.resourceBaskets.size()}" />
+
+        <h:outputText value="#{messages.roles}" />
+        <h:outputText value="#{userMergeManager.userLeft.roles.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.roles.size()}" />
+
+        <h:outputText value="#{messages.runs}" />
+        <h:outputText value="#{userMergeManager.userLeft.runs.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.runs.size()}" />
+
+        <h:outputText value="#{messages.serviceAreas}" />
+        <h:outputText value="#{userMergeManager.userLeft.serviceAreas.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.serviceAreas.size()}" />
+
+        <h:outputText value="#{messages.serviceTypes}" />
+        <h:outputText value="#{userMergeManager.userLeft.serviceTypes.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.serviceTypes.size()}" />
+
+        <h:outputText value="#{messages.services}" />
+        <h:outputText value="#{userMergeManager.userLeft.services.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.services.size()}" />
+
+        <h:outputText value="#{messages.serviceTypesCoach}" />
+        <h:outputText value="#{userMergeManager.userLeft.serviceTypesCoach.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.serviceTypesCoach.size()}" />
+
+        <h:outputText value="#{messages.serviceTypesCoachBackup}" />
+        <h:outputText value="#{userMergeManager.userLeft.serviceTypesCoachBackup.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.serviceTypesCoachBackup.size()}" />
+
+        <h:outputText value="#{messages.statusModifiedContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.statusModifiedContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.statusModifiedContainers.size()}" />
+
+        <h:outputText value="#{messages.statusModifiedExecutables}" />
+        <h:outputText value="#{userMergeManager.userLeft.statusModifiedExecutables.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.statusModifiedExecutables.size()}" />
+
+        <h:outputText value="#{messages.statusModifiedPlates}" />
+        <h:outputText value="#{userMergeManager.userLeft.statusModifiedPlates.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.statusModifiedPlates.size()}" />
+
+        <h:outputText value="#{messages.statusModifiedRuns}" />
+        <h:outputText value="#{userMergeManager.userLeft.statusModifiedRuns.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.statusModifiedRuns.size()}" />
+
+        <h:outputText value="#{messages.supervisedApplications}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedApplications.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedApplications.size()}" />
+
+        <h:outputText value="#{messages.supervisedContracts}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedContracts.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedContracts.size()}" />
+
+        <h:outputText value="#{messages.supervisedExecutables}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedExecutables.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedExecutables.size()}" />
+
+        <h:outputText value="#{messages.supervisedInstruments}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedInstruments.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedInstruments.size()}" />
+
+        <h:outputText value="#{messages.supervisedStorages}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedStorages.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedStorages.size()}" />
+
+        <h:outputText value="#{messages.supervisedSubmitters}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedSubmitters.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedSubmitters.size()}" />
+
+        <h:outputText value="#{messages.supervisedWrapperCreators}" />
+        <h:outputText value="#{userMergeManager.userLeft.supervisedWrapperCreators.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.supervisedWrapperCreators.size()}" />
+
+        <h:outputText value="#{messages.trackedContainers}" />
+        <h:outputText value="#{userMergeManager.userLeft.trackedContainers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.trackedContainers.size()}" />
+
+        <h:outputText value="#{messages.trackedServices}" />
+        <h:outputText value="#{userMergeManager.userLeft.trackedServices.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{userMergeManager.merged.trackedServices.size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{userMergeManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{userMergeManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

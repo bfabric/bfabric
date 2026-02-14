@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup rendered="#{configuration.orderEnabled and sidebarHelper.isTab('reassignorderbioinformatician') and identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/task/reassignordercoach-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="reassignorderbioinformatician" />
+      <ui:param
+        name="tableContent"
+        value="#{orderList.reassignOrderBioinformaticianTasks}" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

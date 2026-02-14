@@ -1,0 +1,88 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="Search Help" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h3>Terms</h3>
+
+    <p>
+      Choosing the right search terms is the key to finding the information you need.<br /> Start with the obvious – if you're looking for general information on Drosophila, try "Drosophila".<br />
+      But it's often advisable to use multiple search terms; if you're looking for Drosophila Extracts, you will do better with extracts Drosophila than with either Drosophila or Extract by
+      themselves.
+    </p>
+
+    <p>A query is broken up into terms and operators. There are two types of terms: Single Terms and Phrases.</p>
+
+    <ul>
+      <li>A Single Term is a single word such as "test" or "hello".</li>
+      <li>A Phrase is a group of words surrounded by double quotes such as "hello dolly".</li>
+    </ul>
+
+    <p>Multiple terms can be combined together with Boolean operators AND (or +), OR, and NOT (or -) to form a more complex query. Note that these operators have to be written in upper letters.</p>
+
+    <p>Hence, omit the symbol - in a search term representing a date. Write 20120529 instead of 2012-05-29.</p>
+
+    <h3>Capitalization</h3>
+
+    <p>Searches are case in-sensitive. All letters, regardless of how you type them, will be understood as lower case. For example, searches for drosophila, Drosohpila or even dRoSoPhIla will all
+      return the same results.</p>
+
+    <h3>Automatic Exclusion of Common Words</h3>
+
+    <p>A search ignores common words and characters such as "where" and "how", as well as certain single digits and single letters, because they tend to slow down your search without improving the
+      results.</p>
+
+    <h3>Document Types / Search Fields</h3>
+
+    <p>The search can be limited by selecting the desired document types. When a document type is selected, the list of available fields is loaded according to the supported fields of the selected
+      document type.</p>
+
+    <h3>Wildcard Searches</h3>
+
+    <p>Both single and multiple character wildcard searches are supported within single terms (not within phrase queries).</p>
+
+    <ul>
+      <li>To perform a single character wildcard search use the "?" symbol.</li>
+      <li>To perform a multiple character wildcard search use the "*" symbol.</li>
+    </ul>
+
+    <p>To get all documents, just enter a single "*" symbol in the search field. But be aware that such a query might take a long time.</p>
+
+    <h3>Fuzzy Searches</h3>
+
+    <p>
+      To do a fuzzy search use the tilde, "~", symbol at the end of a Single word Term. For example to search for a term similar in spelling to "roam" use the fuzzy search: "roam~"<br /> This search
+      will find terms like foam and roams.<br /> An additional (optional) parameter can specify the required similarity. The value is between 0 and 1, with a value closer to 1 only terms with a
+      higher similarity will be matched. For example: "roam~0.8"<br /> The default that is used if the parameter is not given is 0.5.
+    </p>
+
+    <h3>Proximity Searches</h3>
+
+    <p>Words which are within a specific distance can be found. To do a proximity search use the tilde, "~", symbol at the end of a Phrase. For example to search for a "apache" and "jakarta"
+      within 10 words of each other in a document use the search: "jakarta apache"~10</p>
+
+    <h3>Range Searches</h3>
+
+    <p>
+      Range Queries allow one to match documents whose field(s) values are between the lower and upper bound specified by the Range Query. Range Queries can be inclusive or exclusive of the upper and
+      lower bounds. Sorting is done lexicographically.<br /> The query [Aida TO Carmen] will find documents that have values between Aida and Carmen, inclusive.<br /> The query {Aida TO Carmen} will
+      find all documents whose titles are between Aida and Carmen, but not including Aida and Carmen. <br /> Inclusive range queries are denoted by square brackets. Exclusive range queries are
+      denoted by curly brackets.
+    </p>
+
+    <p>
+      Lucene runs a fulltext search. However, you may use range queries to simulate less/greater than comparisons of positive numbers under some restrictions.<br /> Write [0 TO 42.8] to express less
+      than or equal 42,8. <br /> Write {61,25 TO 999999999} to simulate a greater than 61,25 comparison, while you assume that there is no number greater than 999999999. <br /> In other words, use a
+      number for the right boundary that is expected to be higher than all values of the given field.
+    </p>
+
+    <p>
+      Check out Lucene's <a
+      href="https://lucene.apache.org/core/8_11_3/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description">Query Parser Syntax</a> web page for more detailed help.
+    </p>
+  </ui:define>
+</ui:composition>

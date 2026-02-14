@@ -1,0 +1,33 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('admin')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.billingAccounts} " />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/user/billingaccount-columns.xhtml" />
+      <ui:param
+        name="tableType"
+        value="user" />
+      <ui:param
+        name="tableContext"
+        value="billingaccounts" />
+      <ui:param
+        name="tableContent"
+        value="#{userList.resultList}" />
+      <ui:param
+        name="showColumns"
+        value="title, salutation" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

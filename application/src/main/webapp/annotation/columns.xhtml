@@ -1,0 +1,43 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('type')}"
+    field="#{fieldPrefix}type"
+    headerText="#{messages.type}"
+    filterValue="#{annotationTypeFilter}"
+    filterMatchMode="exact">
+    <f:facet name="filter">
+      <h:selectOneMenu
+        id="type"
+        value="#{annotationTypeFilter}"
+        onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{annotationManager.annotationTypes}"
+          var="item"
+          itemValue="#{item.label}"
+          itemLabel="#{item.label}" />
+      </h:selectOneMenu>
+    </f:facet>
+  </p:column>
+
+  <ui:include src="/fragments/column/na.xhtml" />
+  <ui:include src="/fragments/column/top.xhtml" />
+  <ui:include src="/fragments/column/common.xhtml" />
+  <ui:include src="/fragments/column/released.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/sample-count.xhtml">
+    <ui:param name="sortable" value="false" />
+    <ui:param name="filterable" value="false" />
+  </ui:include>
+  <ui:include src="/fragments/column/samplepreparationprotocol-count.xhtml">
+    <ui:param name="sortable" value="false" />
+    <ui:param name="filterable" value="false" />
+  </ui:include>
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

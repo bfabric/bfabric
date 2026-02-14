@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <p:button rendered="#{instance.datasetTemplateCreatable}" outcome="/datasettemplate/edit.xhtml" value="#{messages.createDatasetTemplate}" title="#{messages.createDatasetTemplateHint}">
+    <f:param name="datasetId" value="#{instance.id}" />
+  </p:button>
+</ui:composition>

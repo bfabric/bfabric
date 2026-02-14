@@ -1,0 +1,33 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.resourceStatus}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="resourceStatus" />
+      <ui:param
+        name="tableContent"
+        value="#{statisticsList.resourceStatusCounts}" />
+      <ui:param
+        name="include"
+        value="/statistics/resourcestatus-count-columns.xhtml" />
+      <ui:param
+        name="paginator"
+        value="true" />
+    </ui:include>
+    <p:spacer height="30" />
+    <p:barChart model="#{barChart.getHorizontal(statisticsList.resourceStatusCounts,null,null,messages.status,null,null)}" style="width:400px" />
+  </ui:define>
+</ui:composition>

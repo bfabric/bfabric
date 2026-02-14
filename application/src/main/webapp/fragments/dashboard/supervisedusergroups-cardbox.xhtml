@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/dashboard-cardbox.xhtml">
+    <ui:param name="content" value="#{content != null ? content : userGroupList.getSupervisedUserGroups(user)}" />
+    <ui:param name="tab" value="supervisedusergroups" />
+    <ui:param name="label" value="#{not empty label ? label : messages.supervisedUserGroups}" />
+  </ui:include>
+</ui:composition>

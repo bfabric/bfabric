@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('purchaseReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.purchaseItems}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist.xhtml">
+      <ui:param
+        name="include"
+        value="/purchaseitem/columns-purchase-including.xhtml" />
+      <ui:param
+        name="tableType"
+        value="purchaseitem" />
+      <ui:param
+        name="showColumns"
+        value="internal" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

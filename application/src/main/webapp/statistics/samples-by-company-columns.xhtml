@@ -1,0 +1,80 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:columnGroup type="header">
+    <p:row>
+      <p:column colspan="1" headerText="#{messages.year}" />
+      <p:column colspan="5" headerText=" " />
+      <p:column colspan="2" headerText="#{messages.charges}" />
+    </p:row>
+    <p:row>
+      <p:column headerText="&#160;" sortBy="#{entity[0]}" filterBy="#{entity[0]}" />
+      <p:column headerText="#{messages.companyId}" sortBy="#{entity[1]}" filterBy="#{entity[1]}" />
+      <p:column headerText="#{messages.companyName}" sortBy="#{entity[2]}" filterBy="#{entity[2]}" />
+      <p:column headerText="#{messages.divisionId}" sortBy="#{entity[3]}" filterBy="#{entity[3]}" />
+      <p:column headerText="#{messages.divisionName}" sortBy="#{entity[4]}" filterBy="#{entity[4]}" />
+      <p:column headerText="#{messages.samples}" sortBy="#{entity[5]}" filterBy="#{entity[5]}" />
+      <p:column headerText="#{messages.accounted}" />
+      <p:column headerText="#{messages.notAcc}" />
+    </p:row>
+  </p:columnGroup>
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.companyId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.companyName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[1]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueClass"
+      value="company" />
+  </ui:include>
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.divisionId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.divisionName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[3]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[4]}" />
+    <ui:param
+      name="valueClass"
+      value="division" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.samples}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.accounted}" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.notAccounted}" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+  </ui:include>
+</ui:composition>

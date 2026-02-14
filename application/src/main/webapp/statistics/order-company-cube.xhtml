@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.ordersByCompany}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="ordersByCompany" />
+      <ui:param
+        name="tableContent"
+        value="#{statisticsList.ordersByCompany}" />
+      <ui:param
+        name="include"
+        value="/statistics/order-company-cube-columns.xhtml" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="all" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

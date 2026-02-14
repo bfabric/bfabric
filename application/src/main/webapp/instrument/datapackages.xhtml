@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.orderEnabled and sidebarHelper.isTab('datapackages')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrumentdatapackage" />
+      <ui:param
+        name="tableContext"
+        value="#{instrument.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{instrument.instrumentDataPackages}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

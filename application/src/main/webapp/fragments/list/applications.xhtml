@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('applications')}">
+    <h:outputText value="#{messages.applicationNoRunnableHint}" rendered="#{empty instance.applications}" />
+    <h:panelGroup rendered="#{not empty instance.applications}">
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param name="tableType" value="application" />
+        <ui:param name="tableContext" value="#{instance.tableContext}" />
+        <ui:param name="tableContent" value="#{instance.applications}" />
+        <ui:param name="showColumns" value="runSucceedingWorkunit" />
+        <ui:param name="hideColumns" value="hidden,forEmployeesOnly,annotationRequired,importResourcesRequired,pageflow,executable,wrapperCreator,submitter,createdBy,createdOn" />
+      </ui:include>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

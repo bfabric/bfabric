@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('workunitCount')}">
+    <c:if test="#{empty workunitsTransitiveSize or workunitsTransitiveSize == 0}">
+      <p:column
+        field="#{fieldPrefix}workunits.size()"
+        headerText="#{messages.workunit} #{messages.count}" />
+    </c:if>
+    <c:if test="#{not empty workunitsTransitiveSize and workunitsTransitiveSize > 0}">
+      <p:column
+        field="#{fieldPrefix}workunits.size()"
+        headerText="#{messages.workunit}  #{messages.count}">
+        <h:outputText value="#{entity.workunits.size()} (#{workunitsTransitiveSize})" />
+      </p:column>
+    </c:if>
+  </c:if>
+</ui:composition>

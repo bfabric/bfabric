@@ -1,0 +1,250 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{contractManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{contractManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{contract.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <ui:include src="/fragments/supervisor-autocomplete-required.xhtml">
+            <ui:param
+              name="instance"
+              value="#{contract}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.type}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="contractType" />
+            <ui:param
+              name="value"
+              value="#{contract.contractType}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{contractManager.getContractTypesFiltered}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="@this" />
+            <ui:param
+              name="ajaxClear"
+              value="true" />
+            <ui:param
+              name="clearUpdate"
+              value="@this" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.nameWithEnabledMessage}" />
+          </ui:include>
+
+          <c:if test="#{technologyList.getTechnologiesEnabledIncludingTechnologies(contract.technologies).size() > 1}">
+            <h:outputText value="#{messages.technologies}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectManyCheckbox
+                id="technologies"
+                value="#{contract.technologies}"
+                collectionType="java.util.HashSet"
+                styleClass="rightpadding"
+                layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(contract.technologies))}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(contract.technologies)}"
+                  var="item"
+                  itemLabel="#{item.nameWithEnabledMessage}"
+                  itemDescription="#{item.description}" />
+              </h:selectManyCheckbox>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.instruments}" />
+          <h:panelGroup>
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="selectedinstruments" />
+                <ui:param
+                  name="value"
+                  value="#{contract.instrumentsAsList}" />
+                <ui:param
+                  name="multiple"
+                  value="true" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{contractManager.getInstrumentsFiltered}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.displayName}" />
+                <ui:param
+                  name="includeColumns"
+                  value="/instrument/autocomplete-columns.xhtml" />
+                <ui:param
+                  name="hideColumns"
+                  value="label" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{contract.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge">
+            </h:inputTextarea>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.referenceNumber}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="referenceNumber"
+              value="#{contract.referenceNumber}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.startDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="startDate"
+              value="#{contract.startDate}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.expiryDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="expiryDate"
+              value="#{contract.expiryDate}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="priceGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.price}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              id="price"
+              value="#{contract.price}"
+              thousandSeparator=""
+              styleClass="editWidthExtraLarge">
+              <p:ajax
+                event="change"
+                immediate="true"
+                update="priceGrid, currencyGrid" />
+            </p:inputNumber>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="currencyGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.currency}"
+            rendered="#{not empty contract.price}" />
+          <h:panelGroup rendered="#{not empty contract.price}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:selectOneMenu
+                id="currency"
+                value="#{contract.currency}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{currencyList.resultListOrderByCode}"
+                  var="item"
+                  itemLabel="#{item.code}" />
+                <p:ajax
+                  event="change"
+                  immediate="true"
+                  update="currencyGrid" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.approvalDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="approvalDate"
+              value="#{contract.approvalDate}"
+              maxdate="#{LocalDate.now()}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.approvedBy}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="contractApprovedBy" />
+              <ui:param
+                name="value"
+                value="#{contract.approvedBy}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{contract.getEmployeesIncludingApprovedBy}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullLastFirstName}" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.approvalNote}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="approvalNote"
+              value="#{contract.approvalNote}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.purchases}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="purchase" />
+              <ui:param
+                name="value"
+                value="#{contract.purchasesAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{purchaseService.getFiltered}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param name="multiple" value="true" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

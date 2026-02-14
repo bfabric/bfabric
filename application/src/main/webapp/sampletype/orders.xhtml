@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if
+    test="#{configuration.orderEnabled and sidebarHelper.isTab('orders') and not empty sampleType.orders and identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="order" />
+      <ui:param
+        name="tableContext"
+        value="#{sampleType.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{orderList.getLazyModelBySampleTypeId(sampleType.id)}" />
+      <ui:param
+        name="hideColumns"
+        value="sampleType, oldProjectOrderId, oldServiceOrderId" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

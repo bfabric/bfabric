@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.requiresCustomOptions}">
+    <h:outputText value="#{messages.requiresCustomOptions}" />
+    <h:outputText value="#{instance.requiresCustomOptions}" styleClass="#{stringHelper.toGreenRed(instance.requiresCustomOptions)}" />
+  </c:if>
+</ui:composition>

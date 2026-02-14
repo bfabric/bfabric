@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:button
+    rendered="#{not empty rendered ? rendered : true}"
+    outcome="list.xhtml"
+    value="#{messages.list}"
+    title="#{title}" />
+</ui:composition>

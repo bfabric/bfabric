@@ -1,0 +1,108 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:panelGroup id="#{constants.ASSIGN}">
+    <h:panelGrid id="#{constants.SOURCE}">
+      <h:outputText
+        rendered="#{sourceTableContent.size() > 0}"
+        value="#{messages.available} #{entityName} (#{sourceTableContent.size()})"
+        styleClass="bold" />
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="showEmpty"
+          value="#{showEmptySource}" />
+        <ui:param
+          name="tableType"
+          value="#{tableType}" />
+        <ui:param
+          name="tableContext"
+          value="#{constants.SOURCE}" />
+        <ui:param
+          name="tableContent"
+          value="#{sourceTableContent}" />
+        <ui:param
+          name="showColumns"
+          value="#{constants.ADD}#{constants.BUTTON}#{constants.COLUMN}#{not empty showSourceTableColumns ? ','.concat(showSourceTableColumns) : ''}" />
+        <ui:param
+          name="hideColumns"
+          value="#{not empty hideSourceTableColumns ? hideSourceTableColumns : hideColumns}" />
+        <ui:param
+          name="addButtonDisabled"
+          value="#{addButtonDisabled}" />
+        <o:methodParam
+          name="addAllButtonListener"
+          value="#{addAllButtonListener}" />
+        <ui:param
+          name="addAllButtonUpdate"
+          value="#{constants.EDIT}:#{constants.SOURCE}, #{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+        <o:methodParam
+          name="addButtonListener"
+          value="#{addButtonListener}" />
+        <ui:param
+          name="addButtonUpdate"
+          value="@this, #{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+      </ui:include>
+    </h:panelGrid>
+
+    <p:spacer height="10" />
+
+    <h:panelGrid id="#{constants.TARGET}">
+      <h:outputText
+        rendered="#{ourceTableContent.size() > 0 or not empty targetTableContent}"
+        value="#{messages.selected} #{entityName} (#{targetTableContent.size()})"
+        styleClass="bold" />
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="sourceTableId"
+          value="#{constants.EDIT}:#{constants.SOURCE}#{tableType}#{constants.TABLE}" />
+        <ui:param
+          name="tableType"
+          value="#{tableType}" />
+        <ui:param
+          name="tableContext"
+          value="#{constants.TARGET}" />
+        <ui:param
+          name="tableContent"
+          value="#{targetTableContent}" />
+        <ui:param
+          name="showColumns"
+          value="#{constants.REMOVE}#{constants.BUTTON}#{constants.COLUMN}#{not empty showTargetTableColumns ? ','.concat(showTargetTableColumns) : ''}" />
+        <ui:param
+          name="hideColumns"
+          value="#{not empty hideTargetTableColumns ? hideTargetTableColumns : hideColumns}" />
+        <o:methodParam
+          name="removeAllButtonListener"
+          value="#{removeAllButtonListener}" />
+        <ui:param
+          name="removeAllButtonUpdate"
+          value="#{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+        <o:methodParam
+          name="removeButtonListener"
+          value="#{removeButtonListener}" />
+        <ui:param
+          name="removeButtonUpdate"
+          value="#{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+        <ui:param
+          name="customRowsPerPageTemplate"
+          value="#{not empty customRowsPerPageTemplateTarget ? customRowsPerPageTemplateTarget : configuration.defaultRowsPerPageTemplate}" />
+      </ui:include>
+    </h:panelGrid>
+
+    <h:panelGrid
+      id="#{constants.BUTTONS}"
+      columns="2"
+      styleClass="action">
+      <p:commandButton
+        rendered="#{not empty saveButtonRendered ? saveButtonRendered : true}"
+        action="#{saveAction}"
+        value="#{messages.save}"
+        update="#{constants.ASSIGN}" />
+      <p:commandButton
+        action="#{cancelAction}"
+        value="#{messages.cancel}"
+        immediate="true" />
+    </h:panelGrid>
+  </h:panelGroup>
+</ui:composition>

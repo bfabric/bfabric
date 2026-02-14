@@ -1,0 +1,79 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{serviceCodeManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="name"
+              value="#{serviceCode.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.costCentres}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="serviceCode" />
+              <ui:param
+                name="value"
+                value="#{serviceCode.costCentresAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{serviceCodeManager.getCostCentres}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{serviceCode.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <h:panelGroup id="enabledDecorate">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="enabled"
+                value="#{serviceCode.enabled}"
+                disabled="#{not serviceCode.enabled}" />
+              <h:outputText
+                value="&#160;#{messages.enableServiceHint}"
+                styleClass="pending"
+                rendered="#{not serviceCode.enabled}" />
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-edit-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

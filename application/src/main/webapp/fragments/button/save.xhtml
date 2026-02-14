@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:commandButton
+    action="#{entityManager.save}"
+    value="#{messages.save}"
+    update="@form"
+    oncomplete="fixOversize();" />
+</ui:composition>

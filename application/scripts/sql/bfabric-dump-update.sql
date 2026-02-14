@@ -1,0 +1,12 @@
+------------------------------------------------------------------------------------------------
+-- This script is used to collect all updates that need to be applied on the last production
+-- B-Fabric database dump.
+--
+-- If a command has already been applied to the corresponding database, mark it with [Applied].
+--
+-- The content of this file needs to be deleted after the production B-Fabric database has
+-- been dumped into the bfabric-dump.sql.gz file and placed in the public_html/DB folder.
+--
+-- This script is not intended to run entirely on the production database since some commands
+-- could already be applied on the production database. Be careful!
+------------------------------------------------------------------------------------------------

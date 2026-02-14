@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:confirm
+    header="#{messages.confirmAction}"
+    message="#{messages.confirmCustomContainerStatusMessage.replace('{0}', customStatus)}"
+    icon="ui-icon-alert" />
+  <ui:include src="/fragments/confirm-dialog.xhtml" />
+</ui:composition>

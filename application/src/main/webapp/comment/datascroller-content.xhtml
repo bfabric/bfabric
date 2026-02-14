@@ -1,0 +1,206 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="commentEntity" type="org.bfabric.entity.Comment"-->
+  <p:panel
+    styleClass="#{not empty panelStyleClass ? panelStyleClass : commentItem.parentClassOrder and type.equals(CommentDiscriminator.PROJECT_COMMENT) and isOrderCommentsShown ? 'order-comment-header' : ''} margin-bottom-10">
+    <f:facet name="header">
+      <h:panelGroup styleClass="normal-font-weight">
+        <h:panelGroup
+          rendered="#{not hideColumns.contains('headerbuttons')}"
+          styleClass="commentButtons">
+          <h:panelGrid
+            columns="14"
+            styleClass="nospace noborder">
+            <h:outputText value="#{commentItem.noteLabel} #{commentItem.internalLabel}" styleClass="warning" />
+            <p:spacer width="6" rendered="#{not empty commentEntity.acknowledgedBy or commentEntity.lastComment and identityManager.hasCurrentUserRole('employee')}" />
+            <ui:include src="/fragments/comment-hints-acknowledgedby.xhtml">
+              <ui:param
+                name="commentEntity"
+                value="#{commentItem}" />
+            </ui:include>
+            <p:spacer width="6" rendered="#{commentItem.replyEnabled}" />
+            <p:link
+              rendered="#{commentItem.replyEnabled}"
+              outcome="/comment/edit.xhtml"
+              title="#{messages.reply}"
+              styleClass="font-larger">
+              <f:param
+                name="parentId"
+                value="#{parent.id}" />
+              <f:param
+                name="type"
+                value="#{type}" />
+              <f:param
+                name="replyToId"
+                value="#{commentItem.id}" />
+              <i class="fas fa-reply" />
+            </p:link>
+            <p:spacer width="6" rendered="#{commentItem.updatable and not isOrderCommentsShown}" />
+            <p:link
+              rendered="#{commentItem.updatable and not isOrderCommentsShown}"
+              outcome="/comment/edit.xhtml"
+              title="#{messages.edit}">
+              <f:param
+                name="id"
+                value="#{commentItem.id}" />
+              <i class="fas fa-edit" />
+            </p:link>
+            <p:spacer width="6" rendered="#{identityManager.hasCurrentUserRole('commentReader') and commentItem.updatable and not isOrderCommentsShown}" />
+            <ui:include
+              src="/fragments/button/edit-links-link.xhtml"
+              rendered="#{identityManager.hasCurrentUserRole('commentReader') and commentItem.updatable and not isOrderCommentsShown}">
+              <ui:param
+                name="parent"
+                value="#{commentItem}" />
+            </ui:include>
+            <p:spacer width="6" rendered="#{commentItem.deletable and not isOrderCommentsShown}" />
+            <p:commandLink
+              action="#{commentHelper.remove(commentItem)}"
+              title="#{messages.remove}"
+              rendered="#{commentItem.deletable and not isOrderCommentsShown}"
+              process="@this">
+              <i class="far fa-trash-alt" />
+              <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+            </p:commandLink>
+            <p:spacer width="6" />
+            <h:panelGroup>
+              <ui:include src="/fragments/comment-hints-viewedby.xhtml">
+                <ui:param
+                  name="commentEntity"
+                  value="#{commentItem}" />
+              </ui:include>
+              <ui:include src="/fragments/comment-hints-starredby.xhtml">
+                <ui:param
+                  name="commentEntity"
+                  value="#{commentItem}" />
+              </ui:include>
+              <c:if test="#{identityManager.hasCurrentUserRole('employee')}">
+                <ui:include src="/fragments/comment-hints-pinned.xhtml">
+                  <ui:param
+                    name="commentEntity"
+                    value="#{commentItem}" />
+                </ui:include>
+              </c:if>
+            </h:panelGroup>
+          </h:panelGrid>
+        </h:panelGroup>
+        <c:if test="#{type.equals(CommentDiscriminator.PROJECT_COMMENT) and isOrderCommentsShown}">
+          <p:link
+            outcome="/order/show.xhtml"
+            value="Order #{commentItem.parentId}"
+            rendered="#{commentItem.orderComment}">
+            <f:param
+              name="id"
+              value="#{commentItem.parentId}" />
+            <f:param
+              name="tab"
+              value="comments" />
+          </p:link>
+          <p:link
+            outcome="/order/show.xhtml"
+            value="Order #{commentItem.parentId}"
+            rendered="#{commentItem.orderNote}">
+            <f:param
+              name="id"
+              value="#{commentItem.parentId}" />
+            <f:param
+              name="tab"
+              value="notes" />
+          </p:link>
+          <p:link
+            outcome="/order/show.xhtml"
+            value="#{messages.order} #{commentItem.parentId}"
+            rendered="#{commentItem.orderResult}">
+            <f:param
+              name="id"
+              value="#{commentItem.parentId}" />
+            <f:param
+              name="tab"
+              value="results" />
+          </p:link>
+          <p:spacer
+            width="6"
+            rendered="#{not commentItem.projectComment}" />
+          <h:panelGroup rendered="#{commentItem.orderComment or commentItem.orderNote or commentItem.orderResult}" />
+        </c:if>
+        <h:outputText value="#{commentItem.createdByFullDateFirst}" />
+        <ui:include src="/fragments/user-hints-online.xhtml">
+          <ui:param
+            name="instance"
+            value="#{commentItem.createdByUser}" />
+        </ui:include>
+        <h:outputText value="&#160;#{commentItem.subject}" styleClass="green" />
+        <span />
+      </h:panelGroup>
+    </f:facet>
+    <h:panelGrid>
+      <!--
+            <p:textEditor value="#{commentItem.comment}" readonly="true" toolbarVisible="false" style="margin-bottom:10px" />
+      -->
+      <h:outputText
+        value="#{commentItem.commentTrimmed}"
+        styleClass="preformat cellpadding"
+        rendered="#{not empty commentItem.comment}" />
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/comment/attachment-columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="attachments" />
+        <ui:param
+          name="tableContent"
+          value="#{commentItem.attachments}" />
+        <ui:param
+          name="styleClass"
+          value="noborder hide-table-header" />
+        <ui:param
+          name="paginator"
+          value="false" />
+      </ui:include>
+      <p:dataTable
+        rendered="#{not empty commentItem.links}"
+        value="#{commentItem.links}"
+        var="linkEntity"
+        styleClass="hide-table-header noborder">
+        <ui:include src="/fragments/column/linkurl.xhtml">
+          <ui:param
+            name="entity"
+            value="#{linkEntity}" />
+        </ui:include>
+      </p:dataTable>
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/comment/workunit-columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="workunits" />
+        <ui:param
+          name="tableContent"
+          value="#{commentItem.workunits}" />
+        <ui:param
+          name="styleClass"
+          value="noborder hide-table-header" />
+        <ui:param
+          name="paginator"
+          value="false" />
+      </ui:include>
+    </h:panelGrid>
+  </p:panel>
+  <f:facet name="loading">
+    <p:skeleton shape="circle" />
+  </f:facet>
+  <f:facet name="loader">
+    <p:commandButton
+      rendered="#{loadMoreButtonRendered ? loadMoreButtonRendered : comments.size() > sessionManager.dataScrollerChunkSize}"
+      type="button"
+      value="#{messages.loadMore}"
+      title="#{not empty loadMoreHint ? loadMorehint : messages.loadMoreComments}"
+      style="float: left; margin-left:-10px;" />
+  </f:facet>
+</ui:composition>

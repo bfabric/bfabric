@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <h:panelGroup>
+    <h:outputText value="&#169;&#160;" />
+    <h:outputText value="#{now}">
+      <f:convertDateTime pattern="yyyy" />
+    </h:outputText>
+    <a href="#{configuration.deployerHomeURL}" target="_blank" rel="noopener">#{configuration.deployerName}</a> &#160;|&#160;
+    <a href="#{configuration.urlUserManual}" target="_blank" rel="noopener">#{messages.userManual}</a> &#160;|&#160;
+    <a href="#{configuration.urlFAQ}" target="_blank" rel="noopener">#{messages.faq}</a> &#160;|&#160;
+    <c:if test="#{not empty configuration.urlIntranet}">
+      <a href="#{configuration.urlIntranet}" target="_blank" rel="noopener">#{messages.intranet}</a> &#160;|&#160;
+    </c:if>
+    <h:panelGroup rendered="#{configuration.deployerFGCZ and currentUser.employee}">
+      <a href="#{configuration.urlIssueTracker}" target="_blank" rel="noopener">Problems</a>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{not configuration.deployerFGCZ or not currentUser.employee}">
+      <a href="mailto:#{configuration.technicalSupportEmail}">Problems</a>
+    </h:panelGroup>
+  </h:panelGroup>
+</ui:composition>

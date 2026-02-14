@@ -1,0 +1,355 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{serviceTypeManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.serviceArea}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              columns="3"
+              styleClass="noborder-rightpadding">
+              <h:selectOneMenu
+                id="serviceArea"
+                value="#{serviceType.serviceArea}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItems
+                  var="item"
+                  value="#{serviceAreaList.getEnabledServiceAreasIncluding(serviceType.serviceArea)}"
+                  itemLabel="#{item.name}" />
+                <p:ajax
+                  event="change"
+                  update="enabledDecorate"
+                  global="false" />
+              </h:selectOneMenu>
+              <p:commandLink
+                id="addServiceAreaButton"
+                action="#{serviceHelper.createNew(serviceType, 'serviceType', null)}"
+                immediate="true"
+                oncomplete="PF('addServiceAreaDialog').show()"
+                update="addServiceArea,addServiceAreaHeader,addServiceAreaPanel">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+              </p:commandLink>
+              <p:message
+                for="serviceArea"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{serviceType.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{technologyList.getTechnologiesEnabledIncludingTechnologies(serviceType.technologies).size() > 1}">
+            <h:outputText
+              value="#{messages.technologies}"
+              title="#{messages.editServiceTypeTechnologiesHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectManyCheckbox
+                id="technologies"
+                value="#{serviceType.technologies}"
+                collectionType="java.util.HashSet"
+                styleClass="rightpadding"
+                layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(serviceType.technologies))}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(serviceType.technologies)}"
+                  var="item"
+                  itemLabel="#{item.nameWithEnabledMessage}"
+                  itemDescription="#{item.description}" />
+              </h:selectManyCheckbox>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.coach}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="coach" />
+            <ui:param
+              name="value"
+              value="#{serviceType.coach}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{serviceTypeManager.getFilteredUsersByDefaultRequiredRoleIncludingOldCoach}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="@this" />
+            <ui:param
+              name="ajaxClear"
+              value="true" />
+            <ui:param
+              name="clearUpdate"
+              value="@this" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.name}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.coachBackup}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:param
+              name="componentId"
+              value="coachBackupautocomplete" />
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="coachBackup" />
+              <ui:param
+                name="value"
+                value="#{serviceType.coachBackup}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{serviceTypeManager.getFilteredUsersByDefaultRequiredRoleIncludingOldCoachBackup}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="@this" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <ui:param
+                name="clearUpdate"
+                value="@this" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.users}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="serviceType" />
+              <ui:param
+                name="value"
+                value="#{serviceType.usersAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{serviceTypeManager.getUsers}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.instructionLink}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="instructionLink"
+              value="#{serviceType.instructionLink}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{serviceType.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <h:panelGroup id="enabledDecorate">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="enabled"
+                value="#{serviceType.enabled}"
+                valueChangeListener="#{serviceTypeManager.enabledChangedListener}"
+                disabled="#{not serviceType.serviceArea.enabled and not serviceType.serviceArea.enabledForOffer}">
+                <p:ajax
+                  event="change"
+                  global="false" />
+              </h:selectBooleanCheckbox>
+              <h:outputText
+                value="&#160;#{messages.enableServiceTypeHint}"
+                styleClass="warning"
+                rendered="#{not serviceType.serviceArea.enabled and not serviceType.serviceArea.enabledForOffer}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.propagateEnabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid columns="2" styleClass="noborder-rightpadding, align-middle">
+              <p:selectOneButton
+                id="propagateEnabled"
+                value="#{serviceType.propagateEnabled}">
+                <f:selectItem
+                  itemLabel="#{messages.no}"
+                  itemValue="#{false}" />
+                <f:selectItem
+                  itemLabel="#{messages.yes}"
+                  itemValue="#{true}" />
+              </p:selectOneButton>
+              <p:tooltip
+                for="propagateEnabled"
+                showDelay="500"
+                value="#{messages.propagateEnabledHint}" />
+              <h:outputText value="&#160;#{serviceType.services.size()} #{messages.services}" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.internal}" />
+          <h:panelGroup id="internalDecorate">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="internal"
+                value="#{serviceType.internal}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.requiresProject}"
+            title="#{messages.requiresProjectHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="requiresProject"
+              value="#{serviceType.requiresProject}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGroup id="processesSamplesGroup">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText
+              value="#{messages.processesSamples}"
+              title="#{messages.processesSamplesHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="processesSamples"
+                value="#{serviceType.processesSamples}"
+                valueChangeListener="#{serviceType.processesSamplesChanged}">
+                <p:ajax
+                  event="change"
+                  update="@this, #{constants.EDIT}:sampleTypeGrid, #{constants.EDIT}:processesSamplesDependent, #{constants.EDIT}:processesPlatesDependent" />
+              </h:selectBooleanCheckbox>
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGroup id="sampleTypeGrid">
+          <h:panelGrid
+            rendered="#{serviceType.processesSamples}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.sampleType}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="sampleType"
+                value="#{serviceType.sampleType}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="#{messages.selectAnItem}" />
+                <f:selectItems
+                  var="item"
+                  value="#{sampleTypeList.getAllEnabledIncluding(serviceType.sampleType)}"
+                  itemLabel="#{item.name}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.requiresSameDayProcessing}" title="#{messages.requiresSameDayProcessingHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox id="requiresSameDayProcessing" value="#{serviceType.requiresSameDayProcessing}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.serviceColumnEnabled}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="serviceColumnEnabled"
+                value="#{serviceType.serviceColumnEnabled}" />
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGroup id="processesSamplesDependent">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText
+              value="#{messages.processesPlates}"
+              title="#{messages.processesPlatesHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="processesPlates"
+                value="#{serviceType.processesPlates}"
+                valueChangeListener="#{serviceType.processesPlatesChanged}">
+                <p:ajax
+                  event="change"
+                  update="@this, #{constants.EDIT}:sampleTypeGrid, #{constants.EDIT}:processesSamplesGroup, #{constants.EDIT}:processesPlatesDependent" />
+              </h:selectBooleanCheckbox>
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGroup id="processesPlatesDependent">
+          <h:panelGrid
+            rendered="#{serviceType.processesPlates}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText
+              value="#{messages.plateSubmissionProposalLimit}"
+              title="#{messages.plateSubmissionProposalLimitHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputNumber
+                id="plateSubmissionProposalLimit"
+                value="#{serviceType.plateSubmissionProposalLimit}"
+                minValue="0"
+                thousandSeparator=""
+                decimalPlaces="0"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.initialCustomStatus}"
+            title="#{messages.initialCustomStatusHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="initialCustomStatus"
+              value="#{serviceType.initialCustomStatus}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/servicearea/add-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

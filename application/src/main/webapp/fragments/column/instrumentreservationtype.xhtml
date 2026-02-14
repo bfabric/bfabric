@@ -1,0 +1,23 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instrumentReservationType')}">
+    <p:column field="#{fieldPrefix}instrumentReservationType.name" headerText="#{messages.instrumentReservationType}" filterMatchMode="exact">
+      <f:facet name="filter">
+        <h:selectOneMenu id="instrumentReservationType" onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{instrumentReservationTypeList.resultList}"
+            var="item"
+            itemLabel="#{item.name}"
+            itemValue="#{item.name}" />
+        </h:selectOneMenu>
+      </f:facet>
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param name="instance" value="#{entity.instrumentReservationType}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

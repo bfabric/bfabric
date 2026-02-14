@@ -1,0 +1,39 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/fragments/column/value-id.xhtml">
+      <ui:param name="headerTextId" value="#{messages.storageId}" />
+      <ui:param name="valueId" value="#{entity[1]}" />
+      <ui:param name="valueClass" value="storage" />
+    </ui:include>
+  </c:if>
+  <c:if test="#{not identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/statistics/fragments/column/string.xhtml">
+      <ui:param name="headerText" value="#{messages.storageId}" />
+      <ui:param name="value" value="#{entity[1]}" />
+    </ui:include>
+  </c:if>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param name="headerText" value="#{messages.status}" />
+    <ui:param name="value" value="#{entity[2]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param name="headerText" value="#{messages.resources}" />
+    <ui:param name="value" value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param name="headerText" value="#{messages.resourcesTotalSize}" />
+    <ui:param name="value" value="#{numberUtils.getPrintSize(entity[4])}" />
+    <ui:param name="sortByValue" value="#{entity[4]}" />
+  </ui:include>
+  <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+    <p:column headerText="HTTP #{messages.access}">
+      <c:set var="storageUrl" value="#{instance.getStorageUrlByStorageId(entity[1])}" />
+      <h:panelGroup rendered="#{not empty storageUrl}">
+        <p:link value="#{storageUrl} " href="#{storageUrl}" target="_blank" rel="noopener" />
+      </h:panelGroup>
+    </p:column>
+  </c:if>
+</ui:composition>

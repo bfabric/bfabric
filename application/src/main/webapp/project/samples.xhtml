@@ -1,0 +1,150 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{configuration.dataManagementEnabled and sidebarHelper.isTab('samples') and project.accepted}">
+    <h:panelGroup id="project-samples-tab-content">
+      <h:panelGroup
+        id="tableView"
+        rendered="#{not sampleTreeTableManager.treeTableView}">
+        <c:if test="#{project.orders.size() > 0 and sampleList.getLazyModelByContainers(project.associatedContainers).size() > 0}">
+          <ui:include src="/fragments/switch.xhtml">
+            <ui:param
+              name="widgetVarName"
+              value="'#{project.tableContext}sample'" />
+            <ui:param
+              name="type"
+              value="sample" />
+            <ui:param
+              name="count"
+              value="#{sampleList.getLazyModelByContainers(project.associatedContainers).size()}" />
+            <ui:param
+              name="update"
+              value="#{project.tableContext}sampletableform" />
+          </ui:include>
+        </c:if>
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableType"
+            value="sample" />
+          <ui:param
+            name="tableContext"
+            value="#{project.tableContext}" />
+          <ui:param
+            name="tableContent"
+            value="#{sampleList.getLazyModelByContainerId(project.id, project.associatedContainers, projectManager.containerAll)}" />
+          <ui:param
+            name="hideColumns"
+            value="#{not entityManager.containerAll ? 'container' : ''}" />
+          <ui:param
+            name="lazy"
+            value="true" />
+          <ui:param
+            name="rowStyleClass"
+            value="#{entity.rowStyleClass}" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="treeTableView"
+        rendered="#{sampleTreeTableManager.treeTableView}">
+        <c:if test="#{sampleTreeTableManager.treeTableView}">
+          <ui:include src="/fragments/show-treetable.xhtml">
+            <ui:param
+              name="tableType"
+              value="sample" />
+            <ui:param
+              name="tableContext"
+              value="#{project.tableContext}" />
+            <ui:param
+              name="treeTableContent"
+              value="#{sampleTreeTableManager.getTreeTableContent(project.samples, null, false)}" />
+            <ui:param
+              name="contentSize"
+              value="#{project.samples.size()}" />
+            <ui:param
+              name="hideColumns"
+              value="container" />
+            <o:methodParam
+              name="nodeExpandListener"
+              value="#{sampleTreeTableManager.nodeExpandListener}" />
+            <o:methodParam
+              name="nodeCollapseListener"
+              value="#{sampleTreeTableManager.nodeCollapseListener}" />
+          </ui:include>
+        </c:if>
+      </h:panelGroup>
+
+      <h:panelGrid
+        rendered="#{project.extensible}"
+        columns="4"
+        styleClass="action">
+        <p:button
+          rendered="#{project.sampleCreatable}"
+          outcome="/sample/edit.xhtml"
+          value="#{messages.create}">
+          <f:param
+            name="containerId"
+            value="#{project.id}" />
+        </p:button>
+        <p:button
+          rendered="#{project.sampleCreatable}"
+          outcome="/sample/edit-batch.xhtml"
+          value="#{messages.batchCreate}"
+          title="#{messages.batchCreateSamplesHint}">
+          <f:param
+            name="containerId"
+            value="#{project.id}" />
+          <f:param
+            name="skipSelect"
+            value="true" />
+        </p:button>
+        <p:button
+          rendered="#{project.sampleCreatable}"
+          outcome="/sample/edit-batch.xhtml"
+          value="#{messages.batchEdit}"
+          title="#{messages.batchEditSamplesHint}">
+          <f:param
+            name="containerId"
+            value="#{project.id}" />
+          <f:param
+            name="skipSelect"
+            value="false" />
+        </p:button>
+        <h:form>
+          <p:commandButton
+            value="#{sampleTreeTableManager.treeTableView ? ''.concat(messages.table.concat(' ').concat(messages.view)) : ''.concat(messages.tree.concat(' ').concat(messages.view))}"
+            action="#{sampleTreeTableManager.switchTreeTableView()}"
+            process="@this"
+            update="@this, project-samples-tab-content"
+            oncomplete="fixOversize();" />
+        </h:form>
+
+        <!-- NOTE: DO NOT DELETE THIS! Only commented out due to performance reasons. We might reuse this code fragment later on a data cleaning screen.
+        <h:form>
+          <p:commandButton
+            value="#{messages.deleteAllDeletableSamples}"
+            title="#{messages.deleteAllDeletableSamplesHint}"
+            action="#{sampleManager.removeAllDeletableSamples(project)}"
+            process="project-samples-tab-content"
+            update="project-samples-tab-content"
+            rendered="#{project.extensible}"
+            oncomplete="fixOversize()">
+            <ui:include src="/fragments/confirm-dialog-delete-show-amount.xhtml">
+              <ui:param
+                name="number"
+                value="#{project.deletableSamples.size()}" />
+              <ui:param
+                name="simpleClassName"
+                value="Sample" />
+            </ui:include>
+          </p:commandButton>
+        </h:form>
+        -->
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

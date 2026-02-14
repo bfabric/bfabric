@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.sendMailNotification}">
+    <h:outputText value="#{messages.sendMailNotification}" />
+    <h:outputText value="#{instance.sendMailNotification}" styleClass="#{stringHelper.toGreenRed(instance.sendMailNotification)}" />
+  </c:if>
+</ui:composition>

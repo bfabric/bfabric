@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.importResource} #{messages.id}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+    </ui:include>
+    <h:outputText
+      value=" imported"
+      styleClass="#{entity.imported}"
+      rendered="#{entity.imported}" />
+  </p:column>
+  <ui:include src="/fragments/column/name.xhtml" />
+  <ui:include src="/fragments/column/application.xhtml" />
+  <ui:include src="/fragments/column/storage.xhtml" />
+  <ui:include src="/fragments/column/relativepath.xhtml" />
+  <ui:include src="/fragments/column/url.xhtml" />
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/size.xhtml" />
+  <ui:include src="/fragments/column/filechecksum.xhtml" />
+  <ui:include src="/fragments/column/filedate.xhtml" />
+  <ui:include src="/fragments/column/expirationdate.xhtml" />
+  <ui:include src="/fragments/column/sample.xhtml" />
+  <ui:include src="/fragments/column/report.xhtml" />
+  <ui:include src="/fragments/column/resourcescount.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    field="#{field}"
+    headerText="#{headerText}">
+    <p:link
+      rendered="#{not empty entity and not empty entity.urlShowScreen}"
+      outcome="#{entity.urlShowScreen}"
+      value="#{entity.id}"
+      styleClass="#{styleClass}">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+    <h:outputText
+      rendered="#{empty entity.urlShowScreen}"
+      value="#{entity.id}" />
+  </p:column>
+</ui:composition>

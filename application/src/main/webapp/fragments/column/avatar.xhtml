@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('avatar') and identityManager.hasCurrentUserRole('userManager')}">
+    <p:column
+      sortable="#{lazy}"
+      sortBy="#{entity.image.content}"
+      headerText="#{messages.avatar}">
+      <p:avatar id="image" rendered="#{not empty entity.image.content}" shape="circle">
+        <p:graphicImage value="#{entity.image.streamedContent}" stream="false" />
+      </p:avatar>
+      <p:tooltip for="image">
+        <p:graphicImage value="#{entity.image.streamedContent}" stream="false" />
+      </p:tooltip>
+    </p:column>
+  </c:if>
+</ui:composition>

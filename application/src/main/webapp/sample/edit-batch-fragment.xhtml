@@ -1,0 +1,116 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:form
+    id="#{constants.EDIT}"
+    styleClass="navigate-away-class">
+    <h:panelGroup id="edit-batch-sample-batchtable">
+      <h:panelGroup rendered="#{not empty sampleBatchManager.editList}">
+        <h:panelGroup styleClass="height-10" />
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="batch" />
+          <ui:param
+            name="tableContent"
+            value="#{sampleBatchManager.editList}" />
+          <ui:param
+            name="include"
+            value="/sample/edit-batch-columns.xhtml" />
+          <ui:param
+            name="editable"
+            value="true" />
+          <o:methodParam
+            name="pageListener"
+            value="#{sampleBatchManager.pageListener}" />
+          <ui:param
+            name="pageListenerGlobal"
+            value="true" />
+          <ui:param
+            name="customListingRows"
+            value="#{sampleBatchManager.customListingRows}" />
+          <ui:param
+            name="customRowsPerPageTemplate"
+            value="5,10,20,50" />
+          <ui:param
+            name="maximumRowsPerPage"
+            value="50" />
+          <ui:param
+            name="styleClass"
+            value="batchEditTable" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <h:panelGrid
+          columns="2"
+          styleClass="nospace topline">
+          <p:spinner
+            value="#{sampleBatchManager.numberOfNewBatchItems}"
+            disabled="#{sampleBatchManager.addNewBatchItemsDisabled}"
+            min="1"
+            max="#{sampleBatchManager.maxNumberOfNewBatchItems}"
+            size="5"
+            decimalPlaces="0"
+            thousandSeparator="">
+            <p:ajax
+              event="change"
+              global="false" />
+          </p:spinner>
+          <p:commandButton
+            action="#{sampleBatchManager.addNewBatchItems}"
+            disabled="#{sampleBatchManager.addNewBatchItemsDisabled}"
+            value="#{messages.create} #{messages.sample}"
+            title="#{sampleBatchManager.addNewBatchItemsDisabled ? sampleBatchManager.itemLimitExceededHint : ''}"
+            immediate="true"
+            styleClass="noleftborderselect"
+            update="@([id$=#{constants.EDIT}])"
+            process="@this"
+            oncomplete="fixOversize();" />
+        </h:panelGrid>
+      </h:panelGrid>
+
+      <h:panelGroup rendered="#{not empty sampleBatchManager.editList}">
+        <h:panelGrid
+          id="buttons"
+          columns="3"
+          styleClass="action">
+          <p:commandButton
+            rendered="#{sampleBatchManager.sampleNamesGenerated}"
+            action="#{sampleBatchManager.confirmGeneratedSampleNames()}"
+            value="#{messages.confirmGeneratedSampleNames}"
+            title="#{messages.confirmGeneratedSampleNamesHint}"
+            process="@this"
+            update="#{constants.EDIT}:buttons, #{constants.EDIT}:batchtable:generate-button"
+            style="border:1px solid #f00" />
+          <p:commandButton
+            rendered="#{sampleBatchManager.sampleNamesGenerated}"
+            action="#{sampleBatchManager.clearGeneratedSampleNames()}"
+            value="#{messages.clearGeneratedSampleNames}"
+            title="#{messages.clearGeneratedSampleNamesHint}"
+            process="@this"
+            update="#{constants.EDIT}:buttons, #{constants.EDIT}:batchtable:generate-button" />
+          <p:commandButton
+            rendered="#{not sampleBatchManager.sampleNamesGenerated}"
+            action="#{sampleBatchManager.saveSamples}"
+            value="#{messages.saveAllSamples}"
+            update="page_envelope"
+            onclick="hasChanged=false;"
+            oncomplete="fixOversize();">
+            <o:skipValidators />
+          </p:commandButton>
+          <p:commandButton
+            action="#{sampleBatchManager.cancel}"
+            value="#{messages.cancel}"
+            immediate="true"
+            update="page_envelope"
+            oncomplete="fixOversize();" />
+        </h:panelGrid>
+      </h:panelGroup>
+    </h:panelGroup>
+  </h:form>
+</ui:composition>

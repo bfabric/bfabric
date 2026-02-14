@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('entityName')}">
+    <p:column
+      field="#{fieldPrefix}name"
+      headerText="#{messages.name}"
+      filterable="#{not empty filterable ? filterable : true}"
+      exportValue="#{entity.name}">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity}" />
+        <ui:param
+          name="entityValue"
+          value="#{entity.getTruncatedName(40)}" />
+        <ui:param
+          name="entityHint"
+          value="#{entity.name}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

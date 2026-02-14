@@ -1,0 +1,156 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:columnGroup type="header">
+    <p:row>
+      <p:column colspan="1" headerText="#{messages.year}" />
+      <p:column colspan="2" headerText="#{messages.instrument}" />
+      <p:column colspan="18" headerText="#{messages.charges}" />
+    </p:row>
+    <p:row>
+      <p:column colspan="1" headerText="&#160;" />
+      <p:column colspan="2" headerText="&#160;" />
+      <p:column colspan="2" headerText="#{messages.all}" />
+      <p:column colspan="2" headerText="#{messages.billable}" />
+      <p:column colspan="2" headerText="#{messages.nonBillable}" />
+      <p:column colspan="2" headerText="#{messages.all} #{messages.internal}" />
+      <p:column colspan="2" headerText="#{messages.billable} #{messages.internal}" />
+      <p:column colspan="2" headerText="#{messages.nonBillable} #{messages.internal}" />
+    </p:row>
+    <p:row>
+      <p:column headerText="&#160;" sortBy="#{entity[0]}" filterBy="#{entity[0]}" />
+      <p:column headerText="#{messages.id}" sortBy="#{entity[1]}" filterBy="#{entity[1]}" />
+      <p:column headerText="#{messages.label}" sortBy="#{entity[2]}" filterBy="#{entity[2]}" />
+      <p:column headerText="#{messages.accounted}" />
+      <p:column headerText="#{messages.notAcc}" />
+      <p:column headerText="#{messages.accounted}" />
+      <p:column headerText="#{messages.notAcc}" />
+      <p:column headerText="#{messages.accounted}" />
+      <p:column headerText="#{messages.notAcc}" />
+      <p:column headerText="#{messages.accounted}" />
+      <p:column headerText="#{messages.notAcc}" />
+      <p:column headerText="#{messages.accounted}" />
+      <p:column headerText="#{messages.notAcc}" />
+      <p:column headerText="#{messages.accounted}" />
+      <p:column headerText="#{messages.notAcc}" />
+    </p:row>
+  </p:columnGroup>
+
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.instrumentId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.instrumentName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[1]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueClass"
+      value="instrument" />
+    <ui:param
+      name="grouped"
+      value="true" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.accounted}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.notAccounted}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.accounted} #{messages.billable}" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.notAccounted} #{messages.billable}" />
+    <ui:param
+      name="value"
+      value="#{entity[11]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.accounted} #{messages.nonBillable}" />
+    <ui:param
+      name="value"
+      value="#{entity[13]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.notAccounted} #{messages.nonBillable}" />
+    <ui:param
+      name="value"
+      value="#{entity[14]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.internal} #{messages.accounted}" />
+    <ui:param
+      name="value"
+      value="#{entity[16]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.internal} #{messages.notAccounted}" />
+    <ui:param
+      name="value"
+      value="#{entity[17]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.internal} #{messages.accounted} #{messages.billable}" />
+    <ui:param
+      name="value"
+      value="#{entity[22]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.internal} #{messages.notAccounted} #{messages.billable}" />
+    <ui:param
+      name="value"
+      value="#{entity[23]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.internal} #{messages.accounted} #{messages.nonBillable}" />
+    <ui:param
+      name="value"
+      value="#{entity[25]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.internal} #{messages.notAccounted} #{messages.nonBillable}" />
+    <ui:param
+      name="value"
+      value="#{entity[26]}" />
+  </ui:include>
+</ui:composition>

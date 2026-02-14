@@ -1,0 +1,52 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGroup id="show-annotation">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id-name.xhtml" />
+        <ui:include src="/fragments/details/type.xhtml" />
+
+        <c:if test="#{not empty annotation.na}">
+          <h:outputText value="#{messages.na}" />
+          <h:outputText value="#{annotation.na}" />
+        </c:if>
+
+        <c:if test="#{not empty annotation.top}">
+          <h:outputText value="#{messages.top}" />
+          <h:outputText value="#{annotation.top}" />
+        </c:if>
+
+        <c:if test="#{not empty annotation.common}">
+          <h:outputText value="#{messages.common}" />
+          <h:outputText value="#{annotation.common}" />
+        </c:if>
+
+        <c:if test="#{not empty annotation.released}">
+          <h:outputText value="#{messages.released}" />
+          <h:outputText value="#{annotation.released}" />
+        </c:if>
+
+        <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml" />
+      </h:panelGrid>
+      <h:panelGrid
+        columns="6"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit.xhtml" />
+        <h:form rendered="#{annotation.releasable}">
+          <p:commandButton
+            action="#{annotationManager.release}"
+            value="#{messages.release}"
+            update="show-annotation" />
+        </h:form>
+        <ui:include src="/fragments/button/edit-links.xhtml" />
+        <ui:include src="/fragments/button/delete.xhtml" />
+        <ui:include src="/fragments/button/list.xhtml" />
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

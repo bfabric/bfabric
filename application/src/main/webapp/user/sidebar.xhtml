@@ -1,0 +1,408 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('userManager') or user.equals(currentUser)}" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('admin') or user.identityUser}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="label"
+        value="#{messages.userBillingInfo}" />
+      <ui:param
+        name="tab"
+        value="userbillinginfo" />
+      <ui:param
+        name="showAlways"
+        value="true" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('admin') or user.identityUser}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="label"
+        value="#{messages.settings}" />
+      <ui:param
+        name="tab"
+        value="settings" />
+      <ui:param
+        name="showAlways"
+        value="true" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="label"
+      value="#{messages.computerLogin}" />
+    <ui:param
+      name="tab"
+      value="sync" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('userManager')}" />
+    <ui:param
+      name="showAlways"
+      value="#{identityManager.hasCurrentUserRole('userManager')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/duties.xhtml" />
+
+  <c:if test="#{user.identityUserOrUserManager}">
+    <ui:include src="/fragments/sidebar/orders.xhtml">
+      <ui:param
+        name="content"
+        value="#{orderList.getLazyModelByUserId(user.id)}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/projects.xhtml">
+      <ui:param
+        name="content"
+        value="#{projectList.getLazyModelByUserId(user.id)}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{projectList.getFormerProjectsLazyModelByUserId(user.id)}" />
+      <ui:param
+        name="label"
+        value="#{messages.formerProjects}" />
+      <ui:param
+        name="tab"
+        value="formerprojects" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{chargeList.getLazyModelByContainerBudgetOfficerId(user.id)}" />
+    <ui:param
+      name="label"
+      value="#{messages.userBudgetOfficerCharges}" />
+    <ui:param
+      name="hint"
+      value="#{messages.userBudgetOfficerChargesHint}" />
+    <ui:param
+      name="tab"
+      value="charges" />
+    <ui:param
+      name="enabled"
+      value="#{(identityManager.hasCurrentUserRole('containerManager') or user.equals(currentUser))}" />
+  </ui:include>
+
+  <c:if test="#{user.identityUserOrUserManager}">
+    <ui:include src="/fragments/sidebar/samples.xhtml">
+      <ui:param
+        name="content"
+        value="#{sampleList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+      <ui:param
+        name="hint"
+        value="#{messages.userSamplesHint}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/workunits.xhtml">
+      <ui:param
+        name="content"
+        value="#{workunitList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+      <ui:param
+        name="hint"
+        value="#{messages.userWorkunitsHint}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/resources.xhtml">
+      <ui:param
+        name="content"
+        value="#{resourceList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+      <ui:param
+        name="hint"
+        value="#{messages.userResourcesHint}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/datasets.xhtml">
+      <ui:param
+        name="content"
+        value="#{datasetList.getLazyModelContainerDependentByContainerIds(user.containerIds)}" />
+      <ui:param
+        name="hint"
+        value="#{messages.userDatasetsHint}" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('userManager')}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{user.coachedContainers}" />
+      <ui:param
+        name="label"
+        value="#{messages.coachedContainers}" />
+      <ui:param
+        name="tab"
+        value="coachedcontainers" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{user.discussedContainers}" />
+      <ui:param
+        name="label"
+        value="#{messages.discussedContainers}" />
+      <ui:param
+        name="tab"
+        value="discussedcontainers" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('containerReader') or user.equals(currentUser)}">
+    <ui:include src="/fragments/sidebar/plates.xhtml" />
+    <ui:include src="/fragments/sidebar/runs.xhtml" />
+
+    <ui:include src="/fragments/sidebar/offers.xhtml">
+      <ui:param
+        name="label"
+        value="#{messages.userOffers}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{user.chargerCharges}" />
+      <ui:param
+        name="label"
+        value="#{messages.chargerCharges}" />
+      <ui:param
+        name="hint"
+        value="#{messages.chargerChargesHint}" />
+      <ui:param
+        name="tab"
+        value="chargercharges" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/instrumentreservations.xhtml">
+    <ui:param
+      name="content"
+      value="#{instrumentReservationList.getLazyModelByUserId(user.id)}" />
+    <ui:param
+      name="enabled"
+      value="#{user.identityUserOrUserManager}" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('containerReader') or user.equals(currentUser)}">
+    <ui:include src="/fragments/sidebar/instruments.xhtml" />
+    <ui:include src="/fragments/sidebar/trainedinstruments.xhtml">
+      <ui:param
+        name="showAlways"
+        value="#{user.identityUserOrUserManager or identityManager.hasCurrentUserRole('containerReader')}" />
+    </ui:include>
+
+
+    <ui:include src="/fragments/sidebar/comments.xhtml">
+      <ui:param
+        name="content"
+        value="#{commentList.getLazyModelByCreatedByUser(user)}" />
+      <ui:param
+        name="showAlways"
+        value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{commentList.getLazyModelAssociatedCommentByUser(user)}" />
+      <ui:param
+        name="label"
+        value="#{messages.associatedComments}" />
+      <ui:param
+        name="tab"
+        value="commentsassociated" />
+      <ui:param
+        name="showAlways"
+        value="#{identityManager.hasCurrentUserRole('admin')}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="entity"
+        value="#{user}" />
+      <ui:param
+        name="content"
+        value="#{commentList.getLazyModelByUserIdStarred(user.id)}" />
+      <ui:param
+        name="label"
+        value="#{messages.starredComments}" />
+      <ui:param
+        name="tab"
+        value="commentsstarred" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="entity"
+        value="#{user}" />
+      <ui:param
+        name="content"
+        value="#{commentList.getLazyModelByUserIdViewed(user.id)}" />
+      <ui:param
+        name="label"
+        value="#{messages.viewedComments}" />
+      <ui:param
+        name="tab"
+        value="commentsviewed" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/contracts.xhtml" />
+  </c:if>
+
+  <c:if test="#{user.extensibleByCurrentUser}">
+    <ui:include src="/fragments/sidebar/roles.xhtml">
+      <ui:param
+        name="showAlways"
+        value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{(identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser)) and user.hasRoleEmployee()}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{user.events}" />
+      <ui:param
+        name="label"
+        value="#{messages.events}" />
+      <ui:param
+        name="tab"
+        value="events" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{user.credits}" />
+      <ui:param
+        name="label"
+        value="#{messages.credits}" />
+      <ui:param
+        name="tab"
+        value="credits" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{(identityManager.hasCurrentUserRole('bookingManager') or user.equals(currentUser)) and user.hasRoleEmployee()}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{purchaseList.getLazyModelByUserId(user.id)}" />
+      <ui:param
+        name="label"
+        value="#{messages.purchases}" />
+      <ui:param
+        name="tab"
+        value="purchases" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/mails.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{user.mailsRendered}" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/sidebar/serviceareas.xhtml" />
+    <ui:include src="/fragments/sidebar/servicetypes.xhtml" />
+    <ui:include src="/fragments/sidebar/services.xhtml" />
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{user.trackedContainers}" />
+      <ui:param
+        name="label"
+        value="#{messages.trackedContainers}" />
+      <ui:param
+        name="tab"
+        value="trackedcontainers" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('serviceReader')}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{user.trackedServices}" />
+      <ui:param
+        name="label"
+        value="#{messages.trackedServices}" />
+      <ui:param
+        name="tab"
+        value="trackedservices" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{user.identityUserOrUserManager}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{userGroupList.getMember(user)}" />
+      <ui:param
+        name="label"
+        value="#{messages.userGroups}" />
+      <ui:param
+        name="tab"
+        value="usergroups" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{userGroupList.getSupervisedUserGroups(user)}" />
+      <ui:param
+        name="label"
+        value="#{messages.supervisedUserGroups}" />
+      <ui:param
+        name="tab"
+        value="supervisedusergroups" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{workflowStepList.getSupervisedWorkflowSteps(user)}" />
+      <ui:param
+        name="label"
+        value="#{messages.supervisedWorkflowSteps}" />
+      <ui:param
+        name="tab"
+        value="supervisedworkflowsteps" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{user.updatable}">
+    <ui:include src="/fragments/sidebar/accessrequests.xhtml" />
+  </c:if>
+
+  <c:if test="#{user.actionsRendered}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="entity"
+        value="#{user}" />
+      <ui:param
+        name="content"
+        value="#{entityLogList.getLazyModelByCreatedBy(user.login)}" />
+      <ui:param
+        name="label"
+        value="#{messages.actions}" />
+      <ui:param
+        name="tab"
+        value="actions" />
+    </ui:include>
+  </c:if>
+</ui:composition>

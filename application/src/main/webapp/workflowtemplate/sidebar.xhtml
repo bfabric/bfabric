@@ -1,0 +1,12 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+
+  <ui:include src="/fragments/sidebar/workflows.xhtml">
+    <ui:param
+      name="hint"
+      value="#{messages.workflowsHint}" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+</ui:composition>

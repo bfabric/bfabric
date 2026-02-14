@@ -1,0 +1,64 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.query} #{messages.id}">
+    <p:link
+      outcome="/search/show.xhtml"
+      value="#{entity.id}"
+      title="#{entity.entityInfo}">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}name"
+    headerText="#{messages.name}"
+    exportValue="#{entity.name}">
+    <p:link
+      outcome="/search/show.xhtml"
+      value="#{entity.getTruncatedName(80)}"
+      title="#{entity.name}">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+  </p:column>
+  <ui:include src="/fragments/column/created.xhtml" />
+  <ui:include src="/fragments/column/discriminator.xhtml" />
+  <p:column
+    rendered="#{showColumns.contains('remove')}"
+    exportable="false"
+    headerText="#{messages.remove}">
+    <p:commandButton
+      action="#{queryManager.removeQuery(entity)}"
+      value="#{messages.remove}"
+      title="#{messages.removeQueryHint}"
+      rendered="#{entity.deletable}"
+      update="@([id$=#{tableContext}#{tableType}tableform])"
+      styleClass="inline">
+      <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+    </p:commandButton>
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('publish')}"
+    exportable="false"
+    headerText="#{messages.publish}">
+    <p:commandButton
+      action="#{queryManager.publishQuery(entity)}"
+      value="#{messages.publish}"
+      title="#{messages.publishQueryHint}"
+      rendered="#{entity.publishable}"
+      update="@([id$=#{tableContext}#{tableType}tableform])"
+      styleClass="inline" />
+  </p:column>
+</ui:composition>

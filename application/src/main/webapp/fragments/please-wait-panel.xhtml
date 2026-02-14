@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup id="mpWait" rendered="#{not sessionTimeoutManager.timedout}">
+    <p:blockUI widgetVar="mpWait" block="body">
+      <h:outputText value="#{messages.pleaseWait}" styleClass="bold" />
+      <h:graphicImage style="margin-top: 5px;" value="/images/spinner.gif" />
+    </p:blockUI>
+  </h:panelGroup>
+  <p:ajaxStatus onstart="PF('mpWait').show(); disableAllButtonsAndTabs();" oncomplete="setTimeout(function() { PF('mpWait').hide(); enableAllButtonsAndTabs(); }, 0);" />
+</ui:composition>

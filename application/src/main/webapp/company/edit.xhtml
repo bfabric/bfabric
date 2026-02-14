@@ -1,0 +1,103 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{companyManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.organizationType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="organizationType"
+              value="#{company.organizationType}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{organizationTypeList.nonAcademicOrganizationTypes}"
+                var="item"
+                itemLabel="#{item.name}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.billingOrganizationType}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="billingOrganizationType"
+              value="#{company.billingOrganizationType}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem itemLabel="" />
+              <f:selectItems
+                value="#{organizationTypeList.nonAcademicOrganizationTypes}"
+                var="item"
+                itemLabel="#{item.name}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{company.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('bookingManager')}">
+            <h:outputText value="#{messages.defaultBookingType}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="defaultBookingType"
+                value="#{company.defaultBookingType}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItems
+                  var="item"
+                  value="#{bookingTypeList.resultList}"
+                  itemLabel="#{item.booker.name} - #{item.name}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.debitorNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputNumber
+                id="debitorNumber"
+                value="#{company.debitorNumber}"
+                thousandSeparator=""
+                decimalPlaces="0"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.vatNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="vatNumber"
+                value="#{company.vatNumber}"
+                styleClass="editWidthMedium" />
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

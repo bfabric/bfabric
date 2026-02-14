@@ -1,0 +1,71 @@
+<!--
+    This modal panel is used to add new organizations to departments.
+    All the application logic is located in the departmentManager.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:dialog
+    id="addOrganizationForDepartmentPanel"
+    widgetVar="addOrganizationForDepartmentDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText
+        id="addOrganizationHeader"
+        value="#{messages.addNew}" />
+    </f:facet>
+    <h:form id="addOrganizationForDepartmentForm">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.organizationType}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:selectOneMenu
+            id="selectOrganizationType"
+            value="#{department.organization.organizationType}"
+            required="true"
+            styleClass="editWidthExtraLarge"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItems
+              value="#{organizationTypeList.academicOrganizationTypes}"
+              var="item"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </ui:decorate>
+        <h:outputText value="#{messages.organization}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="organizationName"
+            value="#{department.organization.name}"
+            required="true"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          actionListener="#{departmentManager.saveOrganizationIfNotExists}"
+          value="#{messages.save}"
+          id="saveOrganizationButton"
+          global="false"
+          update="addOrganizationForDepartmentForm, @([id$=organizationautocomplete])"
+          oncomplete="hideDialogOnSuccess(args, 'addOrganizationForDepartmentDialog')">
+          <p:resetInput target="#{constants.EDIT}:organizationautocomplete" />
+        </p:commandButton>
+        <p:commandButton
+          value="#{messages.cancel}"
+          id="cancelOrganizationButton"
+          immediate="true"
+          global="false"
+          oncomplete="PF('addOrganizationForDepartmentDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

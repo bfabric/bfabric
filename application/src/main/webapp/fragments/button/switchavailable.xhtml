@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:commandButton
+    action="#{entityManager.switchAvailable}"
+    value="#{instance.available ? messages.notAvailable : messages.available}"
+    title="#{messages.switchStatus} #{instance.available ? messages.notAvailable : messages.available}"
+    update="@form"
+    oncomplete="fixOversize();" />
+</ui:composition>

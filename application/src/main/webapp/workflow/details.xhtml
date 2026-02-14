@@ -1,0 +1,93 @@
+<!--
+    This template is used in both the project tree and the sample show screen.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/workflowtemplate.xhtml" />
+      <ui:include src="/fragments/details/container.xhtml">
+        <ui:param
+          name="label"
+          value="#{workflow.container.classLabel}" />
+        <ui:param
+          name="entityValue"
+          value="#{workflow.container.displayName}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/orderitems.xhtml">
+        <ui:param
+          name="notAllOrderItemsSelectedHint"
+          value="#{workflow.notAllOrderItemsSelectedHint}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/datasets-transitive.xhtml" />
+      <ui:include src="/fragments/details/samples-transitive.xhtml" />
+      <ui:include src="/fragments/details/workunits-transitive.xhtml" />
+      <ui:include src="/fragments/details/plates-transitive.xhtml" />
+
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="3"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-delete-list.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.steps} (#{workflow.workflowSteps.size()})" />
+    </h:panelGrid>
+
+    <h:panelGroup>
+      <h:outputText
+        value="#{messages.createAtLeastOneWorkflowStepHint}"
+        styleClass="pending"
+        rendered="#{empty workflow.workflowSteps}" />
+
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="tableType"
+          value="workflowstep" />
+        <ui:param
+          name="tableContext"
+          value="workflow" />
+        <ui:param
+          name="tableContent"
+          value="#{workflow.workflowSteps}" />
+        <ui:param
+          name="showColumns"
+          value="editIcon" />
+        <ui:param
+          name="hideColumns"
+          value="workflowParent, workflowTemplate" />
+        <ui:param
+          name="customListingRows"
+          value="#{workflow.workflowSteps.size()}" />
+        <ui:param
+          name="rowsPerPageDropdown"
+          value="all" />
+      </ui:include>
+
+      <h:panelGrid
+        columns="4"
+        styleClass="action">
+        <p:button
+          outcome="/workflowstep/edit.xhtml"
+          value="#{messages.createStep}"
+          title="#{messages.createWorkflowStepHint}"
+          rendered="#{workflow.updatable}">
+          <f:param
+            name="workflowId"
+            value="#{workflow.id}" />
+        </p:button>
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

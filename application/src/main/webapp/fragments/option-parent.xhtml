@@ -1,0 +1,12 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup>
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param name="instance" value="#{instance.option}" />
+    </ui:include>
+    <h:outputText value="&#160;#{messages.for}&#160;#{instance.option.parent}&#160;" />
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param name="instance" value="#{instance.option.parent}" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

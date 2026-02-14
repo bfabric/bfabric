@@ -1,0 +1,94 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/batch/string-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.ORDER_ITEM_LIBRARY_TYPE}" />
+    <ui:param
+      name="rendered"
+      value="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_LIBRARY_TYPE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.libraryTypeOrderItem}" />
+    <ui:param
+      name="displayRequired"
+      value="#{sampleAttributeHelper.isRequiredColumn(orderEntity, constants.ORDER_ITEM_LIBRARY_TYPE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.libraryType}" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/string-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.ORDER_ITEM_REGION}" />
+    <ui:param
+      name="rendered"
+      value="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_REGION)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.region}" />
+    <ui:param
+      name="displayRequired"
+      value="#{sampleAttributeHelper.isRequiredColumn(orderEntity, constants.ORDER_ITEM_REGION)}" />
+    <ui:param
+      name="value"
+      value="#{entity.region}" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/string-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.ORDER_ITEM_READ_TYPE}" />
+    <ui:param
+      name="rendered"
+      value="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_READ_TYPE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.readType}" />
+    <ui:param
+      name="displayRequired"
+      value="#{sampleAttributeHelper.isRequiredColumn(orderEntity, constants.ORDER_ITEM_READ_TYPE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.readType}" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.ORDER_ITEM_INSERT_SIZE}" />
+    <ui:param
+      name="rendered"
+      value="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_INSERT_SIZE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.insertSize}" />
+    <ui:param
+      name="displayRequired"
+      value="#{sampleAttributeHelper.isRequiredColumn(orderEntity, constants.ORDER_ITEM_INSERT_SIZE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.insertSize}" />
+    <ui:param
+      name="decimalPlaces"
+      value="0" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/string-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.ORDER_ITEM_MULTIPLEXING}" />
+    <ui:param
+      name="rendered"
+      value="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_MULTIPLEXING)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.multiplexing}" />
+    <ui:param
+      name="displayRequired"
+      value="#{sampleAttributeHelper.isRequiredColumn(orderEntity, constants.ORDER_ITEM_MULTIPLEXING)}" />
+    <ui:param
+      name="value"
+      value="#{entity.multiplexing}" />
+  </ui:include>
+</ui:composition>

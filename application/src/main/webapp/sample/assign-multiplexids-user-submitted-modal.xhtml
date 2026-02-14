@@ -1,0 +1,125 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+  <p:dialog
+    id="assignMultiplexIdsModalPanel"
+    widgetVar="assignMultiplexIdsModalDialog"
+    resizable="false"
+    closable="false"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.assignMultiplexIdsTo} #{bean.multiplexIdAssignmentSample.tubeId} #{bean.multiplexIdAssignmentSample.name}" />
+    </f:facet>
+
+    <h:panelGroup rendered="#{serviceTypeReadyMadeLibrariesSequencingAssignMultiplexIdsHintRendered}">
+      <h:outputText
+        value="#{messages.serviceTypeReadyMadeLibrariesSequencingAssignMultiplexIdsHint}"
+        styleClass="warning" />
+    </h:panelGroup>
+
+    <h:form id="assignMultiplexIds">
+      <p:spacer
+        rendered="#{serviceTypeReadyMadeLibrariesSequencingAssignMultiplexIdsHintRendered}"
+        height="10" />
+      <h:panelGroup id="numberOfSamplesGroup">
+        <h:panelGrid
+          rendered="#{not empty bean.multiplexIdAssignmentSample}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.numberOfSamples} in #{messages.pool}" />
+          <h:panelGrid columns="2">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputNumber
+                id="numberOfSamples"
+                value="#{bean.sampleIdentifiersNumberMap[bean.multiplexIdAssignmentSample.hashCode()]}"
+                valueChangeListener="#{bean.numberOfSamplesInMultiplexChanged}"
+                decimalPlaces="0"
+                thousandSeparator=""
+                minValue="1"
+                maxValue="5000"
+                size="4">
+                <p:ajax
+                  event="change"
+                  update="@this, assignMultiplexIds:multiplexIdGroup, assignMultiplexIds:actions" />
+              </p:inputNumber>
+            </ui:decorate>
+            <h:outputText value="(maximum: 5000)" styleClass="warn" />
+          </h:panelGrid>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGroup id="multiplexIdGroup">
+        <pe:sheet
+          id="multiplexIdSheet"
+          widgetVar="multiplexIdSheetWidgetVar"
+          value="#{bean.multiplexIdAssignmentSample.parentSamplesOfUserMultiplex}"
+          var="sampleInMultiplex"
+          resizableCols="false"
+          resizableRows="false"
+          rowKey="#{sampleInMultiplex.hashCode()}"
+          showRowHeaders="true"
+          width="900"
+          styleClass="sheet">
+          <pe:sheetcolumn
+            readOnly="true"
+            value="#{sampleInMultiplex.namePrefix}" />
+          <pe:sheetcolumn
+            headerText="#{messages.name}"
+            value="#{sampleInMultiplex.userSampleInMultiplexName}"
+            validatorMessage="#{messages.userSampleInMultiplexNameValidatorMessage}"
+            trimWhitespace="true"
+            colWidth="200">
+            <f:validateRegex pattern="#{constants.SAMPLE_IN_MULTIPLEX_NAME_CHARACTERS_REGEXP}" />
+          </pe:sheetcolumn>
+          <pe:sheetcolumn
+            headerText="#{not empty headerTextMultiplexId ? headerTextMultiplexId : messages.multiplexId}"
+            value="#{sampleInMultiplex.multiplexId}"
+            trimWhitespace="true"
+            colWidth="125" />
+          <pe:sheetcolumn
+            headerText="#{not empty headerTextMultiplexId2 ? headerTextMultiplexId2 : messages.multiplexId2}"
+            value="#{sampleInMultiplex.multiplexId2}"
+            trimWhitespace="true"
+            colWidth="125" />
+          <pe:sheetcolumn
+            headerText="#{messages.species}"
+            value="#{sampleInMultiplex.speciesString}"
+            colType="autocomplete"
+            selectItems="#{annotationList.getAnnotationNamesByType('Species')}"
+            autoCompleteStrict="true"
+            autoCompleteVisibleRows="10"
+            colWidth="200" />
+          <p:ajax
+            event="change"
+            global="false"
+            listener="#{bean.multiplexIdAssignmentSample.setChanged(true)}" />
+        </pe:sheet>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="applyButton"
+          rendered="#{not empty bean.multiplexIdAssignmentSample}"
+          action="#{bean.assignMultiplexIds}"
+          value="#{messages.assign}"
+          global="true"
+          styleClass="assignMultiplexIdsApplyButton"
+          onclick="hasChanged=true; setNavigateAway('.assignMultiplexIdsApplyButton[id$=\'applyButton\']'); jQuery(this).change();"
+          oncomplete="hideDialogOnSuccess(args, 'assignMultiplexIdsModalDialog'); fixOversize();"
+          update="assignMultiplexIds" />
+        <p:commandButton
+          value="#{messages.cancel}"
+          action="#{bean.cancelAssignMultiplexIds}"
+          global="false"
+          onclick="hasChanged=false;"
+          oncomplete="PF('assignMultiplexIdsModalDialog').hide(); fixOversize();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('summary')}">
+    <p:column
+      field="#{fieldPrefix}summary"
+      headerText="#{messages.summary}">
+      <h:outputText value="#{stringHelper.truncate(entity.summary, 20)}" title="#{entity.summary}" />
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('sequencingApplication')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}sequencingApplication.name"
+        headerText="#{messages.sequencingApplication}">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.sequencingApplication}" />
+        </ui:include>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}sequencingApplication.name"
+        headerText="#{messages.sequencingApplication}" />
+    </c:if>
+  </c:if>
+</ui:composition>

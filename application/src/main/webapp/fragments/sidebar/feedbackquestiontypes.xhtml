@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{content != null ? content : instance.feedbackQuestionTypes}" />
+    <ui:param
+      name="label"
+      value="#{not empty label ? label : messages.feedbackQuestionTypes}" />
+    <ui:param
+      name="tab"
+      value="#{not empty tab ? tab : 'feedbackquestiontypes'}" />
+  </ui:include>
+</ui:composition>

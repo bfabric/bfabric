@@ -1,0 +1,28 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleUserDecisionEnum" />
+  <c:if test="#{not hideColumns.contains('userDecision')}">
+    <p:column id="userDecision" field="#{fieldPrefix}userDecision" headerText="#{messages.userDecision}" filterMatchMode="exact" filterable="#{empty filterable ? true : filterable}">
+      <f:facet name="filter">
+        <h:selectOneMenu onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems value="#{SampleUserDecisionEnum}" />
+        </h:selectOneMenu>
+      </f:facet>
+      <h:outputText value="#{entity.userDecision}" style="color:#{entity.userDecision.color}" />
+      <p:commandButton rendered="#{entity.userDecisionRequiredRendered and not entity.userDecisionConfirmRequired}" action="#{sampleService.userDecisionRequired(entity, instance)}"
+                       value="#{messages.required}" title="#{messages.userDecisionRequiredHint}" update="@form,userDecision" styleClass="inline" />
+      <p:commandButton rendered="#{entity.userDecisionRequiredRendered and entity.userDecisionConfirmRequired}" action="#{sampleService.userDecisionRequired(entity, instance)}"
+                       value="#{messages.required}" title="#{messages.userDecisionRequiredHint}" update="@form,userDecision" styleClass="inline">
+        <ui:include src="/fragments/confirm-dialog-userDecisionRequired.xhtml">
+          <ui:param name="parentsSize" value="#{entity.parents.size()}" />
+        </ui:include>
+      </p:commandButton>
+    </p:column>
+  </c:if>
+</ui:composition>

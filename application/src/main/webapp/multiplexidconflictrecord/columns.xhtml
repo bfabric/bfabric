@@ -1,0 +1,53 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('lanePosition')}">
+    <p:column
+      field="lanePosition"
+      headerText="#{messages.lane}" />
+  </c:if>
+  <p:column
+    exportable="false"
+    sortable="false"
+    filterable="false"
+    headerText="#{messages.samples}">
+    <h:panelGroup rendered="#{not empty entity.conflictingMultiplexIdSamples}">
+      <p:dataTable
+        value="#{collectionHelper.getDatatableContent(entity.conflictingMultiplexIdSamples, false)}"
+        var="item"
+        styleClass="subtable nowrap">
+        <ui:include src="/fragments/column/id-name.xhtml">
+          <ui:param
+            name="entity"
+            value="#{item}" />
+        </ui:include>
+        <ui:include src="/fragments/column/multiplexid.xhtml">
+          <ui:param
+            name="entity"
+            value="#{item}" />
+        </ui:include>
+        <ui:include src="/fragments/column/multiplexid2.xhtml">
+          <ui:param
+            name="entity"
+            value="#{item}" />
+        </ui:include>
+        <c:if test="#{not hideColumns.contains('entityName')}">
+          <p:column
+            field="multiplexIdConflictMultiplexedSample.name"
+            headerText="In #{messages.multiplex}">
+            <ui:include src="/fragments/entity-link.xhtml">
+              <ui:param
+                name="entityValue"
+                value="#{stringHelper.truncate(item.multiplexIdConflictMultiplexedSample.name)}" />
+              <ui:param
+                name="instance"
+                value="#{item.multiplexIdConflictMultiplexedSample}" />
+            </ui:include>
+          </p:column>
+        </c:if>
+      </p:dataTable>
+    </h:panelGroup>
+  </p:column>
+</ui:composition>

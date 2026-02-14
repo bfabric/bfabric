@@ -1,0 +1,45 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+
+  <ui:include src="/fragments/sidebar/orderitems.xhtml">
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/datasets.xhtml">
+    <ui:param
+      name="content"
+      value="#{workflow.datasetsTransitive}" />
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/samples.xhtml">
+    <ui:param
+      name="content"
+      value="#{workflow.samplesTransitive}" />
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/workunits.xhtml">
+    <ui:param
+      name="content"
+      value="#{workflow.workunitsTransitive}" />
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/plates.xhtml">
+    <ui:param
+      name="content"
+      value="#{workflow.platesTransitive}" />
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+</ui:composition>

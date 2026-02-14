@@ -1,0 +1,120 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.StatusEnum" />
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name-status-supervisor.xhtml" />
+      <ui:include src="/fragments/details/demultiplexingrequired.xhtml" />
+
+      <h:outputText value="#{messages.qc}" />
+      <h:outputText value="#{run.qc}" />
+
+      <ui:include src="/fragments/details/instrument.xhtml" />
+
+      <c:if test="#{not empty run.runUnit and run.runUnit.managed}">
+        <ui:include src="/fragments/details/rununit.xhtml" />
+
+        <h:outputText value="#{messages.physicalSeparation}" />
+        <h:outputText value="#{run.runUnit.physicalSeparation}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/instrumentreadconfiguration.xhtml" />
+
+      <c:if test="#{not empty run.dataFolder}">
+        <h:outputText value="#{messages.dataFolder}" />
+        <h:outputText value="#{run.dataFolder}" />
+      </c:if>
+
+      <c:if test="#{not empty run.serverLocation}">
+        <h:outputText value="#{messages.serverLocation}" />
+        <h:outputText value="#{run.serverLocation}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/containers.xhtml" />
+      <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="8"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <p:button
+        rendered="#{run.samplesAssignable}"
+        outcome="assignSamples.xhtml"
+        value="#{empty run.samples ? messages.assignSamples : messages.reassignSamples}">
+        <f:param
+          name="id"
+          value="#{run.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.status}" />
+    </h:panelGrid>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/status/columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="run" />
+      <ui:param
+        name="tableContent"
+        value="#{run.states}" />
+      <ui:param
+        name="paginator"
+        value="false" />
+    </ui:include>
+
+    <h:form>
+      <h:panelGrid
+        columns="10"
+        styleClass="action">
+        <c:forEach
+          items="#{run.nextStates}"
+          var="nextStatus">
+          <p:commandButton
+            action="#{runManager.changeStatus(nextStatus)}"
+            value="#{messages[nextStatus.action]}" />
+        </c:forEach>
+        <p:commandButton
+          action="#{runManager.changeStatus(StatusEnum.CANCELED)}"
+          value="#{messages.cancel}"
+          rendered="#{run.cancelable}" />
+        <p:commandButton
+          action="#{runManager.rollbackStatus}"
+          value="#{messages.rollbackStatus}"
+          title="#{messages.rollbackStatusHint}"
+          rendered="#{run.rollbackable}" />
+        <c:if test="#{run.renderedSendEmailCheckbox}">
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="sendMail"
+              value="#{run.sendMail}">
+              <p:ajax
+                event="change"
+                listener="#{run.sendMailChanged}"
+                immediate="true" />
+            </h:selectBooleanCheckbox>
+            <h:outputText value="#{messages.sendEmailNotification}" />
+          </ui:decorate>
+        </c:if>
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+  </c:if>
+</ui:composition>

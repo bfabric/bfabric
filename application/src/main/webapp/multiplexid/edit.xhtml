@@ -1,0 +1,155 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{multiplexIdManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{multiplexIdManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{multiplexId.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.type}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="type"
+              value="#{multiplexId.type}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.multiplexKit}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              value="#{multiplexId.multiplexKit}"
+              valueChangeListener="#{multiplexIdManager.multiplexKitChangedListener}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem itemLabel="#{messages.selectAnItem}" />
+              <f:selectItems
+                value="#{multiplexKitList.resultList}"
+                var="item"
+                itemLabel="#{item.displayName}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="multiplexIdKitSpecific" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.sequence}" />
+          <h:panelGroup id="sequenceGroup">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText
+                id="sequence"
+                value="#{multiplexId.sequence}"
+                valueChangeListener="#{multiplexId.sequenceChangedListener}">
+                <p:ajax
+                  global="false"
+                  process="@this"
+                  update="reverseSequenceGroup" />
+                <o:skipValidators />
+              </h:inputText>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGroup id="reverseSequenceGroup">
+          <h:panelGrid
+            rendered="#{not empty multiplexId.reverseSequence and not empty multiplexId.reverseComplementSequence}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.reverseSequence}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText
+                id="reverseSequence"
+                value="#{multiplexId.reverseSequence}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.reverseComplementSequence}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText
+                id="reverseComplementSequence"
+                value="#{multiplexId.reverseComplementSequence}" />
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGroup id="multiplexIdKitSpecific">
+          <h:panelGrid
+            rendered="#{not empty multiplexId.multiplexKit and not multiplexId.multiplexKit.combinedMultiplexId}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.plateNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputNumber
+                id="plateNumber"
+                value="#{multiplexId.plateNumber}"
+                thousandSeparator=""
+                decimalPlaces="0"
+                inputStyleClass="editWidthExtraLarge" />
+            </ui:decorate>
+            <h:outputText value="#{messages.platePosition}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputText
+                id="platePosition"
+                value="#{multiplexId.platePosition}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGrid>
+          <h:panelGrid
+            rendered="#{not empty multiplexId.multiplexKit and multiplexId.multiplexKit.combinedMultiplexId}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.combinedXAxis}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="combinedXAxis"
+                value="#{multiplexId.combinedXAxis}" />
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{multiplexId.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{multiplexId.enabled}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

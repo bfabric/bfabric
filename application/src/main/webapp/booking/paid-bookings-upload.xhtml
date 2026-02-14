@@ -1,0 +1,27 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.paidBookingsUpload}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="csv-upload-form">
+      <p:dataTable rendered="#{not empty paidBookingsUploader.rows}" id="csvTable" value="#{paidBookingsUploader.rows}" var="row" widgetVar="csvTableWidget">
+        <p:columns value="#{paidBookingsUploader.headers}" var="column" columnIndexVar="columnIndex" filterMatchMode="contains"
+                   headerText="#{column}" sortBy="#{row[column]}" filterBy="#{row[column]}">
+          <h:outputText value="#{row[column]}" />
+        </p:columns>
+      </p:dataTable>
+      <h:panelGrid columns="11" styleClass="action">
+        <p:commandButton rendered="#{not empty paidBookingsUploader.rows}" value="#{messages.saveAsPaid}" action="#{paidBookingsUploader.saveBookingsAsPaid}" process="@form" update="@form" />
+        <p:commandButton rendered="#{not empty paidBookingsUploader.rows}" value="#{messages.clear}" action="#{paidBookingsUploader.clear}" update="@form" />
+        <p:fileUpload id="fileUpload" listener="#{paidBookingsUploader.handleFileUpload}" mode="advanced" auto="true" ajax="true" process="@this" update="@form"
+                      allowTypes="/(\.|\/)(csv|xlsx|xls)$/" invalidFileMessage="#{messages.onlyCsvXlsxAllowed}" invalidSizeMessage="#{messages.invalidSizeMessage}"
+                      fileLimit="1" multiple="false" sizeLimit="10000000" styleClass="no-icon-upload" label="#{messages.upload}"/>
+      </h:panelGrid>
+      <p:messages />
+    </h:form>
+  </ui:define>
+</ui:composition>

@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('containerReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="&#160;#{messages.projects}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist-with-create.xhtml">
+      <ui:param
+        name="tableType"
+        value="project" />
+      <ui:param
+        name="showColumns"
+        value="resourcesTotalSize, importResourcesTotalSize, coachBackup, bioinformatician, euGrant, costCentre, pspElement, internal, orderDataOnly, budgetLimit" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

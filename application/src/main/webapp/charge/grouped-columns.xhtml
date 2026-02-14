@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="#{hideColumns}" />
+  </ui:include>
+  <ui:include src="/fragments/column/servicename.xhtml" />
+  <ui:include src="/fragments/column/servicecodename.xhtml" />
+
+  <p:column
+    field="#{fieldPrefix}accountedComputed"
+    headerText="#{messages.quantity}">
+    <h:outputText value="#{entity.accountedComputed}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+
+  <ui:include src="/fragments/column/basicprice.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.unitPrice}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/discountedprice.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.price}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created.xhtml" />
+</ui:composition>

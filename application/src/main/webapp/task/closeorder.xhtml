@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-order-items.xhtml">
+    <ui:param
+      name="tasks"
+      value="#{messages.taskOrderClose}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskOrderCloseHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{orderList.closeOrderTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{configuration.orderEnabled and sidebarHelper.isTab('closeorder')}" />
+  </ui:include>
+</ui:composition>

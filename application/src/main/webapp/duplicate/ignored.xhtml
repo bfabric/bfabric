@@ -1,0 +1,73 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('dataCleaner')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.duplicatesIgnored}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form>
+      <h:panelGrid columns="1">
+        <h:selectOneMenu
+          id="mergeableClass"
+          value="#{duplicateManager.mergeableClass}">
+          <f:selectItem
+            itemLabel="#{messages.selectAnItem}"
+            itemDisabled="true" />
+          <f:selectItems
+            value="#{classHelper.mergeableEntityClassNamesList}"
+            var="item"
+            itemValue="#{item}"
+            itemLabel="#{item}" />
+          <p:ajax
+            listener="#{duplicateManager.resetLocallyCachedLists()}"
+            process="mergeableClass"
+            global="false"
+            update="@form"
+            oncomplete="fixOversize();" />
+        </h:selectOneMenu>
+      </h:panelGrid>
+
+      <h:panelGroup rendered="#{not empty duplicateManager.mergeableClass}">
+        <h:panelGroup styleClass="height-10" />
+        <h:outputText
+          value="There are no potential ignored duplicates!"
+          rendered="#{empty duplicateManager.duplicatesIgnored}" />
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="duplicateignored" />
+          <ui:param
+            name="tableContent"
+            value="#{duplicateManager.duplicatesIgnored}" />
+          <ui:param
+            name="include"
+            value="/duplicate/columns.xhtml" />
+          <ui:param
+            name="hideColumns"
+            value="score, ignore" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="1"
+        styleClass="action">
+        <p:button
+          rendered="#{not empty duplicateManager.mergeableClass}"
+          outcome="/duplicate/list.xhtml"
+          value="#{messages.duplicates}">
+          <f:param
+            name="merge"
+            value="#{duplicateManager.mergeableClass}" />
+        </p:button>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

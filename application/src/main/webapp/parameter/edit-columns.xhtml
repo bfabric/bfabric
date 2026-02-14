@@ -1,0 +1,59 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column headerText="#{messages.type}">
+    <h:outputText value="#{entity.type}" />
+  </p:column>
+  <p:column headerText="#{messages.key}">
+    <h:outputText value="#{entity.key}" />
+  </p:column>
+  <p:column headerText="#{messages.label}">
+    <h:outputText value="#{entity.label}" />
+  </p:column>
+  <p:column headerText="#{messages.value}">
+    <h:inputText
+      rendered="#{entity.string and entity.parentAllowsModification and empty entity.enumeration}"
+      value="#{entity.value}"
+      styleClass="inlinemiddle" />
+    <h:selectOneMenu
+      rendered="#{entity.string and entity.modifiable and not empty entity.enumeration}"
+      value="#{entity.value}"
+      style="width: 100%">
+      <f:selectItem
+        itemLabel="#{messages.selectAnItem}"
+        itemDisabled="#{entity.required}" />
+      <f:selectItems
+        value="#{entity.enumeration}"
+        var="item"
+        itemLabel="#{item}" />
+    </h:selectOneMenu>
+    <h:selectBooleanCheckbox
+      rendered="#{entity.boolean and entity.parentAllowsModification}"
+      value="#{entity.valueBoolean}" />
+    <h:outputText
+      rendered="#{not entity.parentAllowsModification}"
+      value="#{entity.value}" />
+  </p:column>
+  <p:column headerText="#{messages.description}">
+    <h:inputText
+      rendered="#{entity.parentAllowsModification}"
+      value="#{entity.description}"
+      styleClass="inlinemiddle" />
+    <h:outputText
+      rendered="#{not entity.parentAllowsModification}"
+      value="#{entity.description}" />
+  </p:column>
+  <p:column headerText="#{messages.modifiable}">
+    <h:selectBooleanCheckbox
+      rendered="#{entity.parentAllowsModification}"
+      value="#{entity.modifiable}" />
+    <h:outputText
+      rendered="#{not entity.parentAllowsModification}"
+      value="#{entity.modifiable}" />
+  </p:column>
+  <p:column headerText="#{messages.required}">
+    <h:outputText value="#{entity.required}" />
+  </p:column>
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/value.xhtml" />
+      <ui:include src="/fragments/details/discriminator-label.xhtml" />
+      <ui:include src="/fragments/details/environment.xhtml" />
+      <ui:include src="/fragments/details/deployer.xhtml" />
+      <ui:include src="/fragments/details/instance.xhtml" />
+      <ui:include src="/fragments/details/requiredrole.xhtml" />
+      <ui:include src="/fragments/details/comment.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="3"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

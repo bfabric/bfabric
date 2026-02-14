@@ -1,0 +1,29 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column exportable="false">
+    <p:commandButton
+      action="#{parent.setWrapperCreatorAndParameters(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      global="false"
+      oncomplete="PF('selectWrapperCreatorModalDialog').hide()"
+      update="@([id$=wrapperCreator])" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.wrapperCreator} #{messages.id}" />
+  <p:column
+    field="#{fieldPrefix}name"
+    headerText="#{messages.name}">
+    <ui:include src="/fragments/entity-link-newtab.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+      <ui:param
+        name="entityValue"
+        value="#{entity.name}" />
+    </ui:include>
+  </p:column>
+</ui:composition>

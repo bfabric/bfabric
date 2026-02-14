@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup rendered="#{not empty tasksList and tasksRendered}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="container" />
+      <ui:param
+        name="tableContext"
+        value="#{tasksId}" />
+      <ui:param
+        name="tableContent"
+        value="#{tasksList}" />
+      <ui:param
+        name="hideColumns"
+        value="totalBookedCharges, totalBillableCharges, failedWorkunitsCount, department, institute, division, createdBy, createdOn, coach, company, budgetOfficer, billingEmail, billingAddress, billingCustomer, euGrant, customAttributes" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

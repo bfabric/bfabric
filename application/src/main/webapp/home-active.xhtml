@@ -1,0 +1,54 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.welcomeTo} #{configuration.applicationName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p>
+      <h:outputText
+        value="#{configuration.applicationName} is the platform used at #{configuration.deployerName} to request and manage projects. Provide the required information and upload a project description PDF to apply. After approval, project-specific features are enabled to track activities such as communication, sample delivery, data generation, sharing, and downloads." />
+    </p>
+
+    <p>You may find these actions useful:</p>
+    <ol>
+      <li>
+        <p:link outcome="/user/change-password.xhtml" value="#{messages.changePassword}">
+          <f:param name="id" value="#{currentUser.id}" />
+        </p:link>
+      </li>
+      <li>
+        <p:link outcome="/project/edit.xhtml" value="#{messages.createProject}" title="#{messages.createProjectHint}" />
+        to apply for a project
+      </li>
+      <li>
+        <p:link outcome="/order/edit.xhtml" value="#{messages.createOrder}" title="#{messages.createOrderHint}" />
+        to request analytical services
+      </li>
+    </ol>
+
+    <p>Help:</p>
+    <ul>
+      <li>
+        <a href="#{configuration.urlUserManual}" target="_blank" rel="noopener">#{messages.userManual}</a>
+        <h:outputText value=" describes how to use #{configuration.applicationName}" />
+      </li>
+      <li>
+        <a href="#{configuration.urlFAQ}" target="_blank" rel="noopener">#{messages.faq}</a>
+        <h:outputText value=" answers frequently asked questions" />
+      </li>
+    </ul>
+
+    <c:if test="#{not currentUser.emailVerified}">
+      <h:panelGrid styleClass="content-subheader-normal">
+        <h:outputText
+          value="Please verify your email address. Important notifications are sent by email, and your #{configuration.applicationName} account will be blocked until verification is completed. Click the verification link sent to your registered email address."
+          styleClass="warning bold" />
+      </h:panelGrid>
+    </c:if>
+  </ui:define>
+</ui:composition>

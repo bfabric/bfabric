@@ -1,0 +1,50 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('instrumentreservations')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrumentreservation" />
+      <ui:param
+        name="tableContext"
+        value="#{order.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{instrumentReservationList.getLazyModelByContainerIdJoined(order.id)}" />
+    </ui:include>
+    <h:panelGrid
+      columns="4"
+      styleClass="action">
+      <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+        <p:button
+          outcome="/instrumentreservation/edit.xhtml"
+          value="#{messages.create}"
+          rendered="#{order.extensible}">
+          <f:param
+            name="containerId"
+            value="#{order.id}" />
+        </p:button>
+        <c:if test="#{instrumentReservationList.getLazyModelByContainerIdJoined(order.id).size() > 0}">
+          <h:form rendered="#{order.extensible}">
+            <p:commandButton
+              action="#{orderManager.chargeSelectedInstrumentReservations(dataTableHelper.selectedEntities)}"
+              value="#{messages.charge} #{instrumentReservationList.getLazyModelByContainerIdJoined(order.id).size()}"
+              title="#{messages.chargeSelectedInstrumentReservationsHint}" />
+          </h:form>
+          <h:form>
+            <p:commandButton
+              ajax="false"
+              actionListener="#{order.exportAndDownloadIcs(dataTableHelper.selectedEntities)}"
+              value="#{messages.exportICSExport}"
+              title="#{messages.exportICSHint}" />
+          </h:form>
+        </c:if>
+      </c:if>
+      <p:button outcome="/instrumentschedule/list.xhtml" value="#{messages.showInstrumentReservationInOverview}" title="#{messages.showInstrumentReservationInOverviewHint}" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

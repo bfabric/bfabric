@@ -1,0 +1,66 @@
+<!--
+    This template is used in both the project tree and the sample show screen.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/users-table.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/contactInfo.xhtml" />
+
+      <h:outputText value="#{messages.enabled}" />
+      <h:panelGroup>
+        <h:outputText value="#{serviceArea.enabled}" />
+        <h:outputText rendered="#{serviceArea.enabled and not empty serviceArea.serviceTypesDisabled}"
+                      value="&#160;#{messages.hasDisabledServiceTypesHint}"
+                      styleClass="warn" />
+        <h:outputText rendered="#{not serviceArea.enabled and not serviceArea.enabledForOffer and not empty serviceArea.serviceTypesEnabled}"
+                      value="&#160;#{messages.hasEnabledServiceTypesHint}"
+                      styleClass="warn" />
+        <h:outputText rendered="#{serviceArea.enabled and serviceArea.servicesCount ne serviceArea.servicesEnabledCount}"
+                      value="&#160;#{messages.hasDisabledServicesHint}"
+                      styleClass="warn" />
+        <h:outputText rendered="#{not serviceArea.enabled and not serviceArea.enabledForOffer and serviceArea.servicesEnabledCount > 0}"
+                      value="&#160;#{messages.hasEnabledServicesHint}"
+                      styleClass="warn" />
+      </h:panelGroup>
+
+      <h:outputText value="#{messages.enabledForOffer}" />
+      <h:outputText value="#{serviceArea.enabledForOffer}" />
+
+      <h:outputText value="#{messages.enabledServiceTypes}" />
+      <h:outputText value="#{serviceArea.serviceTypesEnabled.size()}" />
+
+      <h:outputText value="#{messages.enabledServices}" />
+      <h:outputText value="#{serviceArea.servicesEnabledCount}" />
+
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="6"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <ui:include src="/fragments/button/delete-cascade.xhtml" />
+      <h:form rendered="#{serviceArea.clearPricesRendered}">
+        <p:commandButton
+          action="#{serviceAreaManager.clearPrices()}"
+          value="#{messages.clearPrices}"
+          title="#{messages.clearPricesHint}"
+          update="@form">
+          <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+        </p:commandButton>
+      </h:form>
+      <ui:include src="/fragments/button/list.xhtml" />
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

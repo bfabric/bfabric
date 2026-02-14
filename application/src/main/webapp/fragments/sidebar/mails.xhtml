@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{not empty content ? content : mailList.getMailsLazyModelByParent(instance)}" />
+    <ui:param
+      name="label"
+      value="#{not empty label ? label : messages.mails}" />
+    <ui:param
+      name="tab"
+      value="#{not empty tab ? tab : 'mails'}" />
+  </ui:include>
+</ui:composition>

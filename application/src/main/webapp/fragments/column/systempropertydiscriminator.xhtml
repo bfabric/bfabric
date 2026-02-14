@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{not hideColumns.contains('discriminator')}">
+    <o:importConstants type="org.bfabric.enums.SystemPropertyDiscriminator" />
+    <p:column
+      field="#{fieldPrefix}discriminator"
+      headerText="#{messages.discriminator}"
+      filterMatchMode="exact">
+      <f:facet name="filter">
+        <h:selectOneMenu onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{SystemPropertyDiscriminator.values()}"
+            var="item"
+            itemLabel="#{item.label}" />
+        </h:selectOneMenu>
+      </f:facet>
+      <h:outputText value="#{entity.discriminator.label}" />
+    </p:column>
+  </c:if>
+</ui:composition>

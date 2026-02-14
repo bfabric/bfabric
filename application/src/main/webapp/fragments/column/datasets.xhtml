@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:set
+    value="#{not empty datasets ? datasets : entity.datasets}"
+    var="datasets" />
+  <c:if test="#{not hideColumns.contains('datasets')}">
+    <p:column
+      headerText="#{messages.datasets}"
+      exportValue="#{collectionHelper.printDisplayNames(datasets)}">
+      <ui:repeat
+        var="item"
+        value="#{datasets}">
+        <ui:include src="/fragments/entity-link-displayname.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+          <ui:param
+            name="entityValue"
+            value="#{stringHelper.truncate(item.displayName, 60)}" />
+          <ui:param
+            name="entityHint"
+            value="#{item.displayName}" />
+        </ui:include>
+        <br />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

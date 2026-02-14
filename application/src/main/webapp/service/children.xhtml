@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('children') and not empty service.children}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="service" />
+      <ui:param
+        name="tableContext"
+        value="#{service.tableContext}_children" />
+      <ui:param
+        name="tableContent"
+        value="#{service.children}" />
+      <ui:param
+        name="hideColumns"
+        value="parent" />
+    </ui:include>
+  </c:if>
+</ui:composition>

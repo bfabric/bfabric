@@ -1,0 +1,784 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{applicationManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <!-- must be inside the body -->
+      <o:importConstants type="org.bfabric.enums.ExecutableContextEnum" />
+
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid columns="1">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.name}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText
+                id="#{constants.NAME}"
+                value="#{app.name}"
+                title="#{messages.editApplicationNameHint}"
+                styleClass="editWidthExtraLarge">
+                <p:ajax event="change" process="@this" />
+              </h:inputText>
+            </ui:decorate>
+
+            <c:if test="#{app.supervisorEditable}">
+              <ui:include src="/fragments/supervisor-autocomplete-required.xhtml">
+                <ui:param
+                  name="instance"
+                  value="#{app}" />
+              </ui:include>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGroup id="typeGrid">
+            <h:panelGrid
+              rendered="#{not empty app.workunits}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.type}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:outputText value="#{app.applicationType.name}" />
+              </ui:decorate>
+
+              <h:outputText
+                value="#{messages.pageflow}"
+                rendered="#{not empty app.pageflow}" />
+              <h:panelGroup rendered="#{not empty app.pageflow}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{app.pageflow.name}" />
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.datasetTemplate}"
+                rendered="#{not empty app.datasetTemplate}" />
+              <h:panelGroup rendered="#{not empty app.datasetTemplate}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{app.datasetTemplate.name}" />
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.annotation} #{messages.required}"
+                rendered="#{app.import}" />
+              <h:panelGroup rendered="#{app.import}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{app.annotationRequired}" />
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.importResources} #{messages.required}"
+                rendered="#{app.import}" />
+              <h:panelGroup rendered="#{app.import}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{app.importResourcesRequired}" />
+                </ui:decorate>
+              </h:panelGroup>
+            </h:panelGrid>
+
+            <h:panelGrid
+              rendered="#{empty app.workunits}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.type}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <p:selectOneButton
+                  id="type"
+                  value="#{app.applicationType}"
+                  title="#{messages.editApplicationTypeHint}"
+                  valueChangeListener="#{app.typeChanged}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItems
+                    value="#{applicationTypeList.resultListOrderByName}"
+                    var="item"
+                    itemLabel="#{messages[item.name]}" />
+                  <p:ajax
+                    event="change"
+                    update="@form" />
+                </p:selectOneButton>
+              </ui:decorate>
+
+              <h:outputText
+                value="#{messages.pageflow}"
+                rendered="#{not empty app.applicationType.pageflows}" />
+              <h:panelGroup rendered="#{not empty app.applicationType.pageflows}">
+                <ui:decorate template="/fragments/required.xhtml">
+                  <p:selectOneButton
+                    id="pageflow"
+                    value="#{app.pageflow}"
+                    title="#{messages.editApplicationPageFlowHint}"
+                    valueChangeListener="#{app.pageflowChanged}"
+                    styleClass="editWidthExtraLarge"
+                    converter="omnifaces.SelectItemsConverter">
+                    <f:selectItems
+                      value="#{app.applicationType.pageflows}"
+                      var="item"
+                      itemLabel="#{messages[item.name]}" />
+                    <p:ajax
+                      event="change"
+                      update="@form" />
+                  </p:selectOneButton>
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.annotation} #{messages.required}"
+                rendered="#{app.import}" />
+              <h:panelGroup rendered="#{app.import}">
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <h:selectBooleanCheckbox
+                    id="annotationRequired"
+                    value="#{app.annotationRequired}"
+                    title="#{messages.editApplicationAnnotationRequiredHint}" />
+                </ui:decorate>
+              </h:panelGroup>
+
+              <h:outputText
+                value="#{messages.importResources} #{messages.required}"
+                rendered="#{app.import}" />
+              <h:panelGroup rendered="#{app.import}">
+                <ui:decorate template="/fragments/edit.xhtml">
+                  <h:selectBooleanCheckbox
+                    id="importResourcesRequired"
+                    value="#{app.importResourcesRequired}"
+                    title="#{messages.editApplicationImportResourceRequiredHint}" />
+                </ui:decorate>
+              </h:panelGroup>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGrid rendered="#{app.webApp}"
+                       columns="2"
+                       columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.webUrl}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText id="webUrl"
+                           value="#{app.webUrl}"
+                           title="#{messages.editApplicationWebAppHint}"
+                           styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.entityClassName}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu value="#{app.entityClassName}"
+                               title="#{messages.editApplicationWebAppEntityClassNameHint}"
+                               styleClass="editWidthExtraLarge">
+                <f:selectItem itemLabel="" />
+                <f:selectItems value="#{classHelper.webAppEntityClassNamesList}"
+                               var="item" />
+                <p:ajax
+                  event="change"
+                  update="datasetTemplateGrid" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGrid>
+
+          <h:panelGrid id="datasetTemplateGrid"
+                       columns="2"
+                       columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.datasetTemplate}"
+                          rendered="#{app.pageflow.name.equals('dataset') or app.entityClassName eq 'Dataset'}" />
+            <h:panelGroup id="datasettemplate"
+                          rendered="#{app.pageflow.name.equals('dataset') or app.entityClassName eq 'Dataset'}">
+              <ui:decorate template="/fragments/display.xhtml">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="listContext"
+                    value="datasetTemplate" />
+                  <ui:param
+                    name="value"
+                    value="#{app.datasetTemplate}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{datasetTemplateService.getDatasetTemplates}" />
+                  <o:methodParam
+                    name="valueChangeListener"
+                    value="#{app.datasetTemplateChanged}" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.name}" />
+                  <ui:param
+                    name="ajaxChange"
+                    value="true" />
+                  <ui:param
+                    name="clearUpdate"
+                    value="@this" />
+                  <ui:param
+                    name="itemUnselectUpdate"
+                    value="@this" />
+                  <ui:param
+                    name="itemSelectUpdate"
+                    value="@this" />
+                </ui:include>
+              </ui:decorate>
+            </h:panelGroup>
+          </h:panelGrid>
+
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.category}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="category"
+                value="#{app.applicationCategory}"
+                title="#{messages.editApplicationCategoryHint}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="#{messages.selectAnItem}" />
+                <f:selectItems
+                  value="#{applicationCategoryList.resultList}"
+                  var="item"
+                  itemLabel="#{item.name}" />
+                <p:ajax
+                  event="change"
+                  update="@form" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <c:if test="#{technologyList.getTechnologiesEnabledIncludingTechnologies(app.technologies).size() > 1}">
+              <h:outputText value="#{messages.technologies}"
+                            title="#{messages.editProjectTechnologiesHint}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:selectManyCheckbox
+                  id="technologies"
+                  value="#{app.technologies}"
+                  collectionType="java.util.HashSet"
+                  styleClass="rightpadding"
+                  layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(app.technologies))}"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItems
+                    value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(app.technologies)}"
+                    var="item"
+                    itemLabel="#{item.nameWithEnabledMessage}"
+                    itemDescription="#{item.description}" />
+                </h:selectManyCheckbox>
+              </ui:decorate>
+            </c:if>
+
+            <h:outputText value="#{messages.help}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="help"
+                value="#{app.help}"
+                title="#{messages.editApplicationHelpHint}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.description}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputTextarea
+                id="description"
+                value="#{app.description}"
+                title="#{messages.editApplicationDescriptionHint}"
+                rows="4"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.predecessor}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="predecessor" />
+                <ui:param
+                  name="value"
+                  value="#{app.predecessor}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{applicationManager.getPotentialPredecessorApplicationsFiltered}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.displayName}" />
+              </ui:include>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.succeedingWebApp}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param name="listContext" value="succeedingWebApp" />
+                <ui:param name="value" value="#{app.succeedingWebApp}" />
+                <o:methodParam name="completeMethod" value="#{applicationManager.getAvailableSucceedingWebApps}" />
+                <ui:param name="itemLabel" value="#{item.name}" />
+                <ui:param name="ajaxChange" value="true" />
+                <ui:param name="clearUpdate" value="@this" />
+                <ui:param name="itemUnselectUpdate" value="@this" />
+                <ui:param name="itemSelectUpdate" value="@this" />
+              </ui:include>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.enabled}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="enabled"
+                value="#{app.enabled}"
+                title="#{messages.editApplicationEnabledHint}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.valid}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="valid"
+                value="#{app.valid}"
+                title="#{messages.editApplicationValidHint}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.hidden}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="hidden"
+                value="#{app.hidden}"
+                title="#{messages.editApplicationHiddenHint}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.forEmployeesOnly}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="forEmployeesOnly"
+                value="#{app.forEmployeesOnly}"
+                title="#{messages.editApplicationForEmployeesOnlyHint}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.archiving}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox id="archiving" value="#{app.archiving}" />
+            </ui:decorate>
+          </h:panelGrid>
+
+          <h:panelGrid
+            id="notify"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.notify}" rendered="#{not app.webApp}" />
+            <h:panelGroup rendered="#{not app.webApp}">
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:panelGrid columns="4" styleClass="noborder-rightpadding">
+                  <h:selectBooleanCheckbox
+                    id="notifyContainerMember"
+                    value="#{app.notifyContainerMember}"
+                    title="#{messages.notifyContainerMemberHint}" />
+                  <h:outputText value="#{messages.containerMember}" />
+                  <h:selectBooleanCheckbox
+                    id="notifyApplicationSupervisor"
+                    value="#{app.notifyApplicationSupervisor}"
+                    title="#{messages.notifyApplicationSupervisorHint}" />
+                  <h:outputText value="#{messages.applicationSupervisor}" />
+                </h:panelGrid>
+              </ui:decorate>
+            </h:panelGroup>
+          </h:panelGrid>
+
+          <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+          <h:panelGroup id="instrument">
+            <h:panelGrid
+              rendered="#{app.import}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.instrument}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="listContext"
+                    value="instrument" />
+                  <ui:param
+                    name="value"
+                    value="#{app.instrument}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{instrumentService.getInstruments}" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.displayName}" />
+                </ui:include>
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup
+            id="precedingApplications"
+            styleClass="content-subheader-normal">
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.precedingApplications}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:panelGrid columns="1">
+                  <h:panelGrid
+                    columns="2"
+                    styleClass="noborder-rightpadding align-middle extraBottomMargin">
+                    <p:commandButton
+                      value="#{messages.edit}"
+                      immediate="true"
+                      update="addPrecedingApplicationsModalPanel"
+                      oncomplete="PF('addPrecedingApplicationsModalDialog').show()"
+                      styleClass="inlinemiddle" />
+                  </h:panelGrid>
+                  <ui:include src="/fragments/datatable.xhtml">
+                    <ui:param
+                      name="tableType"
+                      value="application" />
+                    <ui:param
+                      name="tableContext"
+                      value="preceding" />
+                    <ui:param
+                      name="tableContent"
+                      value="#{applicationManager.checkedPrecedingApplications}" />
+                    <ui:param
+                      name="hideColumns"
+                      value="run,help,pageflow,executable,wrapperCreator,submitter,createdBy,createdOn" />
+                    <ui:param
+                      name="styleClass"
+                      value="inner" />
+                  </ui:include>
+                </h:panelGrid>
+              </ui:decorate>
+
+              <h:outputText rendered="#{not app.webApp}" value="#{messages.resourceRelativePathFilter}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputText rendered="#{not app.webApp}" id="resourceRelativePathFilter"
+                             value="#{app.resourceRelativePathFilter}"
+                             title="#{messages.editApplicationResourceRelativePathFilterHint}" />
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup
+            id="succeedingApplications"
+            styleClass="content-subheader-normal">
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.succeedingApplications}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:panelGrid columns="1">
+                  <h:panelGrid
+                    columns="2"
+                    styleClass="noborder-rightpadding align-middle extraBottomMargin">
+                    <p:commandButton
+                      value="#{messages.edit}"
+                      immediate="true"
+                      oncomplete="PF('addSucceedingApplicationsModalDialog').show()"
+                      update="addSucceedingApplicationsModalPanel"
+                      styleClass="inlinemiddle" />
+                  </h:panelGrid>
+                  <ui:include src="/fragments/datatable.xhtml">
+                    <ui:param
+                      name="tableType"
+                      value="application" />
+                    <ui:param
+                      name="tableContext"
+                      value="succeeding" />
+                    <ui:param
+                      name="tableContent"
+                      value="#{applicationManager.checkedSucceedingApplications}" />
+                    <ui:param
+                      name="hideColumns"
+                      value="run,help,pageflow,executable,wrapperCreator,submitter,createdBy,createdOn" />
+                    <ui:param
+                      name="styleClass"
+                      value="inner" />
+                  </ui:include>
+                </h:panelGrid>
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup
+            id="storage"
+            styleClass="content-subheader-normal">
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.storage}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <p:commandButton
+                  value="#{messages.select}"
+                  update="storage"
+                  immediate="true"
+                  oncomplete="PF('selectStorageModalDialog').show()"
+                  styleClass="inlinemiddle"
+                  rendered="#{empty app.storage}" />
+                <h:panelGrid
+                  columns="3"
+                  styleClass="noborder-rightpadding align-middle"
+                  rendered="#{not empty app.storage}">
+                  <ui:include src="/fragments/entity-link-newtab.xhtml">
+                    <ui:param
+                      name="instance"
+                      value="#{app.storage}" />
+                    <ui:param
+                      name="entityValue"
+                      value="#{app.storage.displayName}" />
+                  </ui:include>
+                  <p:commandButton
+                    value="#{messages.replace}"
+                    update="storage"
+                    immediate="true"
+                    oncomplete="PF('selectStorageModalDialog').show()"
+                    styleClass="inlinemiddle" />
+                  <p:commandButton
+                    action="#{applicationManager.deselectStorage()}"
+                    value="#{messages.deselect}"
+                    immediate="true"
+                    styleClass="inlinemiddle"
+                    update="storage" />
+                </h:panelGrid>
+              </ui:decorate>
+
+              <h:outputText value="#{messages.outputFileFormat}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputText
+                  id="outputFileFormat"
+                  value="#{app.outputFileFormat}"
+                  title="#{messages.editApplicationOutputFileFormatHint}" />
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup
+            id="executable"
+            rendered="#{not app.webApp}"
+            styleClass="content-subheader-normal">
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.applicationExecutable}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <p:commandButton
+                  value="#{messages.select}"
+                  immediate="true"
+                  oncomplete="PF('selectExecutableModalDialog').show()"
+                  styleClass="inlinemiddle"
+                  rendered="#{empty app.executable}"
+                  update="executable" />
+                <h:panelGrid
+                  columns="3"
+                  styleClass="noborder-rightpadding align-middle"
+                  rendered="#{not empty app.executable}">
+                  <ui:include src="/fragments/entity-link-newtab.xhtml">
+                    <ui:param
+                      name="instance"
+                      value="#{app.executable}" />
+                    <ui:param
+                      name="entityValue"
+                      value="#{app.executable.displayName}" />
+                  </ui:include>
+                  <p:commandButton
+                    value="#{messages.replace}"
+                    immediate="true"
+                    oncomplete="PF('selectExecutableModalDialog').show()"
+                    styleClass="inlinemiddle"
+                    update="executable" />
+                  <p:commandButton
+                    action="#{applicationManager.deselectExecutable()}"
+                    value="#{messages.deselect}"
+                    immediate="true"
+                    styleClass="inlinemiddle"
+                    update="executable" />
+                </h:panelGrid>
+              </ui:decorate>
+
+              <h:outputText
+                value="#{messages.parameters}"
+                rendered="#{not empty app.getParametersInUseByExecutableContext(ExecutableContextEnum.APPLICATION)}" />
+              <h:panelGrid
+                rendered="#{not empty app.getParametersInUseByExecutableContext(ExecutableContextEnum.APPLICATION)}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <ui:include src="/fragments/datatable.xhtml">
+                    <ui:param
+                      name="tableType"
+                      value="parameter" />
+                    <ui:param
+                      name="tableContext"
+                      value="editExecutable" />
+                    <ui:param
+                      name="tableContent"
+                      value="#{app.getParametersInUseByExecutableContext(ExecutableContextEnum.APPLICATION)}" />
+                    <ui:param
+                      name="include"
+                      value="/parameter/edit-columns.xhtml" />
+                    <ui:param
+                      name="styleClass"
+                      value="inner" />
+                  </ui:include>
+                </ui:decorate>
+              </h:panelGrid>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup
+            id="wrapperCreator"
+            rendered="#{not app.webApp}"
+            styleClass="content-subheader-normal">
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.wrapperCreator}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <p:commandButton
+                  value="#{messages.select}"
+                  update="wrapperCreator"
+                  immediate="true"
+                  oncomplete="PF('selectWrapperCreatorModalDialog').show()"
+                  styleClass="inlinemiddle"
+                  rendered="#{empty app.wrapperCreator}" />
+                <h:panelGrid
+                  columns="3"
+                  styleClass="noborder-rightpadding align-middle"
+                  rendered="#{not empty app.wrapperCreator}">
+                  <ui:include src="/fragments/entity-link-newtab.xhtml">
+                    <ui:param
+                      name="instance"
+                      value="#{app.wrapperCreator}" />
+                    <ui:param
+                      name="entityValue"
+                      value="#{app.wrapperCreator.displayName}" />
+                  </ui:include>
+                  <p:commandButton
+                    value="#{messages.replace}"
+                    update="wrapperCreator"
+                    immediate="true"
+                    oncomplete="PF('selectWrapperCreatorModalDialog').show()"
+                    styleClass="inlinemiddle" />
+                  <p:commandButton
+                    action="#{applicationManager.deselectWrapperCreator()}"
+                    value="#{messages.deselect}"
+                    immediate="true"
+                    styleClass="inlinemiddle"
+                    update="wrapperCreator" />
+                </h:panelGrid>
+              </ui:decorate>
+              <h:outputText
+                value="#{messages.parameters}"
+                rendered="#{not empty app.getParametersInUseByExecutableContext(ExecutableContextEnum.WRAPPERCREATOR)}" />
+              <h:panelGrid
+                rendered="#{not empty app.getParametersInUseByExecutableContext(ExecutableContextEnum.WRAPPERCREATOR)}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <ui:include src="/fragments/datatable.xhtml">
+                    <ui:param
+                      name="tableType"
+                      value="parameter" />
+                    <ui:param
+                      name="tableContext"
+                      value="editWrapperCreatorExecutable" />
+                    <ui:param
+                      name="tableContent"
+                      value="#{app.getParametersInUseByExecutableContext(ExecutableContextEnum.WRAPPERCREATOR)}" />
+                    <ui:param
+                      name="include"
+                      value="/parameter/edit-columns.xhtml" />
+                    <ui:param
+                      name="styleClass"
+                      value="inner" />
+                  </ui:include>
+                </ui:decorate>
+              </h:panelGrid>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup
+            id="submitter"
+            rendered="#{not app.webApp}"
+            styleClass="content-subheader-normal">
+            <h:panelGrid
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.submitter}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <p:commandButton
+                  value="#{messages.select}"
+                  update="storage"
+                  immediate="true"
+                  oncomplete="PF('selectSubmitterModalDialog').show();"
+                  styleClass="inlinemiddle"
+                  rendered="#{empty app.submitter}" />
+                <h:panelGrid
+                  columns="3"
+                  styleClass="noborder-rightpadding align-middle"
+                  rendered="#{not empty app.submitter}">
+                  <ui:include src="/fragments/entity-link-newtab.xhtml">
+                    <ui:param
+                      name="instance"
+                      value="#{app.submitter}" />
+                    <ui:param
+                      name="entityValue"
+                      value="#{app.submitter.displayName}" />
+                  </ui:include>
+                  <p:commandButton
+                    value="#{messages.replace}"
+                    update="storage"
+                    immediate="true"
+                    oncomplete="PF('selectSubmitterModalDialog').show()"
+                    styleClass="inlinemiddle" />
+                  <p:commandButton
+                    action="#{applicationManager.deselectSubmitter()}"
+                    value="#{messages.deselect}"
+                    immediate="true"
+                    styleClass="inlinemiddle"
+                    update="submitter" />
+                </h:panelGrid>
+              </ui:decorate>
+              <h:outputText
+                rendered="#{not empty app.getParametersInUseByExecutableContext(ExecutableContextEnum.SUBMITTER)}"
+                value="#{messages.parameters}" />
+              <h:panelGrid
+                rendered="#{not empty app.getParametersInUseByExecutableContext(ExecutableContextEnum.SUBMITTER)}">
+                <ui:decorate template="/fragments/display.xhtml">
+                  <ui:include src="/fragments/datatable.xhtml">
+                    <ui:param
+                      name="tableType"
+                      value="parameter" />
+                    <ui:param
+                      name="tableContext"
+                      value="submitterExecutable" />
+                    <ui:param
+                      name="tableContent"
+                      value="#{app.getParametersInUseByExecutableContext(ExecutableContextEnum.SUBMITTER)}" />
+                    <ui:param
+                      name="include"
+                      value="/parameter/edit-columns.xhtml" />
+                    <ui:param
+                      name="styleClass"
+                      value="inner" />
+                  </ui:include>
+                </ui:decorate>
+              </h:panelGrid>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGrid
+            columns="2"
+            styleClass="action">
+            <ui:decorate template="/fragments/button/save-edit-cancel.xhtml" />
+          </h:panelGrid>
+        </h:panelGrid>
+      </h:form>
+      <ui:include src="/application/select-executable-modal.xhtml" />
+      <ui:include src="/wrappercreator/select-modal.xhtml">
+        <ui:param
+          name="parent"
+          value="#{app}" />
+      </ui:include>
+      <ui:include src="/submitter/select-modal.xhtml">
+        <ui:param
+          name="parent"
+          value="#{app}" />
+      </ui:include>
+      <ui:include src="/storage/select-modal.xhtml" />
+      <ui:include src="/application/add-preceding-modal.xhtml" />
+      <ui:include src="/application/add-succeeding-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

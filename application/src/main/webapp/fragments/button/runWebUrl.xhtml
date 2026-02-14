@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+  <p:commandButton rendered="#{instance.webApp}"
+                   value="#{empty label ? messages.run : label}"
+                   action="#{instance.createWebAppJob(runOnEntity, currentUser)}"
+                   styleClass="#{empty styleClass ? 'app' : styleClass}">
+    <p:autoUpdate />
+  </p:commandButton>
+</ui:composition>

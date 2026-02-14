@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('charges') and identityManager.hasCurrentUserRole('instrumentManager')}">
+    <h:panelGroup id="show-instrument-charges">
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="tableType"
+          value="charge" />
+        <ui:param
+          name="tableContext"
+          value="#{instrument.tableContext}" />
+        <ui:param
+          name="tableContent"
+          value="#{instrument.charges}" />
+        <ui:param
+          name="hideColumns"
+          value="instrument_" />
+        <ui:param
+          name="rowStyleClass"
+          value="#{entity.rowStyleClass}" />
+      </ui:include>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,28 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('applicationReader')}"
+            bind="alt+q" handler="location.href='../executable/list.html';" disableInInput="true" disableInInputTypes="texts" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('applicationReader')}"
+            bind="alt+w" handler="location.href='../application/list.html';" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('applicationReader')}"
+            bind="alt+r" handler="location.href='../importresource/list.html';" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+            bind="alt+o" handler="location.href='../offer/edit.html';" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+            bind="alt+p" handler="location.href='../charge/edit-batch-with-create.html';" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('agendaUser')}"
+            bind="alt+x" handler="location.href='../event/edit.html';" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('agendaUser')}"
+            bind="alt+a" handler="location.href='../eventschedule/list.html';" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('mailSender')}"
+            bind="alt+m" handler="location.href='../mail/send.html';" />
+  <p:hotkey bind="alt+t" handler="location.href='../task/list.html';" />
+  <p:hotkey bind="alt+z" handler="location.href='../sample/edit-batch.html';" />
+  <p:hotkey bind="alt+i" handler="location.href='../instrumentschedule/list.html';" />
+  <p:hotkey bind="alt+j" handler="location.href='../application/run.html?applicationType=import';" />
+  <p:hotkey bind="alt+k" handler="location.href='../application/run.html?applicationType=analysis';" />
+  <p:hotkey bind="alt+l" handler="location.href='../dataset/edit.html';" />
+  <p:hotkey bind="alt+y" handler="location.href='../order/edit.html';" />
+  <p:hotkey rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+            bind="alt+c" handler="location.href='../workflow/edit.html';" />
+</ui:composition>

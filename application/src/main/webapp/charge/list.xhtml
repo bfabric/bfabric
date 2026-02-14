@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('chargeReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.charges}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist-with-create.xhtml">
+      <ui:param
+        name="tableType"
+        value="charge" />
+      <ui:param
+        name="buttonRendered"
+        value="#{identityManager.hasCurrentUserRole('chargeManager')}" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

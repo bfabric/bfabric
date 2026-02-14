@@ -1,0 +1,46 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.top} #{messages.applications}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:panelGroup styleClass="statistics-block">
+      <p:dataTable
+        value="#{statisticsList.view('statisticsapplicationworkunit')}"
+        var="item">
+        <p:column
+          headerText="#{messages.workunits}"
+          styleClass="textright">
+          <h:outputText value="#{item[1]}" />
+        </p:column>
+        <p:column headerText="#{messages.applications} (#{messages.id})">
+          <h:outputText value="#{item[0]}" />
+        </p:column>
+      </p:dataTable>
+    </h:panelGroup>
+
+    <h:panelGroup styleClass="statistics-block">
+      <p:dataTable
+        value="#{statisticsList.view('statisticsapplicationimportresource')}"
+        var="item">
+        <p:column
+          headerText="#{messages.importResources}"
+          styleClass="textright">
+          <h:outputText value="#{item[1]}" />
+        </p:column>
+        <p:column headerText="#{messages.applications} (#{messages.id})">
+          <h:outputText value="#{item[0]}" />
+        </p:column>
+      </p:dataTable>
+    </h:panelGroup>
+  </ui:define>
+</ui:composition>

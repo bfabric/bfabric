@@ -1,0 +1,137 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <p:column
+    exportable="false"
+    style="text-align:center">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.delete}" />
+      </div>
+    </f:facet>
+    <p:commandButton
+      actionListener="#{purchaseItemBatchManager.deleteChanged(entity)}"
+      value="#{messages.delete}"
+      global="true"
+      process="@this"
+      update="@([id$=batchtable]), @([id$=addNewBatchItemsSpinner]), @([id$=addNewBatchItemsButton]), @([id$=buttons])"
+      oncomplete="fixOversize();"
+      styleClass="inline"
+      style="width:50px;min-width:50px" />
+  </p:column>
+
+  <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+  <ui:include src="/fragments/batch/autocomplete-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.CONSUMABLE}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.consumable}" />
+    <ui:param
+      name="rendered"
+      value="#{purchaseItemBatchManager.isRenderedColumn(constants.CONSUMABLE)}" />
+    <ui:param
+      name="displayRequired"
+      value="#{purchaseItemBatchManager.isAttributeRequired(constants.CONSUMABLE)}" />
+    <ui:param
+      name="entityValue"
+      value="#{entity.consumable}" />
+    <ui:param
+      name="completeMethodHeader"
+      value="#{purchaseItemBatchManager.getConsumablesFiltered}" />
+    <ui:param
+      name="completeMethod"
+      value="#{purchaseItemBatchManager.getConsumablesFiltered}" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.QUANTITY}" />
+    <ui:param
+      name="rendered"
+      value="#{purchaseItemBatchManager.isRenderedColumn(constants.QUANTITY)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.quantity}" />
+    <ui:param
+      name="displayRequired"
+      value="#{purchaseItemBatchManager.isAttributeRequired(constants.QUANTITY)}" />
+    <ui:param
+      name="value"
+      value="#{entity.quantity}" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.BASIC_PRICE}" />
+    <ui:param
+      name="rendered"
+      value="#{purchaseItemBatchManager.isRenderedColumn(constants.BASIC_PRICE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.basicNetPrice}" />
+    <ui:param
+      name="displayRequired"
+      value="#{purchaseItemBatchManager.isAttributeRequired(constants.BASIC_PRICE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.basicPrice}" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.TOTAL_PRICE}" />
+    <ui:param
+      name="rendered"
+      value="#{purchaseItemBatchManager.isRenderedColumn(constants.TOTAL_PRICE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.totalNetPrice}" />
+    <ui:param
+      name="displayRequired"
+      value="#{purchaseItemBatchManager.isAttributeRequired(constants.TOTAL_PRICE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.totalPrice}" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.TOTAL_PRICE_DEFAULT_CURRENCY}" />
+    <ui:param
+      name="rendered"
+      value="#{purchaseItemBatchManager.isRenderedColumn(constants.TOTAL_PRICE_DEFAULT_CURRENCY)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.totalNetPrice} #{configuration.defaultCurrencyCode}" />
+    <ui:param
+      name="displayRequired"
+      value="#{purchaseItemBatchManager.isAttributeRequired(constants.TOTAL_PRICE_DEFAULT_CURRENCY)}" />
+    <ui:param
+      name="value"
+      value="#{entity.totalPriceDefaultCurrency}" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+</ui:composition>

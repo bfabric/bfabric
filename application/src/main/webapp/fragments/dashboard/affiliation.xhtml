@@ -1,0 +1,51 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <div class="cardBoxDetails cardBoxShadow">
+    <div class="card-header"><h3><h:outputText value="#{messages.affiliation}" title="#{messages.affiliation}" /></h3></div>
+    <table class="content-table">
+      <tr>
+        <td class="header-table">
+          <h:outputText value="#{messages.organization}" />
+        </td>
+        <td>
+          <ui:include src="/fragments/entity-link-name.xhtml">
+            <ui:param name="instance" value="#{instance.institute.department.organization}" />
+          </ui:include>
+        </td>
+      </tr>
+      <tr>
+        <td class="header-table">
+          <h:outputText value="#{messages.department}" />
+        </td>
+        <td>
+          <ui:include src="/fragments/entity-link-name.xhtml">
+            <ui:param name="instance" value="#{instance.institute.department}" />
+          </ui:include>
+        </td>
+      </tr>
+      <tr>
+        <td class="header-table">
+          <h:outputText value="#{messages.institute}" />
+        </td>
+        <td>
+          <ui:include src="/fragments/entity-link-name.xhtml">
+            <ui:param name="instance" value="#{instance.institute}" />
+          </ui:include>
+        </td>
+      </tr>
+      <c:if test="#{not empty instance.postalAddress}">
+        <ui:include src="/fragments/dashboard-box.xhtml">
+          <ui:param name="messages" value="#{messages.billingAddress}" />
+          <ui:param name="value" value="#{instance.postalAddress}" />
+        </ui:include>
+        <c:if test="#{instance.billingOrganizationType.financeSourceRequired}">
+          <ui:include src="/fragments/dashboard-box.xhtml">
+            <ui:param name="messages" value="#{messages.billingAccount}" />
+            <ui:param name="value" value="#{instance.billingAccountDisplay}" />
+          </ui:include>
+        </c:if>
+      </c:if>
+    </table>
+  </div>
+</ui:composition>

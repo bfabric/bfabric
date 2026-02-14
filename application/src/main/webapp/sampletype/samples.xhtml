@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('samples')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="sample" />
+      <ui:param
+        name="tableContext"
+        value="#{sampleType.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{sampleList.getLazyModelByTypeId(sampleType.id)}" />
+      <ui:param
+        name="hideColumns"
+        value="type" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,384 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{queryManager.pageTitle}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <c:set value="#{queryManager.query}" var="currentQuery" />
+    <c:set value="#{queryManager.resultColumns}" var="resultColumns" />
+    <!-- The Query toggle bar -->
+    <h:form id="queryForm">
+      <p:fieldset
+        legend="#{messages.query}"
+        toggleable="true"
+        collapsed="#{currentQuery.listing and currentQuery.total != 0}"
+        styleClass="noborder">
+        <!-- Select search domain (my/all) -->
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.searchDomain}" />
+          <h:panelGroup>
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneRadio
+                id="domain"
+                value="#{currentQuery.showAll}"
+                title="#{messages.domainHint}"
+                valueChangeListener="#{currentQuery.showAllChanged}"
+                immediate="true">
+                <f:selectItem
+                  itemValue="true"
+                  itemLabel="#{messages.all}" />
+                <f:selectItem
+                  itemValue="false"
+                  itemLabel="#{messages.my}" />
+                <p:ajax
+                  event="change"
+                  listener="#{queryManager.queryChanged}"
+                  immediate="true"
+                  update="pageTitle, queryForm" />
+              </h:selectOneRadio>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <!-- Select document type -->
+          <h:outputText value="#{messages.indexMapType}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="indexMapType"
+              value="#{currentQuery.indexMapType}"
+              title="#{messages.indexMapTypeHint}"
+              valueChangeListener="#{queryManager.indexMapTypeChanged}"
+              immediate="true"
+              styleClass="editWidth">
+              <f:selectItems
+                value="#{queryManager.indexMapTypes}"
+                var="item"
+                itemLabel="#{messages[item]}" />
+              <p:ajax
+                event="change"
+                immediate="true"
+                update="pageTitle, queryForm:searchResultPanel, queryForm:searchCriteriaGrid, createButtons" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <!-- Specify search criteria -->
+        <h:panelGrid
+          id="searchCriteriaGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <!-- Show Filter values -->
+          <h:outputText value="#{messages.criteria}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:dataTable
+              id="searchCriteriaTable"
+              value="#{currentQuery.criteria}"
+              var="item"
+              styleClass="noborder-rightpadding align-middle hide-table-header no-min-width repeatform inner">
+              <p:column>
+                <h:selectOneMenu
+                  id="itemField"
+                  value="#{item.field}"
+                  title="#{messages.fieldHint}"
+                  styleClass="editWidth">
+                  <f:selectItems
+                    value="#{queryManager.getIndexMapTypeFields(currentQuery.indexMapType)}"
+                    var="item"
+                    itemLabel="#{messages[item]}" />
+                  <p:ajax
+                    event="change"
+                    listener="#{queryManager.queryChanged}"
+                    immediate="true"
+                    update="pageTitle, queryForm:searchResultPanel" />
+                </h:selectOneMenu>
+              </p:column>
+              <p:column>
+                <h:inputText
+                  id="term"
+                  value="#{item.term}"
+                  title="#{messages.termHint}"
+                  styleClass="editWidth">
+                  <o:skipValidators />
+                  <p:ajax
+                    event="keyup"
+                    delay="300"
+                    listener="#{queryManager.queryChanged}"
+                    global="false"
+                    immediate="true"
+                    update="pageTitle, queryForm:searchResultPanel" />
+                </h:inputText>
+              </p:column>
+              <p:column>
+                <p:commandLink
+                  action="#{queryManager.addCriterionDefault}"
+                  title="#{messages.addCriterionHint}"
+                  global="false"
+                  update="pageTitle, queryForm:searchResultPanel, queryForm:searchCriteriaGrid"
+                  styleClass="font-larger">
+                  <i class="fas fa-plus-square" />
+                </p:commandLink>
+              </p:column>
+              <p:column>
+                <p:commandLink
+                  action="#{queryManager.removeCriterion(item)}"
+                  title="#{messages.removeCriterionHint}"
+                  rendered="#{currentQuery.hasMultipleCriteria()}"
+                  global="false"
+                  update="pageTitle, queryForm:searchResultPanel, queryForm:searchCriteriaGrid"
+                  styleClass="font-larger">
+                  <i class="fas fa-minus-square" />
+                </p:commandLink>
+              </p:column>
+              <p:column>
+                <p:message
+                  for="term"
+                  styleClass="errorMessage" />
+              </p:column>
+            </p:dataTable>
+          </ui:decorate>
+
+          <!-- Boolean search (and/or) -->
+          <c:if test="#{currentQuery.hasMultipleCriteria()}">
+            <span />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:panelGrid
+                columns="2"
+                columnClasses="editMatch, editWidth">
+                <h:selectOneRadio
+                  id="match"
+                  value="#{currentQuery.bool}"
+                  title="#{message.matchHint}">
+                  <f:selectItem
+                    itemValue="and"
+                    itemLabel="#{messages.matchAll}" />
+                  <f:selectItem
+                    itemValue="or"
+                    itemLabel="#{messages.matchAny}" />
+                  <p:ajax
+                    event="change"
+                    listener="#{queryManager.queryChanged}"
+                    immediate="true"
+                    update="pageTitle, queryForm:searchResultPanel" />
+                </h:selectOneRadio>
+                <p:commandButton
+                  action="#{queryManager.resetCriteria}"
+                  value="#{messages.clearCriteria}"
+                  title="#{messages.clearCriteriaHint}"
+                  styleClass="margin-top-4 inline"
+                  update="pageTitle, queryForm:searchResultPanel, queryForm:searchCriteriaGrid" />
+              </h:panelGrid>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <!-- Specify date type filter -->
+        <h:panelGrid
+          id="dateTypeGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.modifiedFilter}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="dateType"
+              value="#{currentQuery.dateType}"
+              valueChangeListener="#{queryManager.dateTypeChanged}"
+              immediate="true"
+              styleClass="editWidth">
+              <f:selectItem
+                itemValue="-1"
+                itemLabel="#{messages.none}" />
+              <f:selectItem
+                itemValue="0"
+                itemLabel="#{messages.relative}" />
+              <f:selectItem
+                itemValue="1"
+                itemLabel="#{messages.range}" />
+              <p:ajax
+                event="change"
+                immediate="true"
+                global="false"
+                update="pageTitle, queryForm:searchResultPanel, queryForm:dateFilterGrid" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <!-- Specify date filter -->
+        <h:panelGrid
+          id="dateFilterGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            id="modifiedText"
+            value="#{messages.modified}"
+            rendered="#{currentQuery.dateType == 0}" />
+          <h:panelGroup rendered="#{currentQuery.dateType == 0}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="relativeFilter"
+                value="#{currentQuery.relative}"
+                styleClass="editWidth">
+                <f:selectItem
+                  itemValue="0"
+                  itemLabel="#{messages.duringLastHour}" />
+                <f:selectItem
+                  itemValue="1"
+                  itemLabel="#{messages.duringToday}" />
+                <f:selectItem
+                  itemValue="2"
+                  itemLabel="#{messages.duringSinceYesterday}" />
+                <f:selectItem
+                  itemValue="3"
+                  itemLabel="#{messages.duringThisWeek}" />
+                <f:selectItem
+                  itemValue="4"
+                  itemLabel="#{messages.duringThisFortnight}" />
+                <f:selectItem
+                  itemValue="5"
+                  itemLabel="#{messages.duringThisMonth}" />
+                <f:selectItem
+                  itemValue="6"
+                  itemLabel="#{messages.duringSinceLastMonth}" />
+                <f:selectItem
+                  itemValue="7"
+                  itemLabel="#{messages.duringLast3Months}" />
+                <f:selectItem
+                  itemValue="8"
+                  itemLabel="#{messages.duringLast6Months}" />
+                <f:selectItem
+                  itemValue="9"
+                  itemLabel="#{messages.duringLast12Months}" />
+                <p:ajax
+                  event="change"
+                  listener="#{queryManager.queryChanged}"
+                  immediate="true"
+                  update="pageTitle, queryForm:searchResultPanel" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.from}"
+            rendered="#{currentQuery.dateType == 1}" />
+          <h:panelGroup rendered="#{currentQuery.dateType == 1}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:datePicker
+                id="calendarFrom"
+                value="#{currentQuery.start}"
+                inputStyle="width: 150px">
+                <p:ajax
+                  event="dateSelect"
+                  listener="#{queryManager.rangeStartChanged}"
+                  update="pageTitle, queryForm:searchResultPanel, queryForm:calendarTo" />
+              </p:datePicker>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.to}"
+            rendered="#{currentQuery.dateType == 1}" />
+          <h:panelGroup rendered="#{currentQuery.dateType == 1}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:datePicker
+                id="calendarTo"
+                value="#{currentQuery.end}"
+                inputStyle="width: 150px">
+                <p:ajax
+                  event="dateSelect"
+                  listener="#{queryManager.rangeEndChanged}"
+                  update="pageTitle, queryForm:searchResultPanel, queryForm:calendarFrom" />
+              </p:datePicker>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <!-- Search Button Grid -->
+        <h:panelGrid
+          id="searchButtonGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <span />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:panelGrid
+              columns="5"
+              styleClass="noborder-rightpadding">
+              <p:commandButton
+                id="applyButton"
+                actionListener="#{queryManager.doQuery}"
+                value="#{messages.applySearch}"
+                title="#{messages.applySearchHint}"
+                update="pageTitle, @form"
+                oncomplete="fixOversize()" />
+              <p:commandButton
+                actionListener="#{queryManager.saveNew}"
+                value="#{messages.save}"
+                oncomplete="PF('saveQueryDialog').show()"
+                update="saveQueryPanel" />
+              <p:commandButton
+                rendered="#{currentQuery.listing and currentQuery.indexMapType.equals(IndexMapTypeEnum.workunit)}"
+                actionListener="#{queryManager.toggleExcludeFeeder}"
+                value="#{queryManager.excludeFeeder}"
+                title="#{queryManager.excludeFeederHint}"
+                global="false"
+                styleClass="normal" />
+              <p:link
+                outcome="/search/hint.xhtml"
+                value="#{messages.help}"
+                title="#{messages.helpHint}"
+                target="_blank"
+                rel="noopener" />
+            </h:panelGrid>
+          </ui:decorate>
+        </h:panelGrid>
+      </p:fieldset>
+
+      <h:panelGroup id="searchResultPanel">
+        <c:if test="#{queryManager.showResults}">
+          <h:panelGrid styleClass="content-subheader">
+            <h:outputText value="#{messages.results}" />
+          </h:panelGrid>
+
+          <!-- No results found -->
+          <h:outputText
+            value="#{messages.emptySearchResult} Follow the help link above to learn more about how to pose a query."
+            rendered="#{not currentQuery.resultNotEmpty}" />
+
+          <!-- Result table -->
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="include"
+              value="/search/columns.xhtml" />
+            <ui:param
+              name="tableContext"
+              value="results" />
+            <ui:param
+              name="tableContent"
+              value="#{queryManager.model}" />
+            <ui:param
+              name="lazy"
+              value="true" />
+          </ui:include>
+        </c:if>
+      </h:panelGroup>
+
+      <o:importConstants type="org.bfabric.indexer.enums.IndexMapTypeEnum" />
+      <h:panelGrid
+        id="createButtons"
+        columns="1"
+        styleClass="action">
+        <p:button
+          rendered="#{currentQuery.indexMapType.equals(IndexMapTypeEnum.order) or currentQuery.indexMapType.equals(IndexMapTypeEnum.project)}"
+          outcome="/#{currentQuery.indexMapType.name().toLowerCase()}/edit.xhtml"
+          value="#{messages.create} #{stringHelper.firstUpper(currentQuery.indexMapType)}" />
+      </h:panelGrid>
+    </h:form>
+    <ui:include src="/query/save-modal.xhtml" />
+  </ui:define>
+</ui:composition>

@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:param
+    name="entityManager"
+    value="#{runUnitManager}" />
+
+  <ui:define name="pageTitle">
+    <ui:include src="/fragments/show-page-title.xhtml" />
+  </ui:define>
+
+  <ui:decorate template="/fragments/sidebar/show.xhtml" />
+</ui:composition>

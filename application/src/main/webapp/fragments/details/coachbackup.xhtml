@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.coachBackup}">
+    <h:outputText value="#{messages.coachBackup}" />
+    <h:panelGroup>
+      <ui:include src="/fragments/user-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{instance.coachBackup}" />
+      </ui:include>
+      <h:panelGroup rendered="#{not instance.coachBackupValid}">
+        <i
+          class="fas fa-exclamation-circle warning"
+          title="#{messages.coachBackupInvalidHint}" />
+      </h:panelGroup>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

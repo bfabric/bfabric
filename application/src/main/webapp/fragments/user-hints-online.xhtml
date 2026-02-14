@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup rendered="#{instance.loggedIn and not noHints}">
+    <i
+      class="fas fa-plug #{instance.activelyUsing ? 'running' : 'processing'}"
+      title="#{instance.activelyUsing ? messages.userActivelyUsingHint : messages.userLoggedInHint}" />
+  </h:panelGroup>
+  <!--
+    We should not show an explicit hint for offline until there is no appropriate icon for it. So we can keep it as it is: If a user is online, then the plug icon is shown; otherwise when offline nothing is shown by default.
+    <h:panelGroup rendered="#{not instance.loggedIn and not noHints}">
+      <i
+        class="fas fa-plug-circle-exclamation warning"
+        title="#{messages.userOfflineHint}" />
+    </h:panelGroup>
+  -->
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.CommentDiscriminator" />
+  <c:if test="#{sidebarHelper.isTab('comments')}">
+    <ui:include src="/comment/list-by-parent-with-create.xhtml">
+      <ui:param
+        name="category"
+        value="#{constants.COMMENT_CATEGORY_COMMENT}" />
+      <ui:param
+        name="type"
+        value="#{CommentDiscriminator.SAMPLE_COMMENT}" />
+      <ui:param
+        name="parent"
+        value="#{sample}" />
+      <ui:param
+        name="comments"
+        value="#{sample.commentsCurrentUser}" />
+      <ui:param
+        name="showform"
+        value="#{sample.renderedAddCommentButton}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

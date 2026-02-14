@@ -1,0 +1,20 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/comment.xhtml" />
+  <ui:include src="/fragments/column/subject.xhtml" />
+  <ui:include src="/fragments/column/attachment-count.xhtml" />
+  <ui:include src="/fragments/column/commentdiscriminator.xhtml" />
+  <ui:include src="/fragments/column/parentclass.xhtml">
+    <ui:param
+      name="parentClassNames"
+      value="#{commentList.parentClassNames}" />
+  </ui:include>
+  <ui:include src="/fragments/column/parentid.xhtml" />
+  <ui:include src="/fragments/column/replyto.xhtml" />
+  <ui:include src="/fragments/column/viewedby.xhtml" />
+  <ui:include src="/fragments/column/starredby.xhtml" />
+  <ui:include src="/fragments/column/acknowledgedby.xhtml" />
+  <ui:include src="/fragments/column/pinned.xhtml" />
+  <ui:include src="/fragments/column/workunit-count.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

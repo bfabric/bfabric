@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/dashboard-cardbox.xhtml">
+    <ui:param name="content" value="#{content != null ? content : instance.bookers}" />
+    <ui:param name="tab" value="bookers" />
+    <ui:param name="label" value="#{not empty label ? label : messages.bookers}" />
+  </ui:include>
+</ui:composition>

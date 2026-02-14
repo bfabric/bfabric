@@ -1,0 +1,8 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('serviceFullCost') and identityManager.hasCurrentUserRole('containerReader')}">
+    <p:column field="#{fieldPrefix}service.fullCost" headerText="#{messages.fullCost}" />
+  </c:if>
+</ui:composition>

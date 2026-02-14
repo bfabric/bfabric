@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:outputText
+    value="#{truncDescription != null ? truncDescription : formatDescription}"
+    title="#{truncDescription != null ? formatDescription : ''}"
+    styleClass="#{formatStyleClass}"
+    rendered="#{not empty formatDescription}" />
+  <h:outputText
+    value="#{messages.missingHint}"
+    styleClass="warning"
+    rendered="#{empty formatDescription}" />
+</ui:composition>

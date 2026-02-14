@@ -1,0 +1,147 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('agendaReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.agenda}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <c:set value="#{agendaEventManager.previousNextButton}" var="previousNextButton" />
+    <c:set value="#{agendaEventManager.usersFiltered}" var="usersFiltered" />
+    <h:form id="agendaBody">
+      <ui:include src="paginator-navigation.xhtml" />
+      <p:spacer height="10" />
+      <div class="oversize">
+        <table
+          class="overview align-middle"
+          cellpadding="0"
+          cellspacing="0">
+          <ui:include src="paginator-month.xhtml" />
+          <ui:include src="paginator-day-filter.xhtml" />
+          <ui:include src="events-public.xhtml" />
+          <ui:include src="events.xhtml" />
+          <c:if test="#{usersFiltered.size() > 20}">
+            <ui:include src="paginator-day.xhtml" />
+            <ui:include src="paginator-month.xhtml" />
+          </c:if>
+        </table>
+      </div>
+      <p:spacer height="20" />
+      <div class="oversize">
+        <h:panelGrid
+          columns="2"
+          columnClasses="agendafirstcolumn,agenda"
+          cellpadding="0"
+          cellspacing="0">
+          <h:panelGrid
+            columns="2"
+            cellpadding="0"
+            cellspacing="0">
+            <c:if test="#{identityManager.hasCurrentUserRole('agendaUser')}">
+              <c:if test="#{currentUser.employee}">
+                <h:outputText value="#{messages.vacationDays} #{now.year+1900}" />
+                <h:outputText value="&#160;" />
+                <h:panelGrid
+                  columns="2"
+                  cellpadding="0"
+                  cellspacing="0"
+                  columnClasses="textright,textleft">
+                  <h:outputText value="#{currentUser.creditsTotal}"> <f:convertNumber pattern="0.0" /></h:outputText>
+                  <h:outputText value="&#160;#{messages.total}" />
+                  <h:outputText value="#{currentUser.accountedDays}"> <f:convertNumber pattern="0.0" /></h:outputText>
+                  <h:outputText value="&#160;#{messages.taken}" />
+                  <h:outputText
+                    value="#{currentUser.remainingDays}"
+                    styleClass="#{currentUser.creditsOverdrawn}">
+                    <f:convertNumber pattern="0.0" />
+                  </h:outputText>
+                  <h:outputText
+                    value="&#160;#{messages.remaining}"
+                    styleClass="#{currentUser.creditsOverdrawn}" />
+                </h:panelGrid>
+                <h:outputText value="&#160;" />
+              </c:if>
+              <h:outputText value="&#160;" />
+              <h:outputText value="&#160;" />
+              <ui:include src="/fragments/entity-link.xhtml">
+                <ui:param
+                  name="instance"
+                  value="#{currentUser}" />
+                <ui:param
+                  name="entityValue"
+                  value="#{messages.credits}" />
+                <ui:param
+                  name="tab"
+                  value="credits" />
+              </ui:include>
+              <p:link
+                rendered="#{identityManager.hasCurrentUserRole('agendaManager')}"
+                outcome="/credit/edit.xhtml"
+                value="&#160;#{messages.add}" />
+              <h:panelGroup rendered="#{not identityManager.hasCurrentUserRole('agendaManager')}" />
+              <ui:include src="/fragments/entity-link.xhtml">
+                <ui:param
+                  name="instance"
+                  value="#{currentUser}" />
+                <ui:param
+                  name="entityValue"
+                  value="#{messages.events}" />
+                <ui:param
+                  name="tab"
+                  value="events" />
+              </ui:include>
+              <p:link
+                rendered="#{identityManager.hasCurrentUserRole('agendaManager')}"
+                outcome="/event/edit.xhtml"
+                value="&#160;#{messages.add}" />
+              <h:panelGroup rendered="#{not identityManager.hasCurrentUserRole('agendaManager')}" />
+              <h:outputText value="&#160;" />
+              <h:outputText value="&#160;" />
+              <ui:include src="/fragments/sync-button.xhtml">
+                <ui:param
+                  name="clipboardid"
+                  value="#{currentUser.id}_all" />
+                <ui:param
+                  name="callerEntity"
+                  value="#{currentUser}" />
+                <ui:param
+                  name="contextManager"
+                  value="#{contextManager}" />
+                <ui:param
+                  name="urlContainingToken"
+                  value="#{currentUser.urlCalendarForUser}" />
+              </ui:include>
+              <p />
+            </c:if>
+          </h:panelGrid>
+          <h:panelGroup>
+            <table
+              class="legend align-middle"
+              cellpadding="0"
+              cellspacing="0">
+              <ui:repeat
+                value="#{agendaEventManager.eventTypesForLegend}"
+                var="item">
+                <tr>
+                  <td
+                    class="slotLegend"
+                    bgcolor="#{item[0]}">&#160;
+                  </td>
+                  <td class="slotLegendLabel"><h:outputText value="&#160;#{item[1]}" /></td>
+                </tr>
+              </ui:repeat>
+            </table>
+          </h:panelGroup>
+        </h:panelGrid>
+      </div>
+    </h:form>
+  </ui:define>
+</ui:composition>

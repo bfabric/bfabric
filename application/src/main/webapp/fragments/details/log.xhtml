@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.log}">
+    <h:outputText value="#{messages.log}" />
+    <h:outputText rendered="#{instance.log.length() le 256}" value="#{instance.log}" styleClass="preformat" />
+    <h:inputTextarea rendered="#{instance.log.length() gt 256}" id="log" value="#{instance.log}" readonly="true" rows="20" styleClass="preformat width-570" />
+  </c:if>
+</ui:composition>

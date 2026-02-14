@@ -1,0 +1,21 @@
+<f:view
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  contentType="text/xml">
+  <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <ui:include src="page-setup-A4-landscape.xhtml" />
+    <!-- Introduce a page number to pass to the stylesheets, this is only necessary if static content like headers change depending on pages -->
+    <fo:page-sequence master-reference="A4-landscape">
+      <ui:param
+        name="pageId"
+        value="1" />
+      <ui:insert name="pageHeader" />
+      <fo:flow flow-name="xsl-region-body">
+        <ui:insert name="masterPage" />
+        <ui:insert name="detailPage" />
+        <ui:insert name="lastpageblock" />
+      </fo:flow>
+    </fo:page-sequence>
+  </fo:root>
+</f:view>

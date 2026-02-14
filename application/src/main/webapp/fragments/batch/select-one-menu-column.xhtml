@@ -1,0 +1,135 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    id="#{columnId}#{constants.COLUMN}"
+    rendered="#{rendered}"
+    exportable="false"
+    styleClass="nopadding">
+    <f:facet name="header">
+      <h:selectOneMenu
+        id="#{columnId}#{constants.HEADER_INPUT}"
+        disabled="#{columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled}"
+        valueChangeListener="#{bean.valueChangedAll}"
+        title="#{messages.setValueForColumnHint}"
+        styleClass="table-header-margin"
+        style="#{not empty style ? style : 'width:150px !important;'}"
+        dir="#{(dir == null) ? LTR : dir}"
+        converter="#{bean.getConverter(not empty isEnum and isEnum ? ConverterTypeEnum.GENERIC_ENUM_CONVERTER : ConverterTypeEnum.SELECT_ITEMS_CONVERTER)}">
+        <f:selectItem
+          itemLabel="#{(columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled) ? '' : messages.setValueForColumn}"
+          itemDisabled="#{displayRequired}"
+          noSelectionOption="true" />
+        <c:if test="#{not empty isEnum and isEnum}">
+          <f:selectItems
+            value="#{items}"
+            var="item"
+            itemValue="#{item}"
+            itemLabel="#{item.label}" />
+        </c:if>
+        <c:if test="#{empty isEnum or not isEnum}">
+          <f:selectItems
+            value="#{items}"
+            var="item"
+            itemLabel="#{not empty displayName ? item.displayName : item.name}" />
+        </c:if>
+        <p:ajax
+          partialSubmit="true"
+          resetValues="true"
+          update="@this" />
+      </h:selectOneMenu>
+      <div>
+        <h:outputText value="#{headerText}" />
+        <h:outputText
+          rendered="#{displayRequired}"
+          value="&#160;*"
+          title="#{messages.requiredHint}"
+          styleClass="required" />
+        <p:commandLink
+          rendered="#{not empty sampleAttributeEnum and sampleAttributeEnum.annotationExtensible}"
+          actionListener="#{bean.createAnnotation(sampleAttributeEnum)}"
+          title="#{messages.addAnnotationHint}"
+          global="false"
+          process="@this"
+          immediate="true"
+          oncomplete="PF('addAnnotationDialog').show()"
+          update="addAnnotationPanel">
+          <ui:include src="/fragments/add-button-icon.xhtml" />
+        </p:commandLink>
+      </div>
+    </f:facet>
+    <h:panelGroup id="#{columnId}#{constants.REQUIRED_FIELD}">
+      <h:outputText
+        rendered="#{not empty displayRequiredCell and displayRequiredCell}"
+        value="&#160;*"
+        title="#{messages.requiredHint}"
+        styleClass="required" />
+    </h:panelGroup>
+    <h:selectOneMenu
+      id="#{columnId}#{constants.INPUT}"
+      disabled="#{columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled}"
+      valueChangeListener="#{bean.valueChanged}"
+      value="#{not empty hideValueIfFieldDisabled and hideValueIfFieldDisabled and (columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled) ? null : value}"
+      title="#{not empty title ? title : (columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled) ? null : (not empty isEnum and isEnum ? value.label : (not empty displayName ? value.displayName : value.name))}"
+      styleClass="noborder width-150"
+      style="#{not empty style ? style : 'width:150px !important;'}"
+      dir="#{(dir == null) ? LTR : dir}"
+      converter="#{bean.getConverter(not empty isEnum and isEnum ? ConverterTypeEnum.GENERIC_ENUM_CONVERTER : ConverterTypeEnum.SELECT_ITEMS_CONVERTER)}">
+      <f:selectItem
+        itemLabel="#{(columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled) ? '' : messages.selectAnItem}"
+        itemDisabled="#{displayRequired}"
+        noSelectionOption="true" />
+      <c:if test="#{not empty isEnum and isEnum}">
+        <f:selectItems
+          value="#{not empty entitySpecificItems ? entitySpecificItems : items}"
+          var="item"
+          itemValue="#{item}"
+          itemLabel="#{item.label}" />
+      </c:if>
+      <c:if test="#{empty isEnum or not isEnum}">
+        <f:selectItems
+          value="#{not empty entitySpecificItems ? entitySpecificItems : items}"
+          var="item"
+          itemLabel="#{not empty displayName ? item.displayName : item.name}" />
+      </c:if>
+      <c:if test="#{attributeCouplingEnabled == null or not attributeCouplingEnabled}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          resetValues="#{not empty resetValues and resetValues}" />
+      </c:if>
+      <c:if test="#{attributeCouplingEnabled != null and attributeCouplingEnabled}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          resetValues="#{not empty resetValues and resetValues}"
+          listener="#{bean.updateCoupling(entity, columnId)}" />
+      </c:if>
+    </h:selectOneMenu>
+    <div>
+      <h:message
+        id="#{columnId}#{constants.MESSAGE}"
+        for="#{columnId}#{constants.INPUT}"
+        styleClass="errorMessageField" />
+    </div>
+  </p:column>
+
+  <ui:include src="/fragments/column/export-column.xhtml">
+    <ui:param
+      name="rendered"
+      value="#{rendered}" />
+    <ui:param
+      name="headerText"
+      value="#{headerText}" />
+    <ui:param
+      name="value"
+      value="#{value}" />
+  </ui:include>
+</ui:composition>

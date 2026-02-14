@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('project')}">
+    <p:column
+      field="#{fieldPrefix}project.id"
+      headerText="#{messages.project}">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.project}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

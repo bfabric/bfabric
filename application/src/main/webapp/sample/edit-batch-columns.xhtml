@@ -1,0 +1,183 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+
+  <c:set
+    var="type"
+    value="#{sampleBatchManager.sampleType.name}"
+    scope="request" />
+  <c:set
+    var="sampleEntity"
+    value="#{entity}" />
+
+  <p:column
+    rendered="#{bean.cloneColumnRendered}"
+    exportable="false"
+    label="#{messages.clone}">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.clone}" />
+      </div>
+    </f:facet>
+    <h:panelGroup rendered="#{entity.id > 0}">
+      <p:commandButton
+        id="clonelink"
+        disabled="#{bean.addNewBatchItemsDisabled}"
+        action="#{bean.initCloneItemPanel}"
+        value="#{messages.clone}"
+        title="#{bean.addNewBatchItemsDisabled ? bean.itemLimitExceededHint : ''}"
+        oncomplete="PF('cloneSampleDialog').show()"
+        update="cloneSamplePanel"
+        styleClass="inline">
+        <f:setPropertyActionListener
+          value="#{entity}"
+          target="#{sampleBatchManager.currentSample}" />
+      </p:commandButton>
+    </h:panelGroup>
+  </p:column>
+  <p:column
+    exportable="false"
+    label="#{messages.delete}">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.delete}" />
+      </div>
+    </f:facet>
+    <h:panelGroup rendered="#{entity.deletable or entity.id eq 0}">
+      <div style="margin: 4px 4px 0 12px">
+        <h:selectBooleanCheckbox
+          id="selectsampleslink"
+          value="#{sampleBatchManager.checkedEditListItems[entity]}"
+          title="#{messages.selectSampleCheckHint}"
+          styleClass="">
+          <p:ajax
+            event="change"
+            partialSubmit="true"
+            global="false" />
+        </h:selectBooleanCheckbox>
+      </div>
+    </h:panelGroup>
+  </p:column>
+
+  <p:column
+    id="#{constants.SAMPLE_NAME}#{constants.COLUMN}"
+    styleClass="#{constants.SAMPLE_NAME}#{rowIndex}"
+    exportHeaderValue="#{messages.sampleName}"
+    exportValue="#{entity.name}">
+    <f:facet name="header">
+      <h:panelGrid
+        id="generate-button"
+        columns="2"
+        styleClass="nobordernospace">
+        <p:inputText
+          id="samplePrefixInput"
+          value="#{sampleBatchManager.sampleNamePrefix}"
+          title="#{messages.generateSampleNamePrefixHint} #{messages.orderSampleNameHint}"
+          disabled="#{empty sampleBatchManager.createdList or sampleBatchManager.sampleNamesGenerated}"
+          maxlength="250"
+          style="width:70px;min-width:70px;">
+          <p:keyFilter regEx="/#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}/i" />
+        </p:inputText>
+        <p:commandButton
+          action="#{sampleBatchManager.generateSampleNames}"
+          value="#{messages.generate}"
+          title="#{messages.generateSampleNameHint}"
+          disabled="#{empty sampleBatchManager.createdList or sampleBatchManager.sampleNamesGenerated}"
+          disableOnAjax="false"
+          styleClass="noleftborderselect"
+          style="width:70px;min-width:70px;"
+          oncomplete="fixOversize();"
+          process="@this, samplePrefixInput"
+          update="#{tableContext}#{tableType}table, #{constants.EDIT}:buttons, #{constants.EDIT}:batchtable:generate-button" />
+      </h:panelGrid>
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.sampleName}" />
+        <ui:param
+          name="required"
+          value="true" />
+      </ui:include>
+    </f:facet>
+    <p:inputText
+      id="#{constants.SAMPLE_NAME}#{constants.INPUT}"
+      value="#{entity.name}"
+      title="#{messages.orderSampleNameHint}"
+      valueChangeListener="#{bean.valueChanged}"
+      maxlength="#{constants.MAX_LENGTH_NAME}"
+      styleClass="inline-input #{constants.SAMPLE_NAME}#{constants.INPUT}#{rowIndex}"
+      style="width:140px;min-width:140px;">
+      <f:validateRegex pattern="#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}" />
+      <p:keyFilter regEx="/#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}/i" preventPaste="false" />
+      <p:ajax
+        global="false"
+        ignoreAutoUpdate="true"
+        partialSubmit="true" />
+    </p:inputText>
+    <div>
+      <h:message
+        for="#{constants.SAMPLE_NAME}#{constants.INPUT}"
+        styleClass="errorMessageField" />
+    </div>
+  </p:column>
+
+  <c:forEach
+    items="#{sampleBatchManager.getAttributeEnums(sampleBatchManager.sampleType.name)}"
+    var="sampleAttributeEnum">
+    <ui:decorate template="/fragments/batch/sample-attribute-column.xhtml">
+      <ui:param
+        name="columnId"
+        value="#{sampleAttributeEnum.name}" />
+      <ui:param
+        name="rendered"
+        value="#{sampleAttributeEnum.isAttribute(type)}" />
+      <ui:param
+        name="headerText"
+        value="#{sampleAttributeEnum.labelWithUnit}" />
+      <ui:param
+        name="displayRequired"
+        value="#{sampleAttributeEnum.isSubTypeDependentAttribute(type) ? false : sampleAttributeEnum.isAttributeRequired(type)}" />
+      <ui:param
+        name="displayRequiredCell"
+        value="#{sampleAttributeHelper.isDisplayRequiredCell(sampleAttributeEnum, type, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="cellInputEnabled"
+        value="#{sampleAttributeEnum eq SampleAttributeEnum.TUBE_ID ? sampleAttributeHelper.isTubeIdEditable(sampleEntity) : (sampleAttributeHelper.isSizeGenomeEstimated(sampleAttributeEnum) ? sampleAttributeHelper.isSizeGenomeEstimatedAndRendered(sampleAttributeEnum, sampleEntity.container, sampleEntity.sampleType.name) : sampleAttributeHelper.isCellInputEnabled(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType))}" />
+      <ui:param
+        name="watermarkValue"
+        value="#{sampleAttributeHelper.isSizeGenomeEstimated(sampleAttributeEnum) ? (not sampleAttributeHelper.isSizeGenomeEstimatedAndRendered(sampleAttributeEnum, sampleEntity.container, sampleEntity.sampleType.name) ? messages.disabled : null) : sampleAttributeHelper.getWatermarkValueForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="watermarkValueHint"
+        value="#{sampleAttributeHelper.isSizeGenomeEstimated(sampleAttributeEnum) and not sampleAttributeHelper.isSizeGenomeEstimatedAndRendered(sampleAttributeEnum, sampleEntity.container, sampleEntity.sampleType.name) ? messages.sizeGenomeEstimatedWatermarkValueHint : sampleAttributeHelper.getWatermarkValueHintForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="hideValueIfFieldDisabled"
+        value="#{not (sampleAttributeEnum eq SampleAttributeEnum.TUBE_ID and !sampleAttributeHelper.isTubeIdEditable(sampleEntity))}" />
+      <ui:param
+        name="value"
+        value="#{sampleEntity[fn:replace(sampleAttributeEnum.name.concat('DELIMITER_VALUE'),'DELIMITER_VALUE','')]}" />
+      <ui:param
+        name="sampleAttributeEnum"
+        value="#{sampleAttributeEnum}" />
+    </ui:decorate>
+  </c:forEach>
+
+  <ui:include src="/customattribute/edit-batch-columns.xhtml">
+    <ui:param
+      name="manager"
+      value="#{bean}" />
+  </ui:include>
+</ui:composition>

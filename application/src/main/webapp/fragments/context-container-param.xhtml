@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty contextContainer}">
+    <f:param
+      name="containerId"
+      value="#{contextContainer.id}" />
+  </c:if>
+</ui:composition>

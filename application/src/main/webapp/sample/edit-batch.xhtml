@@ -1,0 +1,55 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(contextManager.contextContainer.extensible)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText
+      rendered="#{not sampleBatchManager.skipSelect}"
+      value="#{messages.editSamples}" />
+    <h:outputText
+      rendered="#{sampleBatchManager.skipSelect}"
+      value="#{messages.createSamples}" />
+    <h:outputText
+      rendered="#{not empty sampleBatchManager.sampleType}"
+      value=" (#{sampleBatchManager.sampleType.name})" />
+  </ui:define>
+
+  <ui:param
+    name="bean"
+    value="#{sampleBatchManager}" />
+
+  <ui:define name="body">
+    <h:panelGroup id="page_envelope">
+      <h:panelGroup rendered="#{not sampleBatchManager.editView}">
+        <ui:include src="/sample/select-batch-fragment.xhtml" />
+      </h:panelGroup>
+      <h:panelGroup rendered="#{sampleBatchManager.editView}">
+        <ui:include src="/sample/edit-batch-fragment.xhtml" />
+      </h:panelGroup>
+    </h:panelGroup>
+
+    <ui:include src="/sample/clone-modal.xhtml" />
+    <ui:include src="/annotation/add-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+      <ui:param
+        name="updateOnSave"
+        value="@([id$=batchtable]), @([id$=addAnnotation])" />
+    </ui:include>
+    <ui:include src="/fragments/batch/edit-multi-value-field.xhtml" />
+    <ui:include src="/fragments/batch/edit-multi-value-fields.xhtml" />
+    <ui:include src="/sample/assign-multiplexids-user-submitted-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

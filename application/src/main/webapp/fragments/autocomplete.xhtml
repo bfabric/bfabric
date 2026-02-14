@@ -1,0 +1,110 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:set var="clearButtonRendered"
+         value="#{not empty clearButtonRendered ? clearButtonRendered : (not empty clearButtonRendered and clearButtonRendered) or ((empty multiple or not multiple) and (empty disabled or not disabled) and empty valueChangeListener and empty itemSelectListener and empty itemUnselectListener and empty clearListener)}" />
+  <c:if test="#{empty valueChangeListener}">
+    <o:methodParam name="valueChangeListener" value="#{null}" />
+  </c:if>
+  <c:if test="#{empty itemSelectListener}">
+    <o:methodParam name="itemSelectListener" value="#{null}" />
+  </c:if>
+  <c:if test="#{empty clearListener}">
+    <o:methodParam name="clearListener" value="#{null}" />
+  </c:if>
+  <c:if test="#{empty clearButtonListener}">
+    <o:methodParam name="clearButtonListener" value="#{null}" />
+  </c:if>
+
+  <h:panelGroup>
+    <c:if test="#{not empty initializeAutocompleteListener and empty noConverter and not noConverter}">
+      <o:resolveComponent name="autocompleteReference" for="#{(empty componentId) ? listContext.concat('autocomplete') : componentId}" />
+      <c:if test="#{empty onkeydownListener}">
+        <c:set var="onkeydownListener" value="disableBackSpaceAndDeleteKeyboardInput('#{autocompleteReference.clientId}', event);" />
+      </c:if>
+      <p:remoteCommand autoRun="true"
+                       name="initializeAutocomplete"
+                       actionListener="#{initializeAutocompleteListener}"
+                       global="false"
+                       process="@this, #{(empty componentId) ? listContext.concat('autocomplete') : componentId}"
+                       update="@none">
+        <f:attribute name="#{constants.AUTOCOMPLETE_CLIENT_ID}" value="#{autocompleteReference.clientId}" />
+      </p:remoteCommand>
+    </c:if>
+    <c:if test="#{empty noConverter and not noConverter}">
+      <p:autoComplete onkeydown="#{onkeydownListener}"
+                      rendered="#{rendered == null ? true : rendered}"
+                      id="#{(empty componentId) ? listContext.concat('autocomplete') : componentId}"
+                      title="#{disabled ? '' : (empty title ? messages.autocompleteHint : title)}"
+                      widgetVar="#{empty widgetVar ? listContext : widgetVar}"
+                      placeholder="#{empty placeholder ? messages.selectAnItemForAutocomplete : placeholder}"
+                      value="#{value}"
+                      valueChangeListener="#{valueChangeListener}"
+                      immediate="#{immediate}"
+                      disabled="#{disabled}"
+                      dropdown="#{empty dropdown ? true : dropdown}"
+                      required="#{required}"
+                      completeMethod="#{completeMethod}"
+                      emptyMessage="#{emptyMessage == null ? messages.noResultFound : emptyMessage}"
+                      converter="customListConverter"
+                      var="item"
+                      itemValue="#{item}"
+                      itemLabel="#{empty itemLabel ? item : itemLabel}"
+                      forceSelection="#{forceSelection == null ? true : forceSelection}"
+                      queryDelay="#{queryDelay == null ? 200 : queryDelay}"
+                      scrollHeight="#{scrollHeight == null ? 388 : scrollHeight}"
+                      autoHighlight="false"
+                      multiple="#{multiple}"
+                      styleClass="#{empty styleClass ? 'editWidthExtraLarge' : styleClass}"
+                      inputStyleClass="#{empty inputStyleClass ? 'editWidthExtraLarge' : inputStyleClass}"
+                      inputStyle="#{empty inputStyle ? 'editWidthExtraLarge' : inputStyle}"
+                      onblur="if('#{clearValueOnBlur}') {this.value='';}">
+        <ui:include src="/fragments/autocomplete-content.xhtml" />
+      </p:autoComplete>
+    </c:if>
+    <c:if test="#{not empty noConverter and noConverter}">
+      <p:autoComplete rendered="#{rendered == null ? true : rendered}"
+                      id="#{(empty componentId) ? listContext.concat('autocomplete') : componentId}"
+                      title="#{disabled ? '' : (empty title ? messages.autocompleteHint : title)}"
+                      widgetVar="#{empty widgetVar ? listContext : widgetVar}"
+                      placeholder="#{empty placeholder ? messages.selectAnItemForAutocomplete : placeholder}"
+                      value="#{value}"
+                      valueChangeListener="#{valueChangeListener}"
+                      immediate="#{immediate}"
+                      disabled="#{disabled}"
+                      dropdown="#{empty dropdown ? true : dropdown}"
+                      required="#{required}"
+                      completeMethod="#{completeMethod}"
+                      emptyMessage="#{emptyMessage == null ? messages.noResultFound : emptyMessage}"
+                      var="item"
+                      itemValue="#{item}"
+                      itemLabel="#{empty itemLabel ? item : itemLabel}"
+                      forceSelection="#{forceSelection == null ? true : forceSelection}"
+                      queryDelay="#{queryDelay == null ? 200 : queryDelay}"
+                      scrollHeight="#{scrollHeight == null ? 388 : scrollHeight}"
+                      autoHighlight="false"
+                      multiple="#{multiple}"
+                      styleClass="#{empty styleClass ? 'editWidthExtraLarge' : styleClass}"
+                      inputStyleClass="#{empty inputStyleClass ? 'editWidthExtraLarge' : inputStyleClass}"
+                      inputStyle="#{empty inputStyle ? 'editWidthExtraLarge' : inputStyle}"
+                      onblur="if('#{clearValueOnBlur}') {this.value='';}">
+        <ui:include src="/fragments/autocomplete-content.xhtml" />
+      </p:autoComplete>
+    </c:if>
+    <p:commandLink rendered="#{clearButtonRendered}"
+                   actionListener="#{clearButtonListener}"
+                   title="#{messages.clear}"
+                   immediate="true"
+                   global="false"
+                   oncomplete="clearButtonOnComplete('#{widgetVar}', '#{listContext}');"
+                   update="#{empty clearButtonSpecificUpdate ? constants.EMPTY_STRING : clearButtonSpecificUpdate}, #{(empty componentId) ? listContext.concat('autocomplete') : componentId}">
+      <i class="fas fa-delete-left" />
+      <p:resetInput
+        target="#{empty clearButtonSpecificTarget ? constants.EMPTY_STRING : clearButtonSpecificTarget}, #{(empty componentId) ? listContext.concat('autocomplete') : componentId}" />
+    </p:commandLink>
+  </h:panelGroup>
+</ui:composition>

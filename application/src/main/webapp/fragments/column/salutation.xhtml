@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('salutation')}">
+    <p:column
+      field="#{fieldPrefix}salutation"
+      headerText="#{messages.salutation}">
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,235 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{false}">
+    <p:column field="#{fieldPrefix}isInNonUpdatableOrder()" headerText="isInNonUpdatableOrder()" />
+    <p:column field="#{fieldPrefix}isInNonUpdatablePlate()" headerText="isInNonUpdatablePlate()" />
+    <p:column field="#{fieldPrefix}isAssignedToRuns()" headerText="isAssignedToRuns()" />
+    <p:column field="#{fieldPrefix}isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()" headerText="isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()" />
+    <p:column field="#{fieldPrefix}isOnRunTypeAndOnDemultiplexedOrFinishedRun()" headerText="isOnRunTypeAndOnDemultiplexedOrFinishedRun()" />
+    <p:column field="#{fieldPrefix}isUserSampleInMultiplexType()" headerText="isUserSampleInMultiplexType()" />
+    <p:column field="#{fieldPrefix}isUpdatable()" headerText="updatable()" />
+  </c:if>
+  <ui:include src="/fragments/column/assign-with-button.xhtml">
+    <ui:param
+      name="tableType"
+      value="#{constants.SAMPLE}" />
+  </ui:include>
+  <ui:include src="/fragments/column/assign-with-checkbox.xhtml">
+    <ui:param
+      name="tableType"
+      value="#{constants.SAMPLE}" />
+  </ui:include>
+
+  <c:if test="#{showColumns.contains('lanes') and runEntity != null}">
+    <p:column
+      sortable="#{empty lazy or not lazy}"
+      sortBy="#{entity.getLanePositionsForRunAsText(runEntity)}"
+      filterable="#{empty lazy or not lazy}"
+      filterBy="#{entity.getLanePositionsForRunAsText(runEntity)}"
+      headerText="#{messages.lane}(s)"
+      exportHeaderValue="#{messages.runUnitLanePosition}(s)"
+      exportValue="#{entity.getLanePositionsForRunAsText(runEntity)}">
+      <ui:repeat
+        value="#{entity.getRunUnitLanesForRunOrdered(runEntity)}"
+        var="item">
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+          <ui:param
+            name="entityValue"
+            value="#{item.position}" />
+        </ui:include>
+        <h:outputText value=" " />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param
+      name="tableType"
+      value="sample" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/name-trunc.xhtml" />
+
+  <c:if test="#{not hideColumns.contains('parents')}">
+    <p:column
+      headerText="#{messages.parents}"
+      exportValue="#{collectionHelper.printNames(entity.parents)}">
+      <h:panelGroup
+        id="parents"
+        rendered="#{not empty entity.parents}">
+        <p:commandButton
+          rendered="#{not entity.checked and entity.parents.size() > 1}"
+          value="#{messages.show} (#{entity.parents.size()})"
+          action="#{entity.check()}"
+          oncomplete="fixOversize();"
+          styleClass="inline"
+          update="parents" />
+        <p:commandButton
+          rendered="#{entity.checked and entity.parents.size() > 1}"
+          value="#{messages.hide}"
+          action="#{entity.uncheck()}"
+          oncomplete="fixOversize();"
+          styleClass="inline"
+          style="margin-bottom:4px"
+          update="parents" />
+        <h:panelGroup rendered="#{entity.checked or entity.parents.size() eq 1}">
+          <h:panelGroup rendered="#{entity.parents.size() > 1}">
+            <br />
+          </h:panelGroup>
+          <ui:repeat
+            var="item"
+            value="#{entity.parents}">
+            <ui:include src="/fragments/entity-link-displayname.xhtml">
+              <ui:param
+                name="instance"
+                value="#{item}" />
+            </ui:include>
+            <br />
+          </ui:repeat>
+        </h:panelGroup>
+      </h:panelGroup>
+    </p:column>
+  </c:if>
+
+  <ui:include src="/container/entity-container-column.xhtml" />
+
+  <c:if test="#{identityManager.hasCurrentUserRole('containerManager') and showColumns.contains('oldProjectOrderId')}">
+    <p:column
+      field="#{fieldPrefix}container.oldProjectOrderId"
+      headerText="#{messages.oldProjectOrderId}" />
+  </c:if>
+
+  <p:column
+    rendered="#{not hideColumns.contains('type')}"
+    field="#{fieldPrefix}type"
+    headerText="#{messages.type}"
+    filterMatchMode="exact">
+    <f:facet name="filter">
+      <h:selectOneMenu
+        id="type"
+        onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{sampleTypeList.resultList}"
+          var="item"
+          itemValue="#{item.name}"
+          itemLabel="#{item.name}" />
+      </h:selectOneMenu>
+    </f:facet>
+    <h:outputText value="#{entity.type}" />
+  </p:column>
+
+  <!-- Note: Always show the tubeId if not explicitly to be hidden -->
+  <ui:include src="/fragments/column/tubeid.xhtml" />
+  <ui:include src="/fragments/column/userDecision.xhtml" />
+  <ui:include src="/fragments/column/replaces.xhtml" />
+  <ui:include src="/fragments/column/readcount.xhtml" />
+  <ui:include src="/fragments/column/multiplexidparentlibrary.xhtml" />
+  <ui:include src="/fragments/column/multiplexid2parentlibrary.xhtml" />
+
+  <c:if test="#{not hideColumns.contains('specific') or not empty specificColumns}">
+    <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleStatusEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleQCTypeEnum" />
+    <p:columns
+      value="#{not empty specificColumns ? specificColumns : (not empty showOnlySampleTypeSpecificColumns and showOnlySampleTypeSpecificColumns and not empty types ? sampleAttributeHelper.getAttributeEnums(null, types) : sampleList.getEnabledSampleAttributeEnum())}"
+      var="sampleAttributeEnum"
+      visible="#{sampleAttributeEnum ne SampleAttributeEnum.TUBE_ID}"
+      exportable="#{sampleAttributeEnum ne SampleAttributeEnum.TUBE_ID}"
+      exportValue="#{entity[sampleAttributeEnum.name]}"
+      filterable="#{not sampleAttributeEnum.annotationTypeMultiValued}"
+      filterBy="#{entity[sampleAttributeEnum.name]}"
+      sortable="#{not sampleAttributeEnum.annotationTypeMultiValued}"
+      sortBy="#{entity[sampleAttributeEnum.name]}"
+      headerText="#{sampleAttributeEnum.labelWithUnit}">
+      <f:facet name="filter">
+        <h:selectOneMenu
+          rendered="#{sampleAttributeEnum.enumType}"
+          onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{sampleAttributeEnum.getEnumValues(false)}"
+            var="item"
+            itemLabel="#{item.label}" />
+        </h:selectOneMenu>
+      </f:facet>
+      <h:outputText
+        rendered="#{sampleAttributeEnum.booleanType}"
+        value="#{entity[sampleAttributeEnum.name]}" />
+      <h:outputText
+        rendered="#{sampleAttributeEnum.enumType and not empty entity[sampleAttributeEnum.name]}"
+        value="#{entity[sampleAttributeEnum.name].label}" />
+      <h:outputText
+        rendered="#{sampleAttributeEnum.annotationTypeMultiValued}"
+        value="#{collectionHelper.print(entity[sampleAttributeEnum.name])}" />
+      <h:outputText
+        rendered="#{sampleAttributeEnum.annotationTypeSingleValued}"
+        value="#{entity[sampleAttributeEnum.name].name}" />
+      <p:link
+        rendered="#{sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.enumType and not empty entity[sampleAttributeEnum.name]}"
+        outcome="/#{(sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT_2) ? 'multiplexkit' : sampleAttributeEnum.name.toLowerCase()}/show.xhtml"
+        value="#{entity[sampleAttributeEnum.name].name}">
+        <f:param
+          name="id"
+          value="#{entity[sampleAttributeEnum.name].id}" />
+        <f:param
+          name="tab"
+          value="#{constants.DETAILS}" />
+      </p:link>
+      <h:outputText
+        rendered="#{not sampleAttributeEnum.booleanType and not sampleAttributeEnum.annotationType and not sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.localDateType and not sampleAttributeEnum.localDateTimeType}"
+        value="#{stringHelper.truncate(entity[sampleAttributeEnum.name], 40)}"
+        title="#{entity[sampleAttributeEnum.name]}" />
+      <h:outputText
+        rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateType}"
+        value="#{entity[sampleAttributeEnum.name]}" />
+      <h:outputText
+        rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateTimeType}"
+        value="#{entity[sampleAttributeEnum.name]}" />
+    </p:columns>
+  </c:if>
+
+  <ui:include src="/fragments/column/orders.xhtml" />
+
+  <c:if test="#{not hideColumns.contains('parentsSize')}">
+    <p:column
+      field="#{fieldPrefix}parents.size()"
+      headerText="#{messages.parents}" />
+  </c:if>
+
+  <c:if test="#{not hideColumns.contains('childrenSize')}">
+    <p:column
+      field="#{fieldPrefix}children.size()"
+      headerText="#{messages.childSamples}" />
+  </c:if>
+
+  <ui:include src="/fragments/column/resource-count.xhtml" />
+  <ui:include src="/fragments/column/workflows.xhtml" />
+  <ui:include src="/fragments/column/workflowsteps.xhtml" />
+  <ui:include src="/fragments/column/replacements-count.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/customattributes-quality-control-values.xhtml" />
+
+  <c:if test="#{showColumns.contains('oldSampleId') and configuration.legacyEnabled}">
+    <p:column
+      field="#{fieldPrefix}oldSampleId"
+      headerText="#{messages.old} #{messages.sample} #{messages.id}" />
+  </c:if>
+
+  <c:if test="#{showColumns.contains('oldExtractId') and configuration.legacyEnabled}">
+    <p:column
+      field="#{fieldPrefix}oldExtractId"
+      headerText="#{messages.old} #{messages.extract} #{messages.id}" />
+  </c:if>
+
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

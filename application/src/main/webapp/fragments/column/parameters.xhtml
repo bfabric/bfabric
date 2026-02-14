@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('listParameters')}">
+    <p:column
+      sortBy="#{collectionHelper.print(entity.parameters, 'getKey')}"
+      sortable="#{not tableReference.lazy}"
+      filterBy="#{collectionHelper.print(entity.parameters, 'getKey')}"
+      filterable="#{not tableReference.lazy}"
+      headerText="#{messages.parameters}"
+      exportValue="#{collectionHelper.print(entity.parameters, 'getKey')}">
+      <c:if test="#{empty printAllParameters}">
+        <h:outputText value="#{stringHelper.truncate(entity.parametersKeyValueMap.toString())}" title="#{entity.parametersKeyValueMap.toString()}" />
+      </c:if>
+      <c:if test="#{not empty printAllParameters}">
+        <ui:repeat
+          value="#{entity.parameters}"
+          var="item">
+          <h:outputText value="#{item.key} " />
+          <br />
+        </ui:repeat>
+      </c:if>
+    </p:column>
+  </c:if>
+</ui:composition>

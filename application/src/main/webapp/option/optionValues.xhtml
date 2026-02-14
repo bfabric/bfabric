@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('optionValues')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="optionvalue" />
+      <ui:param name="tableContext" value="#{option.tableContext}" />
+      <ui:param name="tableContent" value="#{option.optionValues}" />
+      <ui:param name="hideColumns" value="option" />
+    </ui:include>
+    <h:panelGrid id="buttons" columns="1" styleClass="action">
+      <p:button outcome="/optionvalue/edit.xhtml?optionId=#{option.id}" value="#{messages.create}" rendered="#{identityManager.hasCurrentUserRole('containerManager')}" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

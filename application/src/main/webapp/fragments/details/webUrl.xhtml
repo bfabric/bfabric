@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{instance.webApp}">
+    <h:outputText value="#{messages.webUrl}" />
+    <h:panelGroup>
+      <h:outputText value="#{instance.webUrl}" />
+      <h:panelGroup rendered="#{not instance.valid}">
+        <i class="fas fa-exclamation-circle warning" />
+      </h:panelGroup>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

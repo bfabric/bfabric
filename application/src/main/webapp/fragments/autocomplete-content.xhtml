@@ -1,0 +1,58 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <p:ajax
+    event="itemSelect"
+    global="#{not empty itemSelectGlobal and itemSelectGlobal}"
+    listener="#{itemSelectListener}"
+    update="#{itemSelectUpdate}" />
+  <!-- itemUnselectEvent is only triggered in multiple selection -->
+  <c:if test="#{multiple and empty itemUnselectListener}">
+    <p:ajax
+      event="itemUnselect"
+      global="#{not empty itemUnselectGlobal and itemUnselectGlobal}" />
+  </c:if>
+  <c:if test="#{multiple and not empty itemUnselectListener}">
+    <p:ajax
+      event="itemUnselect"
+      global="#{not empty itemUnselectGlobal and itemUnselectGlobal}"
+      listener="#{itemUnselectListener}"
+      update="#{itemUnselectUpdate}" />
+  </c:if>
+  <p:ajax
+    event="query"
+    global="false" />
+  <c:if test="#{ajaxChange}">
+    <p:ajax
+      event="change"
+      global="false" />
+  </c:if>
+  <c:if test="#{ajaxClear}">
+    <p:ajax
+      event="clear"
+      global="false"
+      listener="#{clearListener}"
+      update="#{clearUpdate}" />
+  </c:if>
+  <!-- Include f:attributes -->
+  <c:if test="#{not empty attributes}">
+    <c:forEach
+      items="#{fn:split(attributes, ',')}"
+      var="attribute">
+      <f:attribute
+        name="#{fn:split(attribute, ':')[0]}"
+        value="#{fn:split(attribute, ':')[1]}" />
+    </c:forEach>
+  </c:if>
+  <!-- Include nested columns -->
+  <c:if test="#{not empty includeColumns}">
+    <ui:include src="#{includeColumns}" />
+  </c:if>
+  <c:if test="#{empty skipValidators or skipValidators}">
+    <o:skipValidators />
+  </c:if>
+</ui:composition>

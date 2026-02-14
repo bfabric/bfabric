@@ -1,0 +1,82 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml">
+        <ui:param
+          name="showOldId"
+          value="#{not empty orderItem.oldId and identityManager.hasCurrentUserRole('containerManager')}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/order.xhtml" />
+      <ui:include src="/fragments/details/service.xhtml" />
+
+      <c:if test="#{not empty orderItem.analysisReasons}">
+        <h:outputText value="#{messages.analysisReasons}" />
+        <h:outputText value="#{orderItem.analysisReasonsAsString}" />
+      </c:if>
+
+      <c:if test="#{not empty orderItem.tubeId}">
+        <h:outputText value="#{messages.tubeId}" />
+        <h:outputText value="#{orderItem.tubeId}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/sample.xhtml" />
+      <ui:include src="/fragments/details/plate.xhtml" />
+
+      <c:if test="#{not empty orderItem.libraryType}">
+        <h:outputText value="#{messages.libraryTypeOrderItem}" />
+        <h:outputText value="#{orderItem.libraryType}" />
+      </c:if>
+
+      <c:if test="#{not empty orderItem.region}">
+        <h:outputText value="#{messages.region}" />
+        <h:outputText value="#{orderItem.region}" />
+      </c:if>
+
+      <c:if test="#{not empty orderItem.readType}">
+        <h:outputText value="#{messages.readType}" />
+        <h:outputText value="#{orderItem.readType}" />
+      </c:if>
+
+      <c:if test="#{not empty orderItem.insertSize}">
+        <h:outputText value="#{messages.insertSize}" />
+        <h:outputText value="#{orderItem.insertSize}" />
+      </c:if>
+
+      <c:if test="#{not empty orderItem.multiplexing}">
+        <h:outputText value="#{messages.multiplexing}" />
+        <h:outputText value="#{orderItem.multiplexing}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/chargeable.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="4"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <p:button
+        outcome="/charge/edit.xhtml"
+        value="#{messages.charge}"
+        rendered="#{orderItem.chargeable}">
+        <f:param
+          name="containerId"
+          value="#{orderItem.order.id}" />
+        <f:param
+          name="orderItemId"
+          value="#{orderItem.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/delete.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

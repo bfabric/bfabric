@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.permissionDenied}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <div>
+      <p>
+        <h:outputText value="#{messages.permissionDeniedHint}" />
+      </p>
+    </div>
+    <p:messages
+      id="errorMessage"
+      styleClass="message" />
+  </ui:define>
+</ui:composition>

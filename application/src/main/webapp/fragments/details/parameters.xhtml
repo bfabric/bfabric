@@ -1,0 +1,15 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not empty instance.parameters}">
+    <h:outputText value="#{messages.parameters}" />
+    <h:panelGroup styleClass="inner-repeat">
+      <p:dataTable value="#{instance.parameters}" var="item" styleClass="inner" style="margin-left: -4px !important">
+        <p:column field="key" headerText="#{messages.key}" filterable="false" sortable="false" />
+        <p:column field="label" headerText="#{messages.label}" filterable="false" sortable="false" />
+        <p:column field="value" headerText="#{messages.value}" filterable="false" sortable="false" />
+      </p:dataTable>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

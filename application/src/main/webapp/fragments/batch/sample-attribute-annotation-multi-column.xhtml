@@ -1,0 +1,130 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <!--<p:column
+    id="#{sampleAttributeEnum.name}#{constants.COLUMN}"
+    rendered="#{sampleAttributeEnum.isAttribute(type)}"
+    exportable="false"
+    style="width:150px !important;"
+    styleClass="#{sampleAttributeEnum.name}#{rowIndex}">
+    <f:facet name="header">
+      <p:commandButton
+        process="@this"
+        actionListener="#{bean.setSampleAttributeEnum(sampleAttributeEnum)}"
+        value="#{messages.setValueForColumn}"
+        title="#{messages.setValueForColumnHint}"
+        oncomplete="PF('edit-multi-value-fields').show()"
+        update="edit-multi-value-fields"
+        global="false"
+        style="width:158px;"
+        styleClass="table-header-button" />
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages[sampleAttributeEnum.name]}" />
+        <ui:param
+          name="required"
+          value="#{sampleAttributeEnum.isAttributeRequired(type)}" />
+      </ui:include>
+    </f:facet>
+    <h:panelGrid
+      id="#{sampleAttributeEnum.name}#{constants.INPUT}"
+      styleClass="noborder repeat-inline">
+      <ui:repeat
+        value="#{sampleEntity[sampleAttributeEnum.name]}"
+        var="item">
+        <h:outputText
+          value="#{item.name}"
+          title="#{item.name}"
+          layout="block"
+          styleClass="width-150 textEllipsis" />
+      </ui:repeat>
+    </h:panelGrid>
+    <h:message
+      id="#{sampleAttributeEnum.name}#{constants.MESSAGE}"
+      for="#{sampleAttributeEnum.name}#{constants.INPUT}"
+      styleClass="errorMessageField" />
+
+    <script>
+        jQuery(".#{sampleAttributeEnum.name}#{rowIndex}").unbind().click(function () {
+            onclick#{sampleAttributeEnum.name}#{rowIndex}();
+        });
+    </script>
+
+    <p:remoteCommand
+      process="@this"
+      name="onclick#{sampleAttributeEnum.name}#{rowIndex}"
+      oncomplete="PF('edit-multi-value-field').show()"
+      update="edit-multi-value-field"
+      global="false"
+      actionListener="#{bean.prepareMultiValueModalPanel(entity, sampleAttributeEnum)}">
+      <o:skipValidators />facet
+    </p:remoteCommand>
+  </p:column>-->
+
+  <p:column
+    id="#{columnId}#{constants.COLUMN}"
+    rendered="#{rendered}"
+    exportable="false"
+    style="width:150px !important;"
+    styleClass="#{columnId}#{rowIndex}">
+    <f:facet name="header">
+      <p:commandButton
+        process="@this"
+        actionListener="#{bean.setSampleAttributeEnum(sampleAttributeEnum)}"
+        value="#{messages.setValueForColumn}"
+        title="#{messages.setValueForColumnHint}"
+        oncomplete="PF('edit-multi-value-fields').show()"
+        update="edit-multi-value-fields"
+        global="false"
+        style="width:158px;"
+        styleClass="table-header-button" />
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{headerText}" />
+        <ui:param
+          name="required"
+          value="#{displayRequired}" />
+      </ui:include>
+    </f:facet>
+    <h:panelGrid
+      id="#{columnId}#{constants.INPUT}"
+      styleClass="noborder repeat-inline">
+      <ui:repeat
+        value="#{sampleEntity[columnId]}"
+        var="item">
+        <h:outputText
+          value="#{item.name}"
+          title="#{item.name}"
+          layout="block"
+          styleClass="width-150 textEllipsis" />
+      </ui:repeat>
+    </h:panelGrid>
+    <h:message
+      id="#{columnId}#{constants.MESSAGE}"
+      for="#{columnId}#{constants.INPUT}"
+      styleClass="errorMessageField" />
+
+    <script>
+        if (#{cellInputEnabled}) {
+            jQuery(".#{columnId}#{rowIndex}").unbind().click(function () {
+                onclick#{columnId}#{rowIndex}();
+            });
+        }
+    </script>
+
+    <p:remoteCommand
+      process="@this"
+      name="onclick#{columnId}#{rowIndex}"
+      oncomplete="PF('edit-multi-value-field').show()"
+      update="edit-multi-value-field"
+      global="false"
+      actionListener="#{bean.prepareMultiValueModalPanel(entity, sampleAttributeEnum)}">
+      <o:skipValidators />
+    </p:remoteCommand>
+  </p:column>
+</ui:composition>

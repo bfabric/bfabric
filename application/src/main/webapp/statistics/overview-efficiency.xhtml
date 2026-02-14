@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.efficiency} #{messages.overview}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form>
+      <p:lineChart
+        model="#{lineChart.getLineChartStacked([statisticsList.getAvgArrivingEfficiencyYearly(), statisticsList.getAvgProcessingEfficiencyYearly(), statisticsList.getAvgAnalyzingEfficiencyYearly(), statisticsList.getAvgClosingEfficiencyYearly()], messages.kpiEfficiencyAvgSendProcClos, messages.year, messages.days, ['00CCFF', '0066FF', '0033CC', '000099'], [messages.submittedToArrived, messages.processedToAnalyzed, messages.analyzedToFinished, messages.finishedToClosed])}"
+        style="height:400px; width:1000px" />
+    </h:form>
+  </ui:define>
+</ui:composition>

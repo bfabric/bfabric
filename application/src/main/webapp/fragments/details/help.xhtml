@@ -1,0 +1,14 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.help}">
+    <h:outputText value="#{messages.help}" />
+    <h:outputLink
+      value="#{instance.help}"
+      target="_blank"
+      rel="noopener">
+      <h:outputText value="#{instance.help}" />
+    </h:outputLink>
+  </c:if>
+</ui:composition>

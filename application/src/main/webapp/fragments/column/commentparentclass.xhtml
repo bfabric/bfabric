@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('parentClassName')}">
+    <p:column
+      field="#{fieldPrefix}parentClassName"
+      headerText="#{messages.parentClass}">
+      <f:facet name="filter">
+        <h:selectOneMenu
+          id="parentClassName"
+          value="#{tableContent.parentClassNameFilter}"
+          valueChangeListener="#{tableContent.parentClassNameFilterChanged}"
+          filterMatchMode="exact">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{commentList.parentClasses}"
+            var="item"
+            itemLabel="#{item}" />
+          <p:ajax
+            event="change"
+            update="discriminator"
+            global="false"
+            oncomplete="PF('#{tableContext}#{tableType}').filter()" />
+        </h:selectOneMenu>
+      </f:facet>
+      <h:outputText value="#{entity.parentClassName}" />
+    </p:column>
+  </c:if>
+</ui:composition>

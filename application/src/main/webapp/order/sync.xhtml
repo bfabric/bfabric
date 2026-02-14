@@ -1,0 +1,35 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup
+    id="show-container-sync"
+    rendered="#{sidebarHelper.isTab('sync') and identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="externaljob" />
+      <ui:param
+        name="tableContext"
+        value="#{order.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{externalJobList.getLazyModelByContainerId(order.id)}" />
+    </ui:include>
+    <h:form rendered="#{order.syncableByCurrentUser}">
+      <h:panelGrid
+        columns="1"
+        styleClass="action">
+        <p:commandButton
+          actionListener="#{orderManager.synchronizeWithAD(order)}"
+          value="#{messages.synchronize}"
+          title="#{messages.containerSyncHint}"
+          update="show-container-sync"
+          oncomplete="fixOversize();" />
+      </h:panelGrid>
+    </h:form>
+    <h:outputText
+      rendered="#{not configuration.synchronizeWithADEnabled}"
+      value="#{messages.synchronizationWithADDisabledHint}" />
+  </h:panelGroup>
+</ui:composition>

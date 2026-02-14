@@ -1,0 +1,6 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('costs') and project.accepted}">
+    <ui:include src="/container/costs.xhtml" />
+  </c:if>
+</ui:composition>

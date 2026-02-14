@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('reminderDays')}">
+    <p:column
+      field="#{fieldPrefix}reminderDays"
+      headerText="#{messages.reminderDays}" />
+  </c:if>
+</ui:composition>

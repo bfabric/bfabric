@@ -1,0 +1,22 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/feedbacktemplate.xhtml">
+    <ui:param name="headerText" value="#{messages.templateId}" />
+  </ui:include>
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/servicetype.xhtml">
+    <ui:param name="fieldPrefix" value="container." />
+    <ui:param name="entity" value="#{entity.container}" />
+  </ui:include>
+  <ui:include src="/fragments/column/servicearea.xhtml">
+    <ui:param name="fieldPrefix" value="container.serviceType." />
+    <ui:param name="entity" value="#{entity.container.serviceType}" />
+  </ui:include>
+  <ui:include src="/fragments/column/technologies.xhtml">
+    <ui:param name="fieldPrefix" value="container." />
+    <ui:param name="entity" value="#{entity.container}" />
+  </ui:include>
+  <ui:include src="/fragments/column/user.xhtml" />
+  <ui:include src="/fragments/column/answer-count.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

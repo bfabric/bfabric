@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not empty instance.clientEntityClassName and not empty instance.clientEntityId}">
+    <h:outputText value="#{messages.client} #{messages.entity}" />
+    <p:link
+      outcome="#{instance.clientEntityLink}"
+      value="#{instance.clientEntityClassName} #{instance.clientEntityId}">
+      <f:param
+        name="id"
+        value="#{instance.clientEntityId}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+  </c:if>
+</ui:composition>

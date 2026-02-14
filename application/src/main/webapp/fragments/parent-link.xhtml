@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.parent}">
+    <ui:include src="/fragments/entity-parent-link.xhtml">
+      <ui:param name="parent" value="#{instance.parent}" />
+    </ui:include>
+    <c:if test="#{not empty instance.parent.project}">
+      <ui:include src="/fragments/entity-parent-link.xhtml">
+        <ui:param name="parent" value="#{instance.parent.project}" />
+      </ui:include>
+    </c:if>
+  </c:if>
+</ui:composition>

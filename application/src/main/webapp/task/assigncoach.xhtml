@@ -1,0 +1,22 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-project-items.xhtml">
+    <ui:param
+      name="tasksId"
+      value="assigncoach" />
+    <ui:param
+      name="tasks"
+      value="#{messages.taskAssignCoach}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskAssignCoachHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{projectList.coachAssignmentTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{sidebarHelper.isTab('assigncoach') and identityManager.hasCurrentUserRole('reviewManager')}" />
+    <ui:param
+      name="hideColumns"
+      value="coach" />
+  </ui:include>
+</ui:composition>

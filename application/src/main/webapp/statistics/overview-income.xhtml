@@ -1,0 +1,131 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.income} #{messages.overview}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p:spacer height="10" />
+    <h:panelGrid columns="3">
+      <p:lineChart
+        model="#{lineChart.get([statisticsList.getYearlyBooking(), statisticsList.getYearlyBookingOrganization(), statisticsList.getYearlyBookingCompany(), statisticsList.getIncomeYearlyCounter()], messages.incomeYearly, null, null,  ['333333', '0033CC', 'CCCC00', 'cccccc'], [messages.total, messages.organizations, messages.companies, messages.noOfBooking])}"
+        style="height:400px; width:950px" />
+      <p:spacer width="20" />
+      <h:panelGroup>
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="booking-per-year" /> <ui:param name="label" value="#{messages.income} #{messages.yearly}" /></ui:include>
+      </h:panelGroup>
+    </h:panelGrid>
+    <p:spacer height="20" />
+    <h:panelGrid columns="7">
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getIncomeOrgCom(), messages.incomeOrgCom, messages.days, ['0033CC', 'CCCC00'])}"
+        style="width:300px" />
+      <p:spacer width="20" />
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getIncomeOrgEthzUniz(), messages.incomeUzhEthz, messages.days, ['0066FF', '000099'])}"
+        style="width:300px" />
+      <p:spacer width="20" />
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getIncomeOrgType(), messages.incomeOrganizations, messages.days, ['0033CC', '0099FF', '00DDFF'])}"
+        style="width:300px" />
+      <p:spacer width="20" />
+      <h:panelGroup>
+        <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="booking-per-organization" /> <ui:param name="label" value="#{messages.incomePerOrganization}" /></ui:include></p>
+        <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="booking-per-company" /> <ui:param name="label" value="#{messages.incomePerCompany}" /></ui:include></p>
+        <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="booking-per-costcentre" />
+          <ui:param name="label" value="#{messages.income} #{messages.per} #{messages.costCentre}" /></ui:include>
+        </p>
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <p:spacer height="20" />
+
+    <h:panelGrid columns="4">
+      <p:lineChart
+        model="#{lineChart.get([statisticsList.getYearlyBookingTechGenomics(), statisticsList.getYearlyBookingTechMetabolomics(), statisticsList.getYearlyBookingTechProteomics(), statisticsList.getYearlyBookingTechnologyCounter()], messages.IncomeByTechnologies, null, null,  ['FF0000', 'FF9900', '996600', 'cccccc'], [messages.genomics, messages.metabolomicsBiophysics, messages.proteomics, messages.noOfBooking])}"
+        style="height:300px; width:650px" />
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getIncomeTechnology(), messages.IncomeByTechnologies, messages.days, ['FF0000', 'FF9900', '996600'])}"
+        style="width:300px" />
+      <p:spacer width="20" />
+      <h:panelGroup>
+        <p><ui:include src="table-link.xhtml"><ui:param name="filename" value="booking-per-technology" /><ui:param name="label" value="#{messages.incomePerTechnology}" /></ui:include></p>
+        <p><ui:include src="table-link.xhtml"><ui:param name="filename" value="booking-per-technology-per-year" /><ui:param name="label" value="#{messages.incomePerTechnologyPerYear}" /></ui:include>
+        </p>
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <p:spacer height="20" />
+
+    <h:panelGrid columns="4">
+      <p:lineChart
+        model="#{lineChart.get([statisticsList.getYearlyBookingContainerOrders(), statisticsList.getYearlyBookingContainerProjects(), statisticsList.getYearlyBookingContainerCounter()], messages.IncomeByContainers, null, null, ['EE00EE', 'AA00AA', 'cccccc'], [messages.orders, messages.projects, messages.noOfBooking])}"
+        style="height:300px; width:650px" />
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getIncomeContainer(), messages.IncomeByContainers, messages.days, ['EE00EE', 'AA00AA'])}"
+        style="width:300px" />
+      <p:spacer width="20" />
+      <h:panelGroup>
+        <ui:include src="table-link.xhtml"><ui:param name="filename" value="booking-per-container" /> <ui:param name="label" value="#{messages.incomePerContainer}" /></ui:include>
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <p:spacer height="50" />
+
+    <h:form>
+      <h:panelGrid columns="1">
+        <h:outputText value="#{messages.top10} #{messages.serviceTypes} #{messages.byYear}" styleClass="bold" />
+        <p:selectOneMenu
+          value="#{statisticsManager.selectedYear}"
+          valueChangeListener="#{statisticsManager.selectedYearChanged}"
+          filter="true"
+          filterMatchMode="contains">
+          <f:selectItem itemLabel="#{messages.selectYear}" />
+          <f:selectItems
+            value="#{statisticsList.yearIncome}"
+            var="item" />
+          <p:ajax
+            event="change"
+            global="false"
+            update="servicePerYear" />
+        </p:selectOneMenu>
+      </h:panelGrid>
+
+      <p:spacer height="10" />
+      <h:panelGrid id="servicePerYear" columns="5">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="servicePerYear" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsList.getTopServiceTypePerYear(statisticsManager.selectedYear)}" />
+          <ui:param
+            name="include"
+            value="/statistics/overview-income-service-per-year-columns.xhtml" />
+          <ui:param
+            name="rowsPerPageDropdown"
+            value="all" />
+          <ui:param
+            name="exportSuffix"
+            value="#{statisticsManager.selectedYear}" />
+        </ui:include>
+        <p:spacer width="20" />
+        <p:barChart
+          model="#{barChart.getHorizontal(statisticsList.getTopServiceTypePerYear(statisticsManager.selectedYear),messages.totalBookingsCHF,null,messages.income,null,null)}"
+          style="height:300px;width:500px" />
+        <p:spacer height="20" />
+        <h:panelGroup>
+          <ui:include src="table-link.xhtml"> <ui:param name="filename" value="booking-per-service" /> <ui:param name="label" value="#{messages.incomePerService}" /></ui:include>
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

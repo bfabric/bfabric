@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager') and sidebarHelper.isTab('plates')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="sampleplateposition" />
+      <ui:param
+        name="tableContext"
+        value="#{sample.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{samplePlatePositionList.getLazyModelBySampleId(sample.id)}" />
+      <ui:param
+        name="showColumns"
+        value="plate" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.sample.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

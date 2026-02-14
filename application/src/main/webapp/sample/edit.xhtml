@@ -1,0 +1,418 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui">
+  <ui:param name="entityManager" value="#{sampleManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+      <o:importConstants type="org.bfabric.enums.SampleUserDecisionEnum" />
+      <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+      <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+      <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+
+      <h:form id="#{constants.EDIT}" onsubmit="#{sampleManager.resetRefererURL()}">
+        <h:panelGrid id="samplePanel" columns="2" columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:inputText id="#{constants.NAME}"
+                         value="#{sample.name}"
+                         title="#{messages.orderSampleNameHint}"
+                         disabled="#{sample.managed and sample.userSampleInMultiplexType}"
+                         styleClass="editWidthExtraLarge">
+              <f:validateRegex pattern="#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}" />
+              <p:keyFilter regEx="/#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}/i" preventPaste="false" />
+            </p:inputText>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/select-container.xhtml">
+          <ui:param name="entity" value="#{sample}" />
+          <o:methodParam name="completeMethod" value="#{not sample.moved ? containerList.getExtensibleReadableContainers : sampleManager.getExtensibleReadableContainersExcluding}" />
+          <ui:param name="requiredTemplate" value="true" />
+          <ui:param name="containerEditable" value="#{sample.moved or not sample.managed}" />
+        </ui:include>
+
+        <h:panelGroup id="parents">
+          <c:if
+            test="#{not sample.moved and (not empty sample.parents or not empty sampleManager.getPossibleParents(null)) and not (sample.managed and (sample.userSampleInMultiplexType or sample.multiplexedType or sample.onRunType))}">
+            <h:panelGrid rendered="#{(empty sample.multiplexed or not sample.multiplexed) and not sample.multiplexType and sample.sampleType.name ne messages.controlSample}"
+                         columns="2"
+                         columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.parents}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param name="listContext" value="parentsample" />
+                  <ui:param name="value" value="#{sample.parentsExcludingUserSampleInMultiplexType}" />
+                  <o:methodParam name="completeMethod" value="#{sampleManager.getPossibleParents}" />
+                  <ui:param name="itemLabel" value="#{item.displayName}" />
+                  <ui:param name="multiple" value="true" />
+                  <ui:param name="styleClass" value="editWidthExtraLarge" />
+                  <ui:param name="disabled" value="#{sample.replacement}" />
+                </ui:include>
+              </ui:decorate>
+            </h:panelGrid>
+          </c:if>
+        </h:panelGroup>
+
+        <h:panelGrid columns="2" columnClasses="rtdm, ltd">
+          <c:if test="#{sample.cloned and not empty sampleManager.getPossibleChildren(null)}">
+            <h:outputText value="#{messages.childSamples}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param name="listContext" value="childsample" />
+                <ui:param name="value" value="#{sample.childrenAsList}" />
+                <o:methodParam name="completeMethod" value="#{sampleManager.getPossibleChildren}" />
+                <ui:param name="itemLabel" value="#{item.displayName}" />
+                <ui:param name="multiple" value="true" />
+                <ui:param name="styleClass" value="editWidthExtraLarge" />
+                <ui:param name="disabled" value="#{sample.replacement}" />
+              </ui:include>
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{not sample.moved}">
+            <h:outputText value="#{messages.type}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <p:selectOneMenu id="type"
+                               value="#{sample.sampleType}"
+                               valueChangeListener="#{sample.typeChanged}"
+                               disabled="#{sample.managed and (sample.userSampleInMultiplexType or sample.multiplexedType or sample.multiplexType or sample.replacement) or not empty sample.orderItems}"
+                               filter="true"
+                               filterMatchMode="contains"
+                               styleClass="editWidthExtraLarge"
+                               converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" itemDisabled="true" />
+                <f:selectItems value="#{sampleTypeList.getResultListEnabledIncludingExcludingOnRunAndMultiplexed(sample.sampleType)}"
+                               var="item" itemLabel="#{item.name}" />
+                <p:ajax event="change" oncomplete="fixOversize();" update="type, #{constants.EDIT}:typeSpecific, #{constants.EDIT}:parents" />
+              </p:selectOneMenu>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGroup id="typeSpecific">
+          <h:panelGrid columns="2" columnClasses="rtdm, ltd" rendered="#{not sample.moved}">
+            <c:if test="#{sample.replacementCreatable}">
+              <h:outputText value="#{messages.replaces}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param name="listContext" value="replaces" />
+                  <ui:param name="value" value="#{sample.replaces}" />
+                  <o:methodParam name="completeMethod" value="#{sampleManager.getPotentialReplacesFiltered}" />
+                  <ui:param name="ajaxClear" value="true" />
+                  <o:methodParam name="clearButtonListener" value="#{sample.setReplaces(null)}" />
+                  <ui:param name="itemLabel" value="#{item.displayName}" />
+                  <ui:param name="styleClass" value="editWidthExtraLarge" />
+                  <ui:param name="disabled" value="#{not empty sampleManager.replacementSampleId or sample.replacement}" />
+                </ui:include>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{identityManager.hasCurrentUserRole('containerManager') and empty sampleManager.replacementSampleId}">
+              <h:outputText value="#{messages.userDecision}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:selectOneMenu id="userDecision" value="#{sample.userDecision}" styleClass="editWidthExtraLarge">
+                  <f:selectItem itemLabel="" />
+                  <f:selectItems value="#{SampleUserDecisionEnum}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd"
+            rendered="#{not sample.moved and sample.controlType}">
+            <h:outputText value="#{messages.linkedControlSample}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu id="controlSample"
+                               value="#{sample.controlSample}"
+                               styleClass="editWidthExtraLarge"
+                               converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="#{messages.selectAnItem}" itemDisabled="true" />
+                <f:selectItems value="#{controlSampleList.getResultListEnabledAndNotLinkedIncluding(sample.controlSample.id)}" var="item" itemLabel="#{item.displayName}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGrid>
+
+          <h:panelGrid id="attributes" columns="2" columnClasses="rtdm, ltd" rendered="#{not sample.moved}">
+            <c:forEach items="#{sampleManager.getSampleAttributeEnumsEditable(sample, sample.sampleType, sample.sampleForm, sample.qualityControlType)}"
+                       var="sampleAttributeEnum">
+              <h:outputText
+                value="#{!sampleAttributeEnum.stringType or sampleAttributeEnum.stringType and (sampleAttributeEnum eq SampleAttributeEnum.DESCRIPTION or (sampleAttributeEnum.isNotMultiplexed(sample))) ? messages[sampleAttributeEnum.name] : null}"
+                rendered="#{!sampleAttributeEnum.stringType or sampleAttributeEnum.stringType and (sampleAttributeEnum eq SampleAttributeEnum.DESCRIPTION or (sampleAttributeEnum.isNotMultiplexed(sample)))}" />
+              <h:outputText
+                rendered="#{!(!sampleAttributeEnum.stringType or sampleAttributeEnum.stringType and (sampleAttributeEnum eq SampleAttributeEnum.DESCRIPTION or (sampleAttributeEnum.isNotMultiplexed(sample))))}" />
+              <ui:decorate template="#{sampleAttributeEnum.isAttributeRequired(sample.type, sample.sampleForm, sample.qualityControlType) ? '/fragments/required.xhtml' : '/fragments/edit.xhtml'}">
+                <ui:param name="componentId"
+                          value="#{!sampleAttributeEnum.stringType or sampleAttributeEnum.stringType and (sampleAttributeEnum eq SampleAttributeEnum.DESCRIPTION or (sampleAttributeEnum.isNotMultiplexed(sample))) ? sampleAttributeEnum.name : null}" />
+                <h:panelGrid columns="2" columnClasses="rightpadding," styleClass="noborder">
+                  <c:if test="#{sampleAttributeEnum.selectionType and not sampleAttributeEnum.enumType}">
+                    <ui:include src="/fragments/autocomplete.xhtml">
+                      <ui:param name="listContext" value="#{sampleAttributeEnum.name}" />
+                      <ui:param name="componentId" value="#{sampleAttributeEnum.name}" />
+                      <ui:param name="value" value="#{sample[sampleAttributeEnum.name]}" />
+                      <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.SAMPLE_PREPARATION_PROTOCOL and sample.multiplexedType}">
+                        <ui:param name="disabled" value="#{sampleAttributeHelper.isDisabled(sample, sampleAttributeEnum)}" />
+                      </c:if>
+                      <o:methodParam name="completeMethod" value="#{sampleManager.getSelectionValuesBySampleAttributeFiltered}" />
+                      <c:if test="#{(sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT_2) and sample.notMultiplexed}">
+                        <o:methodParam name="valueChangeListener" value="#{sample.selectionValueChanged}" />
+                        <ui:param name="ajaxChange" value="true" />
+                      </c:if>
+                      <ui:param name="itemLabel" value="#{item.name}" />
+                      <ui:param name="multiple" value="#{sampleAttributeEnum.annotationType ? sampleAttributeEnum.multiValued : false}" />
+                      <ui:param name="emptyMessage" value="#{sampleAttributeEnum.annotationType ? messages.noAnnotationFound : messages.noResultFound}" />
+                      <ui:param name="inputStyleClass" value="editWidthExtraLarge" />
+                      <ui:param name="clearButtonRendered" value="true" />
+                      <ui:param name="styleClass" value="editWidthExtraLarge" />
+                      <ui:param name="attributes" value="sampleAttributeEnum:#{sampleAttributeEnum.name}" />
+                    </ui:include>
+
+                    <p:commandLink rendered="#{sampleAttributeEnum.annotationExtensible}" actionListener="#{sampleManager.createAnnotation(sampleAttributeEnum)}"
+                                   title="#{messages.addAnnotationHint}"
+                                   immediate="true"
+                                   oncomplete="PF('addAnnotationDialog').show()"
+                                   update="addAnnotationPanel">
+                      <ui:include src="/fragments/add-button-icon.xhtml" />
+                      <p:resetInput target="#{sampleAttributeEnum.name}" />
+                    </p:commandLink>
+                  </c:if>
+
+                  <c:if test="#{sampleAttributeEnum.enumType}">
+                    <p:selectOneMenu id="#{sampleAttributeEnum.name}" value="#{sample[sampleAttributeEnum.name]}"
+                                     filter="true" filterMatchMode="contains" styleClass="editWidthExtraLarge">
+                      <f:selectItem itemLabel="" itemDisabled="#{sampleAttributeEnum.isAttributeRequired(sample.type, sample.sampleForm, sample.qualityControlType)}" noSelectionOption="true" />
+                      <f:selectItems value="#{sampleManager.getSelectionValuesBySampleAttributeIncluding(sampleAttributeEnum, sample, sample.type)}" var="item" itemLabel="#{item.label}" />
+                      <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.STATUS}">
+                        <p:ajax event="change" global="false" />
+                      </c:if>
+                      <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.SAMPLE_FORM or sampleAttributeEnum eq SampleAttributeEnum.QUALITY_CONTROL_TYPE}">
+                        <p:ajax event="change" global="false" update="#{constants.EDIT}:typeSpecific" />
+                      </c:if>
+                    </p:selectOneMenu>
+                  </c:if>
+
+                  <c:if
+                    test="#{sampleAttributeEnum.stringType and sampleAttributeEnum ne SampleAttributeEnum.DESCRIPTION and (sampleAttributeEnum.isNotMultiplexed(sample))}">
+                    <h:panelGroup id="#{constants.STRING_TYPE}#{sampleAttributeEnum.name}">
+                      <!-- Multiplex id selection from multiplex kit -->
+                      <c:if
+                        test="#{(sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID_2) and sampleAttributeEnum.isNotMultiplexedButKitSet(sample)}">
+                        <h:panelGrid columns="2">
+                          <h:inputText id="#{sampleAttributeEnum.name}"
+                                       value="#{sample[sampleAttributeEnum.name]}"
+                                       maxlength="#{sampleAttributeEnum.maxLength}"
+                                       style="width: 146px;">
+                            <p:ajax process="@this" global="false" />
+                          </h:inputText>
+
+                          <h:panelGrid columns="1">
+                            <ui:decorate template="/fragments/display-right.xhtml">
+                              <h:selectOneMenu id="#{constants.SELECTED}#{sampleAttributeEnum.name}"
+                                               title="#{messages.multiplexIdSelectionHint.replace('{0}', sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID ? sample.multiplexKit.name : sample.multiplexKit2.name)}"
+                                               value="#{sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID ? sample.selectedMultiplexId : sample.selectedMultiplexId2}"
+                                               valueChangeListener="#{sample.selectedMultiplexIdChanged}"
+                                               styleClass="editWidthLarge"
+                                               converter="omnifaces.SelectItemsConverter">
+                                <f:selectItem itemLabel="#{messages.selectAnItem}" />
+                                <f:selectItems value="#{sample.getSelectionMultiplexIdsBySampleAttributeName(sampleAttributeEnum.name)}" var="item" itemLabel="#{item.name}" />
+                                <p:ajax event="change" process="@this" />
+                                <f:attribute name="sampleAttributeEnumName" value="#{sampleAttributeEnum.name}" />
+                              </h:selectOneMenu>
+                            </ui:decorate>
+                          </h:panelGrid>
+                          <h:outputText value="#{sampleAttributeEnum.unit}" />
+                        </h:panelGrid>
+                      </c:if>
+
+                      <c:if
+                        test="#{sampleAttributeEnum ne SampleAttributeEnum.MULTIPLEX_ID and sampleAttributeEnum ne SampleAttributeEnum.MULTIPLEX_ID_2 or !sampleAttributeEnum.isNotMultiplexedButKitSet(sample)}">
+                        <h:inputText id="#{sampleAttributeEnum.name}"
+                                     value="#{sample[sampleAttributeEnum.name]}"
+                                     disabled="#{sampleAttributeEnum eq SampleAttributeEnum.TUBE_ID and !sampleAttributeHelper.isTubeIdEditable(sample)}"
+                                     maxlength="#{sampleAttributeEnum.maxLength}"
+                                     styleClass="editWidthExtraLarge">
+                          <p:ajax process="@this" global="false" />
+                        </h:inputText>
+                        <h:outputText value="#{sampleAttributeEnum.unit}" />
+                      </c:if>
+                    </h:panelGroup>
+                  </c:if>
+
+                  <c:if test="#{sampleAttributeEnum.stringType and sampleAttributeEnum eq SampleAttributeEnum.DESCRIPTION}">
+                    <h:inputTextarea id="#{sampleAttributeEnum.name}"
+                                     value="#{sample[sampleAttributeEnum.name]}"
+                                     disabled="#{sample.managed and sample.userSampleInMultiplexType}"
+                                     rows="6"
+                                     styleClass="editWidthExtraLarge">
+                      <p:ajax process="@this" global="false" />
+                    </h:inputTextarea>
+                  </c:if>
+
+                  <c:if test="#{sampleAttributeEnum.typeFloat}">
+                    <p:inputNumber id="#{sampleAttributeEnum.name}"
+                                   value="#{sample[sampleAttributeEnum.name]}"
+                                   decimalPlaces="32"
+                                   thousandSeparator=""
+                                   padControl="false"
+                                   inputStyleClass="editWidthExtraLarge">
+                      <p:ajax process="@this" global="false" />
+                    </p:inputNumber>
+                    <h:outputText value="#{sampleAttributeEnum.unit}" />
+                  </c:if>
+
+                  <c:if test="#{sampleAttributeEnum.typeDecimal}">
+                    <c:if
+                      test="#{sampleAttributeEnum.hasSampleAttributeValueChangedListener() and (sample.illuminaLibraryCalculationEnabledForInitialQc or sample.illuminaLibraryCalculationEnabledForFinalQc or sample.nanoporeLibraryCalculationEnabled or sample.pacBioLibraryCalculationEnabled)}">
+                      <h:panelGrid columns="2">
+                        <p:inputNumber id="#{sampleAttributeEnum.name}"
+                                       value="#{sample[sampleAttributeEnum.name]}"
+                                       valueChangeListener="#{sample.sampleAttributeValueChanged}"
+                                       decimalPlaces="32"
+                                       thousandSeparator=""
+                                       padControl="false"
+                                       inputStyle="#{sampleAttributeHelper.isCalculatedAttribute(sampleAttributeEnum, sample.type) ? sample.getCalculatedAttributeStyle(sampleAttributeEnum) : ''} #{sampleAttributeEnum eq SampleAttributeEnum.CONCENTRATION_INPUT_QC and sample.illuminaLibraryCalculationEnabledForInitialQc or sampleAttributeEnum eq SampleAttributeEnum.MOLARITY and sample.illuminaLibraryCalculationEnabledForFinalQc ? 'width: 106.5px;' : 'width: 450px; min-width: 450px;'}">
+                          <p:ajax process="@this" />
+                        </p:inputNumber>
+                        <h:outputText value="#{sampleAttributeEnum.unit}" />
+                      </h:panelGrid>
+                    </c:if>
+
+                    <!-- Calculations from the initial qc -->
+                    <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.CONCENTRATION_INPUT_QC and sample.illuminaLibraryCalculationEnabledForInitialQc}">
+                      <h:panelGrid columns="1">
+                        <ui:decorate template="/fragments/display-right.xhtml">
+                          <h:selectOneMenu id="#{constants.INPUT_QC_SAMPLE}"
+                                           title="#{messages.selectInputQcSampleHint}"
+                                           value="#{sample.inputQcSample}"
+                                           valueChangeListener="#{sample.inputQcSampleChanged}"
+                                           styleClass="editWidthLarge"
+                                           converter="omnifaces.SelectItemsConverter">
+                            <f:selectItem itemLabel="#{messages.selectSampleForCalculation}" />
+                            <f:selectItems
+                              value="#{sample.getQcSiblingsWithNonEmptyConcentration()}"
+                              var="item"
+                              itemLabel="#{stringHelper.truncate(item.getSampleCalculationInfoForInitialQc(), 80)}" />
+                            <p:ajax event="change" process="@this" />
+                          </h:selectOneMenu>
+                        </ui:decorate>
+                      </h:panelGrid>
+                    </c:if>
+
+                    <!-- Calculations from the final qc -->
+                    <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.MOLARITY and sample.illuminaLibraryCalculationEnabledForFinalQc}">
+                      <h:panelGrid columns="1">
+                        <ui:decorate template="/fragments/display.xhtml">
+                          <h:selectOneMenu id="#{constants.MOLARITY_SAMPLE}"
+                                           title="#{messages.selectMolaritySampleHint}"
+                                           value="#{sample.molaritySample}"
+                                           valueChangeListener="#{sample.molaritySampleChanged}"
+                                           styleClass="editWidthLarge"
+                                           converter="omnifaces.SelectItemsConverter">
+                            <f:selectItem itemLabel="#{messages.selectSampleForCalculation}" />
+                            <f:selectItems value="#{sample.qcChildrenWithNonEmptyMolarConcentrationInRange}"
+                                           var="item"
+                                           itemLabel="#{stringHelper.truncate(item.getSampleCalculationInfoForFinalQc(), 80)}" />
+                            <p:ajax event="change" process="@this" />
+                          </h:selectOneMenu>
+                        </ui:decorate>
+                      </h:panelGrid>
+                    </c:if>
+
+                    <c:if
+                      test="#{(!sampleAttributeEnum.hasSampleAttributeValueChangedListener() or !sample.illuminaLibraryCalculationEnabledForInitialQc and !sample.illuminaLibraryCalculationEnabledForFinalQc and !sample.nanoporeLibraryCalculationEnabled and !sample.pacBioLibraryCalculationEnabled)}">
+                      <p:inputNumber
+                        id="#{sampleAttributeEnum.name}"
+                        value="#{sample[sampleAttributeEnum.name]}"
+                        decimalPlaces="32"
+                        thousandSeparator=""
+                        padControl="false"
+                        inputStyle="#{sampleAttributeHelper.isCalculatedAttribute(sampleAttributeEnum, sample.type) ? sample.getCalculatedAttributeStyle(sampleAttributeEnum) : ''}"
+                        inputStyleClass="editWidthExtraLarge">
+                        <p:ajax
+                          process="@this"
+                          global="false" />
+                      </p:inputNumber>
+                      <h:outputText value="#{sampleAttributeEnum.unit}" />
+                    </c:if>
+                  </c:if>
+
+                  <c:if test="#{sampleAttributeEnum.typeInteger}">
+                    <p:inputNumber
+                      id="#{sampleAttributeEnum.name}"
+                      value="#{sample[sampleAttributeEnum.name]}"
+                      decimalPlaces="0"
+                      thousandSeparator=""
+                      inputStyleClass="editWidthExtraLarge">
+                      <p:ajax process="@this" global="false" />
+                    </p:inputNumber>
+                    <h:outputText value="#{sampleAttributeEnum.unit}" />
+                  </c:if>
+
+                  <c:if test="#{sampleAttributeEnum.booleanType}">
+                    <h:panelGroup id="#{sampleAttributeEnum.name}#{constants.TRI_STATE_CHECKBOX_GROUP}">
+                      <p:triStateCheckbox id="#{sampleAttributeEnum.name}"
+                                          disabled="#{sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEXED and sample.multiplexedType or sampleAttributeEnum eq SampleAttributeEnum.RE_MULTIPLEXED and sampleAttributeHelper.isDisabled(sample, sampleAttributeEnum)}"
+                                          value="#{sample[sampleAttributeEnum.name]}"
+                                          valueChangeListener="#{sample.booleanTypeValueChanged}"
+                                          styleClass="tri-state-chkbox"
+                                          converter="triStateCheckboxConverter">
+                        <f:attribute name="sampleAttributeEnumName" value="#{sampleAttributeEnum.name}" />
+                        <p:ajax event="change" global="false" />
+                      </p:triStateCheckbox>
+
+                      <p:spacer width="5" />
+
+                      <p:commandButton id="assignMultiplexIdButton"
+                                       rendered="#{sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEXED and sample.multiplexedByUser and not empty sample[sampleAttributeEnum.name] and sample[sampleAttributeEnum.name]}"
+                                       value="#{messages.assignMultiplexIds} (#{not empty sampleManager.sampleIdentifiersNumberMap[sample.hashCode()] ? sampleManager.sampleIdentifiersNumberMap[sample.hashCode()] : 0})"
+                                       title="#{messages.assignMultiplexIdsHint}"
+                                       actionListener="#{sampleManager.prepareMultiplexIdsModalPanel()}"
+                                       immediate="true"
+                                       oncomplete="PF('assignMultiplexIdsModalDialog').show();"
+                                       update="assignMultiplexIdsModalPanel" />
+                    </h:panelGroup>
+                  </c:if>
+
+                  <c:if test="#{sampleAttributeEnum.localDateType or sampleAttributeEnum.localDateTimeType}">
+                    <p:datePicker id="#{sampleAttributeEnum.name}" value="#{sample[sampleAttributeEnum.name]}" />
+                  </c:if>
+                </h:panelGrid>
+              </ui:decorate>
+            </c:forEach>
+          </h:panelGrid>
+        </h:panelGroup>
+        <c:if test="#{not sample.moved}">
+          <ui:include src="/fragments/edit/customattributes.xhtml">
+            <ui:param name="instance" value="#{sample}" />
+          </ui:include>
+        </c:if>
+
+        <h:panelGrid columns="2" styleClass="action">
+          <p:commandButton action="#{sampleManager.save}"
+                           value="#{messages.save}"
+                           onclick="hasChanged=false;"
+                           update="@form" />
+          <p:commandButton action="#{sampleManager.cancel}"
+                           value="#{messages.cancel}"
+                           onclick="hasChanged=false;"
+                           immediate="true" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/annotation/add-modal.xhtml">
+        <ui:param name="manager" value="#{sampleManager}" />
+        <ui:param name="batch" value="false" />
+        <ui:param name="updateOnSave" value="@([id$=typeSpecific])" />
+      </ui:include>
+      <ui:include src="/sample/assign-multiplexids-user-submitted-modal.xhtml">
+        <ui:param name="bean" value="#{sampleManager}" />
+      </ui:include>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('samplepreparationprotocols') and identityManager.hasCurrentUserRole('instrumentManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="samplepreparationprotocol" />
+      <ui:param
+        name="tableContext"
+        value="#{sequencingApplication.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{sequencingApplication.samplePreparationProtocols}" />
+      <ui:param
+        name="hideColumns"
+        value="instrument, discriminator, sequencingApplication, sampleType" />
+    </ui:include>
+  </c:if>
+</ui:composition>

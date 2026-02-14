@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core">
+  <f:facet name="filter">
+    <h:selectOneMenu
+      id="#{idPrefix}BooleanFilter"
+      onchange="PF('#{tableContext}#{tableType}').filter()">
+      <f:selectItem
+        itemLabel="#{messages.noFilter}"
+        noSelectionOption="true" />
+      <f:selectItem
+        itemLabel="#{trueText != null ? trueText: 'yes'}"
+        itemValue="true" />
+      <f:selectItem
+        itemLabel="#{falseText != null ? falseText: 'no'}"
+        itemValue="false" />
+    </h:selectOneMenu>
+  </f:facet>
+</ui:composition>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.bfabric</groupId>
+    <artifactId>bfabric</artifactId>
+    <version>13</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>downloadmanager</artifactId>
+  <version>4.0.0-SNAPSHOT</version>
+
+  <name>B-Fabric Download Manager</name>
+  <description>This project implements the B-Fabric Download Manager</description>
+
+  <url>https://bfabric.org/</url>
+
+  <properties>
+    <root.basedir>${basedir}/..</root.basedir>
+    <!-- NEVER write the real password in this file -->
+    <bfabric.keystore.password>use settings.xml to fill this</bfabric.keystore.password>
+    <bfabric.keystore.file>src/misc/BFABRICDEV.p12</bfabric.keystore.file>
+    <bfabric.keystore.alias>bfabricdev</bfabric.keystore.alias>
+    <bfabric.tsa.url>http://timestamp.digicert.com</bfabric.tsa.url>
+    <bfabric.webapp.fragments>../application/src/main/webapp/fragments/</bfabric.webapp.fragments>
+    <bfabric.jarsigner.verify>true</bfabric.jarsigner.verify>
+    <maven-exec-plugin.version>3.0.0</maven-exec-plugin.version>
+  </properties>
+
+  <developers>
+    <developer>
+      <id>can.tuerker</id>
+      <name>Can Türker</name>
+    </developer>
+    <developer>
+      <id>ugur.guerel</id>
+      <name>Ugur Gürel</name>
+    </developer>
+  </developers>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>org.bfabric.DownloadManager</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagBase>https://www.bfabric.org/repo/bfabric/tags/</tagBase>
+          <goals>deploy</goals>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-descriptor</id>
+            <goals>
+              <goal>attach-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- A plugin to allow execution of system and Java programs -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven-exec-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <environmentVariables>
+                <BFABRIC_KEYSTORE>${bfabric.keystore.file}</BFABRIC_KEYSTORE>
+                <BFABRIC_STOREPASS>${bfabric.keystore.password}</BFABRIC_STOREPASS>
+                <BFABRIC_KSALIAS>${bfabric.keystore.alias}</BFABRIC_KSALIAS>
+                <BFABRIC_TSAURL>${bfabric.tsa.url}</BFABRIC_TSAURL>
+                <BFABRIC_FRAGMENTS>${bfabric.webapp.fragments}</BFABRIC_FRAGMENTS>
+                <BFABRIC_VERIFY>${bfabric.jarsigner.verify}</BFABRIC_VERIFY>
+              </environmentVariables>
+              <executable>bash</executable>
+              <arguments>
+                <argument>${basedir}/sign-jar.sh</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,215 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{dataset.updatable and not dataset.prepared}">
+    <h:panelGroup
+      id="radioPanel"
+      rendered="#{not datasetManager.fromResourceBasket and datasetManager.initScreen}"
+      styleClass="margin-bottom-10">
+      <ui:decorate template="/fragments/edit.xhtml">
+        <h:selectOneRadio
+          id="radioPanelSelection"
+          value="#{datasetManager.fromExistingData}"
+          immediate="true"
+          layout="pageDirection">
+          <f:selectItem
+            itemLabel="#{messages.fromExistingData}"
+            itemValue="true" />
+          <f:selectItem
+            itemLabel="#{messages.fromScratch}"
+            itemValue="false" />
+          <p:ajax
+            event="change"
+            oncomplete="fixOversize();"
+            process="@form"
+            immediate="true"
+            update="edit:existingDataPanel" />
+        </h:selectOneRadio>
+      </ui:decorate>
+    </h:panelGroup>
+
+    <h:panelGroup id="existingDataPanel">
+      <h:panelGroup
+        id="edit-availableWorkunits"
+        rendered="#{datasetManager.fromExistingData}">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="include"
+            value="/workunit/select-columns.xhtml" />
+          <ui:param
+            name="tableContext"
+            value="availableworkunits" />
+          <ui:param
+            name="tableContent"
+            value="#{workunitList.getAvailableWorkunitsLazyModelByUser(currentUser)}" />
+          <ui:param
+            name="lazy"
+            value="true" />
+          <ui:param
+            name="styleClass"
+            value="inner" />
+        </ui:include>
+        <script>
+            PF('availableworkunits').filter();
+        </script>
+        <h:panelGrid
+          columns="1"
+          styleClass="action">
+          <p:commandButton
+            actionListener="#{datasetManager.selectWorkunits()}"
+            title="#{messages.selectAllMarkedWorkunitsHint}"
+            value="#{messages.selectMarked} #{messages.workunits}"
+            oncomplete="fixOversize();"
+            update="edit:existingDataPanel" />
+        </h:panelGrid>
+        <h:panelGroup
+          id="selectedWorkunits"
+          rendered="#{not empty datasetManager.selectedWorkunits}">
+          <h:outputText
+            value="#{messages.selectedWorkunits} (#{datasetManager.selectedWorkunits.size()})"
+            styleClass="bold" />
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="tableType"
+              value="workunit" />
+            <ui:param
+              name="tableContext"
+              value="selected" />
+            <ui:param
+              name="tableContent"
+              value="#{datasetManager.selectedWorkunits}" />
+            <ui:param
+              name="showColumns"
+              value="checked" />
+            <ui:param
+              name="hideColumns"
+              value="basket,inputDataset,report" />
+            <ui:param
+              name="styleClass"
+              value="inner" />
+          </ui:include>
+          <h:panelGrid
+            columns="2"
+            styleClass="action">
+            <p:commandButton
+              actionListener="#{datasetManager.deselectWorkunits(false)}"
+              value="#{messages.deselectMarkedWorkunits}"
+              title="#{messages.deselectMarkedWorkunitsHint}"
+              oncomplete="fixOversize();"
+              update="edit:existingDataPanel" />
+            <p:commandButton
+              actionListener="#{datasetManager.deselectWorkunits(true)}"
+              value="#{messages.deselectAllWorkunits}"
+              oncomplete="fixOversize();"
+              update="edit:existingDataPanel" />
+          </h:panelGrid>
+        </h:panelGroup>
+        <p:spacer
+          height="10"
+          rendered="#{not datasetManager.fromResourceBasket}" />
+      </h:panelGroup>
+      <h:panelGroup id="datasetItemTableGroup">
+        <p:dataTable
+          id="datasetItemTable"
+          rendered="#{not empty dataset.items and (not empty datasetManager.selectedWorkunits or datasetManager.fromResourceBasket)}"
+          value="#{dataset.items}"
+          var="item"
+          styleClass="inner">
+          <p:column
+            id="checkedItemCOL"
+            styleClass="textleft">
+            <f:facet name="header">
+              <h:panelGrid
+                columns="3"
+                style="white-space: nowrap"
+                styleClass="noborder nospace edit-dataset-select-icon">
+                <p:commandLink
+                  rendered="#{empty datasetManager.datasetTemplateId}"
+                  actionListener="#{dataset.showVisibleAttributes}"
+                  title="#{messages.showEmptyAttributesHint}"
+                  global="false"
+                  update="@form"
+                  oncomplete="fixOversize()">
+                  <i class="far fa-check-square" />
+                </p:commandLink>
+                <p:commandLink
+                  rendered="#{empty datasetManager.datasetTemplateId}"
+                  actionListener="#{dataset.hideVisibleAttributes}"
+                  title="#{messages.hideEmptyAttributesHint}"
+                  global="false"
+                  update="@form"
+                  oncomplete="fixOversize()">
+                  <i class="far fa-square" />
+                </p:commandLink>
+                <h:outputText rendered="#{empty datasetManager.datasetTemplateId}" value="#{messages.showEmptyAttributes}" />
+                <p:commandLink
+                  rendered="#{empty datasetManager.datasetTemplateId}"
+                  actionListener="#{dataset.checkAllAttributes}"
+                  title="#{messages.selectAllAttributesHint}"
+                  global="false"
+                  update="@form"
+                  oncomplete="fixOversize()">
+                  <i class="far fa-check-square" />
+                </p:commandLink>
+                <p:commandLink
+                  rendered="#{empty datasetManager.datasetTemplateId}"
+                  actionListener="#{dataset.uncheckAllAttributes}"
+                  title="#{messages.deselectAllAttributesHint}"
+                  global="false"
+                  update="@form"
+                  oncomplete="fixOversize()">
+                  <i class="far fa-square" />
+                </p:commandLink>
+                <h:outputText rendered="#{empty datasetManager.datasetTemplateId}" value="#{messages.selectAllAttributes}" />
+                <p:commandLink
+                  actionListener="#{dataset.checkAllItems}"
+                  title="#{messages.selectAllItemsHint}"
+                  global="false"
+                  update="@form"
+                  oncomplete="fixOversize()">
+                  <i class="far fa-check-square" />
+                </p:commandLink>
+                <p:commandLink
+                  actionListener="#{dataset.uncheckAllItems}"
+                  title="#{messages.deselectAllItemsHint}"
+                  global="false"
+                  update="@form"
+                  oncomplete="fixOversize()">
+                  <i class="far fa-square" />
+                </p:commandLink>
+                <h:outputText value="#{messages.selectAllItems}" />
+              </h:panelGrid>
+            </f:facet>
+            <h:selectBooleanCheckbox
+              id="checkItem"
+              value="#{item.checked}" />
+          </p:column>
+          <c:forEach
+            var="attribute"
+            items="#{dataset.attributes}"
+            varStatus="status">
+            <p:column rendered="#{dataset.checkedVisibleAttributes[attribute]}">
+              <f:facet name="header">
+                <h:panelGroup rendered="#{not attribute.required}">
+                  <h:selectBooleanCheckbox
+                    id="checkAttributeName#{status.index}"
+                    disabled="#{not empty datasetManager.datasetTemplateId}"
+                    value="#{attribute.checked}" />
+                </h:panelGroup>
+                <div>
+                  <h:outputText
+                    value="#{attribute.name}"
+                    style="white-space: nowrap" />
+                </div>
+              </f:facet>
+              <h:outputText value="#{item.getField(attribute).value}" />
+            </p:column>
+          </c:forEach>
+        </p:dataTable>
+      </h:panelGroup>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

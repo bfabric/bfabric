@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+
+  <p:column
+    headerText="#{messages.users}"
+    exportValue="#{entity.userNames}">
+    <h:outputText
+      value="#{entity.getUserNamesTruncated(60)}"
+      title="#{entity.userNames}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/resource-count.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+  <ui:include src="/fragments/column/modified.xhtml" />
+</ui:composition>

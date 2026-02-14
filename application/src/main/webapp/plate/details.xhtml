@@ -1,0 +1,120 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.StatusEnum" />
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name-status-supervisor.xhtml" />
+
+      <h:outputText value="#{messages.layout}" />
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{plate.plateLayout}" />
+      </ui:include>
+
+      <h:outputText value="#{messages.type}" />
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{plate.plateType}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/nameGiven.xhtml" />
+      <ui:include src="/fragments/details/location.xhtml" />
+      <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="7"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <p:commandButton
+        actionListener="#{plateManager.prepareClonePlateModalDialog()}"
+        value="#{messages.clone}"
+        immediate="true"
+        oncomplete="PF('clonePlateModalDialog').show();"
+        update="clonePlateModalPanel" />
+      <p:button
+        rendered="#{plate.sampleAssignmentEditable}"
+        outcome="assignSamples.xhtml"
+        value="#{empty plate.samplePlatePositions ? messages.assignSamples : messages.reassignSamples}">
+        <f:param
+          name="id"
+          value="#{plate.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <p:button
+        rendered="#{identityManager.hasCurrentUserRole('serviceReader')}"
+        outcome="list.xhtml"
+        value="#{messages.list}" />
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.status}" />
+    </h:panelGrid>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/status/columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="plate" />
+      <ui:param
+        name="tableContent"
+        value="#{plate.states}" />
+      <ui:param
+        name="paginator"
+        value="false" />
+    </ui:include>
+
+    <h:form>
+      <h:panelGrid
+        columns="10"
+        styleClass="action">
+        <c:forEach
+          items="#{plate.nextStates}"
+          var="nextStatus">
+          <p:commandButton
+            action="#{plateManager.changeStatus(nextStatus)}"
+            value="#{messages[nextStatus.action]}" />
+        </c:forEach>
+        <p:commandButton
+          action="#{plateManager.changeStatus(StatusEnum.CANCELED)}"
+          value="#{messages.cancel}"
+          rendered="#{plate.cancelable}" />
+        <p:commandButton
+          action="#{plateManager.rollbackStatus}"
+          value="#{messages.rollbackStatus}"
+          title="#{messages.rollbackStatusHint}"
+          rendered="#{plate.rollbackable}" />
+        <c:if test="#{plate.renderedSendEmailCheckbox}">
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="sendMail"
+              value="#{plate.sendMail}">
+              <p:ajax
+                event="change"
+                listener="#{plate.sendMailChanged}"
+                immediate="true" />
+            </h:selectBooleanCheckbox>
+            <h:outputText value="#{messages.sendEmailNotification}" />
+          </ui:decorate>
+        </c:if>
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+
+    <ui:include src="/plate/clone-plate-modal.xhtml" />
+  </c:if>
+</ui:composition>

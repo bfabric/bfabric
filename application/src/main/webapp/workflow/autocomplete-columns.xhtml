@@ -1,0 +1,14 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column>
+    <h:outputText value="#{item.id}" />
+  </p:column>
+  <p:column>
+    <h:outputText value="#{item.workflowTemplate.name}" />
+  </p:column>
+  <p:column>
+    <h:outputText value="#{item.createdBy}" />
+  </p:column>
+</ui:composition>

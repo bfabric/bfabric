@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{configuration.instrumentReservationEnabled and sidebarHelper.isTab('instrumentreservations') and identityManager.hasCurrentUserRole('labManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="instrumentreservation" />
+      <ui:param name="tableContext" value="#{run.tableContext}" />
+      <ui:param name="tableContent" value="#{run.instrumentReservations}" />
+      <ui:param name="hideColumns" value="run" />
+    </ui:include>
+    <h:panelGrid columns="5" styleClass="action">
+      <p:button outcome="/instrumentschedule/show.xhtml" value="#{messages.schedule}">
+        <f:param name="instrumentId" value="#{run.instrument.id}" />
+        <f:param name="runId" value="#{run.id}" />
+      </p:button>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

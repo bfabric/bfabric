@@ -1,0 +1,56 @@
+<!--
+    This modal panel is used to add organizations, departments and services.
+    All the application logic is located in the serviceManager, however.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:dialog
+    id="addServiceAreaPanel"
+    widgetVar="addServiceAreaDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText
+        id="addServiceAreaHeader"
+        value="#{messages.addNew}" />
+    </f:facet>
+    <h:form id="addServiceArea">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.serviceArea}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="serviceArea"
+            maxlength="256"
+            value="#{serviceHelper.serviceAreaName}"
+            required="true"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="saveServiceAreaButton"
+          action="#{serviceHelper.save}"
+          value="#{messages.save}"
+          global="false"
+          update="addServiceArea, @([id$=serviceArea]), @([id$=serviceType]), @([id$=enabled])"
+          oncomplete="hideDialogOnSuccess(args, 'addServiceAreaDialog')" />
+        <p:commandButton
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('addServiceAreaDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

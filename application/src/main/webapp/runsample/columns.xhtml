@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/run.xhtml" />
+  <ui:include src="/fragments/column/sample.xhtml" />
+  <ui:include src="/fragments/column/readcounttotal.xhtml" />
+  <p:column
+    sortBy="#{entity.sample.container.id}"
+    filterBy="#{entity.sample.container.filterValue}"
+    headerText="#{messages.container}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity.sample.container}" />
+      <ui:param
+        name="entityValue"
+        value="#{entity.sample.container.entityName} #{entity.sample.container.id}" />
+    </ui:include>
+  </p:column>
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

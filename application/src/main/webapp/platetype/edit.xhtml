@@ -1,0 +1,54 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:o="http://omnifaces.org/ui">
+
+  <ui:param
+    name="entityManager"
+    value="#{plateTypeManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{plateType.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.sampleType}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="type"
+              value="#{plateType.sampleType}"
+              disabled="#{plateType.sampleTypeDisabled}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem itemLabel="" />
+              <f:selectItems
+                value="#{sampleTypeList.getAllEnabledIncluding(plateType.sampleType)}"
+                var="item"
+                itemLabel="#{item.name}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

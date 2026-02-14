@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instrumentReservation')}">
+    <p:column
+      field="#{fieldPrefix}instrumentReservation.id"
+      headerText="#{messages.instrumentReservation}">
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.instrumentReservation}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

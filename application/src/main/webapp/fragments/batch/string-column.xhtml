@@ -1,0 +1,118 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    id="#{columnId}#{constants.COLUMN}"
+    rendered="#{rendered}"
+    exportable="false"
+    styleClass="#{columnId}#{rowIndex}">
+    <f:facet name="header">
+      <p:inputText
+        id="#{columnId}#{constants.HEADER_INPUT}"
+        disabled="#{columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled}"
+        valueChangeListener="#{bean.valueChangedAll}"
+        title="#{messages.setValueForColumnHint}"
+        maxlength="#{not empty maxLength ? maxLength : -1}"
+        onblur="this.value=''"
+        styleClass="table-header-margin"
+        style="#{not empty style ? style : 'width:150px'}"
+        pt:placeholder="#{(columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled) ? '' : messages.setValueForColumn}">
+        <p:ajax
+          event="change"
+          partialSubmit="true"
+          resetValues="true"
+          update="@this" />
+      </p:inputText>
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{headerText}" />
+        <ui:param
+          name="required"
+          value="#{displayRequired}" />
+      </ui:include>
+    </f:facet>
+    <h:panelGroup id="#{columnId}#{constants.REQUIRED_FIELD}">
+      <h:outputText
+        rendered="#{not empty displayRequiredCell and displayRequiredCell}"
+        value="&#160;*"
+        title="#{messages.requiredHint}"
+        styleClass="required" />
+    </h:panelGroup>
+    <p:inputText
+      id="#{columnId}#{constants.INPUT}"
+      disabled="#{columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled}"
+      value="#{not empty hideValueIfFieldDisabled and hideValueIfFieldDisabled and (columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled) ? null : value}"
+      valueChangeListener="#{bean.valueChanged}"
+      title="#{not empty watermarkValue and not empty watermarkValueHint ? watermarkValueHint : (not empty hideValueIfFieldDisabled and hideValueIfFieldDisabled and (columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled) ? null : value)}"
+      maxlength="#{not empty maxLength ? maxLength : -1}"
+      styleClass="inline-input #{columnId}#{constants.INPUT}#{rowIndex}"
+      style="#{not empty style ? style : 'width:150px;'} #{not empty watermarkValue and not empty watermarkValueHint ? 'pointer-events: all !important;' : ''}"
+      pt:placeholder="#{watermarkValue}">
+      <c:if test="#{attributeCouplingEnabled == null or not attributeCouplingEnabled}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true" />
+      </c:if>
+      <c:if test="#{attributeCouplingEnabled != null and attributeCouplingEnabled}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          listener="#{bean.updateCoupling(entity, columnId)}" />
+      </c:if>
+    </p:inputText>
+    <!-- Multiplex id selection from multiplex kit -->
+    <h:panelGroup id="#{columnId}#{constants.SELECTED}#{constants.GROUP}">
+      <c:if test="#{not empty multiplexIdSelectionRendered and multiplexIdSelectionRendered}">
+        <h:panelGrid
+          rendered="#{multiplexIdSelectionDropdownRendered}"
+          columns="1"
+          styleClass="noborder">
+          <h:selectOneMenu
+            id="#{columnId}#{constants.SELECTED}"
+            title="#{messages.multiplexIdSelectionHint.replace('{0}', sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID ? sampleEntity.multiplexKit.name : sampleEntity.multiplexKit2.name)}"
+            value="#{sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID ? sampleEntity.selectedMultiplexId : sampleEntity.selectedMultiplexId2}"
+            valueChangeListener="#{bean.selectedMultiplexIdChanged}"
+            converter="omnifaces.SelectItemsConverter"
+            styleClass="noborder"
+            style="width: 100%">
+            <f:selectItem itemLabel="" />
+            <f:selectItems
+              value="#{sampleEntity.getSelectionMultiplexIdsBySampleAttributeName(columnId)}"
+              var="item"
+              itemLabel="#{item.name}" />
+            <p:ajax
+              event="change"
+              global="false"
+              process="@this" />
+          </h:selectOneMenu>
+        </h:panelGrid>
+      </c:if>
+    </h:panelGroup>
+    <div>
+      <h:message
+        id="#{columnId}#{constants.MESSAGE}"
+        for="#{columnId}#{constants.INPUT}"
+        styleClass="errorMessageField" />
+    </div>
+  </p:column>
+  <ui:include src="/fragments/column/export-column.xhtml">
+    <ui:param
+      name="rendered"
+      value="#{rendered}" />
+    <ui:param
+      name="headerText"
+      value="#{headerText}" />
+    <ui:param
+      name="value"
+      value="#{value}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+  <h:panelGroup>
+    <p:commandButton
+      id="button-clipboard-#{clipboardid}"
+      value="#{messages.copyCalendarUrlButton}"
+      title="#{messages.copyCalendarUrlButtonHint}"
+      onclick="return false;" />
+    <pe:clipboard
+      trigger="button-clipboard-#{clipboardid}"
+      action="copy"
+      text="#{urlContainingToken}">
+      <p:ajax event="success" listener="#{contextManager.copyUrlEventSuccessfulListener}" />
+      <p:ajax event="error" listener="#{contextManager.copyUrlEventFailedListener}" />
+    </pe:clipboard>
+  </h:panelGroup>
+</ui:composition>

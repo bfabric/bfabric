@@ -1,0 +1,38 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <ui:include src="/dataset/details-content.xhtml">
+      <ui:param name="hideContent" value="false" />
+    </ui:include>
+
+    <h:panelGrid columns="10" styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+      <!--
+            <ui:include src="/fragments/button/export-and-download-csv.xhtml" />
+      -->
+      <ui:include src="/fragments/button/export-and-download-tsv.xhtml" />
+      <ui:include src="/fragments/button/export-and-download-html.xhtml" />
+      <ui:include src="/fragments/button/deriveDatasetTemplate.xhtml" />
+      <ui:include src="/fragments/button/createDatasetTemplate.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGroup rendered="#{dataset.typeInvalid}">
+      <p><h:outputText value="#{messages.fieldTypeCheckException}" styleClass="warning" /></p>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{dataset.entityNotFound}">
+      <p><h:outputText value="#{messages.fieldEntityNotFoundException}" styleClass="warning" /></p>
+    </h:panelGroup>
+
+    <ui:include src="/fragments/button/prevNextInContainer.xhtml" />
+    <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+    <ui:include src="/fragments/details/runnableApplications.xhtml">
+      <ui:param name="creationType" value="#{constants.CREATION_FROM_INPUT_DATASET}" />
+      <ui:param name="selectedDatasetId" value="#{dataset.id}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

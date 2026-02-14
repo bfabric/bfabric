@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{instance.additionalPrice > 0}">
+    <h:outputText value="#{messages.additionalPrice}" />
+    <h:outputText value="#{instance.additionalPrice}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,64 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+      <ui:include src="/fragments/details/replyto.xhtml" />
+
+      <h:outputText value="#{messages.type}" />
+      <h:panelGroup>
+        <h:outputText value="#{comment.discriminator}" />
+        <h:outputText rendered="#{comment.internal}" value=" (#{messages.internalLabel})" styleClass="warning" />
+      </h:panelGroup>
+
+      <ui:include src="/fragments/details/parent.xhtml">
+        <ui:param
+          name="tab"
+          value="#{comment.parentTab}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/pinned.xhtml" />
+      <ui:include src="/fragments/details/comment.xhtml" />
+      <ui:include src="/fragments/details/subject.xhtml" />
+
+      <c:if test="#{not empty comment.attachments}">
+        <h:outputText value="#{messages.attachments}" />
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="include"
+            value="/comment/attachment-columns.xhtml" />
+          <ui:param
+            name="tableContext"
+            value="comment" />
+          <ui:param
+            name="tableContent"
+            value="#{comment.attachments}" />
+          <ui:param
+            name="styleClass"
+            value="noborder hide-table-header inner" />
+          <ui:param
+            name="style"
+            value="margin-left: -4px;" />
+          <ui:param
+            name="paginator"
+            value="false" />
+        </ui:include>
+      </c:if>
+
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      <ui:include src="/fragments/details/viewedby.xhtml" />
+      <ui:include src="/fragments/details/starredby.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      rendered="#{identityManager.hasCurrentUserRole('commentReader') and comment.updatable}"
+      columns="1"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

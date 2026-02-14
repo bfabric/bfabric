@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('samples')}">
+    <ui:include src="/rununit/samples.xhtml">
+      <ui:param
+        name="runUnitEntity"
+        value="#{run.runUnit}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

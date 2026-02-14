@@ -1,0 +1,99 @@
+/*
+    MIT License
+
+    Copyright (c) 2005-2026 Functional Genomics Center Zurich, UZH/ETH Zurich
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+ */
+package org.bfabric.webservice.server.manager;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.bfabric.Messages;
+import org.bfabric.entity.Sample;
+import org.bfabric.forms.AbstractMF;
+import org.bfabric.forms.MFSample;
+import org.bfabric.service.SampleService;
+import org.bfabric.util.StringHelper;
+import org.bfabric.webservice.request.parameter.XMLRequestParameterReadEntity;
+import org.bfabric.webservice.request.parameter.XMLRequestParameterReadSample;
+import org.bfabric.webservice.request.parameter.XMLRequestParameterSaveSample;
+import org.bfabric.webservice.response.XMLResponse;
+import org.bfabric.xml.entity.XMLSample;
+
+public class WSSampleManager extends AbstractWSEntityManager<Sample, XMLSample> {
+
+    @Inject
+    private SampleService sampleService;
+
+    @Override
+    protected AbstractMF getModificationFormPersist(Object aXmlRequestSaveEntity) {
+        return new MFSample(getInstance(), (XMLRequestParameterSaveSample) aXmlRequestSaveEntity);
+    }
+
+    @Override
+    protected AbstractMF getModificationFormUpdate(Object aXmlRequestSaveEntity) {
+        return new MFSample(getInstance(), (XMLRequestParameterSaveSample) aXmlRequestSaveEntity);
+    }
+
+    @Override
+    protected <T> void isValid(T entity) throws Exception {
+        super.isValid(entity);
+        handleValidationErrors(sampleService.isValid(getInstance()));
+    }
+
+    @Override
+    public <Q extends XMLRequestParameterReadEntity> XMLResponse read(Q query, Integer requestedPage, boolean idOnly) {
+        XMLResponse xmlResponse = new XMLResponse();
+        try {
+            XMLRequestParameterReadSample sampleQuery = (XMLRequestParameterReadSample) query;
+            xmlResponse.setNumberofpages(getNumberOfPages(query));
+            int page = requestedPage != null && requestedPage > 0 ? requestedPage : 1;
+            xmlResponse.setPage(page);
+            List<Sample> entitiesToRead = getEntities(query, page - 1);
+            if (entitiesToRead != null) {
+                xmlResponse.setEntitiesonpage(entitiesToRead.size());
+                for (Sample sample : entitiesToRead) {
+                    sample.setReadRequestParameter(sampleQuery);
+                    if ((sampleQuery.includeassociations || sampleQuery.includefamily) && sample.getFamily() != null) {
+                        for (Sample family : sample.getFamily()) {
+                            family.setReadRequestParameter(sampleQuery);
+                            family.setFamilyId(sample.getId());
+                            XMLSample xmlSample = createNewXmlEntity(family, idOnly);
+                            xmlResponse.add(xmlSample);
+                        }
+                    } else {
+                        XMLSample xmlSample = createNewXmlEntity(sample, idOnly);
+                        xmlResponse.add(xmlSample);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            xmlResponse.setErrorreport(StringHelper.isNotEmpty(e.getMessage()) ? e.getMessage() : Messages.get("exceptionUnexpectedFailure"));
+        }
+        return xmlResponse;
+    }
+
+    @Override
+    public void save() {
+        sampleService.save(getInstance(), false);
+    }
+}

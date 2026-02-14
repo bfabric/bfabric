@@ -1,0 +1,41 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:dialog
+    id="selectSubmitterModalPanel"
+    widgetVar="selectSubmitterModalDialog"
+    dynamic="true"
+    modal="true"
+    onShow="repositionDialog();">
+    <f:facet name="header">
+      <h:outputText value="#{messages.select} #{messages.submitter}" />
+    </f:facet>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="submitter" />
+      <ui:param
+        name="tableContent"
+        value="#{submitterList.availableSubmitters}" />
+      <ui:param
+        name="include"
+        value="/submitter/select-columns.xhtml" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="none" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action">
+      <p:commandButton
+        value="#{messages.cancel}"
+        immediate="true"
+        global="false"
+        oncomplete="PF('selectSubmitterModalDialog').hide()" />
+    </h:panelGrid>
+  </p:dialog>
+</ui:composition>

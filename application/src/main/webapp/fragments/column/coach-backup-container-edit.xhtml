@@ -1,0 +1,36 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui">
+  <p:column field="coachBackup.name" headerText="#{messages.coachBackup}">
+    <!--
+    <f:facet name="header">
+      <h:panelGrid columns="1" styleClass="nospace noborder">
+        <h:outputText value="#{messages.coachBackup}" />
+        <ui:include src="/fragments/autocomplete.xhtml">
+          <ui:param name="componentId" value="reassign-coachBackup-all" />
+          <ui:param name="value" value="#{dutyManager.selectedUser}" />
+          <o:methodParam name="completeMethod" value="#{dutyManager.getEmployees}" />
+          <o:methodParam name="valueChangeListener" value="#{dutyManager.reassignCoachBackupForAllListener}" />
+          <ui:param name="ajaxChange" value="true" />
+          <ui:param name="forceSelection" value="true" />
+          <ui:param name="itemSelectUpdate" value="@this, @([id$=reassign-coachBackup])" />
+          <ui:param name="itemLabel" value="#{item.firstLastName}" />
+          <ui:param name="styleClass" value="editWidth" />
+          <ui:param name="inputStyleClass" value="editWidth" />
+        </ui:include>
+      </h:panelGrid>
+    </f:facet>
+    -->
+    <ui:include src="/fragments/autocomplete.xhtml">
+      <ui:param name="componentId" value="reassign-coachBackup" />
+      <ui:param name="value" value="#{entity.coachBackup}" />
+      <o:methodParam name="completeMethod" value="#{dutyManager.getEmployees}" />
+      <o:methodParam name="valueChangeListener" value="#{entity.coachBackupChangedListener}" />
+      <ui:param name="forceSelection" value="true" />
+      <ui:param name="clearButtonRendered" value="false" />
+      <ui:param name="itemLabel" value="#{item.firstLastName}" />
+      <ui:param name="styleClass" value="editWidth" />
+      <ui:param name="inputStyleClass" value="editWidth" />
+    </ui:include>
+  </p:column>
+</ui:composition>

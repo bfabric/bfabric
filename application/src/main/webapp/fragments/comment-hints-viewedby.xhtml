@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="commentEntity" type="org.bfabric.entity.Comment"-->
+  <p:commandLink
+    id="viewed"
+    actionListener="#{commentHelper.switchViewedBy(commentEntity, currentUser)}"
+    title="#{commentEntity.getViewedByHint(currentUser)}"
+    immediate="true"
+    process="viewed"
+    update="viewed">
+    <h:panelGroup rendered="#{commentEntity.viewedBy.contains(currentUser)}">
+      <i class="far fa-eye" />
+    </h:panelGroup>
+    <h:panelGroup rendered="#{not commentEntity.viewedBy.contains(currentUser)}">
+      <i class="fas fa-eye-slash orange" />
+    </h:panelGroup>
+  </p:commandLink>
+</ui:composition>

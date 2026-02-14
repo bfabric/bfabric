@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('userCreatable')}">
+    <p:column
+      field="#{fieldPrefix}userCreatable"
+      headerText="#{messages.userCreatable}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="userCreatable" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.userCreatable)}"
+        styleClass="#{stringHelper.toGreenRed(entity.userCreatable)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

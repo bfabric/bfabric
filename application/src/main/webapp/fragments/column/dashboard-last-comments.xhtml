@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column headerText="#{messages.comment}">
+    <h:outputText value="#{stringHelper.truncate(entity.comment, 80)}" title="#{entity.comment}" />
+  </p:column>
+  <ui:include src="/fragments/column/created.xhtml" />
+</ui:composition>

@@ -1,0 +1,15 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('purchases')}">
+    <p:column field="#{fieldPrefix}purchases" headerText="#{messages.purchases}">
+      <ui:repeat value="#{entity.purchases}" var="item">
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param name="instance" value="#{item}" />
+          <ui:param name="entityValue" value="#{item.name}" />
+        </ui:include>
+        <br />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

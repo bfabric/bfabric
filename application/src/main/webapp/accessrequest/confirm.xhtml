@@ -1,0 +1,72 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.accessRequested}: #{accessRequest.accessRequestType.name}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:panelGroup rendered="#{accessRequest.personalAccessCardAccess or accessRequest.guestAccessCardApplication}">
+      <h:panelGroup rendered="#{accessRequest.user.equals(currentUser)}">
+        <p>You have requested access to our lab.</p>
+
+        <p>Please pass by the ${configuration.deployerAbbreviation} administration office (${configuration.accessRequestManagerAddress}) for the ID check. </p>
+
+        <h:panelGroup rendered="#{not empty accessRequest.user.accessCardNumber}">
+          <p>In fact, you are kindly requested to bring along your UZH Access Card AND your ID, passport or permit. Our access profile will be loaded onto your existing UZH card.</p>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{empty accessRequest.user.accessCardNumber}">
+          <p>In fact, you are kindly requested to bring along your ID, passport or permit. We will also need a picture (a selfie with a white background is fine)
+            which can be sent by e-mail to the ${configuration.deployerAbbreviation} administration office after having performed the ID check.</p>
+          <p>#{messages.accessRequestPickUpAccessCard}</p>
+        </h:panelGroup>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{not accessRequest.user.equals(currentUser)}">
+        <p>#{messages.accessRequestedLab} #{accessRequest.user.name}.</p>
+        <p>#{messages.informedUserAccessRequest}</p>
+      </h:panelGroup>
+
+      <p>${messages.accessRequestManagerOfficeTimes}: #{configuration.accessRequestManagerOfficeTimes}</p>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:button
+          outcome="#{accessRequest.user.urlShowScreen}"
+          value="#{messages.userDetails}">
+          <f:param
+            name="id"
+            value="#{accessRequest.user.id}" />
+        </p:button>
+      </h:panelGrid>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{accessRequest.guestAccessCardExtension}">
+      <h:panelGroup rendered="#{accessRequest.user.equals(currentUser)}">
+        <p>#{messages.extensionCard}</p>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{not accessRequest.user.equals(currentUser)}">
+        <p>#{messages.extensionCardUser} #{accessRequest.user.name}.</p>
+        <p>#{messages.informedUserExtensionRequest}</p>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:button
+          outcome="#{accessRequest.user.urlShowScreen}"
+          value="#{messages.userDetails}">
+          <f:param
+            name="id"
+            value="#{accessRequest.user.id}" />
+        </p:button>
+      </h:panelGrid>
+    </h:panelGroup>
+  </ui:define>
+</ui:composition>

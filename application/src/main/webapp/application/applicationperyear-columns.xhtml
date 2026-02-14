@@ -1,0 +1,35 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.workunits}" />
+    <ui:param
+      name="value"
+      value="#{entity[1]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.resources}" />
+    <ui:param
+      name="value"
+      value="#{entity[2]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.size}" />
+    <ui:param
+      name="value"
+      value="#{numberUtils.getPrintSize(entity[3])}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.runs}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+</ui:composition>

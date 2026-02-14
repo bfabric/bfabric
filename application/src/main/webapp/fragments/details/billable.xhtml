@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not instance.billable}">
+    <h:outputText value="#{messages.billable}" title="#{messages.billableHint}" />
+    <h:outputText value="#{instance.billable}" title="#{messages.billableHint}" />
+  </c:if>
+</ui:composition>

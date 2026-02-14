@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.orderId}" />
+  </ui:include>
+  <ui:include src="/fragments/column/project.xhtml" />
+  <ui:include src="/fragments/column/servicetype.xhtml" />
+  <ui:include src="/fragments/column/name.xhtml" />
+  <ui:include src="/fragments/column/libraryprotocol.xhtml" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{orderList.orderStatusEnums}" />
+  </ui:include>
+  <ui:include src="/fragments/column/customstatus.xhtml">
+    <o:methodParam
+      name="completeMethod"
+      value="#{genomicsViewManager.getCustomOrderStatesFiltered}" />
+  </ui:include>
+  <ui:include src="/fragments/column/userSamplesCount.xhtml" />
+  <ui:include src="/fragments/column/sample-count.xhtml" />
+  <ui:include src="/fragments/column/sequencingapplication.xhtml" />
+  <ui:include src="/fragments/column/instrument.xhtml" />
+  <ui:include src="/fragments/column/coach.xhtml" />
+  <ui:include src="/fragments/column/offeredTotal.xhtml" />
+  <ui:include src="/fragments/column/instituteorganization.xhtml" />
+  <ui:include src="/fragments/column/express.xhtml" />
+</ui:composition>

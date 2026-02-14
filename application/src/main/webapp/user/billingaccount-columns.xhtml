@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:param
+    name="fieldPrefix"
+    value="userBillingInfo." />
+  <ui:param
+    name="entity"
+    value="#{entity.userBillingInfo}" />
+  <ui:include src="/userBillingInfo/columns.xhtml" />
+</ui:composition>

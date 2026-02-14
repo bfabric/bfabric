@@ -1,0 +1,162 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{project.hasCurrentUserRole('containerManager')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="label"
+      value="#{messages.computerLogin}" />
+    <ui:param
+      name="tab"
+      value="sync" />
+    <ui:param
+      name="showAlways"
+      value="#{identityManager.hasCurrentUserRole('containerManager') and project.statusSyncable}" />
+  </ui:include>
+
+  <c:if test="#{project.accepted}">
+    <ui:include src="/fragments/sidebar/costs.xhtml" />
+
+    <ui:include src="/fragments/sidebar/members.xhtml">
+      <ui:param
+        name="content"
+        value="#{membershipList.getCurrentLazyModel(project)}" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+
+  <c:if test="#{configuration.dataManagementEnabled}">
+    <ui:include src="/fragments/sidebar/samples.xhtml">
+      <ui:param
+        name="showAlways"
+        value="#{project.accepted}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/workunits.xhtml">
+      <ui:param
+        name="showAlways"
+        value="#{project.accepted}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/resources.xhtml">
+      <ui:param
+        name="showAlways"
+        value="#{project.accepted}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/importresources.xhtml">
+      <ui:param name="showAlways" value="#{project.accepted}" />
+      <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/datasets.xhtml">
+      <ui:param
+        name="showAlways"
+        value="#{project.accepted}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/runnableApplications.xhtml" />
+  </c:if>
+
+  <c:if test="#{configuration.workflowEnabled}">
+    <ui:include src="/fragments/sidebar/workflows.xhtml">
+      <ui:param
+        name="enabled"
+        value="#{project.accepted and project.hasCurrentUserRole('containerReader')}" />
+      <ui:param
+        name="showAlways"
+        value="#{project.accepted and project.hasCurrentUserRole('containerReader')}" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{configuration.labEnabled and project.hasCurrentUserRole('labManager')}">
+    <ui:include src="/fragments/sidebar/runs.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/offers.xhtml" />
+
+  <ui:include src="/fragments/sidebar/orders.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{project.renderedOrders}" />
+    <ui:param
+      name="showAlways"
+      value="#{project.renderedOrders}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/charges.xhtml">
+    <ui:param
+      name="showAlways"
+      value="#{project.renderedCharges}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/bookings.xhtml">
+    <ui:param
+      name="showAlways"
+      value="#{project.renderedBookings}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/instrumentreservations.xhtml">
+    <ui:param
+      name="showAlways"
+      value="#{configuration.instrumentReservationEnabled and project.acceptedButNotPublished}" />
+  </ui:include>
+
+  <c:if test="#{project.renderedFeedbacks}">
+    <ui:include src="/fragments/sidebar/feedbacks.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/mails.xhtml">
+    <ui:param
+      name="enabled"
+      value="#{project.mailsUserReadable}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{project.associatedDatasets}" />
+    <ui:param
+      name="label"
+      value="#{messages.associatedDatasets}" />
+    <ui:param
+      name="tab"
+      value="associateddatasets" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{project.reviews}" />
+    <ui:param
+      name="label"
+      value="#{messages.reviews}" />
+    <ui:param
+      name="tab"
+      value="reviews" />
+    <ui:param
+      name="enabled"
+      value="#{project.renderedReviews}" />
+    <ui:param
+      name="showAlways"
+      value="#{project.renderedReviews}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/timeline.xhtml" />
+  <ui:include src="/fragments/sidebar/tree.xhtml" />
+
+  <c:if test="#{not project.published}">
+    <h:outputLink
+      value="#{configuration.urlTermsAndConditions}"
+      target="_blank"
+      rel="noopener">Terms and Conditions</h:outputLink>
+    <span />
+  </c:if>
+</ui:composition>

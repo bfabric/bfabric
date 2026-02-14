@@ -1,0 +1,1773 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="contextContainer" type="org.bfabric.entity.Container"-->
+  <h:form>
+    <ui:include src="/fragments/header-deployer-logo.xhtml" />
+    <ui:include src="/fragments/hot-keys-public.xhtml" />
+    <c:if test="#{loggedIn}">
+      <ui:include src="/fragments/hot-keys.xhtml" />
+      <h:panelGrid
+        columns="3"
+        styleClass="page-subheader"
+        columnClasses="max-width,">
+        <h:panelGroup styleClass="header-menubar">
+          <h:panelGrid columns="2">
+            <p:menubar styleClass="transparent">
+              <p:submenu
+                icon="fas fa-tasks menu-icon-padding">
+                <p:menuitem
+                  outcome="/task/list.xhtml?tab=details"
+                  value="#{messages.tasks}"
+                  title="#{messages.tasksHint}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+                  outcome="/order/genomics-list.xhtml"
+                  value="#{messages.genomicsOrders}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+                  outcome="/order/proteomics-list.xhtml"
+                  value="#{messages.proteomicsOrders}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu icon="fas fa-table menu-icon-padding">
+                <p:menuitem
+                  rendered="#{configuration.orderEnabled}"
+                  outcome="/search/show.xhtml"
+                  value="#{messages.myOrders}"
+                  title="#{messages.ordersHint}">
+                  <f:param
+                    name="type"
+                    value="order" />
+                  <f:param
+                    name="showAll"
+                    value="false" />
+                  <f:param
+                    name="creator"
+                    value="false" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/search/show.xhtml"
+                  value="#{messages.myProjects}"
+                  title="#{messages.projectsHint}">
+                  <f:param
+                    name="type"
+                    value="project" />
+                  <f:param
+                    name="showAll"
+                    value="false" />
+                  <f:param
+                    name="creator"
+                    value="false" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{configuration.dataManagementEnabled}">
+                  <p:menuitem
+                    outcome="/search/show.xhtml"
+                    value="#{messages.mySamples}"
+                    title="#{messages.samplesHint}">
+                    <f:param
+                      name="type"
+                      value="sample" />
+                    <f:param
+                      name="showAll"
+                      value="false" />
+                    <f:param
+                      name="creator"
+                      value="true" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/search/show.xhtml"
+                    value="#{messages.myWorkunits}"
+                    title="#{messages.workunitsHint}">
+                    <f:param
+                      name="type"
+                      value="workunit" />
+                    <f:param
+                      name="showAll"
+                      value="false" />
+                    <f:param
+                      name="creator"
+                      value="true" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/search/show.xhtml"
+                    value="#{messages.myDatasets}"
+                    title="#{messages.datasetsHint}">
+                    <f:param
+                      name="type"
+                      value="dataset" />
+                    <f:param
+                      name="showAll"
+                      value="false" />
+                    <f:param
+                      name="creator"
+                      value="true" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+                <c:if test="#{configuration.orderEnabled}">
+                  <p:menuitem
+                    outcome="/search/show.xhtml"
+                    value="#{messages.allOrders}"
+                    title="#{messages.ordersAllHint}">
+                    <f:param
+                      name="type"
+                      value="order" />
+                    <f:param
+                      name="showAll"
+                      value="true" />
+                    <f:param
+                      name="creator"
+                      value="false" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+                <p:menuitem
+                  outcome="/search/show.xhtml"
+                  value="#{messages.allProjects}"
+                  title="#{messages.projectsAllHint}">
+                  <f:param
+                    name="type"
+                    value="project" />
+                  <f:param
+                    name="showAll"
+                    value="true" />
+                  <f:param
+                    name="creator"
+                    value="false" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{configuration.dataManagementEnabled}">
+                  <p:menuitem
+                    outcome="/search/show.xhtml"
+                    value="#{messages.allSamples}"
+                    title="#{messages.samplesAllHint}">
+                    <f:param
+                      name="type"
+                      value="sample" />
+                    <f:param
+                      name="showAll"
+                      value="true" />
+                    <f:param
+                      name="creator"
+                      value="false" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/search/show.xhtml"
+                    value="#{messages.allWorkunits}"
+                    title="#{messages.workunitsAllHint}">
+                    <f:param
+                      name="type"
+                      value="workunit" />
+                    <f:param
+                      name="showAll"
+                      value="true" />
+                    <f:param
+                      name="creator"
+                      value="false" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/search/show.xhtml"
+                    value="#{messages.allDatasets}"
+                    title="#{messages.datasetsAllHint}">
+                    <f:param
+                      name="type"
+                      value="dataset" />
+                    <f:param
+                      name="showAll"
+                      value="true" />
+                    <f:param
+                      name="creator"
+                      value="false" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+                icon="fas fa-box menu-icon-padding">
+                <p:menuitem
+                  outcome="/booking/list.xhtml"
+                  value="#{messages.bookings}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/charge/list.xhtml"
+                  value="#{messages.charges}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{configuration.dataManagementEnabled}">
+                  <p:menuitem
+                    outcome="/dataset/list.xhtml"
+                    value="#{messages.datasets}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('admin')}"
+                    outcome="/datasetattribute/list.xhtml"
+                    value="#{messages.datasetAttributes}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('admin')}"
+                    outcome="/datasetfield/list.xhtml"
+                    value="#{messages.datasetFields}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/datasettemplate/list.xhtml"
+                    value="#{messages.datasetTemplates}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('admin')}"
+                    outcome="/datasettemplateattribute/list.xhtml"
+                    value="#{messages.datasetTemplateAttributes}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+                <p:menuitem
+                  outcome="/offer/list.xhtml"
+                  value="#{messages.offers}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{configuration.orderEnabled}">
+                  <p:menuitem
+                    outcome="/order/list.xhtml"
+                    value="#{messages.orders}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/orderitem/list.xhtml"
+                    value="#{messages.orderItems}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+                <p:menuitem
+                  outcome="/project/list.xhtml"
+                  value="#{messages.projects}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{configuration.dataManagementEnabled}">
+                  <p:menuitem
+                    outcome="/resource/list.xhtml"
+                    value="#{messages.resources}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/sample/list.xhtml"
+                    value="#{messages.samples}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/sampletype/list.xhtml"
+                    value="#{messages.sampleTypes}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/sampleattribute/list.xhtml"
+                    value="#{messages.sampleAttributes}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/workunit/list.xhtml"
+                    value="#{messages.workunits}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+              </p:submenu>
+              <p:submenu icon="fas fa-plus-square menu-icon-padding">
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('containerManager')}"
+                  outcome="/charge/edit-batch-with-create.xhtml"
+                  value="#{messages.addCharges}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('containerManager')}"
+                  outcome="/offer/edit.xhtml"
+                  value="#{messages.createOffer}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{configuration.orderEnabled}">
+                  <p:menuitem
+                    outcome="/order/edit.xhtml"
+                    value="#{messages.createOrder}"
+                    title="#{messages.createOrderHint}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+                <p:menuitem
+                  outcome="/project/edit.xhtml"
+                  value="#{messages.createProject}"
+                  title="#{messages.createProjectHint}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{configuration.dataManagementEnabled}">
+                  <p:menuitem
+                    rendered="#{contextContainer.containerProject and contextContainer.sampleCreatable}"
+                    outcome="/sample/edit.xhtml"
+                    value="#{messages.createSample}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{contextContainer.containerProject and contextContainer.sampleCreatable}"
+                    outcome="/sample/edit-batch.xhtml"
+                    value="#{messages.batchCreateSamples}"
+                    title="#{messages.batchCreateSamplesHint}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                    <f:param
+                      name="skipSelect"
+                      value="true" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{contextContainer.containerProject and contextContainer.sampleCreatable}"
+                    outcome="/sample/edit-batch.xhtml"
+                    value="#{messages.batchEditSamples}"
+                    title="#{messages.batchEditSamplesHint}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                    <f:param
+                      name="skipSelect"
+                      value="false" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{contextContainer.extensible}"
+                    outcome="/dataset/edit.xhtml"
+                    value="#{messages.createDataset}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{contextContainer.extensible}"
+                    outcome="/application/run.xhtml"
+                    value="#{messages.importWorkunit}">
+                    <f:param name="applicationTypeName" value="#{constants.APPLICATION_TYPE_IMPORT}" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{contextContainer.extensible}"
+                    outcome="/application/run.xhtml"
+                    value="#{messages.analyzeWorkunit}">
+                    <f:param name="applicationTypeName" value="#{constants.APPLICATION_TYPE_ANALYSIS}" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{contextContainer.extensible}"
+                    outcome="/application/run.xhtml"
+                    value="#{messages.webApps}">
+                    <f:param name="applicationTypeName" value="#{constants.APPLICATION_TYPE_WEBAPP}" />
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{contextContainer.renderedAddWorkflowButton}"
+                    outcome="/workflow/edit.xhtml"
+                    value="#{messages.createWorkflow}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+              </p:submenu>
+              <p:submenu
+                icon="far fa-calendar-alt menu-icon-padding"
+                rendered="#{(configuration.instrumentReservationEnabled or configuration.agendaEnabled) and (identityManager.hasCurrentUserRole('user') or identityManager.hasCurrentUserRole('instrumentReader') or identityManager.hasCurrentUserRole('agendaUser') or identityManager.hasCurrentUserRole('agendaManager'))}">
+                <c:if test="#{configuration.instrumentReservationEnabled}">
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('user') or identityManager.hasCurrentUserRole('instrumentReader')}"
+                    outcome="/instrumentschedule/list.xhtml?view=nonRejected"
+                    value="#{messages.instrumentReservation}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('instrumentReader')}"
+                    outcome="/instrumentreservation/list.xhtml"
+                    value="#{messages.instrumentReservations}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('admin')}"
+                    outcome="/instrumentreservationsetting/list.xhtml"
+                    value="#{messages.instrumentReservationSettings}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+                <c:if test="#{configuration.agendaEnabled}">
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('agendaReader')}"
+                    outcome="/eventschedule/list.xhtml"
+                    value="#{messages.agenda}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('agendaManager')}"
+                    outcome="/event/list.xhtml"
+                    value="#{messages.events}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('agendaManager')}"
+                    outcome="/credit/list.xhtml"
+                    value="#{messages.credits}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('agendaManager')}"
+                    outcome="/eventtype/list.xhtml"
+                    value="#{messages.eventTypes}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('agendaManager')}"
+                    outcome="/eventschedule/reports.xhtml"
+                    value="#{messages.agendaReports}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('agendaManager') and agendaEventClosable}"
+                    outcome="/eventschedule/close-year.xhtml"
+                    value="#{messages.closeAgendaYear}"
+                    onclick="if(confirm('#{messages.closeAgendaYearConfirm}')){PF('mpWait').show(); return true; } else { return false; }">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    rendered="#{identityManager.hasCurrentUserRole('agendaManager')}"
+                    outcome="/user/employees.xhtml"
+                    value="#{messages.employees}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+              </p:submenu>
+              <p:submenu icon="fas fa-microscope menu-icon-padding">
+                <c:if test="#{identityManager.hasCurrentUserRole('instrumentReader')}">
+                  <p:menuitem
+                    outcome="/instrument/list.xhtml"
+                    value="#{messages.instruments}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/instrumentevent/list.xhtml"
+                    value="#{messages.instrumentEvents}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/instrumenteventtype/list.xhtml"
+                    value="#{messages.instrumentEventTypes}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <c:if test="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+                    <p:menuitem
+                      outcome="/user/assign-trainedinstruments.xhtml"
+                      value="#{messages.assignTrainedUsers}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                  </c:if>
+                  <c:if test="#{configuration.orderEnabled}">
+                    <p:menuitem
+                      outcome="/instrumentdatadelivery/list.xhtml"
+                      value="#{messages.instrumentDataDeliveries}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                    <p:menuitem
+                      outcome="/instrumentdatapackage/list.xhtml"
+                      value="#{messages.instrumentDataPackages}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                    <p:menuitem
+                      outcome="/instrumentreadconfiguration/list.xhtml"
+                      value="#{messages.instrumentReadConfiguration}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                    <p:menuitem
+                      outcome="/sequencingapplication/list.xhtml"
+                      value="#{messages.sequencingApplications}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                    <p:menuitem
+                      outcome="/sequencingapplicationindexlength/list.xhtml"
+                      value="#{messages.sequencingApplicationIndexLengths}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                    <p:menuitem
+                      outcome="/demultiplexing/list.xhtml"
+                      value="#{messages.demultiplexing}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                  </c:if>
+                </c:if>
+                <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+                  <c:if test="#{configuration.orderEnabled}">
+                    <p:menuitem
+                      outcome="/orderattribute/list.xhtml"
+                      value="#{messages.orderAttributes}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                  </c:if>
+                </c:if>
+                <c:if test="#{configuration.dataManagementEnabled}">
+                  <p:menuitem
+                    outcome="/samplepreparationprotocol/list.xhtml"
+                    value="#{messages.samplePrepProtocols}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+                    <p:menuitem
+                      outcome="/option/list.xhtml"
+                      value="#{messages.options}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                    <p:menuitem
+                      outcome="/optionvalue/list.xhtml"
+                      value="#{messages.optionValues}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                  </c:if>
+                </c:if>
+              </p:submenu>
+              <p:submenu
+                rendered="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}"
+                icon="fas fa-flask menu-icon-padding">
+                <p:menuitem
+                  outcome="/plate/list.xhtml"
+                  value="#{messages.plates}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/platelayout/list.xhtml"
+                  value="#{messages.plateLayouts}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/platetype/list.xhtml"
+                  value="#{messages.plateTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/run/list.xhtml"
+                  value="#{messages.runs}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/runsample/list.xhtml"
+                  value="#{messages.runSamples}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/rununit/list.xhtml"
+                  value="#{messages.runUnits}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/rununitlane/list.xhtml"
+                  value="#{messages.runUnitLanes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/rununittype/list.xhtml"
+                  value="#{messages.runUnitTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/controlsample/list.xhtml"
+                  value="#{messages.controlSample}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/multiplexkit/list.xhtml"
+                  value="#{messages.multiplexKits}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/multiplexid/list.xhtml"
+                  value="#{messages.multiplexIds}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/sample/label.xhtml"
+                  value="#{messages.createMultiplexIdSamples}"
+                  title="#{messages.createMultiplexIdSamplesHint}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/sample/multiplex.xhtml"
+                  value="#{messages.multiplexSample}"
+                  title="#{messages.multiplexSampleHint}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('serviceReader')}"
+                icon="fas fa-store menu-icon-padding">
+                <p:menuitem
+                  outcome="/service/list.xhtml"
+                  value="#{messages.services}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/servicearea/list.xhtml"
+                  value="#{messages.serviceAreas}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/servicetype/list.xhtml"
+                  value="#{messages.serviceTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/service/prices.xhtml"
+                  value="#{messages.servicePrices}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('serviceManager')}"
+                  outcome="/servicecode/list.xhtml"
+                  value="#{messages.serviceCodes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/servicetypecollection/list.xhtml"
+                  value="#{messages.serviceTypeCollections}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/contactinfo/list.xhtml"
+                  value="#{messages.contactInfos}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/storagemodel/list.xhtml"
+                  value="#{messages.storageModels}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('containerReader') and configuration.workflowEnabled}"
+                icon="fas fa-cog menu-icon-padding">
+                <p:menuitem
+                  outcome="/workflow/list.xhtml"
+                  value="#{messages.workflows}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/workflowstep/list.xhtml"
+                  value="#{messages.workflowSteps}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/workflowtemplate/list.xhtml"
+                  value="#{messages.workflowTemplates}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/workflowtemplatestep/list.xhtml"
+                  value="#{messages.workflowTemplateSteps}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('feedbackReader') and configuration.feedbackEnabled}"
+                icon="fas fa-poll-h menu-icon-padding">
+                <p:menuitem
+                  outcome="/feedback/list.xhtml"
+                  value="#{messages.feedbacks}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/feedbackquestion/list.xhtml"
+                  value="#{messages.feedbackQuestions}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('feedbackManager')}"
+                  outcome="/feedbackquestiontype/list.xhtml"
+                  value="#{messages.feedbackQuestionTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/feedbacktemplate/list.xhtml"
+                  value="#{messages.feedbackTemplates}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('feedbackManager')}"
+                  outcome="/feedbacktemplatetype/list.xhtml"
+                  value="#{messages.feedbackTemplateTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('admin')}"
+                  outcome="/widgettype/list.xhtml"
+                  value="#{messages.widgetTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('mailSender') or identityManager.hasCurrentUserRole('mailReader') or identityManager.hasCurrentUserRole('userGroupReader') or identityManager.hasCurrentUserRole('commentReader') }"
+                icon="fas fa-envelope menu-icon-padding">
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('mailSender')}"
+                  outcome="/mail/send.xhtml"
+                  value="#{messages.sendMail}"
+                  title="#{messages.sendBatchMailHint}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('mailReader')}"
+                  outcome="/mail/list.xhtml"
+                  value="#{messages.mails}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('commentReader')}"
+                  outcome="/comment/list.xhtml"
+                  value="#{messages.comments}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('commentReader')}"
+                  outcome="/commenttemplate/list.xhtml"
+                  value="#{messages.commentTemplates}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('commentReader')}"
+                  outcome="/attachment/list.xhtml"
+                  value="#{messages.attachments}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('affiliationReader') or identityManager.hasCurrentUserRole('employeeReader') or identityManager.hasCurrentUserRole('userGroupReader')}"
+                icon="fas fa-users menu-icon-padding">
+                <p:menuitem
+                  rendered="#{configuration.accessRequestEnabled and identityManager.hasCurrentUserRole('accessRequestManager')}"
+                  outcome="/accessrequest/list.xhtml"
+                  value="#{messages.accessRequests}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{configuration.accessRequestEnabled and identityManager.hasCurrentUserRole('accessRequestManager')}"
+                  outcome="/accessrequestprofile/list.xhtml"
+                  value="#{messages.accessRequestProfiles}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{configuration.accessRequestEnabled and identityManager.hasCurrentUserRole('accessRequestManager')}"
+                  outcome="/accessrequesttype/list.xhtml"
+                  value="#{messages.accessRequestTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('accessRequestManager')}"
+                  outcome="/systemproperty/list.xhtml"
+                  value="#{messages.systemProperties}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('employeeReader')}"
+                  outcome="/user/alumni.xhtml"
+                  value="#{messages.alumni}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('employeeReader')}"
+                  outcome="/user/employees-contact.xhtml"
+                  value="#{messages.employeeContacts}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/user/list.xhtml"
+                  value="#{messages.users}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('userGroupReader')}"
+                  outcome="/usergroup/list.xhtml"
+                  value="#{messages.userGroups}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/company/list.xhtml"
+                  value="#{messages.companies}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/department/list.xhtml"
+                  value="#{messages.departments}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/division/list.xhtml"
+                  value="#{messages.divisions}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/institute/list.xhtml"
+                  value="#{messages.institutes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/organization/list.xhtml"
+                  value="#{messages.organizations}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/organizationtype/list.xhtml"
+                  value="#{messages.organizationTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/organizationemailsuffix/list.xhtml"
+                  value="#{messages.organizationEmailSuffixes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('supplierReader') or identityManager.hasCurrentUserRole('purchaseReader') or identityManager.hasCurrentUserRole('contractReader')}"
+                icon="fas fa-file-signature menu-icon-padding">
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('supplierReader')}"
+                  outcome="/supplier/list.xhtml"
+                  value="#{messages.suppliers}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('purchaseReader')}"
+                  outcome="/consumable/list.xhtml"
+                  value="#{messages.consumables}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('purchaseReader')}"
+                  outcome="/purchase/list.xhtml"
+                  value="#{messages.purchases}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('purchaseReader')}"
+                  outcome="/purchaseitem/list.xhtml"
+                  value="#{messages.purchaseItems}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('contractReader')}"
+                  outcome="/contract/list.xhtml"
+                  value="#{messages.contracts}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('contractReader')}"
+                  outcome="/contracttype/list.xhtml"
+                  value="#{messages.contractTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                icon="fas fa-wallet menu-icon-padding"
+                rendered="#{identityManager.hasCurrentUserRole('bookingManager')}">
+                <p:menuitem
+                  outcome="/account/list.xhtml"
+                  value="#{messages.accounts}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/booker/list.xhtml"
+                  value="#{messages.bookers}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/bookingtype/list.xhtml"
+                  value="#{messages.bookingTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/costcentre/list.xhtml"
+                  value="#{messages.costCentres}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/financialcenter/list.xhtml"
+                  value="#{messages.financialCenters}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/taxtype/list.xhtml"
+                  value="#{messages.taxTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/booking/paid-bookings-upload.xhtml"
+                  value="#{messages.paidBookingsUpload}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('containerManager') or identityManager.hasCurrentUserRole('annotationManager') or identityManager.hasCurrentUserRole('technologyReader') or identityManager.hasCurrentUserRole('dataCleaner')}"
+                icon="fas fa-toolbox menu-icon-padding">
+                <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+                  <p:menuitem
+                    outcome="/entitylog/list.xhtml"
+                    value="#{messages.entityLog}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/orderedentity/list.xhtml"
+                    value="#{messages.dropdownPositions}"
+                    title="#{messages.dropdownPositionsHint}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <c:if test="#{configuration.legacyEnabled}">
+                    <p:menuitem
+                      outcome="/analysisreason/list.xhtml"
+                      value="#{messages.analysisReasons}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                  </c:if>
+                </c:if>
+                <c:if test="#{configuration.dataManagementEnabled and identityManager.hasCurrentUserRole('annotationManager')}">
+                  <p:menuitem
+                    outcome="/annotation/list.xhtml"
+                    value="#{messages.annotations}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/annotationtype/list.xhtml"
+                    value="#{messages.annotationTypes}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('technologyReader')}"
+                  outcome="/technology/list.xhtml"
+                  value="#{messages.technologies}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <c:if test="#{identityManager.hasCurrentUserRole('dataCleaner')}">
+                  <p:menuitem
+                    outcome="/duplicate/list.xhtml"
+                    value="#{messages.duplicates}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/duplicate/ignored.xhtml"
+                    value="#{messages.duplicatesIgnored}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/user/usersmerged.xhtml"
+                    value="#{messages.usersMerged}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <p:menuitem
+                    outcome="/unassigned/list.xhtml"
+                    value="#{messages.unassignedObjects}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                  <c:if test="#{configuration.dataManagementEnabled}">
+                    <p:menuitem
+                      outcome="/workunit/reassignable-samples.xhtml"
+                      value="#{messages.reassignableWorkunits}">
+                      <ui:include src="/fragments/context-container-param.xhtml" />
+                    </p:menuitem>
+                  </c:if>
+                  <p:menuitem
+                    outcome="/user/list-deletable.xhtml"
+                    value="#{messages.deletableUsers}">
+                    <ui:include src="/fragments/context-container-param.xhtml" />
+                  </p:menuitem>
+                </c:if>
+              </p:submenu>
+              <p:submenu
+                rendered="#{configuration.dataManagementEnabled and identityManager.hasCurrentUserRole('itReader')}"
+                icon="fas fa-screwdriver menu-icon-padding">
+                <p:menuitem
+                  outcome="/accessprotocol/list.xhtml"
+                  value="#{messages.accessProtocols}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/accesstype/list.xhtml"
+                  value="#{messages.accessTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/access/list.xhtml"
+                  value="#{messages.accesses}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/application/list.xhtml"
+                  value="#{messages.applications}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/applicationtype/list.xhtml"
+                  value="#{messages.applicationTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/applicationcategory/list.xhtml"
+                  value="#{messages.applicationCategories}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/applicationtestlog/list.xhtml"
+                  value="#{messages.applicationTestLog}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/executable/list.xhtml"
+                  value="#{messages.executables}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/parameter/list.xhtml"
+                  value="#{messages.parameters}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{configuration.unarchiveEnabled}"
+                  outcome="/externaljob/list.xhtml"
+                  value="#{messages.externalJobs}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/job/list.xhtml"
+                  value="#{messages.jobs}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/importresource/list.xhtml"
+                  value="#{messages.importResources}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/pageflow/list.xhtml"
+                  value="#{messages.pageflows}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/pageflowstep/list.xhtml"
+                  value="#{messages.pageflowSteps}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/storage/list.xhtml"
+                  value="#{messages.storages}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/submitter/list.xhtml"
+                  value="#{messages.submitters}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/wrappercreator/list.xhtml"
+                  value="#{messages.wrapperCreators}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/webservicelog/list.xhtml"
+                  value="#{messages.webServiceLog}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{identityManager.hasCurrentUserRole('admin')}"
+                icon="fas fa-wrench menu-icon-padding">
+                <p:menuitem
+                  outcome="/systemproperty/list.xhtml"
+                  value="#{messages.systemProperties}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/scheduledjoblog/list.xhtml"
+                  value="#{messages.scheduledJobLog}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/instrumentreservationtype/list.xhtml"
+                  value="#{messages.instrumentReservationTypes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/role/list.xhtml"
+                  value="#{messages.roles}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/role/assign-roles.xhtml"
+                  value="#{messages.assignRoles}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/indexing/index.xhtml"
+                  value="#{messages.indexing}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/blacklist/list.xhtml"
+                  value="#{messages.blacklists}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/currency/list.xhtml"
+                  value="#{messages.currencies}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/customattribute/list.xhtml"
+                  value="#{messages.customAttributes}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/customstatus/list.xhtml"
+                  value="#{messages.customStatus}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/containerstatus/list.xhtml"
+                  value="#{messages.containerStatus}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/link/list.xhtml"
+                  value="#{messages.links}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/query/list.xhtml"
+                  value="#{messages.queries}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/user/list-billingaccounts.xhtml"
+                  value="#{messages.userBillingAccounts}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/user/list-settings.xhtml"
+                  value="#{messages.userSettings}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/user/logins.xhtml"
+                  value="#{messages.loggedInUsers}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/about.xhtml"
+                  value="#{messages.about}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+              <p:submenu
+                rendered="#{configuration.dataManagementEnabled and identityManager.hasCurrentUserRole('user')}"
+                icon="fas fa-shopping-cart menu-icon-padding">
+                <p:menuitem
+                  rendered="#{not empty currentUser.selectedResourceBasket}"
+                  outcome="/resourcebasket/show.xhtml"
+                  value="#{messages.resourceBasket}"
+                  title="#{messages.resourceBasketHint}">
+                  <f:param name="id" value="#{currentUser.selectedResourceBasket.id}" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{empty currentUser.selectedResourceBasket}"
+                  outcome="/resourcebasket/show.xhtml"
+                  value="#{messages.resourceBasket}"
+                  title="#{messages.resourceBasketHint}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  rendered="#{identityManager.hasCurrentUserRole('admin')}"
+                  outcome="/resourcebasket/list.xhtml"
+                  value="#{messages.resourceBaskets}">
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+            </p:menubar>
+            <h:panelGrid
+              rendered="#{identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled}"
+              columns="1"
+              styleClass="nospace noborder">
+              <p:megaMenu>
+                <p:submenu icon="fas fa-chart-bar menu-icon-padding">
+                  <p:column>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.income}">
+                      <p:menuitem
+                        outcome="/statistics/overview-income.xhtml"
+                        value="#{messages.overview}"
+                        title="#{messages.overviewIncomeHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-year.xhtml"
+                        value="#{messages.yearly}"
+                        title="#{messages.bookingPerYearHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-costcentre.xhtml"
+                        value="#{messages.costCentre}"
+                        title="#{messages.bookingsOrganizationCostCentreHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-organization.xhtml"
+                        value="#{messages.organizations}"
+                        title="#{messages.bookingPerOrganizationHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-company.xhtml"
+                        value="#{messages.companies}"
+                        title="#{messages.bookingPerCompanyHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-container.xhtml"
+                        value="#{messages.containers}"
+                        title="#{messages.bookingPerContainerHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-service.xhtml"
+                        value="#{messages.services}"
+                        title="#{messages.bookingPerServiceHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-instrument.xhtml"
+                        value="#{messages.instruments}"
+                        title="#{messages.bookingPerInstrumentHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/booking-per-technology.xhtml"
+                        value="#{messages.technologies}"
+                        title="#{messages.bookingPerTechnologyHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                    </p:submenu>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.costs}">
+                      <p:menuitem
+                        outcome="/statistics/overview-costs.xhtml"
+                        value="#{messages.overview}"
+                        title="#{messages.overviewCostsHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/instruments-price-per-year.xhtml"
+                        value="#{messages.instruments}"
+                        title="#{messages.instrumentsPricePerYearHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/purchase-costs.xhtml"
+                        value="#{messages.purchases}"
+                        title="#{messages.costsPerPurchasesHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/contract-costs.xhtml"
+                        value="#{messages.contracts}"
+                        title="#{messages.costsPerContractsHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/supplier-costs.xhtml"
+                        value="#{messages.suppliers}"
+                        title="#{messages.costsPerSupplierHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/purchases-per-supplier.xhtml"
+                        value="#{messages.purchase}, #{messages.supplier}"
+                        title="#{messages.purchasesPerSupplierHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/consumables-per-supplier.xhtml"
+                        value="#{messages.consumable}, #{messages.supplier}"
+                        title="#{messages.consumablesPerSupplierHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                    </p:submenu>
+                  </p:column>
+                  <p:column>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.projects}">
+                      <p:menuitem
+                        outcome="/statistics/overview-projects.xhtml"
+                        value="#{messages.overview}"
+                        title="#{messages.overviewProjectsHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/project-per-year.xhtml"
+                        value="#{messages.yearly}"
+                        title="#{messages.projectsPerYearHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/project-per-organization.xhtml"
+                        value="#{messages.organizations}"
+                        title="#{messages.projectsCubeOrganizationHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/project-per-company.xhtml"
+                        value="#{messages.companies}"
+                        title="#{messages.projectsCompanyHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/project-per-technology.xhtml"
+                        value="#{messages.technologies}"
+                        title="#{messages.projectsTechnologyHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/project-charges.xhtml"
+                        value="#{messages.charges}"
+                        title="#{messages.chargesByProjectHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/project-coach-cube.xhtml"
+                        value="#{messages.projectsCubeCoach}"
+                        title="#{messages.projectsCubeCoachHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/container-usage.xhtml"
+                        value="#{messages.usage}"
+                        title="#{messages.containerUsageHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                    </p:submenu>
+                    <c:if test="#{configuration.orderEnabled}">
+                      <p:submenu style="background-color: #eeeff0" label="#{messages.orders}">
+                        <p:menuitem
+                          outcome="/statistics/overview-orders.xhtml"
+                          value="#{messages.overview}"
+                          title="#{messages.overviewOrdersHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-per-year.xhtml"
+                          value="#{messages.yearly}"
+                          title="#{messages.ordersPerYearHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-per-organization.xhtml"
+                          value="#{messages.organizations}"
+                          title="#{messages.ordersCubeOrganizationHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-organization-charges.xhtml"
+                          value="#{messages.chargesByOrganizationService}"
+                          title="#{messages.orderChargesByOrganizationServiceHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-per-company.xhtml"
+                          value="#{messages.companies}"
+                          title="#{messages.ordersCubeCompanyHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-company-charges.xhtml"
+                          value="#{messages.chargesByCompanyService}"
+                          title="#{messages.orderChargesByCompanyServiceHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-per-requester.xhtml"
+                          value="#{messages.requesters}"
+                          title="#{messages.ordersCubeRequesterHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-per-technology.xhtml"
+                          value="#{messages.technologies}"
+                          title="#{messages.ordersTechnologyHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-charges.xhtml"
+                          value="#{messages.charges}"
+                          title="#{messages.chargesByOrderHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                      </p:submenu>
+                    </c:if>
+                  </p:column>
+                  <p:column>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.services}">
+                      <p:menuitem
+                        outcome="/statistics/overview-services.xhtml"
+                        value="#{messages.overview}"
+                        title="#{messages.overviewServicesHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/service-cube.xhtml"
+                        value="#{messages.overall}"
+                        title="#{messages.servicesCubeHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/charges-per-service.xhtml"
+                        value="#{messages.charges}"
+                        title="#{messages.chargesByServiceHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/charges-per-servicecode-year.xhtml"
+                        value="#{messages.chargesByServiceCode}"
+                        title="#{messages.chargesByServiceCodeHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <!--
+                      <p:menuitem
+                        outcome="/statistics/charges-per-servicecode.xhtml"
+                        value="#{messages.chargesByServiceCode}"
+                        title="#{messages.chargesByServiceCodeHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      -->
+                      <p:menuitem
+                        outcome="/statistics/charges-per-service-per-year.xhtml"
+                        value="#{messages.chargesByServicePerYear}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <c:if test="#{configuration.legacyEnabled}">
+                        <p:menuitem
+                          outcome="/statistics/service-per-technology.xhtml"
+                          value="#{messages.technologies}"
+                          title="#{messages.servicesTechnologyHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                      </c:if>
+                      <c:if test="#{configuration.dataManagementEnabled}">
+                        <p:menuitem
+                          outcome="/statistics/samples-by-organization.xhtml"
+                          value="#{messages.samplesByOrganization}"
+                          title="#{messages.samplesByOrganizationHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/samples-by-company.xhtml"
+                          value="#{messages.samplesByCompany}"
+                          title="#{messages.samplesByCompanyHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                      </c:if>
+                    </p:submenu>
+                    <c:if test="#{configuration.instrumentReservationEnabled}">
+                      <p:submenu style="background-color: #eeeff0" label="#{messages.instruments}">
+                        <p:menuitem
+                          outcome="/statistics/overview-instruments.xhtml"
+                          value="#{messages.overview}"
+                          title="#{messages.overviewInstrumentsHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/instrument-statistics-year.xhtml"
+                          value="#{messages.overall}"
+                          title="#{messages.instrumentStatisticsPerYearHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/charges-per-instrument.xhtml"
+                          value="#{messages.charges}"
+                          title="#{messages.chargesByInstrumentHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/instrumentreservation-budgetofficer-cube.xhtml"
+                          value="#{messages.reservationsBudgetOfficers}"
+                          title="#{messages.instrumentReservationsCubeTechnologyBudgetOfficerHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                      </p:submenu>
+                    </c:if>
+                  </p:column>
+                  <p:column>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.efficiency}">
+                      <p:menuitem
+                        outcome="/statistics/overview-efficiency.xhtml"
+                        value="#{messages.overview}"
+                        title="#{messages.overviewEfficiencyHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/project-durations.xhtml"
+                        value="#{messages.projectDurations}"
+                        title="#{messages.projectDurationsHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <c:if test="#{configuration.orderEnabled}">
+                        <p:menuitem
+                          outcome="/statistics/order-durations.xhtml"
+                          value="#{messages.orderDurations}"
+                          title="#{messages.orderDurationsHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/order-state-durations.xhtml"
+                          value="#{messages.orderStateDurations}"
+                          title="#{messages.orderStateDurationsHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                      </c:if>
+                    </p:submenu>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.REFINE}">
+                      <p:menuitem
+                        outcome="/statistics/refine-services.xhtml"
+                        value="#{messages.services}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/refine-instrumentreservations.xhtml"
+                        value="#{messages.chargedInstrumentReservations}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/refine-instrumentreservation-days.xhtml"
+                        value="#{messages.instrumentReservationsDays}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                    </p:submenu>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.workunits}">
+                      <p:menuitem
+                        outcome="/statistics/application-data.xhtml"
+                        value="#{messages.applications}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/application-data-ethz-uzh.xhtml"
+                        value="#{messages.applications} ETHZ-UZH">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/workunits-ethz-uzh.xhtml"
+                        value="#{messages.workunits} ETHZ-UZH">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                    </p:submenu>
+                  </p:column>
+                  <p:column>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.tops}">
+                      <p:menuitem
+                        outcome="/statistics/tops-entities.xhtml"
+                        value="#{messages.entities}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/tops-organizations.xhtml"
+                        value="#{messages.organizations}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/tops-departments.xhtml"
+                        value="#{messages.departments}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/tops-institutes.xhtml"
+                        value="#{messages.institutes}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/tops-users.xhtml"
+                        value="#{messages.users}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/tops-coaches.xhtml"
+                        value="#{messages.coaches}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/tops-requesters.xhtml"
+                        value="#{messages.requesters}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <c:if test="#{configuration.dataManagementEnabled}">
+                        <p:menuitem
+                          outcome="/statistics/tops-workunits.xhtml"
+                          value="#{messages.workunits}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/tops-applications.xhtml"
+                          value="#{messages.applications}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                      </c:if>
+                    </p:submenu>
+                  </p:column>
+                  <p:column>
+                    <p:submenu style="background-color: #eeeff0" label="#{messages.timeframe}">
+                      <p:menuitem
+                        outcome="/statistics/entity-count-overview.xhtml"
+                        value="#{messages.entityCountOverview}"
+                        title="#{messages.entityCountOverviewHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/entity-cube.xhtml"
+                        value="#{messages.entityCountCube}"
+                        title="#{messages.entityCountCubeHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/entity-count.xhtml"
+                        value="#{messages.entityCount}"
+                        title="#{messages.entityCountHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/timeframe-entitiesmodified.xhtml"
+                        value="#{messages.timeframeEntitiesModified}"
+                        title="#{messages.timeframeEntitiesModifiedHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/timeframe-projectsapproved.xhtml"
+                        value="#{messages.timeframeProjectsApproved}"
+                        title="#{messages.timeframeProjectsApprovedHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/timeframe-projectscreated.xhtml"
+                        value="#{messages.timeframeProjectsCreated}"
+                        title="#{messages.timeframeProjectsCreatedHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/timeframe-userscreated.xhtml"
+                        value="#{messages.timeframeUsersCreated}"
+                        title="#{messages.timeframeUsersCreatedHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <p:menuitem
+                        outcome="/statistics/timeframe-institutescreated.xhtml"
+                        value="#{messages.timeframeInstitutesCreated}"
+                        title="#{messages.timeframeInstitutesCreatedHint}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                      <c:if test="#{configuration.dataManagementEnabled}">
+                        <p:menuitem
+                          outcome="/statistics/application-statistics.xhtml"
+                          value="#{messages.applicationOutput}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/workunitstatus-count.xhtml"
+                          value="#{messages.workunitStatus}"
+                          title="#{messages.workunitStatusHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                        <p:menuitem
+                          outcome="/statistics/resourcestatus-count.xhtml"
+                          value="#{messages.resourceStatus}"
+                          title="#{messages.resourceStatusHint}">
+                          <ui:include src="/fragments/context-container-param.xhtml" />
+                        </p:menuitem>
+                      </c:if>
+                      <p:menuitem
+                        outcome="/statistics/users-per-year.xhtml"
+                        value="#{messages.usersPerYear}">
+                        <ui:include src="/fragments/context-container-param.xhtml" />
+                      </p:menuitem>
+                    </p:submenu>
+                  </p:column>
+                </p:submenu>
+              </p:megaMenu>
+            </h:panelGrid>
+          </h:panelGrid>
+        </h:panelGroup>
+        <h:panelGroup>
+          <h:panelGrid
+            columns="9"
+            columnClasses="align-middle,align-middle,align-middle,align-middle,align-middle,align-middle,align-middle,align-middle,align-middle"
+            styleClass="nospace noborder">
+            <p:menubar
+              label="#{currentUser.login}"
+              styleClass="transparent display-flex">
+              <p:submenu
+                label="#{currentUser.login}"
+                icon="fas fa-user menu-icon-padding"
+                styleClass="user-menu">
+                <p:menuitem
+                  outcome="#{currentUser.urlShowScreen}"
+                  value="#{messages.details}">
+                  <f:param
+                    name="id"
+                    value="#{currentUser.id}" />
+                  <f:param
+                    name="tab"
+                    value="#{constants.DETAILS}" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="#{currentUser.urlShowScreen}"
+                  value="#{messages.billingAccount}">
+                  <f:param
+                    name="id"
+                    value="#{currentUser.id}" />
+                  <f:param
+                    name="tab"
+                    value="userbillinginfo" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="#{currentUser.urlShowScreen}"
+                  value="#{messages.settings}">
+                  <f:param
+                    name="id"
+                    value="#{currentUser.id}" />
+                  <f:param
+                    name="tab"
+                    value="settings" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+                <p:menuitem
+                  outcome="/user/change-password.xhtml"
+                  value="#{messages.changePassword}">
+                  <f:param
+                    name="id"
+                    value="#{currentUser.id}" />
+                  <ui:include src="/fragments/context-container-param.xhtml" />
+                </p:menuitem>
+              </p:submenu>
+            </p:menubar>
+
+            <p:link
+              id="logoutlink"
+              outcome="/user/logout.xhtml"
+              title="#{messages.logoutHint}"
+              styleClass="icon-button">
+              <i class="fas fa-sign-out-alt menu-icon" />
+            </p:link>
+          </h:panelGrid>
+        </h:panelGroup>
+      </h:panelGrid>
+    </c:if>
+  </h:form>
+</ui:composition>

@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{instance.renderFamily}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{content != null ? content : instance.family}" />
+      <ui:param
+        name="label"
+        value="#{not empty label ? label : messages.family}" />
+      <ui:param
+        name="tab"
+        value="#{not empty tab ? tab : 'family'}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

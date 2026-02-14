@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('resources') and project.accepted}">
+    <h:panelGroup id="project-resources-tab-content">
+      <ui:include src="#{sidebarHelper.tab}-#{projectManager.viewSuffix}.xhtml" />
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{projectManager.switchFullView}"
+          value="#{messages.switchView}"
+          update="project-resources-tab-content"
+          oncomplete="fixOversize()" />
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

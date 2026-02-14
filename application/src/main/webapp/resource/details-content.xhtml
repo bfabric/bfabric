@@ -1,0 +1,64 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <!--@elvariable id="instance" type="org.bfabric.entity.Resource"-->
+  <h:panelGrid
+    id="detailsGrid"
+    columns="2"
+    columnClasses="rtd,ltd">
+    <ui:include src="/fragments/details/idlink-name.xhtml" />
+
+    <h:outputText value="#{messages.status}" />
+    <h:form>
+      <ui:include src="/resource/download-button.xhtml">
+        <ui:param name="hideStatus" value="false" />
+        <ui:param name="printSize" value="true" />
+      </ui:include>
+    </h:form>
+    <ui:include src="/fragments/details/storage.xhtml" />
+    <ui:include src="/fragments/details/relativepath.xhtml" />
+    <ui:include src="/fragments/details/filechecksum.xhtml" />
+    <ui:include src="/fragments/details/parent.xhtml" />
+    <ui:include src="/fragments/details/workunit.xhtml" />
+
+    <c:if test="#{not empty instance.sample}">
+      <h:outputText value="#{messages.sample}" />
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{instance.sample}" />
+      </ui:include>
+    </c:if>
+
+    <c:if test="#{instance.singleInputResourceBased}">
+      <h:outputText value="#{messages.inputResource}" />
+      <h:panelGroup>
+        <h:form>
+          <ui:include src="/resource/download-button.xhtml">
+            <ui:param
+              name="instance"
+              value="#{instance.singleInputResource}" />
+            <ui:param
+              name="fieldPrefix"
+              value="singleInputResource." />
+            <ui:param
+              name="showName"
+              value="true" />
+          </ui:include>
+        </h:form>
+      </h:panelGroup>
+    </c:if>
+
+    <ui:include src="/fragments/details/junkfullcomment.xhtml" />
+    <ui:include src="/fragments/details/expirationdate.xhtml" />
+    <ui:include src="/fragments/details/archiveexpirationdate.xhtml" />
+
+    <c:if test="#{not empty instance.report}">
+      <h:outputText value="#{messages.report}" />
+      <h:outputText value="#{instance.report}" />
+    </c:if>
+
+    <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml" />
+  </h:panelGrid>
+</ui:composition>

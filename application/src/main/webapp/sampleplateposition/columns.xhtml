@@ -1,0 +1,75 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.SamplePlatePosition"-->
+  <p:column
+    sortable="#{not showColumns.contains('userSubmitted') and not tableReference.lazy}"
+    filterable="#{not tableReference.lazy}"
+    sortBy="#{entity.plate.plateLayout.getGridPosition(entity.position)}"
+    filterBy="#{entity.plate.plateLayout.getGridPosition(entity.position)}"
+    headerText="#{messages.platePosition}">
+    <h:outputText value="#{entity.plate.plateLayout.getGridPosition(entity.position)}" />
+  </p:column>
+
+  <c:if test="#{showColumns.contains('userSubmitted')}">
+    <p:column
+      field="plate.name"
+      headerText="#{messages.plateName}">
+      <c:if test="#{identityManager.hasCurrentUserRole('plateReader')}">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.plate}" />
+        </ui:include>
+      </c:if>
+      <c:if test="#{not identityManager.hasCurrentUserRole('plateReader')}">
+        <h:outputText value="#{entity.plate.name}" />
+      </c:if>
+    </p:column>
+  </c:if>
+
+  <c:if test="#{showColumns.contains('sample')}">
+    <ui:include src="/sample/columns.xhtml">
+      <ui:param
+        name="entity"
+        value="#{entity.sample}" />
+      <ui:param
+        name="fieldPrefix"
+        value="sample." />
+      <ui:param
+        name="hideColumns"
+        value="#{hideColumns}, listOrders" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{showColumns.contains('plate')}">
+    <ui:include src="/plate/columns.xhtml">
+      <ui:param
+        name="entity"
+        value="#{entity.plate}" />
+      <ui:param
+        name="fieldPrefix"
+        value="plate." />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{showColumns.contains('admin')}">
+    <p:column field="position" headerText="#{messages.position}" />
+    <p:column field="plate.id" headerText="#{messages.plate}" filterMatchMode="exact">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.plate}" />
+      </ui:include>
+    </p:column>
+    <p:column field="sample.id" headerText="#{messages.sample}" filterMatchMode="exact">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.sample}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

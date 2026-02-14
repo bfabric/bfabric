@@ -1,0 +1,44 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.instrumentId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.instrumentName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[1]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueClass"
+      value="instrument" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.charges}" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.priceSumCHF}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.discountedPriceSumCHF}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,27 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid columns="2" columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <h:outputText value="#{messages.attributes}" />
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param name="include" value="/datasettemplate/datasettemplateattributes-columns.xhtml" />
+        <ui:param name="tableContext" value="#{datasetTemplate.tableContext}_datasettemplateattribute" />
+        <ui:param name="showEmpty" value="true" />
+        <ui:param name="styleClass" value="hide-table-body" />
+      </ui:include>
+      <ui:include src="/fragments/details/supervisor.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/enabled.xhtml" />
+      <ui:include src="/fragments/details/created-modified.xhtml" />
+    </h:panelGrid>
+    <h:panelGrid columns="5" styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <ui:include src="/fragments/button/switchenabled.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

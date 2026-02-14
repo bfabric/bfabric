@@ -1,0 +1,14 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('jobs')}">
+    <h:panelGroup rendered="#{not empty workunit.jobs}">
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param name="tableType" value="job" />
+        <ui:param name="tableContext" value="#{workunit.tableContext}" />
+        <ui:param name="tableContent" value="#{workunit.jobs}" />
+        <ui:param name="hideColumns" value="#{not empty hideColumns ? hideColumns : 'parent'}" />
+      </ui:include>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{content != null ? content : instance.bookingTypes}" />
+    <ui:param
+      name="label"
+      value="#{not empty label ? label : messages.bookingTypes}" />
+    <ui:param
+      name="tab"
+      value="#{not empty tab ? tab : 'bookingtypes'}" />
+  </ui:include>
+</ui:composition>

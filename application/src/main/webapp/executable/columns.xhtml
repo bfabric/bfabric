@@ -1,0 +1,92 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ExecutableContextEnum" />
+
+  <p:column
+    exportable="false"
+    rendered="#{showColumns.contains('selectExecutable')}">
+    <p:commandButton
+      action="#{app.setExecutable(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      oncomplete="PF('selectExecutableModalDialog').hide()"
+      update="@([id$=executable])" />
+  </p:column>
+  <p:column
+    exportable="false"
+    rendered="#{showColumns.contains('selectStorageExecutable')}">
+    <p:commandButton
+      action="#{storage.setExecutable(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      oncomplete="PF('selectStorageExecutableModalDialog').hide()"
+      update="#{constants.EDIT}:executable" />
+  </p:column>
+  <p:column
+    exportable="false"
+    rendered="#{showColumns.contains('selectSubmitterExecutable')}">
+    <p:commandButton
+      action="#{submitter.setExecutable(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      oncomplete="PF('selectSubmitterExecutableModalDialog').hide()"
+      update="#{constants.EDIT}:executable" />
+  </p:column>
+  <p:column
+    exportable="false"
+    rendered="#{showColumns.contains('selectWrapperCreatorExecutable')}">
+    <p:commandButton
+      action="#{wrapperCreator.setExecutable(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      oncomplete="PF('selectWrapperCreatorExecutableModalDialog').hide()"
+      update="#{constants.EDIT}:executable" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.executable} #{messages.id}"
+    exportValue="#{entity.id}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+    </ui:include>
+    <h:panelGroup rendered="#{entity.deletable}">
+      <i
+        class="fas fa-exclamation-circle pending"
+        title="#{messages.deletable}" />
+    </h:panelGroup>
+  </p:column>
+
+  <ui:include src="/fragments/column/name.xhtml" />
+  <ui:include src="/fragments/column/context-executable.xhtml" />
+  <ui:include src="/fragments/column/supervisor.xhtml" />
+
+  <o:importConstants type="org.bfabric.enums.ResourceStatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{ResourceStatusEnum.values()}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/valid.xhtml" />
+  <ui:include src="/fragments/column/relativepath.xhtml" />
+  <ui:include src="/fragments/column/program.xhtml" />
+  <ui:include src="/fragments/column/parameters.xhtml" />
+  <ui:include src="/fragments/column/size.xhtml" />
+  <ui:include src="/fragments/column/version.xhtml" />
+  <ui:include src="/fragments/column/predecessor.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/masterExecutable.xhtml" />
+  <ui:include src="/fragments/column/wrapperCreatorExecutable.xhtml" />
+  <ui:include src="/fragments/column/workunitSize.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

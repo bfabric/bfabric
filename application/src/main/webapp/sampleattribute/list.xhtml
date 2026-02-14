@@ -1,0 +1,35 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('containerReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.sampleAttributes}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <!-- must be inside the body -->
+    <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+    <h:form>
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="tableContext"
+          value="all" />
+        <ui:param
+          name="tableContent"
+          value="#{collectionHelper.asList(SampleAttributeEnum.values())}" />
+        <ui:param
+          name="include"
+          value="/sampleattribute/columns.xhtml" />
+        <ui:param
+          name="showColumns"
+          value="typesRequired, typesOptional" />
+      </ui:include>
+    </h:form>
+  </ui:define>
+</ui:composition>

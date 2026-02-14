@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.dataManagementEnabled}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param name="content" value="#{content != null ? content : instance.runnableApplications}" />
+      <ui:param name="label" value="#{not empty label ? label : messages.applications}" />
+      <ui:param name="tab" value="#{not empty tab ? tab : 'applications'}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

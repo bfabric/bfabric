@@ -1,0 +1,539 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{bookingManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <o:importConstants type="org.bfabric.enums.RoleEnum" />
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{bookingManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{booking.container.entityName}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{booking.container.displayName}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.title}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="billingCustomerTitle"
+              value="#{booking.billingInfo.billingCustomerTitle}"
+              styleClass="editWidthSmall">
+              <f:selectItem itemLabel="" />
+              <f:selectItem itemValue="Prof. Dr." />
+              <f:selectItem itemValue="Dr." />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.firstName}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="billingCustomerFirstName"
+              value="#{booking.billingInfo.billingCustomerFirstName}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.lastName}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="billingCustomerLastName"
+              value="#{booking.billingInfo.billingCustomerLastName}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.email}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="billingEmail"
+              value="#{booking.billingInfo.billingEmail}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/select-affiliations.xhtml">
+          <ui:param
+            name="callerEntity"
+            value="#{booking}" />
+          <ui:param
+            name="clearButtonSpecificTarget"
+            value="debitorNumber, vatNumber, referenceNumber" />
+        </ui:include>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.address} #{messages.street}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="billingAddressStreet"
+              value="#{booking.billingInfo.billingAddressStreet}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.zip}" title="#{messages.zipHint}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="billingAddressZip"
+              value="#{booking.billingInfo.billingAddressZip}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.city}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="billingAddressCity"
+              value="#{booking.billingInfo.billingAddressCity}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.country}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="country" />
+            <ui:param
+              name="value"
+              value="#{booking.billingInfo.billingAddressCountry}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{countryService.getCountriesByIdOrNameFiltered}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.address} #{messages.supplement}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="billingAddressSupplement"
+              value="#{booking.billingInfo.billingAddressSupplement}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGroup
+          id="financeSourceVatNumber">
+          <h:panelGrid
+            rendered="#{booking.organizationType.external}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.debitorNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="required"
+                value="#{booking.isDebitorNumberRequired()}" />
+              <p:inputNumber
+                id="debitorNumber"
+                value="#{booking.billingInfo.debitorNumber}"
+                thousandSeparator=""
+                decimalPlaces="0"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.vatNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="vatNumber"
+                value="#{booking.billingInfo.vatNumber}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.referenceNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="referenceNumber"
+                value="#{booking.billingInfo.referenceNumber}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.charges}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              id="charges"
+              columns="1"
+              cellpadding="0"
+              style="margin-top:1px">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="include"
+                  value="/charge/edit-batch-columns.xhtml" />
+                <ui:param
+                  name="tableContext"
+                  value="#{booking.tableContext}" />
+                <ui:param
+                  name="tableContent"
+                  value="#{booking.charges}" />
+                <ui:param
+                  name="styleClass"
+                  value="inner" />
+              </ui:include>
+
+              <h:panelGrid
+                columns="2"
+                styleClass="noborder-rightpadding">
+                <h:outputText
+                  value="#{messages.none}"
+                  rendered="#{empty booking.charges}" />
+                <p:commandButton
+                  action="#{bookingManager.initCandidateCharges}"
+                  value="#{messages.selectCharges}"
+                  immediate="true"
+                  oncomplete="PF('selectChargesModalDialog').show()"
+                  styleClass="select #{not empty booking.charges ? 'action-inline' : ''}"
+                  global="false"
+                  update="selectChargesModalPanel" />
+              </h:panelGrid>
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.executionPeriod}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              id="executionPeriodDatesGrid"
+              columns="8"
+              styleClass="noborder-rightpadding">
+              <h:outputText value="#{messages.start}" />
+              <p:datePicker
+                id="executionPeriodStartDate"
+                value="#{booking.executionPeriodStartDate}"
+                valueChangeListener="#{booking.executionPeriodStartDateChanged}">
+                <p:ajax
+                  event="dateSelect"
+                  listener="#{bookingManager.executionPeriodStartDateChanged}"
+                  global="false"
+                  update="executionPeriodDatesGrid" />
+              </p:datePicker>
+              <p:message
+                for="executionPeriodStartDate"
+                styleClass="errorMessage" />
+              <h:outputText value="#{messages.end}" />
+              <p:datePicker
+                id="executionPeriodEndDate"
+                value="#{booking.executionPeriodEndDate}"
+                valueChangeListener="#{booking.executionPeriodEndDateChanged}">
+                <p:ajax
+                  event="dateSelect"
+                  listener="#{bookingManager.executionPeriodEndDateChanged}"
+                  global="false"
+                  update="executionPeriodDatesGrid" />
+              </p:datePicker>
+              <p:message
+                for="executionPeriodEndDate"
+                styleClass="errorMessage" />
+              <p:commandButton rendered="#{booking.resetExecutionPeriodRendered}" actionListener="#{booking.resetExecutionPeriod}" value="#{messages.reset}"
+                               global="false" process="@this" update="#{constants.EDIT}:executionPeriodDatesGrid" />
+              <h:outputText rendered="#{booking.resetExecutionPeriodRendered}" value="#{messages.resetExecutionPeriodRenderedHint} #{booking.computedExecutionPeriod.intervalAsString}"
+                            styleClass="warning" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookingIssuer}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="bookingIssuer"
+              value="#{booking.bookingIssuer}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{userList.getUsersByRoleEnum(RoleEnum.BOOKINGISSUER)}"
+                var="item"
+                itemLabel="#{item.name}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="bookingGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.booker}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="booker"
+              value="#{booking.booker}"
+              valueChangeListener="#{bookingManager.bookerChanged}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{bookerList.resultListOrderByName}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="bookingGrid" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookingType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="bookingType"
+              value="#{booking.bookingType}"
+              valueChangeListener="#{bookingManager.bookingTypeChanged}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{booking.booker.getBookingTypes()}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="bookingGrid" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.account}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="account"
+              value="#{booking.account}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{booking.booker.getAccounts()}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="bookingGrid" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.costCentre}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="costCentre"
+              value="#{booking.costCentre}"
+              valueChangeListener="#{bookingManager.costCentreChanged}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{booking.booker.costCentresEnabled}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="bookingGrid" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.financialCenter}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="financialCenter"
+              value="#{booking.financialCenter}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{booking.booker.getFinancialCenters()}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="bookingGrid" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookingNr}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="bookingNr"
+              value="#{booking.bookingNr}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookingDate}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:datePicker
+              id="bookingDate"
+              value="#{booking.bookingDate}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="infos"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.currency}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="currency"
+              value="#{booking.currency}"
+              disabled="true"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{currencyList.resultListOrderByCode}"
+                var="item"
+                itemLabel="#{item.code}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="infos" />
+            </h:selectOneMenu>
+          </ui:decorate>
+          <!--
+          <h:outputText rendered="#{not booking.currency.default}" value="#{messages.currencyRate}" />
+          <h:panelGroup rendered="#{not booking.currency.default}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="currencyRate"
+                value="#{booking.currencyRate}"
+                required="false">
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="infos" />
+              </h:inputText>
+            </ui:decorate>
+          </h:panelGroup>
+          -->
+          <h:outputText value="#{messages.totalCharges}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              id="totalCharges"
+              value="#{booking.totalCharges}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.tax}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              id="tax"
+              value="#{booking.tax}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.subTotal}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              id="subTotal"
+              value="#{booking.subTotal}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.roundingValue}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              id="roundingValue"
+              value="#{booking.roundingValue}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.total}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              id="total"
+              value="#{booking.total}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.sapNumber}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              id="sapNumber"
+              value="#{booking.sapNumber}"
+              thousandSeparator=""
+              decimalPlaces="0"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.sapNumberNext}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              id="sapNumberNext"
+              value="#{booking.sapNumberNext}"
+              thousandSeparator=""
+              decimalPlaces="0"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{not empty booking.sapRecordedBy}">
+            <h:outputText value="#{messages.sapRecordedBy}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="sapRecordedBy" />
+                <ui:param
+                  name="value"
+                  value="#{booking.sapRecordedBy}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{booking.getEmployeesIncludingSapRecordedBy}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.fullLastFirstName}" />
+              </ui:include>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.paid}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneRadio
+              id="paid"
+              value="#{booking.paid}">
+              <f:selectItem
+                itemValue="#{false}"
+                itemLabel="#{messages.no}" />
+              <f:selectItem
+                itemValue="#{true}"
+                itemLabel="#{messages.yes}" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.paymentDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker id="paymentDate" value="#{booking.paymentDate}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.cancellationDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker id="cancellationDate" value="#{booking.cancellationDate}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{booking.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/booking/select-charges-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

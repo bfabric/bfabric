@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/dashboard-cardbox.xhtml">
+    <ui:param name="enabled" value="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}" />
+    <ui:param name="content" value="#{content != null ? content : instance.runs}" />
+    <ui:param name="tab" value="runs" />
+    <ui:param name="label" value="#{not empty label ? label : messages.runs}" />
+  </ui:include>
+</ui:composition>

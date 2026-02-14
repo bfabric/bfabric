@@ -1,0 +1,375 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:block-container font-size="9pt" font-family="Arial, Helvetica, sans-serif">
+    <fo:table
+      table-layout="fixed"
+      width="100%">
+      <fo:table-column column-width="5mm" />
+      <c:if test="#{booking.discounted}">
+        <c:if test="#{booking.hasChargeWithItemDiscount() and booking.hasChargeWithOrderDiscount()}">
+          <c:if test="#{booking.hasChargeWithServiceCodeOnly()}">
+            <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="34mm" />
+              <fo:table-column column-width="25mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="54mm" />
+              <fo:table-column column-width="25mm" />
+            </c:if>
+          </c:if>
+          <c:if test="#{not booking.hasChargeWithServiceCodeOnly()}">
+            <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="59mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="79mm" />
+            </c:if>
+          </c:if>
+          <fo:table-column column-width="15mm" />
+          <fo:table-column column-width="20mm" />
+          <fo:table-column column-width="30mm" />
+          <fo:table-column column-width="30mm" />
+          <fo:table-column column-width="20mm" />
+        </c:if>
+        <c:if test="#{not booking.hasChargeWithItemDiscount() or not booking.hasChargeWithOrderDiscount()}">
+          <c:if test="#{booking.hasChargeWithServiceCodeOnly()}">
+            <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="64mm" />
+              <fo:table-column column-width="25mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="84mm" />
+              <fo:table-column column-width="25mm" />
+            </c:if>
+          </c:if>
+          <c:if test="#{not booking.hasChargeWithServiceCodeOnly()}">
+            <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="89mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not booking.hasBasicPricedServicesOnly()}">
+              <fo:table-column column-width="109mm" />
+            </c:if>
+          </c:if>
+          <fo:table-column column-width="15mm" />
+          <fo:table-column column-width="20mm" />
+          <fo:table-column column-width="30mm" />
+          <fo:table-column column-width="20mm" />
+        </c:if>
+      </c:if>
+      <c:if test="#{not booking.discounted}">
+        <c:if test="#{booking.hasChargeWithServiceCodeOnly()}">
+          <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+            <fo:table-column column-width="105mm" />
+            <fo:table-column column-width="34mm" />
+            <fo:table-column column-width="20mm" />
+          </c:if>
+          <c:if test="#{not booking.hasBasicPricedServicesOnly()}">
+            <fo:table-column column-width="125mm" />
+            <fo:table-column column-width="34mm" />
+          </c:if>
+        </c:if>
+        <c:if test="#{not booking.hasChargeWithServiceCodeOnly()}">
+          <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+            <fo:table-column column-width="125mm" />
+            <fo:table-column column-width="34mm" />
+          </c:if>
+          <c:if test="#{not booking.hasBasicPricedServicesOnly()}">
+            <fo:table-column column-width="159mm" />
+          </c:if>
+        </c:if>
+        <fo:table-column column-width="15mm" />
+        <fo:table-column column-width="20mm" />
+      </c:if>
+      <fo:table-body>
+        <fo:table-row
+          font-weight="bold"
+          border-bottom="0.2mm solid">
+          <fo:table-cell>
+            <fo:block>
+              <h:outputText value="#" />
+            </fo:block>
+          </fo:table-cell>
+          <fo:table-cell>
+            <fo:block>
+              <h:outputText value="Invoiced Items" />
+            </fo:block>
+          </fo:table-cell>
+          <c:if test="#{booking.hasChargeWithServiceCodeOnly()}">
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="Code" />
+              </fo:block>
+            </fo:table-cell>
+          </c:if>
+          <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+            <fo:table-cell>
+              <fo:block text-align="right">
+                <h:outputText value="Unit Price" />
+              </fo:block>
+            </fo:table-cell>
+          </c:if>
+          <fo:table-cell>
+            <fo:block text-align="right">
+              <h:outputText value="Quantity" />
+            </fo:block>
+          </fo:table-cell>
+          <fo:table-cell>
+            <fo:block text-align="right">
+              <h:outputText value="Price" />
+            </fo:block>
+          </fo:table-cell>
+          <c:if test="#{booking.hasChargeWithItemDiscount()}">
+            <fo:table-cell>
+              <fo:block
+                padding-left="1mm"
+                text-align="right">
+                <h:outputText value="Item Discount" />
+              </fo:block>
+            </fo:table-cell>
+          </c:if>
+          <c:if test="#{booking.hasChargeWithOrderDiscount()}">
+            <fo:table-cell>
+              <fo:block
+                padding-left="1mm"
+                text-align="right">
+                <h:outputText value="Order Discount" />
+              </fo:block>
+            </fo:table-cell>
+          </c:if>
+          <c:if test="#{booking.discounted}">
+            <fo:table-cell>
+              <fo:block
+                padding-left="1mm"
+                text-align="right">
+                <h:outputText value="Net Price" />
+              </fo:block>
+            </fo:table-cell>
+          </c:if>
+        </fo:table-row>
+        <ui:repeat
+          value="#{charges}"
+          var="chargeEntity"
+          varStatus="chargeEntityStatus">
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="#{chargeEntityStatus.index+1}" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="#{chargeEntity.serviceName}" />
+              </fo:block>
+              <ui:repeat
+                rendered="#{not chargeEntity.grouped}"
+                value="#{chargeEntity.instrumentReservations}"
+                var="item">
+                <fo:block font-size="8pt">
+                  <h:outputText value="#{item.dateIntervalAsText}" />
+                </fo:block>
+              </ui:repeat>
+              <fo:block font-size="8pt" font-style="oblique">
+                <h:outputText value="#{chargeEntity.description}" />
+              </fo:block>
+              <c:if test="#{configuration.bookingPdfChargeDateEnabled}">
+                <fo:block font-size="8pt">
+                  <h:outputText value="#{chargeEntity.date}">
+                    <f:convertDateTime type="localDate" pattern="#{constants.DATE_PATTERN_EU}" />
+                  </h:outputText>
+                </fo:block>
+              </c:if>
+            </fo:table-cell>
+            <c:if test="#{booking.hasChargeWithServiceCodeOnly()}">
+              <fo:table-cell>
+                <fo:block>
+                  <h:outputText value="#{chargeEntity.serviceCodeName}" />
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+            <c:if test="#{booking.hasBasicPricedServicesOnly()}">
+              <fo:table-cell>
+                <fo:block text-align="right">
+                  <h:outputText value="#{chargeEntity.basicPrice}">
+                    <f:convertNumber pattern="0.00" />
+                  </h:outputText>
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+            <fo:table-cell>
+              <fo:block text-align="right">
+                <h:outputText value="#{chargeEntity.accountedComputed}">
+                  <f:convertNumber pattern="0.00" />
+                </h:outputText>
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block text-align="right">
+                <h:outputText value="#{chargeEntity.price}">
+                  <f:convertNumber pattern="0.00" />
+                </h:outputText>
+              </fo:block>
+            </fo:table-cell>
+            <c:if test="#{booking.hasChargeWithItemDiscount()}">
+              <fo:table-cell padding-left="1mm">
+                <fo:block text-align="right">
+                  <h:outputText value="#{chargeEntity.itemDiscount}">
+                    <f:convertNumber pattern="0.00" />
+                  </h:outputText>
+                  <h:outputText value=" (#{chargeEntity.discount}%)" />
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+            <c:if test="#{booking.hasChargeWithOrderDiscount()}">
+              <fo:table-cell padding-left="1mm">
+                <fo:block text-align="right">
+                  <h:outputText value="#{chargeEntity.orderDiscount}">
+                    <f:convertNumber pattern="0.00" />
+                  </h:outputText>
+                  <h:outputText value=" (#{chargeEntity.order.discount}%)" />
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+            <c:if test="#{booking.discounted}">
+              <fo:table-cell padding-left="1mm">
+                <fo:block text-align="right">
+                  <h:outputText value="#{chargeEntity.priceWithOrderDiscount}">
+                    <f:convertNumber pattern="0.00" />
+                  </h:outputText>
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+          </fo:table-row>
+        </ui:repeat>
+      </fo:table-body>
+    </fo:table>
+
+    <fo:table table-layout="fixed" width="100%">
+      <fo:table-column column-width="149mm" />
+      <fo:table-column column-width="30mm" />
+      <fo:table-column column-width="20mm" />
+      <fo:table-body>
+        <fo:table-row>
+          <fo:table-cell>
+            <fo:table table-layout="fixed" width="100%">
+              <fo:table-body>
+                <fo:table-row border-top="0.2mm solid">
+                  <fo:table-cell>
+                    <fo:block />
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:table-cell>
+          <fo:table-cell>
+            <fo:table table-layout="fixed" width="100%">
+              <fo:table-body>
+                <fo:table-row border-top="0.2mm solid">
+                  <fo:table-cell>
+                    <fo:block font-weight="bold" text-align="right" padding-top="2mm">
+                      <h:outputText value="Costs" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-weight="bold" text-align="right">
+                      <h:outputText value="VAT" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-weight="bold" text-align="right">
+                      <h:outputText value="Subtotal" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block font-weight="bold" text-align="right" padding-bottom="2mm">
+                      <h:outputText value="Rounding Value" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row border-top="0.2mm solid">
+                  <fo:table-cell>
+                    <fo:block font-weight="bold" text-align="right" padding-top="2mm">
+                      <h:outputText value="#{messages.total} #{booking.currency.code}" />
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:table-cell>
+          <fo:table-cell>
+            <fo:table
+              table-layout="fixed"
+              width="100%">
+              <fo:table-body>
+                <fo:table-row border-top="0.2mm solid">
+                  <fo:table-cell>
+                    <fo:block
+                      text-align="right"
+                      padding-top="2mm">
+                      <h:outputText value="#{booking.totalCharges}">
+                        <f:convertNumber pattern="0.00" />
+                      </h:outputText>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block text-align="right">
+                      <h:outputText value="#{booking.tax}">
+                        <f:convertNumber pattern="0.00" />
+                      </h:outputText>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block text-align="right">
+                      <h:outputText value="#{booking.subTotal}">
+                        <f:convertNumber pattern="0.00" />
+                      </h:outputText>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block
+                      text-align="right"
+                      padding-bottom="2mm">
+                      <h:outputText value="#{booking.roundingValue}">
+                        <f:convertNumber pattern="0.00" />
+                      </h:outputText>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row border-top="0.2mm solid">
+                  <fo:table-cell>
+                    <fo:block
+                      text-align="right"
+                      padding-top="2mm">
+                      <h:outputText value="#{booking.total}">
+                        <f:convertNumber pattern="0.00" />
+                      </h:outputText>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:table-cell>
+        </fo:table-row>
+      </fo:table-body>
+    </fo:table>
+  </fo:block-container>
+</ui:composition>

@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{showColumns.contains('addCheckbox')}"
+    exportable="false">
+    <h:selectBooleanCheckbox disabled="#{roleManager.selectedRoles.contains(entity)}">
+      <p:ajax
+        listener="#{roleManager.selectRole(entity)}"
+        update="@([id$=assign-roles-roles-options]), @([id$=assign-roles-roles-options-selected]), @([id$=assign-roles-roles-options-selected-text]) @([id$=buttons])"
+        process="@([id$=assign-roles-roles-options]), @([id$=assign-roles-roles-options-selected])"
+        immediate="true"
+        oncomplete="if(PF('selectedRole')){PF('selectedRole').filter();} fixOversize();"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('removeCheckbox')}"
+    exportable="false">
+    <h:selectBooleanCheckbox value="#{roleManager.roleSelected}">
+      <p:ajax
+        listener="#{roleManager.deselectRole(entity)}"
+        update="@([id$=assign-roles-roles-options]), @([id$=assign-roles-roles-options-selected]), @([id$=assign-roles-roles-options-selected-text]) @([id$=buttons])"
+        process="@([id$=assign-roles-roles-options]), @([id$=assign-roles-roles-options-selected])"
+        immediate="true"
+        oncomplete="if(PF('selectedRole')){PF('selectedRole').filter();} fixOversize();"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <ui:include src="/role/columns.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="descendants, groups, parents" />
+    <ui:param
+      name="nameStyleClass"
+      value="min-width-200" />
+  </ui:include>
+</ui:composition>

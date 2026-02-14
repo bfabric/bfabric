@@ -1,0 +1,19 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="#{empty excludeForm or not excludeForm ? '/fragments/show-datatable.xhtml' : '/fragments/datatable.xhtml'}">
+    <ui:param
+      name="tableType"
+      value="#{tableType}" />
+    <ui:param
+      name="tableContext"
+      value="all" />
+    <ui:param
+      name="include"
+      value="#{not empty include ? include : '/'.concat(tableType).concat('/columns.xhtml')}" />
+    <ui:param
+      name="tableContent"
+      value="#{empty tableContent ? entityList.getLazyModelByClassName(tableType) : tableContent}" />
+    <ui:param
+      name="lazy"
+      value="true" />
+  </ui:include>
+</ui:composition>

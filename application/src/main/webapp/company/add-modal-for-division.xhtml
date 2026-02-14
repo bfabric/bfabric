@@ -1,0 +1,65 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="addCompanyForDivisionPanel"
+    widgetVar="addCompanyForDivisionDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.addNew}" />
+    </f:facet>
+    <h:form id="addCompanyForDivisionForm">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.organizationType}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:selectOneMenu
+            id="selectOrganizationType"
+            value="#{division.company.organizationType}"
+            required="true"
+            styleClass="editWidthExtraLarge"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItems
+              value="#{organizationTypeList.nonAcademicOrganizationTypes}"
+              var="item"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </ui:decorate>
+        <h:outputText value="#{messages.company}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="companyName"
+            value="#{division.company.name}"
+            required="true"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="saveCompanyButton"
+          action="#{divisionManager.saveCompanyIfNotExists}"
+          value="#{messages.save}"
+          global="false"
+          update="addCompanyForDivisionForm, #{constants.EDIT}:companyautocomplete"
+          oncomplete="hideDialogOnSuccess(args, 'addCompanyForDivisionDialog')">
+          <p:resetInput target="#{constants.EDIT}:companyautocomplete" />
+        </p:commandButton>
+        <p:commandButton
+          id="cancelCompanyButton"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('addCompanyForDivisionDialog').hide()">
+        </p:commandButton>
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

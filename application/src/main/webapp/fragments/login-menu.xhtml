@@ -1,0 +1,105 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup rendered="#{not loggedIn}">
+    <script>
+        document.getElementById('loginForm').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm:loginCommandButton').click();
+                return false;
+            }
+        });
+    </script>
+    <h:form id="loginForm">
+      <h:panelGrid
+        columns="1"
+        styleClass="login-panel-first">
+        <h:outputLabel
+          for="loginName"
+          value="#{messages.login} #{messages.name}"
+          styleClass="login-content-padding-bottom" />
+        <h:panelGroup styleClass="login-content-padding-bottom">
+          <h:inputText
+            id="loginName"
+            value="#{identityManager.username}"
+            autocomplete="#{configuration.loginAutoComplete}"
+            styleClass="login-input" />
+        </h:panelGroup>
+        <h:outputLabel
+          for="loginPassword"
+          value="#{messages.password}"
+          styleClass="login-content-padding-bottom" />
+        <h:panelGroup styleClass="login-content-padding-bottom">
+          <p:password
+            id="loginPassword"
+            converter="charArrayConverter"
+            value="#{identityManager.password}"
+            autocomplete="#{configuration.loginAutoComplete}"
+            styleClass="login-input" />
+        </h:panelGroup>
+        <p:commandLink
+          id="loginCommandButton"
+          action="#{identityManager.authenticate}"
+          title="#{messages.loginEnterHint}"
+          styleClass="login-content-padding">
+          <h:panelGroup>
+            <h:outputText value="&#160;#{messages.login}" />
+            <i class="fas fa-sign-in-alt" />
+          </h:panelGroup>
+        </p:commandLink>
+      </h:panelGrid>
+
+      <p:focus for="loginName" />
+    </h:form>
+
+    <!-- Important: Do not REMOVE! Leave it commented for potential future re-enabling.
+         <c:if test="#{configuration.aaiLoginEnabled}">
+          <h:panelGrid
+            columns="1"
+            styleClass="login-panel-next">
+            <h:panelGroup
+              styleClass="login-content-padding">
+              <h:outputLink
+                id="aaiLogin"
+                value="#{configuration.aaiResourceEntityId}"
+                title="#{messages.aaiLoginHint}">
+                <h:outputText value="#{messages.aaiLogin}" />
+              </h:outputLink>
+            </h:panelGroup>
+          </h:panelGrid>
+        </c:if>
+     -->
+
+    <h:panelGrid
+      columns="1"
+      styleClass="login-panel-next">
+      <h:panelGroup styleClass="login-content-padding">
+        <h:outputLink
+          id="passwordLost"
+          value="#{request.contextPath}/user/password-lost.html"
+          title="#{messages.forgotLoginDetailsHint}">
+          <h:outputText value="&#160;#{messages.forgotLoginDetails}" />
+        </h:outputLink>
+      </h:panelGroup>
+      <h:panelGroup
+        styleClass="login-content-padding"
+        rendered="#{configuration.userRegistrationEnabled}">
+        <h:outputLink
+          id="registerUser"
+          value="#{request.contextPath}/user/edit.html"
+          title="#{messages.registerUserHint}">
+          <h:outputText value="&#160;#{messages.register}" />
+        </h:outputLink>
+      </h:panelGroup>
+      <h:panelGroup
+        styleClass="login-content-padding"
+        rendered="#{not configuration.userRegistrationEnabled}">
+        <h:outputText
+          value="&#160;#{messages.userRegistrationDisabled}"
+          title="#{messages.userRegistrationDisabledHint}"
+          styleClass="warning" />
+      </h:panelGroup>
+    </h:panelGrid>
+  </h:panelGroup>
+</ui:composition>

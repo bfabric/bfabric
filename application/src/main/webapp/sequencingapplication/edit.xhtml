@@ -1,0 +1,77 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{sequencingApplicationManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{sequencingApplicationManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{sequencingApplication.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.serviceType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              columns="4"
+              styleClass="noborder-rightpadding">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="serviceType" />
+                <ui:param
+                  name="value"
+                  value="#{sequencingApplication.serviceType}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{serviceTypeService.getFilteredEnabledOrderedByName}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.displayName}" />
+              </ui:include>
+              <p:commandLink
+                id="addServiceTypeButton"
+                action="#{serviceHelper.createNew(sequencingApplication, 'sequencingApplication', null)}"
+                immediate="true"
+                oncomplete="PF('addServiceTypeDialog').show()"
+                update="addServiceType, addServiceTypeHeader, addServiceTypePanel">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+              </p:commandLink>
+              <p:message
+                for="serviceTypeautocomplete"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{sequencingApplication.enabled}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/servicetype/add-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

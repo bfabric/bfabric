@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.archiving}">
+    <h:outputText value="#{messages.archiving}" />
+    <h:outputText value="#{stringHelper.toYesNo(instance.archiving)}"
+                  styleClass="#{stringHelper.toGreenRed(instance.archiving)}" />
+  </c:if>
+</ui:composition>

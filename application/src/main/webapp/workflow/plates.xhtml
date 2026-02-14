@@ -1,0 +1,23 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('plates')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="plate" />
+      <ui:param name="tableContext" value="#{workflow.tableContext}" />
+      <ui:param name="tableContent" value="#{workflow.platesTransitive}" />
+      <ui:param name="hideColumns" value="workflow" />
+      <ui:param name="rowStyleClass" value="#{entity.rowStyleClass}" />
+    </ui:include>
+
+    <h:form>
+      <h:panelGrid columns="1" styleClass="action">
+        <p:button rendered="#{workflow.editable}" outcome="assignPlates.xhtml" value="#{empty workflow.plates ? messages.assignPlates : messages.reassignPlates}">
+          <f:param name="id" value="#{workflow.id}" />
+        </p:button>
+      </h:panelGrid>
+    </h:form>
+  </c:if>
+</ui:composition>

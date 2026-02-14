@@ -1,0 +1,17 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid columns="2" columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/servicetypes.xhtml" />
+      <ui:include src="/fragments/details/enabled.xhtml" />
+      <ui:include src="/fragments/details/created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid columns="4" styleClass="action">
+      <ui:include src="/fragments/button/edit-clone-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

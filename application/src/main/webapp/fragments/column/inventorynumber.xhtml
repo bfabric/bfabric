@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('inventoryNumber')}">
+    <p:column
+      field="#{fieldPrefix}inventoryNumber"
+      headerText="#{messages.inventoryNumber}" />
+  </c:if>
+</ui:composition>

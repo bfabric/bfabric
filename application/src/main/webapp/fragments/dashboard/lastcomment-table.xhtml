@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+>
+  <ui:include src="/fragments/datatable.xhtml">
+    <ui:param name="include" value="/fragments/column/dashboard-last-comments.xhtml" />
+    <ui:param name="tableContext" value="lastcomments" />
+    <ui:param name="tableContent" value="#{instance.getLastCommentsCurrentUser(5)}" />
+    <ui:param name="paginator" value="false" />
+    <ui:param name="sortable" value="false" />
+    <ui:param name="filterable" value="false" />
+  </ui:include>
+</ui:composition>

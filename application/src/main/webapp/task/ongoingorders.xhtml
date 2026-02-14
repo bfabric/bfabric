@@ -1,0 +1,22 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-order-items.xhtml">
+    <ui:param
+      name="tasks"
+      value="#{messages.taskOrderOngoing}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskOrderOngoingHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{orderList.ongoingOrderTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{configuration.orderEnabled and sidebarHelper.isTab('ongoingorders')}" />
+    <ui:param
+      name="showStatus"
+      value="true" />
+    <ui:param
+      name="hideOldId"
+      value="true" />
+  </ui:include>
+</ui:composition>

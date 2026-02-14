@@ -1,0 +1,456 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  template="offer-template.xhtml">
+  <ui:define name="pageHeader">
+    <ui:include src="header-fop.xhtml">
+      <ui:param
+        name="coach"
+        value="#{offer.coach}" />
+      <ui:param
+        name="reportPageLayoutLandscape"
+        value="false" />
+      <ui:param
+        name="footerGenerationInfo"
+        value="false" />
+    </ui:include>
+  </ui:define>
+
+  <ui:define name="masterPage">
+    <fo:block-container
+      space-before="1cm"
+      space-after="1cm"
+      font-size="9pt">
+      <fo:block font-weight="bold">
+        <h:outputText value="#{messages.offer} #{offer.id}" />
+      </fo:block>
+    </fo:block-container>
+
+    <fo:block-container
+      space-after="2cm"
+      font-size="9pt">
+      <fo:block>
+        <h:outputText value="#{offer.requesterName}" />
+      </fo:block>
+      <fo:block>
+        <h:outputText value="&#160;" />
+      </fo:block>
+      <fo:block>
+        <c:forEach
+          items="#{offer.requester.affiliationAsList}"
+          var="item"
+          rendered="#{offer.registeredRequester}">
+          <fo:block>
+            <h:outputText value="#{item}" />
+          </fo:block>
+        </c:forEach>
+      </fo:block>
+      <fo:block>
+        <c:forEach
+          items="#{offer.requesterFullDisplayAddressAsList}"
+          var="item">
+          <fo:block>
+            <h:outputText value="#{item}" />
+          </fo:block>
+        </c:forEach>
+      </fo:block>
+    </fo:block-container>
+
+    <fo:block-container
+      space-after="5mm"
+      font-size="9pt">
+      <fo:block>
+        <h:outputText value="#{messages.date}: " />
+        <h:outputText value="#{offer.created}">
+          <f:convertDateTime type="localDateTime" pattern="#{constants.DATE_PATTERN_EU}" />
+        </h:outputText>
+      </fo:block>
+      <c:if test="#{not empty offer.description}">
+        <fo:block>
+          <h:outputText value="#{messages.description}: #{offer.description}" />
+        </fo:block>
+      </c:if>
+    </fo:block-container>
+  </ui:define>
+
+  <ui:define name="detailPage">
+    <!-- Offered Charges Block-->
+    <fo:block-container
+      font-size="9pt"
+      font-family="Arial, Helvetica, sans-serif">
+      <fo:table
+        table-layout="fixed"
+        width="100%"
+        font-size="9pt">
+        <fo:table-column column-width="5mm" />
+        <c:if test="#{offer.hasDiscountedCharge()}">
+          <c:if test="#{offer.hasBasicPricedServicesOnly()}">
+            <c:if test="#{offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="69mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="89mm" />
+            </c:if>
+            <fo:table-column column-width="22mm" />
+            <fo:table-column column-width="15mm" />
+            <fo:table-column column-width="22mm" />
+          </c:if>
+          <c:if test="#{not offer.hasBasicPricedServicesOnly()}">
+            <c:if test="#{offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="91mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="111mm" />
+            </c:if>
+            <fo:table-column column-width="15mm" />
+            <fo:table-column column-width="22mm" />
+          </c:if>
+        </c:if>
+        <c:if test="#{not offer.hasDiscountedCharge()}">
+          <c:if test="#{offer.hasBasicPricedServicesOnly()}">
+            <c:if test="#{offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="106mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="126mm" />
+            </c:if>
+            <fo:table-column column-width="22mm" />
+          </c:if>
+          <c:if test="#{not offer.hasBasicPricedServicesOnly()}">
+            <c:if test="#{offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="128mm" />
+              <fo:table-column column-width="20mm" />
+            </c:if>
+            <c:if test="#{not offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-column column-width="148mm" />
+            </c:if>
+          </c:if>
+        </c:if>
+        <fo:table-column column-width="15mm" />
+        <fo:table-column column-width="22mm" />
+        <fo:table-body>
+          <fo:table-row border-bottom="0.2mm solid">
+            <fo:table-cell>
+              <fo:block
+                font-weight="normal"
+                padding-bottom="1mm"
+                padding-top="1mm">
+                <h:outputText value="#" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block
+                font-weight="normal"
+                padding-bottom="1mm"
+                padding-top="1mm">
+                <h:outputText value="Item" />
+              </fo:block>
+            </fo:table-cell>
+            <c:if test="#{offer.hasChargeWithServiceCodeOnly()}">
+              <fo:table-cell>
+                <fo:block
+                  font-weight="normal"
+                  padding-bottom="1mm"
+                  padding-top="1mm">
+                  <h:outputText value="#{messages.code}" />
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+            <c:if test="#{offer.hasBasicPricedServicesOnly()}">
+              <fo:table-cell>
+                <fo:block
+                  font-weight="normal"
+                  padding-bottom="1mm"
+                  padding-top="1mm"
+                  text-align="right">
+                  <h:outputText value="#{messages.price}" />
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+            <fo:table-cell>
+              <fo:block
+                font-weight="normal"
+                padding-bottom="1mm"
+                padding-top="1mm"
+                text-align="right">
+                <h:outputText value="#{messages.quantity}" />
+              </fo:block>
+            </fo:table-cell>
+            <c:if test="#{offer.hasDiscountedCharge()}">
+              <fo:table-cell>
+                <fo:block
+                  font-weight="normal"
+                  padding-bottom="1mm"
+                  padding-top="1mm"
+                  text-align="right">
+                  <h:outputText value="#{messages.total}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block
+                  font-weight="normal"
+                  padding-bottom="1mm"
+                  padding-top="1mm"
+                  text-align="right">
+                  <h:outputText value="#{messages.discount}" />
+                </fo:block>
+              </fo:table-cell>
+            </c:if>
+            <fo:table-cell>
+              <fo:block
+                font-weight="normal"
+                padding-bottom="1mm"
+                padding-top="1mm"
+                text-align="right">
+                <h:outputText value="#{messages.total} #{messages.price}" />
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <c:forEach
+            items="#{offer.charges}"
+            var="chargeEntity"
+            varStatus="status">
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block
+                  padding-bottom="1mm"
+                  padding-top="1mm">
+                  <h:outputText value="#{status.index + 1}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block
+                  padding-bottom="1mm"
+                  padding-top="1mm">
+                  <fo:block>
+                    <h:outputText value="#{chargeEntity.serviceName}" />
+                  </fo:block>
+                  <fo:block font-size="8pt">
+                    <h:outputText value="#{chargeEntity.description}" />
+                  </fo:block>
+                </fo:block>
+              </fo:table-cell>
+              <c:if test="#{offer.hasChargeWithServiceCodeOnly()}">
+                <fo:table-cell>
+                  <fo:block
+                    padding-bottom="1mm"
+                    padding-top="1mm">
+                    <h:outputText value="#{chargeEntity.serviceCodeName}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <c:if test="#{offer.hasBasicPricedServicesOnly()}">
+                <fo:table-cell>
+                  <fo:block
+                    padding-bottom="1mm"
+                    padding-top="1mm"
+                    text-align="right">
+                    <h:outputText value="#{chargeEntity.basicPrice}" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <fo:table-cell>
+                <fo:block
+                  padding-bottom="1mm"
+                  padding-top="1mm"
+                  text-align="right">
+                  <h:outputText value="#{chargeEntity.accounted}" />
+                </fo:block>
+              </fo:table-cell>
+              <c:if test="#{offer.hasDiscountedCharge()}">
+                <fo:table-cell>
+                  <fo:block
+                    padding-bottom="1mm"
+                    padding-top="1mm"
+                    text-align="right">
+                    <h:outputText value="#{chargeEntity.price}">
+                      <f:convertNumber pattern="0.00" />
+                    </h:outputText>
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block
+                    padding-bottom="1mm"
+                    padding-top="1mm"
+                    text-align="right">
+                    <h:outputText value="#{chargeEntity.discount} %" />
+                  </fo:block>
+                </fo:table-cell>
+              </c:if>
+              <fo:table-cell>
+                <fo:block
+                  padding-bottom="1mm"
+                  padding-top="1mm"
+                  text-align="right">
+                  <h:outputText value="#{chargeEntity.priceWithoutOfferDiscount}">
+                    <f:convertNumber pattern="0.00" />
+                  </h:outputText>
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </c:forEach>
+        </fo:table-body>
+      </fo:table>
+    </fo:block-container>
+
+    <!-- Charges Summary Block-->
+    <fo:block-container
+      space-after="2cm"
+      font-size="9pt"
+      font-family="Arial, Helvetica, sans-serif">
+      <fo:table
+        table-layout="fixed"
+        width="100%">
+        <c:if test="#{offer.hasDiscountedCharge()}">
+          <fo:table-column column-width="120mm" />
+          <fo:table-column column-width="45mm" />
+        </c:if>
+        <c:if test="#{not offer.hasDiscountedCharge()}">
+          <fo:table-column column-width="137mm" />
+          <fo:table-column column-width="28mm" />
+        </c:if>
+        <fo:table-column column-width="25mm" />
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:table
+                table-layout="fixed"
+                width="100%">
+                <fo:table-body>
+                  <fo:table-row border-top="0.2mm solid">
+                    <fo:table-cell>
+                      <fo:block />
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:table
+                table-layout="fixed"
+                width="100%">
+                <fo:table-body>
+                  <c:if test="#{offer.discount > 0 or offer.totalTax > 0}">
+                    <fo:table-row border-top="0.2mm solid">
+                      <fo:table-cell>
+                        <fo:block
+                          text-align="right"
+                          padding-top="2mm">
+                          <h:outputText value="#{messages.subTotal}" />
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <c:if test="#{offer.discount > 0}">
+                    <fo:table-row>
+                      <fo:table-cell>
+                        <fo:block text-align="right" padding-top="2mm" padding-bottom="2mm">
+                          <h:outputText
+                            value="#{messages.additional} "
+                            rendered="#{offer.hasDiscountedCharge()}" />
+                          <h:outputText value="Discount #{offer.discount} %" />
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <c:if test="#{offer.totalTax > 0}">
+                    <fo:table-row>
+                      <fo:table-cell>
+                        <fo:block text-align="right" padding-top="2mm" padding-bottom="2mm">
+                          <h:outputText value="#{messages.vat}" />
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <fo:table-row border-top="0.2mm solid">
+                    <fo:table-cell>
+                      <fo:block font-weight="bold" text-align="right" padding-top="2mm">
+                        <h:outputText value="#{messages.total} #{configuration.getDefaultCurrencyCode()}" />
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:table
+                table-layout="fixed"
+                width="100%">
+                <fo:table-body>
+                  <c:if test="#{offer.discount > 0 or offer.totalTax > 0}">
+                    <fo:table-row border-top="0.2mm solid">
+                      <fo:table-cell>
+                        <fo:block
+                          text-align="right"
+                          padding-top="2mm">
+                          <h:outputText value="#{offer.totalPriceWithoutOfferDiscount}">
+                            <f:convertNumber pattern="0.00" />
+                          </h:outputText>
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <c:if test="#{offer.discount > 0}">
+                    <fo:table-row>
+                      <fo:table-cell>
+                        <fo:block text-align="right" padding-top="2mm" padding-bottom="2mm">
+                          <h:outputText value="#{0 - offer.totalOfferDiscount}">
+                            <f:convertNumber pattern="0.00" />
+                          </h:outputText>
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <c:if test="#{offer.totalTax > 0}">
+                    <fo:table-row>
+                      <fo:table-cell>
+                        <fo:block text-align="right" padding-top="2mm" padding-bottom="2mm">
+                          <h:outputText value="#{offer.totalTax}">
+                            <f:convertNumber pattern="0.00" />
+                          </h:outputText>
+                        </fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+                  </c:if>
+                  <fo:table-row border-top="0.2mm solid">
+                    <fo:table-cell>
+                      <fo:block
+                        text-align="right"
+                        font-weight="bold"
+                        padding-top="2mm">
+                        <h:outputText value="#{offer.totalDiscountedPrice + offer.totalTax}">
+                          <f:convertNumber pattern="0.00" />
+                        </h:outputText>
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:block-container>
+
+    <!-- Comment Block -->
+    <fo:block-container
+      width="190mm"
+      font-size="8pt"
+      font-style="italic"
+      text-align="justify">
+      <fo:block space-after="0.3cm">
+        <h:outputText value="#{configuration.offerDisclaimer}" />
+      </fo:block>
+    </fo:block-container>
+  </ui:define>
+
+  <ui:define name="lastpageblock">
+    <fo:block id="last-page" />
+  </ui:define>
+</ui:composition>

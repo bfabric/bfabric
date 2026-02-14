@@ -1,0 +1,157 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:param
+    name="entityManager"
+    value="#{orderItemManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.order}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{orderItem.order.id}" />
+          </ui:decorate>
+
+          <h:outputText
+            value="#{messages.chargeable}"
+            rendered="#{orderItemManager.chargeableRendered}" />
+          <h:panelGroup rendered="#{orderItemManager.chargeableRendered}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="chargeable"
+                value="#{orderItem.chargeable}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            rendered="#{identityManager.hasCurrentUserRole('admin') or not empty orderItem.tubeId}"
+            value="#{messages.tubeIdOrderItem}" />
+          <h:panelGroup rendered="#{not identityManager.hasCurrentUserRole('admin') and not empty orderItem.tubeId}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{orderItem.tubeId}" />
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('admin')}">
+            <ui:decorate template="#{orderItem.order.isOrderItemTubeIdRendered() ? '/fragments/required.xhtml' : '/fragments/edit.xhtml'}">
+              <h:inputText
+                id="tubeId"
+                value="#{orderItem.tubeId}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <c:if test="#{not orderItem.order.processesPlates}">
+            <h:outputText value="#{messages.sample}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="sample"
+                value="#{orderItem.sample}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItems
+                  value="#{orderItemManager.samples}"
+                  var="item"
+                  itemLabel="#{item.displayName}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{sampleAttributeHelper.isRenderedColumn(orderItem.order, constants.SERVICE)}">
+            <h:outputText value="#{messages.service}" />
+            <h:panelGroup>
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="service"
+                  value="#{orderItem.service}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem
+                    itemLabel="#{messages.selectAnItem}"
+                    itemDisabled="true" />
+                  <f:selectItems
+                    value="#{orderItem.order.serviceType.servicesEnabled}"
+                    var="item"
+                    itemLabel="#{item.displayName}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </h:panelGroup>
+          </c:if>
+
+          <c:if test="#{sampleAttributeHelper.isRenderedColumn(orderItem.order, constants.ORDER_ITEM_LIBRARY_TYPE)}">
+            <h:outputText value="#{messages.libraryTypeOrderItem}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="libraryType"
+                value="#{orderItem.libraryType}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{sampleAttributeHelper.isRenderedColumn(orderItem.order, constants.ORDER_ITEM_REGION)}">
+            <h:outputText value="#{messages.region}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText
+                id="region"
+                value="#{orderItem.region}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{sampleAttributeHelper.isRenderedColumn(orderItem.order, constants.ORDER_ITEM_READ_TYPE)}">
+            <h:outputText value="#{messages.readType}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="readType"
+                value="#{orderItem.readType}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{sampleAttributeHelper.isRenderedColumn(orderItem.order, constants.ORDER_ITEM_INSERT_SIZE)}">
+            <h:outputText value="#{messages.insertSize}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="insertSize"
+                value="#{orderItem.insertSize}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{sampleAttributeHelper.isRenderedColumn(orderItem.order, constants.ORDER_ITEM_MULTIPLEXING)}">
+            <h:outputText value="#{messages.multiplexing}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="multiplexing"
+                value="#{orderItem.multiplexing}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{orderItem.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

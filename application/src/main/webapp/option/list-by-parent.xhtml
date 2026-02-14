@@ -1,0 +1,14 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:set value="#{empty tableContent ? option.options : tableContent}" var="tableContent" />
+  <c:if test="#{not empty tableContent}">
+    <h:outputText value="#{messages.options}" />
+    <p:dataTable value="#{tableContent}" var="optionEntity" styleClass="hide-table-header noborder inner" style="margin-left: -4px !important">
+      <ui:include src="/fragments/column/option.xhtml">
+        <ui:param name="entity" value="#{optionEntity}" />
+      </ui:include>
+    </p:dataTable>
+  </c:if>
+</ui:composition>

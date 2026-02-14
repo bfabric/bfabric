@@ -1,0 +1,387 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <ui:param name="noHints" value="#{project.published}" />
+
+    <ui:include src="/home-message.xhtml" />
+
+    <h:panelGroup id="show-project">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id-name.xhtml" />
+        <ui:include src="/fragments/details/doi.xhtml" />
+
+        <h:outputText value="#{messages.status}" />
+        <h:panelGroup>
+          <h:outputText
+            value="#{project.status.label}"
+            styleClass="#{project.status.label}" />
+          <h:outputText
+            value="&#160;&#160;#{messages.pendingExtensionReport}"
+            title="#{messages.pendingExtensionReportHint}"
+            styleClass="warning"
+            rendered="#{project.readableExtensionReports and project.extensionReportPending}" />
+          <h:outputText
+            value="&#160;&#160;#{messages.reviewExtensionReport}"
+            title="#{messages.reviewExtensionReportHint}"
+            styleClass="warning"
+            rendered="#{project.readableExtensionReports and project.extensionReportReview}" />
+        </h:panelGroup>
+
+        <ui:include src="/fragments/details/internal.xhtml" />
+        <ui:include src="/fragments/details/orderdataonly.xhtml" />
+        <ui:include src="/fragments/details/executionperiod.xhtml" />
+        <ui:include src="/fragments/details/coach.xhtml" />
+        <ui:include src="/fragments/details/coachbackup.xhtml" />
+        <ui:include src="/fragments/details/bioinformatician.xhtml" />
+        <ui:include src="/fragments/details/affiliation.xhtml" />
+        <ui:include src="/fragments/details/budgetofficer.xhtml" />
+        <ui:include src="/fragments/details/budgetLimit.xhtml" />
+        <ui:include src="/fragments/details/leader.xhtml" />
+        <ui:include src="/fragments/details/contact.xhtml" />
+        <ui:include src="/fragments/details/requester.xhtml" />
+        <ui:include src="/fragments/details/technologies.xhtml" />
+        <ui:include src="/fragments/details/summary.xhtml" />
+
+        <h:outputText
+          value="#{messages.description}"
+          title="#{messages.editProjectDescriptionHint}" />
+        <h:form>
+          <p:commandLink
+            ajax="false"
+            value="#{project.description.name}">
+            <i class="fas fa-file-download download-icon" />
+            <p:fileDownload value="#{project.description.defaultStreamedContent}" />
+          </p:commandLink>
+        </h:form>
+
+        <ui:include src="/fragments/details/discussedwith.xhtml" />
+        <ui:include src="/fragments/details/startdate.xhtml" />
+        <ui:include src="/fragments/details/enddate.xhtml" />
+
+        <c:if test="#{project.readableProjectInternals}">
+          <c:if test="#{not empty project.finishAnnouncedDate}">
+            <h:outputText value="#{messages.finishAnnouncedDate}" />
+            <h:outputText value="#{project.finishAnnouncedDate}" />
+          </c:if>
+
+          <c:if test="#{not empty project.finishDate}">
+            <h:outputText value="#{messages.finished}" />
+            <h:outputText value="#{project.finishDate}" />
+          </c:if>
+
+          <c:if test="#{not empty project.privateAnnouncedDate}">
+            <h:outputText
+              value="#{messages.privateAnnouncedDate}"
+              rendered="#{not project.renderedPublishAnnouncedDate}" />
+            <h:outputText
+              value="#{messages.publishAnnouncedDate}"
+              rendered="#{project.renderedPublishAnnouncedDate}" />
+            <h:outputText value="#{project.privateAnnouncedDate}" />
+          </c:if>
+
+          <c:if test="#{not empty project.privateDate}">
+            <h:outputText value="#{messages.private}" />
+            <h:outputText value="#{project.privateDate}" />
+          </c:if>
+
+          <c:if test="#{not empty project.publishGrantedDate}">
+            <h:outputText value="#{messages.publishGrantedDate}" />
+            <h:outputText value="#{project.publishGrantedDate}" />
+          </c:if>
+
+          <c:if test="#{not empty project.publishDate}">
+            <h:outputText value="#{messages.published}" />
+            <h:panelGroup>
+              <h:outputText value="#{project.publishDate}" />
+              <h:outputText
+                value=" (closed for charging and booking)"
+                rendered="#{project.closed and project.hasCurrentUserRole('containerManager')}" />
+            </h:panelGroup>
+          </c:if>
+
+          <c:if test="#{not empty project.postalAddress}">
+            <h:outputText value="#{messages.billingAddress}" />
+            <h:outputText value="#{project.postalAddress}" />
+          </c:if>
+
+          <ui:include src="/fragments/details/vatnumber.xhtml">
+            <ui:param
+              name="instance"
+              value="#{project.billingInfo}" />
+          </ui:include>
+
+          <ui:include src="/fragments/details/referencenumber.xhtml">
+            <ui:param
+              name="instance"
+              value="#{project.billingInfo}" />
+          </ui:include>
+
+          <c:if test="#{project.billingOrganizationType.financeSourceRequired and (project.hasCurrentUserRole('containerReader') or project.member)}">
+            <ui:include src="/fragments/details/billingaccount.xhtml" />
+            <ui:include src="/fragments/details/eugrant.xhtml" />
+          </c:if>
+        </c:if>
+
+        <c:if test="#{not empty project.reminder and project.hasCurrentUserRole('reviewManager')}">
+          <h:outputText value="#{messages.reminder}" />
+          <h:form id="show-project-reminder-button">
+            <h:panelGrid
+              columns="2"
+              styleClass="rightpadding">
+              <h:outputText value="#{project.reminder}" />
+              <p:commandButton
+                action="#{projectManager.resetReminder}"
+                value="#{messages.resetReminder}"
+                title="#{messages.resetReminderHint}"
+                rendered="#{project.reminderResettable}" />
+            </h:panelGrid>
+          </h:form>
+        </c:if>
+
+        <c:if test="#{project.readableExtensionReports}">
+          <h:outputText value="#{messages.firstYearExtensionReport}"
+                        rendered="#{not empty project.extensionReport1 or project.isExtensionReportPendingForYear(1) or project.isExtensionReportApprovable(1)}" />
+          <h:panelGrid rendered="#{not empty project.extensionReport1 or project.isExtensionReportPendingForYear(1) or project.isExtensionReportApprovable(1)}"
+                       columns="3"
+                       styleClass="rightpadding">
+            <h:form rendered="#{not empty project.extensionReport1}">
+              <p:commandLink
+                ajax="false"
+                value="#{project.extensionReport1.name}">
+                <i class="fas fa-file-download download-icon" />
+                <p:fileDownload value="#{project.extensionReport1.defaultStreamedContent}" contentDisposition="inline" store="true" />
+              </p:commandLink>
+            </h:form>
+            <p:button
+              outcome="/project/edit-extension.xhtml"
+              value="#{project.extensionReport1 != null ? messages.edit : messages.add}"
+              title="#{messages.addExtensionReportHint}"
+              rendered="#{project.isExtensionReportPendingForYear(1)}">
+              <f:param
+                name="id"
+                value="#{project.id}" />
+              <f:param
+                name="year"
+                value="1" />
+            </p:button>
+            <h:form rendered="#{project.isExtensionReportApprovable(1)}">
+              <p:commandButton
+                action="#{projectManager.approveExtensionReport(1)}"
+                value="#{messages.approve}"
+                update="show-project" />
+            </h:form>
+          </h:panelGrid>
+
+          <h:outputText value="#{messages.secondYearExtensionReport}"
+                        rendered="#{not empty project.extensionReport2 or project.isExtensionReportPendingForYear(2) or project.isExtensionReportApprovable(2)}" />
+          <h:panelGrid rendered="#{not empty project.extensionReport2 or project.isExtensionReportPendingForYear(2) or project.isExtensionReportApprovable(2)}"
+                       columns="3"
+                       styleClass="rightpadding">
+            <h:form rendered="#{not empty project.extensionReport2}">
+              <p:commandLink
+                ajax="false"
+                value="#{project.extensionReport2.name}">
+                <i class="fas fa-file-download download-icon" />
+                <p:fileDownload value="#{project.extensionReport2.defaultStreamedContent}" contentDisposition="inline" store="true" />
+              </p:commandLink>
+            </h:form>
+            <p:button
+              outcome="/project/edit-extension.xhtml"
+              value="#{project.extensionReport2 != null ? messages.edit : messages.add}"
+              title="#{messages.addExtensionReportHint}"
+              rendered="#{project.isExtensionReportPendingForYear(2)}">
+              <f:param
+                name="id"
+                value="#{project.id}" />
+              <f:param
+                name="year"
+                value="2" />
+            </p:button>
+            <h:form rendered="#{project.isExtensionReportApprovable(2)}">
+              <p:commandButton
+                action="#{projectManager.approveExtensionReport(2)}"
+                value="#{messages.approve}"
+                update="show-project" />
+            </h:form>
+          </h:panelGrid>
+
+          <h:outputText value="#{messages.thirdYearExtensionReport}"
+                        rendered="#{not empty project.extensionReport3 or project.isExtensionReportPendingForYear(3) or project.isExtensionReportApprovable(3)}" />
+          <h:panelGrid rendered="#{not empty project.extensionReport3 or project.isExtensionReportPendingForYear(3) or project.isExtensionReportApprovable(3)}"
+                       columns="3"
+                       styleClass="rightpadding">
+            <h:form rendered="#{not empty project.extensionReport3}">
+              <p:commandLink
+                ajax="false"
+                value="#{project.extensionReport3.name}">
+                <i class="fas fa-file-download download-icon" />
+                <p:fileDownload value="#{project.extensionReport3.defaultStreamedContent}" contentDisposition="inline" store="true" />
+              </p:commandLink>
+            </h:form>
+            <p:button
+              outcome="/project/edit-extension.xhtml"
+              value="#{project.extensionReport3 != null ? messages.edit : messages.add}"
+              title="#{messages.addExtensionReportHint}"
+              rendered="#{project.isExtensionReportPendingForYear(3)}">
+              <f:param
+                name="id"
+                value="#{project.id}" />
+              <f:param
+                name="year"
+                value="3" />
+            </p:button>
+            <h:form rendered="#{project.isExtensionReportApprovable(3)}">
+              <p:commandButton
+                action="#{projectManager.approveExtensionReport(3)}"
+                value="#{messages.approve}"
+                update="show-project" />
+            </h:form>
+          </h:panelGrid>
+        </c:if>
+
+        <ui:include src="/fragments/details/commentspinned.xhtml" />
+        <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="11"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit.xhtml" />
+        <ui:include src="/fragments/button/edit-links.xhtml" />
+        <c:if test="#{not empty project.defaultFeedbackTemplateId}">
+          <p:button
+            rendered="#{project.renderedFeedbackButton}"
+            outcome="/feedback/submit.xhtml"
+            value="#{messages.feedback}"
+            title="#{messages.feedbackProvisionHint}">
+            <f:param
+              name="containerId"
+              value="#{project.id}" />
+            <f:param
+              name="defaultFeedbackTemplateId"
+              value="#{project.defaultFeedbackTemplateId}" />
+          </p:button>
+        </c:if>
+        <!--
+          <h:form
+            id="show-project-doi-button" rendered="#{project.isExtensible('doi') and configuration.doiEnabled}">
+            <p:commandButton
+              oncomplete="PF('doiDialog').show()"
+              value="#{messages.requestDoi}"
+              title="#{messages.requestDoiHint}"
+              update="acceptDoiTerms" />
+         </h:form>
+         -->
+        <ui:include src="/fragments/button/track-container.xhtml" />
+        <ui:include src="/fragments/button/delete.xhtml">
+          <ui:param
+            name="entityManager"
+            value="#{projectManager}" />
+        </ui:include>
+        <p:button
+          rendered="#{identityManager.hasCurrentUserRole('containerReader')}"
+          outcome="list.xhtml"
+          value="#{messages.list}" />
+        <h:form rendered="#{identityManager.hasCurrentUserRole('admin')}">
+          <p:commandButton
+            ajax="false"
+            actionListener="#{projectManager.downloadExtensionReports}"
+            value="#{messages.downloadReports}" />
+        </h:form>
+        <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+      </h:panelGrid>
+
+      <ui:include src="/fragments/view-doi-terms.xhtml" />
+
+      <h:panelGrid styleClass="content-subheader">
+        <h:outputText value="#{messages.status}" />
+      </h:panelGrid>
+
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/status/columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="project" />
+        <ui:param
+          name="tableContent"
+          value="#{project.states}" />
+        <ui:param
+          name="paginator"
+          value="false" />
+      </ui:include>
+
+      <h:form>
+        <h:panelGrid
+          columns="5"
+          styleClass="action">
+          <p:commandButton
+            rendered="#{project.finishAnnouncable}"
+            action="#{projectManager.announceFinish}"
+            value="#{messages.announceFinish}"
+            title="#{messages.announceFinishHint}" />
+          <p:commandButton
+            rendered="#{project.privateAnnouncable}"
+            action="#{projectManager.announcePrivate}"
+            value="#{messages.announcePrivate}"
+            title="#{messages.announcePrivateHint}" />
+          <p:commandButton
+            rendered="#{project.finishable}"
+            action="#{projectManager.finish}"
+            value="#{messages.finish}"
+            title="#{messages.finishHint}" />
+          <p:commandButton
+            rendered="#{project.publishGrantable}"
+            action="#{projectManager.publishGrantedDate}"
+            value="#{messages.grantPublishOption}"
+            title="#{messages.publishGrantedDateHint}">
+            <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+          </p:commandButton>
+          <p:commandButton
+            rendered="#{project.publishable}"
+            action="#{projectManager.publish}"
+            value="#{messages.publish}"
+            title="#{messages.publishProjectHint}">
+            <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+          </p:commandButton>
+          <p:commandButton
+            rendered="#{project.privatizable}"
+            action="#{projectManager.privatize}"
+            value="#{messages.private}"
+            title="#{messages.privateProjectHint}" />
+          <p:commandButton
+            rendered="#{project.runnable}"
+            action="#{projectManager.setRunning}"
+            value="#{messages.running}"
+            title="#{messages.runningProjectHint}" />
+        </h:panelGrid>
+
+        <h:panelGroup rendered="#{project.renderHasBookingsWithoutSAPNumberHint}">
+          <h:outputText
+            value="#{messages.bookingsWithoutSAPNumberHint}"
+            styleClass="warning" />
+          <br />
+        </h:panelGroup>
+
+        <!-- Do not remove: When there is an automatic feed of the paid information, this hint would become useful. Currently it makes no sense to show this since almost all bookings are marked as unpaid!
+                        <h:panelGroup rendered="#{project.closed}">
+                          <h:outputText
+                            value="#{messages.bookingsNonPaidHint}"
+                            styleClass="warning" /><br />
+                        </h:panelGroup>
+         -->
+      </h:form>
+
+      <c:if test="#{project.extensible}">
+        <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+      </c:if>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,28 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param name="headerText" value="#{messages.workunits}" />
+    <ui:param name="value" value="#{entity[1]}" />
+  </ui:include>
+  <ui:include src="/fragments/column/value-id.xhtml">
+    <ui:param name="headerTextId" value="#{messages.application} #{messages.id}" />
+    <ui:param name="valueId" value="#{entity[2]}" />
+    <ui:param name="valueClass" value="application" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param name="headerText" value="#{messages.application} #{messages.name}" />
+    <ui:param name="value" value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param name="headerText" value="#{messages.application} #{messages.type}" />
+    <ui:param name="value" value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param name="headerText" value="#{messages.technology}" />
+    <ui:param name="value" value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param name="headerText" value="#{messages.organization} #{messages.name}" />
+    <ui:param name="value" value="#{entity[6]}" />
+  </ui:include>
+</ui:composition>

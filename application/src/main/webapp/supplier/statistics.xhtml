@@ -1,0 +1,54 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('statistics') and identityManager.hasCurrentUserRole('supplierReader')}">
+    <c:set
+      value="#{statisticsList.getSupplierStatisticsPerYear(supplier)}"
+      var="tableContent" />
+    <h:form>
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/supplier/supplierperyear-cube-columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="#{supplier.tableContext}_statistics" />
+        <ui:param
+          name="tableContent"
+          value="#{tableContent}" />
+        <ui:param
+          name="rowsPerPageDropdown"
+          value="all" />
+      </ui:include>
+    </h:form>
+
+    <c:if test="#{empty tableContent}">
+      <h:outputText value="#{messages.statisticsPerYearNotAvailable}" />
+    </c:if>
+
+    <c:if test="#{not empty tableContent}">
+      <p:spacer height="40" />
+      <h:panelGrid columns="3">
+        <p:barChart
+          model="#{barChart.getHorizontal(statisticsList.getSupplierStatisticsPurchases(supplier),messages.purchases,messages.numberOfPurchasesPerYear,messages.purchases, null, null)}"
+          style="width:400px" />
+        <p:spacer width="20" />
+        <p:barChart
+          model="#{barChart.getHorizontalStacked([statisticsList.getSupplierPurchasesYearlyCHF(supplier), statisticsList.getSupplierPurchasesYearlyUSD(supplier), statisticsList.getSupplierPurchasesYearlyEUR(supplier), statisticsList.getSupplierPurchasesYearlyGBP(supplier)], [messages.chf, messages.usd, messages.eur, messages.gbp], messages.kpiCostExpensesPurchase, null, null, null)}"
+          style="width:400px" />
+        <p:spacer height="20" />
+        <p:spacer height="20" />
+        <p:spacer height="20" />
+        <p:barChart
+          model="#{barChart.getHorizontal(statisticsList.getSupplierStatisticsConsumables(supplier),messages.consumables,messages.numberOfConsumablesPerYear,messages.consumables, null, null)}"
+          style="width:400px" />
+        <p:spacer width="20" />
+        <p:barChart
+          model="#{barChart.getHorizontalStacked([statisticsList.getSupplierConsumableYearlyCHF(supplier), statisticsList.getSupplierConsumableYearlyUSD(supplier), statisticsList.getSupplierConsumableYearlyEUR(supplier), statisticsList.getSupplierConsumableYearlyGBP(supplier)], [messages.chf, messages.usd, messages.eur, messages.gbp], messages.kpiConsumablesPerYear, null, null, null)}"
+          style="width:400px" />
+      </h:panelGrid>
+    </c:if>
+  </c:if>
+</ui:composition>

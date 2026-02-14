@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('class')}">
+    <p:column field="#{fieldPrefix}trimmedClassName" headerText="#{messages.class}" />
+  </c:if>
+</ui:composition>

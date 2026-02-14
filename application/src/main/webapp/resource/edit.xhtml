@@ -1,0 +1,84 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{resourceManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{resourceManager.resource.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.sample}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:param
+              name="required"
+              value="#{resourceManager.resource.annotationRequired}" />
+            <h:selectOneMenu
+              id="sample"
+              value="#{resourceManager.resource.sample}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="#{resourceManager.resource.annotationRequired}" />
+              <f:selectItems
+                value="#{resourceManager.resource.workunit.container.samples}"
+                var="item"
+                itemLabel="#{item.displayName}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.expirationDate}" title="#{messages.expirationDateHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="expirationDate"
+              value="#{resourceManager.resource.expirationDate}"
+              title="#{messages.resourceExpirationDateHint}" />
+          </ui:decorate>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+            <h:outputText value="#{messages.archiveExpirationDate}" title="#{messages.archiveExpirationDateHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:datePicker
+                id="archiveExpirationDate"
+                value="#{resourceManager.resource.archiveExpirationDate}"
+                title="#{messages.resourceArchiveExpirationDateHint}" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{resourceManager.resource.description}"
+              title="#{messages.resourceDescriptionHint}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('commentCount')}">
+    <p:column
+      field="#{fieldPrefix}comments.size()"
+      headerText="#{messages.comments} #{messages.count}"
+      filterMatchMode="exact" />
+  </c:if>
+</ui:composition>

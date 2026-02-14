@@ -1,0 +1,65 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('technologies')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}technologiesAsString"
+        headerText="#{messages.technologies}"
+        exportValue="#{collectionHelper.printNames(entity.technologies)}">
+        <f:facet name="filter">
+          <h:selectOneMenu
+            id="containerReaderTechnology"
+            onchange="PF('#{tableContext}#{tableType}').filter()">
+            <f:selectItem itemLabel="#{messages.noFilter}" />
+            <f:selectItems
+              value="#{technologyList.resultList}"
+              var="item"
+              itemValue="#{item}"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </f:facet>
+        <ui:repeat
+          rendered="#{not empty entity.technologies}"
+          value="#{entity.technologies}"
+          var="item">
+          <ui:include src="/fragments/entity-link-name.xhtml">
+            <ui:param
+              name="instance"
+              value="#{item}" />
+          </ui:include>
+          <br />
+        </ui:repeat>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}technologiesAsString"
+        headerText="#{messages.technologies}"
+        exportValue="#{entity.technologiesAsString}">
+        <f:facet name="filter">
+          <h:selectOneMenu
+            id="nonContainerReaderTechnology"
+            onchange="PF('#{tableContext}#{tableType}').filter()">
+            <f:selectItem itemLabel="#{messages.noFilter}" />
+            <f:selectItems
+              value="#{technologyList.resultList}"
+              var="item"
+              itemValue="#{item}"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </f:facet>
+        <ui:repeat
+          rendered="#{not empty entity.technologies}"
+          value="#{entity.technologies}"
+          var="item">
+          <h:outputText value="#{item.name}" />
+          <br />
+        </ui:repeat>
+      </p:column>
+    </c:if>
+  </c:if>
+</ui:composition>

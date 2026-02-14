@@ -1,0 +1,66 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGrid
+    columns="2"
+    columnClasses="rtd,ltd">
+    <ui:include src="/fragments/details/idlink-name.xhtml" />
+    <h:outputText value="#{messages.status}" />
+    <h:form>
+      <ui:include src="/workunit/download-button.xhtml">
+        <ui:param name="hideStatus" value="false" />
+        <ui:param name="printSize" value="true" />
+      </ui:include>
+    </h:form>
+    <ui:include src="/fragments/details/progress.xhtml" />
+    <ui:include src="/fragments/details/parent.xhtml" />
+    <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+      <ui:include src="/fragments/details/dataFolder.xhtml" />
+    </c:if>
+    <ui:include src="/fragments/details/application.xhtml" />
+    <ui:include src="/fragments/details/dataset.xhtml" />
+    <c:if test="#{workunit.reportResourceAccessible}">
+      <h:outputText value="#{messages.report}" />
+      <h:outputLink value="#{workunit.reportResourceLink}">
+        <h:outputText value="#{workunit.reportResourceName}" />
+      </h:outputLink>
+    </c:if>
+    <ui:include src="/fragments/details/resources-single.xhtml" />
+    <ui:include src="/fragments/details/inputdataset.xhtml" />
+    <ui:include src="/fragments/details/inputresources-single.xhtml" />
+    <ui:include src="/fragments/details/description.xhtml" />
+    <c:if test="#{identityManager.hasCurrentUserRole('itManager')}">
+      <ui:include src="/fragments/details/archiving.xhtml" />
+    </c:if>
+    <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+
+    <c:if test="#{not empty workunit.log}">
+      <h:outputText value="#{messages.workunitExecutable} #{messages.log}" />
+      <h:inputTextarea
+        id="log"
+        value="#{workunit.log}"
+        readonly="true"
+        rows="20"
+        styleClass="preformat width-570" />
+    </c:if>
+  </h:panelGrid>
+
+  <h:panelGrid
+    styleClass="content-subheader-normal"
+    rendered="#{workunit.pending or workunit.imported}">
+    <h:outputText value="Note: #{workunit.status.hint}" />
+  </h:panelGrid>
+
+  <h:form id="logPollingForm" rendered="#{not empty workunit.log and workunit.renderedRefresh}">
+    <p:poll interval="60" update="log, logPollingForm" oncomplete="var $textarea = $('#log'); $textarea.scrollTop($textarea[0].scrollHeight);" />
+  </h:form>
+
+  <c:if test="#{not empty workunit.log}">
+    <script>$(document).ready(function () {
+        var $textarea = $('#log');
+        $textarea.scrollTop($textarea[0].scrollHeight);
+    });</script>
+  </c:if>
+</ui:composition>

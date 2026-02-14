@@ -1,0 +1,91 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <p:dialog
+    id="fractionateModalPanel"
+    widgetVar="fractionateModalDialog"
+    resizable="false"
+    closable="false"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.fractionate} #{messages.sample}: #{bean.instance.displayName}" />
+    </f:facet>
+    <h:form id="fractionate">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.fractions}" />
+        <h:panelGrid columns="2">
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:inputNumber
+              id="fractions"
+              value="#{bean.fractions}"
+              decimalPlaces="0"
+              thousandSeparator=""
+              minValue="2"
+              maxValue="#{confManager.configuration.maxBatchEditItems}"
+              size="4" />
+          </ui:decorate>
+          <h:outputText value="(maximum: #{confManager.configuration.maxBatchEditItems})" styleClass="warn" />
+        </h:panelGrid>
+
+        <h:outputText value="#{messages.fractions} #{messages.sampleType}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:selectOneMenu
+            id="fractionsSampleType"
+            value="#{bean.fractionsSampleType}"
+            styleClass="editWidthExtraLarge"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem
+              itemLabel="#{messages.selectAnItem}"
+              itemDisabled="true" />
+            <f:selectItems
+              var="item"
+              value="#{sampleTypeList.getResultListEnabledIncludingExcludingUserSampleInMultiplexAndControl(bean.fractionsSampleType)}"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.container}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="listContext"
+              value="fractionate" />
+            <ui:param
+              name="value"
+              value="#{bean.fractionsContainer}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{containerList.getReadableContainers}" />
+            <ui:param
+              name="disabled"
+              value="false" />
+            <ui:param
+              name="includeColumns"
+              value="/container/autocomplete-columns.xhtml" />
+          </ui:include>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{bean.fractionate}"
+          value="#{messages.fractionate}"
+          update="fractionate" />
+        <p:commandButton
+          actionListener="#{bean.resetFractionateModalDialog()}"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('fractionateModalDialog').hide();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

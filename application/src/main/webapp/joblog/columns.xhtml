@@ -1,0 +1,12 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:o="http://omnifaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/job.xhtml" />
+  <ui:include src="/fragments/column/log.xhtml" />
+  <ui:include src="/fragments/column/action.xhtml" />
+  <o:importConstants type="org.bfabric.enums.StatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param name="statusEnumList" value="#{jobList.statusEnums}" />
+  </ui:include>
+  <ui:include src="/fragments/column/created.xhtml" />
+</ui:composition>

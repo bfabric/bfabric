@@ -1,0 +1,141 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('dataCleaner')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <c:set
+      value="#{unassignedObjectsList.unassignedObjectsSize}"
+      var="unassignedObjectsSize" />
+    <h:outputText value="#{messages.unassignedObjects}" />
+    <h:outputText
+      value=" (#{unassignedObjectsSize})"
+      rendered="#{unassignedObjectsSize > 0}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:panelGroup id="deleteUnassignedObjects">
+      <h:outputText
+        value="Fine! There are no unassigned objects of type institute, department, organization, division, and company."
+        rendered="#{unassignedObjectsSize == 0}" />
+      <h:panelGroup
+        id="unassignedInstitutes"
+        rendered="#{not empty unassignedObjectsList.unassignedInstitutes}"
+        styleClass="extraBottomMargin">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="unassignedInstitutes" />
+          <ui:param
+            name="tableContent"
+            value="#{unassignedObjectsList.unassignedInstitutes}" />
+          <ui:param
+            name="include"
+            value="/unassigned/institutes-columns.xhtml" />
+          <ui:param
+            name="paginator"
+            value="false" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="unassignedDepartments"
+        rendered="#{not empty unassignedObjectsList.unassignedDepartments}"
+        styleClass="extraBottomMargin">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="unassignedDepartments" />
+          <ui:param
+            name="tableContent"
+            value="#{unassignedObjectsList.unassignedDepartments}" />
+          <ui:param
+            name="include"
+            value="/unassigned/departments-columns.xhtml" />
+          <ui:param
+            name="paginator"
+            value="false" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="unassignedOrganizations"
+        rendered="#{not empty unassignedObjectsList.unassignedOrganizations}"
+        styleClass="extraBottomMargin">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="unassignedOrganizations" />
+          <ui:param
+            name="tableContent"
+            value="#{unassignedObjectsList.unassignedOrganizations}" />
+          <ui:param
+            name="include"
+            value="/unassigned/organizations-columns.xhtml" />
+          <ui:param
+            name="paginator"
+            value="false" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="unassignedDivisions"
+        rendered="#{not empty unassignedObjectsList.unassignedDivisions}"
+        styleClass="extraBottomMargin">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="unassignedDivisions" />
+          <ui:param
+            name="tableContent"
+            value="#{unassignedObjectsList.unassignedDivisions}" />
+          <ui:param
+            name="include"
+            value="/unassigned/divisions-columns.xhtml" />
+          <ui:param
+            name="paginator"
+            value="false" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup
+        id="unassignedCompanies"
+        rendered="#{not empty unassignedObjectsList.unassignedCompanies}"
+        styleClass="extraBottomMargin">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="unassignedCompanies" />
+          <ui:param
+            name="tableContent"
+            value="#{unassignedObjectsList.unassignedCompanies}" />
+          <ui:param
+            name="include"
+            value="/unassigned/companies-columns.xhtml" />
+          <ui:param
+            name="paginator"
+            value="false" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="1"
+        styleClass="action"
+        rendered="#{unassignedObjectsSize > 0}">
+        <h:form>
+          <p:commandButton
+            action="#{unassignedObjectsService.deleteUnassignedObjectsAndRedirect}"
+            value="#{messages.deleteAll}"
+            title="#{messages.deleteUnassignedObjectsHint}"
+            update="pageTitle, deleteUnassignedObjects" />
+        </h:form>
+      </h:panelGrid>
+    </h:panelGroup>
+  </ui:define>
+</ui:composition>

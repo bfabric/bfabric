@@ -1,0 +1,76 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.indexer.enums.IndexMapTypeEnum" />
+  <c:if test="#{queryManager.renderedAddResourcesToBasketButton}">
+    <p:column exportable="false">
+      <f:facet name="header">
+        <div>
+          <h:outputText
+            value="#{messages.basket}"
+            title="#{messages.basketHint}" />
+        </div>
+        <p:commandButton
+          actionListener="#{queryManager.addResourcesToBasket(currentUser.selectedResourceBasket)}"
+          value="#{messages.addAll}"
+          title="#{messages.addResourcesToBasketHint}"
+          styleClass="inline"
+          update="@form"
+          oncomplete="fixOversize();" />
+      </f:facet>
+      <h:panelGroup id="addButton#{entity.get('id')}">
+        <h:panelGroup rendered="#{IndexMapTypeEnum.resource.name().equals(entity.get('indexMapType'))}">
+          <p:commandButton
+            rendered="#{not resourceBasketHelper.isAddResourceIdToBasketDisabled(currentUser.selectedResourceBasket, entity.get('id'))}"
+            value="#{messages.add}"
+            actionListener="#{resourceBasketHelper.addResourceToBasket(currentUser.selectedResourceBasket, entity.get('id'))}"
+            title="#{messages.addResourceToBasketHint}"
+            styleClass="inline"
+            update="@this:@parent:@parent"
+            oncomplete="fixOversize();" />
+        </h:panelGroup>
+        <h:panelGroup rendered="#{IndexMapTypeEnum.workunit.name().equals(entity.get('indexMapType'))}">
+          <p:commandButton
+            rendered="#{not resourceBasketHelper.isAddWorkunitIdToBasketDisabled(currentUser.selectedResourceBasket, entity.get('id'))}"
+            value="#{messages.add}"
+            actionListener="#{resourceBasketHelper.addWorkunitResourcesToBasket(currentUser.selectedResourceBasket, entity.get('id'))}"
+            title="#{messages.addAllWorkunitResourcesToBasket}"
+            styleClass="inline"
+            update="@this:@parent:@parent"
+            oncomplete="fixOversize();" />
+        </h:panelGroup>
+      </h:panelGroup>
+    </p:column>
+  </c:if>
+  <p:columns
+    value="#{resultColumns}"
+    var="field"
+    headerText="#{messages[field]}"
+    sortBy="#{entity[field]}"
+    columnIndexVar="index"
+    id="column#{index}"
+    sortFunction="#{queryManager.model.sortOrders[field]}"
+    styleClass="nowrap">
+    <c:set value="#{entity.get(field.concat(constants.INDEXER_COL_SUFFIX))}" var="entityFieldValue" />
+    <c:set value="#{entityFieldValue != null ? entityFieldValue : entity.get(field)}" var="entityField" />
+    <c:set value="#{entityField.length() > 40 ? stringHelper.truncate(entityField) : entityField}" var="entityValue" />
+    <c:set value="#{entityField.length() > 40 ? entityField : ''}" var="entityValueTitle" />
+    <h:outputText
+      value="#{entityValue}"
+      title="#{entityValueTitle}"
+      rendered="#{empty entity.get('id') or (not field.equals('id') and not field.equals('name'))}" />
+    <p:link
+      rendered="#{not empty entity.get('indexMapType') and not empty entity.get('id') and (field.equals('id') or field.equals('name'))}"
+      outcome="/#{entity.get('indexMapType').toLowerCase()}/show.xhtml"
+      value="#{entityValue}"
+      title="#{entityValueTitle}">
+      <f:param
+        name="id"
+        value="#{entity.get('id')}" />
+    </p:link>
+  </p:columns>
+</ui:composition>

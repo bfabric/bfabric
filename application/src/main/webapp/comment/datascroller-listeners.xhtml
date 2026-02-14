@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{empty skipLoadListener or not skipLoadListener}">
+    <c:choose>
+      <c:when test="#{not empty filterValueCreated}">
+        <script>
+            //<![CDATA[
+            $(document).ready(function () {
+                scrollEventHandler();
+            });
+            //]]>
+        </script>
+      </c:when>
+      <c:otherwise>
+        <script>
+            //<![CDATA[
+            $(document).ready(function () {
+                detectViewPort();
+                scrollEventHandler();
+            });
+            //]]>
+        </script>
+      </c:otherwise>
+    </c:choose>
+  </c:if>
+</ui:composition>

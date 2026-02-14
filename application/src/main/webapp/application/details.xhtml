@@ -1,0 +1,95 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name-supervisor.xhtml" />
+      <ui:include src="/fragments/details/applicationtype.xhtml" />
+      <ui:include src="/fragments/details/webUrl.xhtml" />
+      <ui:include src="/fragments/details/instrument.xhtml" />
+      <ui:include src="/fragments/details/pageflow.xhtml" />
+
+      <c:if test="#{app.import}">
+        <h:outputText value="#{messages.annotation} #{messages.required}" />
+        <h:outputText
+          value="#{app.annotationRequired}"
+          styleClass="#{not app.annotationRequired}" />
+
+        <h:outputText value="#{messages.importResources} #{messages.required}" />
+        <h:outputText
+          value="#{app.importResourcesRequired}"
+          styleClass="#{not app.importResourcesRequired}" />
+      </c:if>
+
+      <c:if test="#{not empty app.datasetTemplate}">
+        <h:outputText value="#{messages.datasetTemplate}" />
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{app.datasetTemplate}" />
+        </ui:include>
+      </c:if>
+
+      <ui:include src="/fragments/details/entityClassName.xhtml" />
+      <ui:include src="/fragments/details/applicationcategory.xhtml" />
+      <ui:include src="/fragments/details/technologies.xhtml" />
+      <ui:include src="/fragments/details/help.xhtml" />
+      <ui:include src="/fragments/details/predecessor.xhtml" />
+      <ui:include src="/fragments/details/succeedingWebApp.xhtml" />
+      <ui:include src="/fragments/details/description-enabled-valid.xhtml" />
+      <ui:include src="/fragments/details/hidden.xhtml" />
+      <ui:include src="/fragments/details/foremployeesonly.xhtml" />
+      <ui:include src="/fragments/details/notifyapplicationsupervisor.xhtml" />
+      <ui:include src="/fragments/details/notifycontainermember.xhtml" />
+      <ui:include src="/fragments/details/archiving.xhtml" />
+      <c:if test="#{not app.webApp}">
+        <ui:include src="/fragments/details/storage.xhtml" />
+        <c:if test="#{empty app.storage}">
+          <h:outputText value="#{messages.storage}" />
+          <h:outputText styleClass="warning" value="#{messages.notConfiguredWarning}" />
+        </c:if>
+        <ui:include src="/fragments/details/outputFileFormat.xhtml" />
+        <ui:include src="/fragments/details/executable.xhtml" />
+        <ui:include src="/fragments/details/wrappercreator.xhtml" />
+        <ui:include src="/fragments/details/submitter.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="8"
+      styleClass="action">
+      <c:if test="#{app.runnable}">
+        <p:button
+          rendered="#{not app.webApp}"
+          outcome="/workunit/edit.xhtml"
+          value="#{messages.run}"
+          title="#{messages.runApplicationHint.replace('{0}', app.name).replace('{1}', empty app.description ? '' : app.description).replace('{2}', contextContainer.toString())}">
+          <f:param
+            name="creationType"
+            value="#{constants.CREATION_FROM_SCRATCH}" />
+          <f:param
+            name="applicationId"
+            value="#{app.id}" />
+        </p:button>
+        <ui:include src="/fragments/button/runWebUrl.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <c:if test="#{identityManager.hasCurrentUserRole('applicationManager')}">
+        <ui:include src="/fragments/button/switchenabled.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <c:if test="#{identityManager.hasCurrentUserRole('applicationReader')}">
+        <ui:include src="/fragments/button/list.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

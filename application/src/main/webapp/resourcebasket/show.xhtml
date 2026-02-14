@@ -1,0 +1,90 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.resourceBasket} #{resourceBasket.id}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="resourcebasketform">
+      <h:outputText
+        value="#{messages.noResourcesInBasket}"
+        rendered="#{empty resourceBasket.resources}" />
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="tableType"
+          value="resource" />
+        <ui:param
+          name="include"
+          value="/resourcebasket/resource-columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="resourcebasket" />
+        <ui:param
+          name="tableContent"
+          value="#{resourceBasket.resources}" />
+      </ui:include>
+
+      <h:panelGroup id="buttons">
+        <h:panelGrid
+          columns="3"
+          styleClass="action"
+          rendered="#{not empty resourceBasketManager.selectedResources}">
+          <p:commandButton
+            action="#{resourceBasketManager.createDatasetFromSelectedResources}"
+            disabled="#{not currentUser.containerDependentEntityCreatable}"
+            value="#{messages.createDataset}"
+            global="false" />
+          <!-- Download button -->
+          <p:commandButton
+            rendered="#{resourceBasketManager.downloadManagerDownloadButtonRendered}"
+            actionListener="#{resourceBasketManager.createBasketFromSelectedResourcesAsJnlp}"
+            value="#{messages.download}"
+            title="#{messages.downloadResourceBasketDownloadManagerHint} #{messages.downloadableResourceHint}"
+            global="false"
+            style="height: 20px !important" />
+          <p:commandButton
+            rendered="#{resourceBasketManager.downloadButtonRendered}"
+            value="#{messages.downloadHttp}"
+            title="#{messages.downloadResourceBasketHint} #{messages.downloadableResourceHint}"
+            onclick="remoteGetJson([{name: 'entity', value: '#{instance}'}])"
+            global="false"
+            style="height: 20px !important" />
+          <p:remoteCommand
+            name="remoteGetJson"
+            action="#{resourceBasketManager.createBasketFromSelectedResourcesAsJson}"
+            oncomplete="download_files(args.json)" />
+        </h:panelGrid>
+
+        <p>
+          <h:outputText value="#{messages.createDatasetButtonDisabledHint}" rendered="#{not empty resourceBasketManager.selectedResources and not currentUser.containerDependentEntityCreatable}"
+                        styleClass="warn" />
+        </p>
+
+        <h:panelGroup rendered="#{not empty resourceBasketManager.selectedResources}">
+          <h:panelGrid styleClass="content-subheader">
+            <h:outputText value="#{messages.runApplicationOnSelectedResources}" />
+          </h:panelGrid>
+
+          <h:outputText
+            value="#{messages.noApplicationAvailableForSelectedResources}"
+            rendered="#{empty resourceBasketManager.applications}" />
+          <h:panelGrid rendered="#{not empty resourceBasketManager.applications}">
+            <ui:repeat
+              value="#{resourceBasketManager.applications}"
+              var="item">
+              <p:commandButton
+                action="#{resourceBasketManager.runApplication(item.id)}"
+                value="#{item.name}"
+                title="#{messages.resourcesBasketHint.replace('{0}', item.name)}"
+                styleClass="application" />
+              <h:outputText value="&#160;" />
+            </ui:repeat>
+          </h:panelGrid>
+        </h:panelGroup>
+      </h:panelGroup>
+    </h:form>
+  </ui:define>
+</ui:composition>

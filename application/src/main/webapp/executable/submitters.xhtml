@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('submitters')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="submitter" />
+      <ui:param
+        name="tableContext"
+        value="#{executable.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{executable.submitters}" />
+      <ui:param
+        name="hideColumns"
+        value="context" />
+    </ui:include>
+  </c:if>
+</ui:composition>

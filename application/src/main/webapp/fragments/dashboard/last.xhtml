@@ -1,0 +1,47 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="instance" type="org.bfabric.entity.Container"-->
+  <div class="hide-table-header dashboard-grid-min-content">
+    <c:if test="#{not empty containerList.getLastEntityLogs(instance, null)}">
+      <div class="cardBoxShadow">
+        <div class="card-header">
+          <h3>
+            <h:outputText value="#{messages.lastActivities}" />
+            <p:link styleClass="iconBox">
+              <f:param name="id" value="#{instance.id}" />
+              <f:param name="tab" value="log" />
+              <i class="fas fa-up-right-from-square" /></p:link>
+          </h3>
+        </div>
+        <ui:include src="/fragments/dashboard/lastactivity-table.xhtml">
+          <ui:param name="tableContent" value="#{containerList.getLastEntityLogs(instance, null)}" />
+        </ui:include>
+      </div>
+    </c:if>
+
+    <c:if test="#{not empty instance.commentsCurrentUser}">
+      <div class="cardBoxShadow">
+        <div class="card-header">
+          <h3>
+            <h:outputText value="#{messages.lastComments}" />
+            <p:link styleClass="iconBox">
+              <f:param name="id" value="#{instance.id}" />
+              <f:param name="tab" value="comments" />
+              <i class="fas fa-up-right-from-square" />
+            </p:link>
+          </h3>
+        </div>
+        <ui:include src="/fragments/dashboard/lastcomment-table.xhtml" />
+      </div>
+    </c:if>
+
+    <div class="cardBoxShadow">
+      <div class="card-header"><h3><h:outputText value="#{messages.status}" title="#{messages.status}" />
+      </h3></div>
+      <ui:include src="/fragments/dashboard/status-table.xhtml" />
+    </div>
+  </div>
+</ui:composition>

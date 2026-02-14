@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column headerText="#{messages.status}">
+    <h:outputText
+      rendered="#{entity.customContainerStatus}"
+      value="#{entity.name}"
+      styleClass="customcontainerstatus" />
+    <h:outputText
+      rendered="#{not entity.customContainerStatus}"
+      value="#{entity.label}"
+      styleClass="#{entity.label}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/created.xhtml">
+    <ui:param
+      name="sortable"
+      value="false" />
+    <ui:param
+      name="filterable"
+      value="false" />
+  </ui:include>
+</ui:composition>

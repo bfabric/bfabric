@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+  <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+    <h:panelGrid styleClass="button-subheader">
+      <h:outputText value="#{messages.switchStatus}" />
+    </h:panelGrid>
+
+    <h:form>
+      <h:inputTextarea
+        id="statusComment"
+        value="#{entityManager.switchStatusComment}"
+        pt:placeholder="#{messages.statusComment}"
+        immediate="true"
+        cols="2"
+        styleClass="editWidthExtraLarge" />
+      <h:panelGrid
+        columns="7"
+        styleClass="action">
+        <ui:include src="/fragments/button/switchup.xhtml" />
+        <ui:include src="/fragments/button/switchbookable.xhtml" />
+        <ui:include src="/fragments/button/switchuservisible.xhtml" />
+        <ui:include src="/fragments/button/switchuserbookable.xhtml" />
+        <ui:include src="/fragments/button/switchrunenabled.xhtml" />
+        <ui:include src="/fragments/button/switchavailable.xhtml" />
+        <ui:include src="/fragments/button/refresh.xhtml" />
+      </h:panelGrid>
+    </h:form>
+  </h:panelGroup>
+</ui:composition>

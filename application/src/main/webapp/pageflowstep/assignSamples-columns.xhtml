@@ -1,0 +1,97 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    headerText="#{messages.relativePath}"
+    exportValue="#{entity.relativePath}">
+    <h:outputText
+      value="#{stringHelper.truncate(entity.relativePath)}"
+      title="#{entity.uri}" />
+  </p:column>
+  <p:column headerText="#{messages.size}">
+    <h:outputText value="#{entity.printSize}" />
+  </p:column>
+  <p:column headerText="#{messages.fileDate}">
+    <h:outputText value="#{entity.fileDate}" />
+  </p:column>
+  <p:column id="sampleColumn">
+    <f:facet name="header">
+      <h:panelGrid
+        columns="1"
+        styleClass="nospace noborder">
+        <h:panelGrid
+          columns="5"
+          styleClass="nospace noborder">
+          <h:outputText value="#{messages.samples}" />
+          <p:spacer width="8" />
+          <p:commandLink
+            action="#{resourceHelper.makeSamplesProposal(workunit.container.samples)}"
+            value="#{messages.propose}"
+            title="#{messages.proposeSamplesHint}"
+            update="#{tableContext}#{tableType}table" />
+          <p:spacer width="8" />
+          <p:commandLink
+            action="#{resourceHelper.deselectAllSamplesFromImportResources()}"
+            value="#{messages.clear}"
+            title="#{messages.deselectAllSamplesHint}"
+            update="#{tableContext}#{tableType}table" />
+        </h:panelGrid>
+        <p:spacer height="4" />
+        <h:panelGrid
+          columns="2"
+          styleClass="nospace noborder">
+          <h:selectOneMenu
+            id="sampleForAll"
+            value="#{resourceHelper.sampleForAllImportResources}"
+            title="#{messages.setSampleForAllResourcesHint}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemLabel="#{messages.selectAnItem}" />
+            <f:selectItems
+              value="#{workunit.container.samples}"
+              var="item"
+              itemLabel="#{item.displayName}" />
+            <p:ajax
+              event="change"
+              listener="#{resourceHelper.setValueForAllImportResources}"
+              update="#{tableContext}#{tableType}table" />
+          </h:selectOneMenu>
+          <p:commandButton
+            action="#{resourceHelper.clearSelectedResource(true)}"
+            value="#{empty resourceHelper.sampleForAllImportResources ? messages.assign : messages.replace}"
+            title="#{messages.assignSampleHint}"
+            immediate="true"
+            oncomplete="PF('assignSampleModalDialog').show()"
+            update="assignSampleModalPanel"
+            styleClass="noleftborderselect" />
+        </h:panelGrid>
+      </h:panelGrid>
+    </f:facet>
+    <h:panelGrid
+      columns="2"
+      styleClass="nospace noborder">
+      <h:selectOneMenu
+        id="sample"
+        value="#{entity.sample}"
+        converter="omnifaces.SelectItemsConverter">
+        <f:selectItem itemLabel="#{messages.selectAnItem}" />
+        <f:selectItems
+          value="#{workunit.container.samples}"
+          var="item"
+          itemLabel="#{item.displayName}" />
+        <p:ajax
+          event="change"
+          global="false" />
+      </h:selectOneMenu>
+      <p:commandButton
+        action="#{resourceHelper.setSelectedResource(entity)}"
+        value="#{empty entity.sample ? messages.assign : messages.replace}"
+        title="#{messages.assignSampleHint}"
+        immediate="true"
+        oncomplete="PF('assignSampleModalDialog').show()"
+        update="assignSampleModalPanel"
+        styleClass="noleftborderselect" />
+    </h:panelGrid>
+  </p:column>
+</ui:composition>

@@ -1,0 +1,35 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <ui:include src="/fragments/user-hints-online.xhtml" />
+  <h:panelGroup rendered="#{not instance.emailVerified and not noHints}">
+    <i
+      class="fas fa-exclamation-circle warning"
+      title="#{messages.userEmailNotVerifiedHint}" />
+  </h:panelGroup>
+  <h:panelGroup rendered="#{not instance.emailActive and not noHints}">
+    <i
+      class="fas fa-ban warning"
+      title="#{messages.userEmailInactiveHint}" />
+  </h:panelGroup>
+  <h:panelGroup rendered="#{instance.employee and not noHints}">
+    <i
+      class="fas fa-award accepted"
+      title="#{messages.userEmployeeHint}" />
+  </h:panelGroup>
+  <h:panelGroup rendered="#{instance.alumni and not noHints}">
+    <i
+      class="fas fa-medal info"
+      title="#{messages.userAlumniHint}" />
+  </h:panelGroup>
+  <h:panelGroup rendered="#{(instance.identityUser or identityManager.hasCurrentUserRole('userReader')) and instance.emailOrganizationNotMatching and not noHints}">
+    <i
+      class="fas fa-exclamation-triangle warning"
+      title="#{messages.emailNotMatchOrganizationException}" />
+  </h:panelGroup>
+  <h:panelGroup rendered="#{(not instance.available and not empty instance.available) and not noHints}">
+    <i
+      class="fas fa-sign pending"
+      title="#{messages.notAvailableHint}" />
+  </h:panelGroup>
+</ui:composition>

@@ -1,0 +1,122 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleQCTypeEnum" />
+  <p:dialog
+    id="clonePlateModalPanel"
+    widgetVar="clonePlateModalDialog"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.clone} #{messages.plate}" />
+    </f:facet>
+    <h:form id="clonePlate">
+      <p>
+        <p:selectOneButton
+          id="cloneMode"
+          value="#{plate.cloneMode}"
+          valueChangeListener="#{plate.cloneModeChanged}">
+          <f:selectItem
+            itemDisabled="#{plate.plateType.name eq constants.PLATE_TYPE_USER_SUBMITTED_NAME}"
+            itemValue="#{constants.CLONE_MODE_SAMPLES_NONE}"
+            itemLabel="#{messages.cloneModeSamplesNone}" />
+          <f:selectItem
+            itemDisabled="#{empty plate.samples}"
+            itemValue="#{constants.CLONE_MODE_SAMPLES_REFERENCE}"
+            itemLabel="#{messages.cloneModeSamplesReference}" />
+          <p:ajax
+            event="change"
+            global="false"
+            update="samplesCloneMode, actions" />
+        </p:selectOneButton>
+        <p:tooltip
+          for="cloneMode"
+          showDelay="500"
+          value="#{messages.cloneModeHint}" />
+      </p>
+
+      <h:panelGroup id="samplesCloneMode">
+        <h:panelGrid
+          rendered="#{!plateManager.cloneModeSamplesNone}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="name"
+              value="#{plate.clonedPlateName}"
+              styleClass="editWidthLarge">
+              <p:ajax
+                event="change"
+                global="false" />
+            </h:inputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.plateType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="plateTypeClone"
+              value="#{plate.clonedPlateType}"
+              styleClass="editWidthLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{plateTypeList.getResultListIncludingExcludingUserSubmitted(plate.plateType.name eq constants.PLATE_TYPE_USER_SUBMITTED_NAME ? null : plate.plateType.id)}"
+                var="item"
+                itemLabel="#{item.displayName}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="samplesCloneMode, actions" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          rendered="#{plate.clonedPlateType.qualityControlPlateType}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.qualityControlType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="qualityControlTypeClone"
+              value="#{plate.clonedQualityControlType}"
+              title="#{messages.qualityControlTypeSamplePlateAssignmentHint}"
+              styleClass="editWidthLarge">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{SampleQCTypeEnum.values()}"
+                var="item"
+                itemLabel="#{item.label}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{plateManager.clonePlate}"
+          value="#{messages.clone}"
+          update="clonePlate" />
+        <p:commandButton
+          actionListener="#{plateManager.resetClonePlateModalDialog()}"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('clonePlateModalDialog').hide(); fixOversize();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

@@ -1,0 +1,76 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param name="logRendered" value="#{identityManager.hasCurrentUserRole('applicationReader')}" />
+  </ui:include>
+  <ui:include src="/fragments/sidebar/parameters.xhtml" />
+  <c:if test="#{identityManager.hasCurrentUserRole('applicationReader')}">
+    <ui:include src="/fragments/sidebar/jobs.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{app.precedingApplications}" />
+    <ui:param
+      name="label"
+      value="#{messages.precedingApplications}" />
+    <ui:param
+      name="tab"
+      value="precedingapplications" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{app.succeedingApplications}" />
+    <ui:param
+      name="label"
+      value="#{messages.succeedingApps}" />
+    <ui:param
+      name="tab"
+      value="succeedingapplications" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('applicationReader')}">
+    <ui:include src="/fragments/sidebar/workunits.xhtml" />
+    <ui:include src="/fragments/sidebar/resources.xhtml">
+      <ui:param
+        name="content"
+        value="#{resourceList.getLazyModelByApplicationId(app.id)}" />
+    </ui:include>
+    <ui:include src="/fragments/sidebar/importresources.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/successors.xhtml" />
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{app.precedingWebApps}" />
+    <ui:param
+      name="label"
+      value="#{messages.precedingWebApps}" />
+    <ui:param
+      name="tab"
+      value="precedingWebApps" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('applicationReader')}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{app.applicationTestLog}" />
+      <ui:param
+        name="label"
+        value="#{messages.applicationTestLog}" />
+      <ui:param
+        name="tab"
+        value="applicationtestlog" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/mails.xhtml" />
+    <ui:include src="/fragments/sidebar/statistics.xhtml" />
+  </c:if>
+</ui:composition>

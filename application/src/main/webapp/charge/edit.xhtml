@@ -1,0 +1,498 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{chargeManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{chargeManager.resetRefererURL()}">
+        <ui:include src="/fragments/select-container.xhtml">
+          <ui:param
+            name="entity"
+            value="#{charge}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{containerList.getChargeableReadableContainers}" />
+          <ui:param
+            name="requiredTemplate"
+            value="true" />
+          <ui:param
+            name="containerEditable"
+            value="#{empty charge.container or charge.container.extensible}" />
+          <o:methodParam
+            name="valueChangeListener"
+            value="#{chargeManager.containerChanged}" />
+          <ui:param
+            name="itemSelectUpdate"
+            value="containerAndInstrumentReservationDependent" />
+        </ui:include>
+
+        <h:panelGroup id="containerAndInstrumentReservationDependent">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{charge.container.instrumentReservations.size() > 0}">
+              <h:outputText value="#{messages.instrumentReservations}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="listContext"
+                    value="instrumentReservations" />
+                  <ui:param
+                    name="value"
+                    value="#{charge.instrumentReservationsAsList}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{chargeManager.getFilteredInstrumentReservationAsList}" />
+                  <o:methodParam
+                    name="valueChangeListener"
+                    value="#{charge.instrumentReservationChanged}" />
+                  <o:methodParam
+                    name="itemUnselectListener"
+                    value="#{charge.instrumentReservationUnselected}" />
+                  <ui:param
+                    name="multiple"
+                    value="true" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.name}" />
+                  <ui:param
+                    name="ajaxChange"
+                    value="true" />
+                  <ui:param
+                    name="clearUpdate"
+                    value="@this, containerAndInstrumentReservationDependent, total, notAccounted, price, discountedPrice, accounted" />
+                  <ui:param
+                    name="itemUnselectUpdate"
+                    value="@this, containerAndInstrumentReservationDependent, total, notAccounted, price, discountedPrice, accounted" />
+                  <ui:param
+                    name="itemSelectUpdate"
+                    value="@this, containerAndInstrumentReservationDependent, total, notAccounted, price, discountedPrice, accounted" />
+                  <ui:param
+                    name="includeColumns"
+                    value="/instrumentreservation/autocomplete-columns.xhtml" />
+                  <ui:param
+                    name="styleClass"
+                    value="editWidthHuge" />
+                </ui:include>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{charge.container.containerProject}">
+              <h:outputText value="#{messages.samples}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:panelGroup rendered="#{empty charge.container.samples}">
+                  <h:outputText value="There is no #{messages.sample} available!" />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not empty charge.container.samples}">
+                  <ui:include src="/fragments/picklist.xhtml">
+                    <ui:param
+                      name="listContext"
+                      value="sample" />
+                    <ui:param
+                      name="dualListModel"
+                      value="#{chargeManager.samplesModel}" />
+                    <ui:param
+                      name="include"
+                      value="/charge/edit-samples.xhtml" />
+                    <ui:param
+                      name="showFilter"
+                      value="true" />
+                    <ui:param
+                      name="itemLabel"
+                      value="#{entity.name}" />
+                    <ui:param
+                      name="transferRequired"
+                      value="true" />
+                  </ui:include>
+                </h:panelGroup>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{empty charge.instrumentReservations}">
+              <h:outputText value="#{messages.date}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:datePicker
+                  id="chargeDate"
+                  value="#{charge.date}" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{not charge.container.containerProject}">
+              <h:outputText value="#{messages.orderItem}" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:panelGroup rendered="#{empty charge.container.orderItems}">
+                  <h:outputText value="There is no #{messages.orderItem} available!" />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not empty charge.container.orderItems}">
+                  <ui:include src="/fragments/picklist.xhtml">
+                    <ui:param
+                      name="listContext"
+                      value="orderItem" />
+                    <ui:param
+                      name="dualListModel"
+                      value="#{chargeManager.orderItemsModel}" />
+                    <ui:param
+                      name="include"
+                      value="/charge/sample-information.xhtml" />
+                    <ui:param
+                      name="transferRequired"
+                      value="true" />
+                  </ui:include>
+                </h:panelGroup>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.service}" />
+          <h:panelGroup rendered="#{not charge.chargedServiceEditable}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{charge.service.fullName}" />
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{charge.chargedServiceEditable}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="include"
+                  value="/service/select-columns-for-charging.xhtml" />
+                <ui:param
+                  name="tableContext"
+                  value="#{constants.SERVICE_SELECTION}" />
+                <ui:param
+                  name="tableContent"
+                  value="#{serviceList.getEnabledServicesForOfferIncluding(charge.service.id)}" />
+                <ui:param
+                  name="selectedService"
+                  value="#{charge.service}" />
+                <o:methodParam
+                  name="rowSelectRadioListener"
+                  value="#{chargeManager.serviceChanged}" />
+                <ui:param
+                  name="selectionMode"
+                  value="#{charge.managed ? 'single' : 'multiple'}" />
+                <ui:param
+                  name="styleClass"
+                  value="hideCheckAll inner" />
+                <c:if test="#{charge.managed}">
+                  <ui:param
+                    name="selection"
+                    value="#{charge.service}" />
+                </c:if>
+                <c:if test="#{not charge.managed}">
+                  <ui:param
+                    name="selection"
+                    value="#{chargeManager.selectedServices}" />
+                  <ui:param
+                    name="update"
+                    value="#{constants.EDIT}:selectedService, #{constants.EDIT}:price, #{constants.EDIT}:discountedPrice" />
+                </c:if>
+                <c:if test="#{charge.managed}">
+                  <ui:param
+                    name="update"
+                    value="#{constants.EDIT}:selectedService, #{constants.EDIT}:basicPrice, #{constants.EDIT}:additionalPrice, #{constants.EDIT}:price, #{constants.EDIT}:discountedPrice" />
+                  <ui:param
+                    name="serviceName"
+                    value="#{charge.service.name}" />
+                </c:if>
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.selectedService}"
+            rendered="#{charge.chargedServiceEditable}" />
+          <h:panelGroup rendered="#{charge.chargedServiceEditable}">
+            <h:panelGroup id="selectedService">
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:panelGrid rendered="#{charge.managed and charge != null and charge.service != null}">
+                  <h:outputText value="#{charge.service.fullName}" />
+                </h:panelGrid>
+                <h:outputText
+                  rendered="#{charge.managed and charge != null and charge.service == null}"
+                  value="#{messages.none}" />
+              </ui:decorate>
+
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:panelGrid rendered="#{not charge.managed and not empty chargeManager.selectedServices}">
+                  <ui:repeat
+                    value="#{chargeManager.selectedServices}"
+                    var="item">
+                    <h:outputText value="#{item.fullName}" />
+                    <br />
+                  </ui:repeat>
+                </h:panelGrid>
+                <h:outputText
+                  rendered="#{not charge.managed and empty chargeManager.selectedServices}"
+                  value="#{messages.none}" />
+              </ui:decorate>
+            </h:panelGroup>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.charger}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="charger" />
+            <ui:param
+              name="value"
+              value="#{charge.charger}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{charge.getEmployeesIncludingCharger}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.fullLastFirstName}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.billingOrganizationType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="organizationType"
+              value="#{charge.organizationType}"
+              valueChangeListener="#{charge.organizationTypeChanged}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{organizationTypeList.resultList}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="basicPrice, additionalPrice, price, discountedPrice" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.total}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="total"
+              align="right"
+              value="#{charge.total}"
+              valueChangeListener="#{charge.totalChanged}"
+              styleClass="editWidthExtraLarge">
+              <f:convertNumber pattern="0.00" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="total, price, discountedPrice, accounted" />
+            </h:inputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.accounted}" title="#{messages.accountedHint}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              id="accounted"
+              align="right"
+              value="#{charge.accountedComputed}"
+              title="#{messages.accountedHint}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.notAccounted}" title="#{messages.notAccountedHint}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="notAccounted"
+              align="right"
+              value="#{charge.notAccounted}"
+              title="#{messages.notAccountedHint}"
+              valueChangeListener="#{charge.notAccountedChanged}"
+              styleClass="editWidthExtraLarge">
+              <f:convertNumber pattern="0.00" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="notAccounted, price, discountedPrice, accounted" />
+            </h:inputText>
+          </ui:decorate>
+
+          <!-- NOTE: Do not delete the discount stuff: Maybe it will be needed later again!
+                  <h:outputText value="#{messages.serviceDiscount}" />
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <p:spinner
+                      id="serviceDiscount"
+                      value="#{charge.discount}"
+                      title="#{messages.discountHint}"
+                      valueChangeListener="#{charge.discountChanged}"
+                      min="0"
+                      max="100"
+                      stepFactor="1"
+                      size="5"
+                      decimalPlaces="0"
+                      thousandSeparator="">
+                      <p:ajax
+                        event="change"
+                        global="false"
+                        update="price, discountedPrice" />
+                    </p:spinner>
+                  </ui:decorate>
+
+                  <c:if test="#{not empty charge.order and charge.order.discount > 0}">
+                  <h:outputText value="#{messages.orderDiscount}" />
+                  <ui:decorate template="/fragments/display.xhtml">
+                  <h:outputText value="#{charge.order.discount}" />
+                  </ui:decorate>
+                  </c:if>
+          -->
+
+          <h:outputText value="#{messages.taxType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="taxType"
+              value="#{charge.taxType}"
+              valueChangeListener="#{charge.taxTypeChanged}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{taxTypeList.resultList}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="taxType" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText
+            rendered="#{charge.managed}"
+            value="#{messages.basicPrice}" />
+          <h:panelGroup rendered="#{charge.managed}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/formatted-price.xhtml">
+                <ui:param
+                  name="formattedPriceId"
+                  value="basicPrice" />
+                <ui:param
+                  name="formattedPriceCurrent"
+                  value="#{charge.managed ? charge.basicPrice : null}" />
+                <ui:param
+                  name="formattedPrice"
+                  value="#{charge.serviceBasicPrice}" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            rendered="#{charge.managed}"
+            value="#{messages.additionalPrice}" />
+          <h:panelGroup rendered="#{charge.managed}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/formatted-price.xhtml">
+                <ui:param
+                  name="formattedPriceId"
+                  value="additionalPrice" />
+                <ui:param
+                  name="formattedPriceCurrent"
+                  value="#{charge.managed ? charge.additionalPrice : null}" />
+                <ui:param
+                  name="formattedPrice"
+                  value="#{charge.serviceAdditionalPrice}" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.price}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <ui:include src="/fragments/formatted-price.xhtml">
+              <ui:param
+                name="formattedPriceId"
+                value="price" />
+              <ui:param
+                name="formattedPriceCurrent"
+                value="#{charge.managed ? charge.price : null}" />
+              <ui:param
+                name="formattedPrice"
+                value="#{chargeManager.totalPriceForSelectedServices}" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.discountedPrice}" rendered="#{charge.price != charge.discountedPrice}" />
+          <h:panelGroup rendered="#{charge.price != charge.discountedPrice}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/formatted-price.xhtml">
+                <ui:param
+                  name="formattedPriceId"
+                  value="discountedPrice" />
+                <ui:param
+                  name="formattedPriceCurrent"
+                  value="#{charge.managed ? charge.discountedPrice : null}" />
+                <ui:param
+                  name="formattedPrice"
+                  value="#{chargeManager.totalDiscountedPriceForSelectedServices}" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{charge.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.notes}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="notes"
+              value="#{charge.notes}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.billable}" title="#{messages.billableHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="billable"
+              value="#{charge.billable}"
+              title="#{messages.billableHint}" />
+          </ui:decorate>
+
+          <c:if test="#{charge.managed}">
+            <h:outputText value="#{messages.prePayment}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="prePayment"
+                value="#{charge.prePayment}"
+                disabled="true" />
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="confirm-container-change-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

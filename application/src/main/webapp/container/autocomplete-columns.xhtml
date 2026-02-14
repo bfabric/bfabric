@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column>
+    <h:outputText value="#{item.id}" />
+  </p:column>
+  <p:column rendered="#{not hideColumns.contains('entityName')}">
+    <p:column>
+      <h:outputText value="#{item.entityName}" />
+    </p:column>
+  </p:column>
+  <p:column rendered="#{not hideColumns.contains('status')}">
+    <h:outputText
+      value="#{item.status.label}"
+      styleClass="#{item.status.label}" />
+  </p:column>
+  <p:column>
+    <h:outputText value="#{stringHelper.truncate(item.name, 60)}" />
+  </p:column>
+</ui:composition>

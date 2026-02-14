@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('childroles')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="role" />
+      <ui:param
+        name="tableContext"
+        value="#{role.tableContext}_group" />
+      <ui:param
+        name="tableContent"
+        value="#{role.groups}" />
+      <ui:param
+        name="hideColumns"
+        value="descendants, parents" />
+    </ui:include>
+  </c:if>
+</ui:composition>

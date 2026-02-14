@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('disableNotificationExclusion')}">
+    <p:column
+      field="#{fieldPrefix}disableNotificationExclusion"
+      headerText="#{messages.disableNotificationExclusion}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="disableNotificationExclusion" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.disableNotificationExclusion)}"
+        styleClass="#{stringHelper.toGreenRed(entity.disableNotificationExclusion)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

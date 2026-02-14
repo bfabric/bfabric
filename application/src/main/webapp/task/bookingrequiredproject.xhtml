@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup rendered="#{sidebarHelper.isTab('bookingrequiredproject') and identityManager.hasCurrentUserRole('containerManager') and not empty projectList.bookingRequiredTasks}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="project" />
+      <ui:param
+        name="tableContext"
+        value="bookingrequiredproject" />
+      <ui:param
+        name="tableContent"
+        value="#{projectList.bookingRequiredTasks}" />
+      <ui:param
+        name="hideColumns"
+        value="division, institute, department, createdBy, createdOn" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

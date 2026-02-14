@@ -1,0 +1,274 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  template="agenda-vacation-template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('agendaManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageHeader">
+    <ui:include src="header-fop.xhtml">
+      <ui:param
+        name="reportPageLayoutLandscape"
+        value="false" />
+    </ui:include>
+  </ui:define>
+
+  <ui:define name="pageHeader">
+    <ui:include src="header-fop.xhtml">
+      <ui:param
+        name="reportPageLayoutLandscape"
+        value="false" />
+      <ui:param
+        name="footerGenerationInfo"
+        value="true" />
+    </ui:include>
+  </ui:define>
+
+  <ui:define name="masterPage">
+    <!-- title -->
+    <fo:block
+      font-size="12pt"
+      font-weight="bold"
+      space-after="10mm">
+      <h:outputText value="Vacation Report #{agendaEventYear}" />
+    </fo:block>
+
+    <!-- index -->
+    <fo:block-container font-size="9pt">
+      <fo:table table-layout="fixed">
+        <fo:table-column column-width="120mm" />
+        <fo:table-column column-width="50mm" />
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block-container>
+                <fo:table
+                  table-layout="fixed"
+                  width="100%">
+                  <fo:table-column column-width="100mm" />
+                  <fo:table-column column-width="20mm" />
+                  <fo:table-body>
+                    <fo:table-row height="20pt">
+                      <fo:table-cell>
+                        <fo:block font-weight="bold"> Employee</fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell>
+                        <fo:block font-weight="bold"> Page</fo:block>
+                      </fo:table-cell>
+                    </fo:table-row>
+
+                    <ui:repeat
+                      value="#{userList.employeesRegular}"
+                      var="employee">
+                      <fo:table-row>
+                        <fo:table-cell>
+                          <fo:block>
+                            <h:outputText value="#{employee.fullLastFirstName}" />
+                          </fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                          <fo:block>
+                            <h:outputText value="#{userList.employeesRegular.indexOf(employee)+2}" />
+                          </fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </ui:repeat>
+                  </fo:table-body>
+                </fo:table>
+              </fo:block-container>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block />
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:block-container>
+  </ui:define>
+
+  <ui:define name="vacations">
+    <!-- body -->
+    <fo:flow flow-name="xsl-region-body">
+
+      <!-- title -->
+      <fo:block
+        font-size="12pt"
+        font-weight="bold"
+        space-after="10mm">
+        <h:outputText value="Vacation Report #{agendaEventYear}" />
+      </fo:block>
+
+      <fo:block-container
+        space-after="4mm"
+        font-size="9pt">
+        <fo:table
+          table-layout="fixed"
+          width="100%">
+          <fo:table-column column-width="120mm" />
+          <fo:table-column column-width="50mm" />
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block
+                  font-weight="bold"
+                  padding-bottom="5mm">Name
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block padding-bottom="5mm">
+                  <h:outputText value="#{employee.fullLastFirstName}" />
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-weight="bold">Credits</fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">Days</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <ui:repeat
+              value="#{employee.getCreditsByYear(agendaEventYear)}"
+              var="creditEntity">
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText value="#{creditEntity.description}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText value="#{creditEntity.days}" />
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </ui:repeat>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block
+                  font-weight="bold"
+                  padding-bottom="5mm">
+                  <h:outputText value="Total" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block
+                  font-weight="bold"
+                  padding-bottom="5mm">
+                  <h:outputText value="#{employee.getCreditsTotalByYear(agendaEventYear)}" />
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+
+        <fo:table table-layout="fixed">
+          <fo:table-column column-width="30mm" />
+          <fo:table-column column-width="90mm" />
+          <fo:table-column column-width="50mm" />
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Vacations" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Days" />
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <ui:repeat
+              value="#{employee.getAccountedEventsByYear(agendaEventYear)}"
+              var="accountedEvent">
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText value="#{accountedEvent.startDateAsText}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText value="#{accountedEvent.endDateAsText}" />
+                  </fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    <h:outputText value="#{accountedEvent.accountedDays}" />
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </ui:repeat>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Total" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block />
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{employee.getAccountedDaysByYear(agendaEventYear)}" />
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="Remaining" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block />
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText value="#{employee.getCreditsTotalByYear(agendaEventYear)-employee.getAccountedDaysByYear(agendaEventYear)}" />
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block-container>
+
+      <!-- Signature -->
+      <fo:block-container
+        space-before="10mm"
+        font-size="9pt">
+        <fo:block>
+          <fo:table table-layout="fixed">
+            <fo:table-column column-width="60mm" />
+            <fo:table-column column-width="10mm" />
+            <fo:table-column column-width="60mm" />
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block padding-bottom="1mm" border-bottom="0.5pt solid">Date:</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block />
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block
+                    padding-bottom="1mm"
+                    border-bottom="0.5pt solid">Signature:</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </ui:define>
+</ui:composition>

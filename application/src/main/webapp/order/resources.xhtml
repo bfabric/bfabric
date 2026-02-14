@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('resources')}">
+    <c:if test="#{order.project != null and resourceList.getLazyModelByContainers(order.associatedContainers).size() > 0}">
+      <ui:include src="/fragments/switch.xhtml">
+        <ui:param
+          name="widgetVarName"
+          value="'orderresource'" />
+        <ui:param
+          name="type"
+          value="resource" />
+        <ui:param
+          name="count"
+          value="#{resourceList.getLazyModelByContainers(order.associatedContainers).size()}" />
+        <ui:param
+          name="update"
+          value="#{order.tableContext}resourcetableform" />
+      </ui:include>
+    </c:if>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="resource" />
+      <ui:param
+        name="tableContext"
+        value="#{order.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{resourceList.getLazyModelByContainerId(order.id, order.associatedContainers, orderManager.containerAll)}" />
+      <ui:param
+        name="hideColumns"
+        value="#{not entityManager.containerAll ? 'container' : ''}" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('defaultBookingType')}">
+    <p:column
+      field="#{fieldPrefix}defaultBookingType.booker.name"
+      headerText="#{messages.defaultBooker}">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.defaultBookingType.booker}" />
+      </ui:include>
+    </p:column>
+    <p:column
+      field="#{fieldPrefix}defaultBookingType.name"
+      headerText="#{messages.defaultBookingType}">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.defaultBookingType}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

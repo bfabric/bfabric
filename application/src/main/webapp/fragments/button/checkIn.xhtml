@@ -1,0 +1,8 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:form rendered="#{entityManager.instance.enabled}">
+    <p:commandButton id="checkIn" action="#{entityManager.checkIn}" value="#{messages.checkIn}" />
+  </h:form>
+</ui:composition>

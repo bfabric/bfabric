@@ -1,0 +1,115 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('samples')}">
+    <h:panelGroup id="samplesView">
+      <h:panelGroup rendered="#{not plateManager.gridView}">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableType"
+            value="sampleplateposition" />
+          <ui:param
+            name="tableContext"
+            value="#{plate.tableContext}" />
+          <ui:param
+            name="tableContent"
+            value="#{plate.currentSamplePlatePositionsOrderedByAssignmentOrder}" />
+          <ui:param
+            name="specificColumns"
+            value="#{plateManager.getAttributeEnums()}" />
+          <ui:param
+            name="showColumns"
+            value="sample" />
+          <ui:param
+            name="hideColumns"
+            value="#{plateManager.types.size() > 1 ? '' : 'type'}, #{plate.plateType.name eq messages.qualityControl ? 'entityName, parentsSize, childrenSize, resources, workflow, workflowstep' : ''}" />
+          <ui:param
+            name="rowStyleClass"
+            value="#{entity.sample.rowStyleClass}" />
+          <ui:param
+            name="rowTitle"
+            value="#{entity.plate.plateLayout.getGridPosition(entity.position)}" />
+        </ui:include>
+      </h:panelGroup>
+      <h:panelGroup rendered="#{plateManager.gridView}">
+        <h:form id="assignSamples">
+          <ui:include src="/plate/assignSamples-datagrid.xhtml">
+            <ui:param
+              name="renderCheckbox"
+              value="true" />
+            <ui:param
+              name="checkboxUpdate"
+              value="@this, assignSamples:removeSelectedButton" />
+            <ui:param
+              name="droppableUpdate"
+              value="assignSamples" />
+            <ui:param
+              name="removeButtonProcessAndUpdate"
+              value="samplesView" />
+          </ui:include>
+
+          <h:outputText
+            id="validationErrorMsg"
+            style="max-width:0;padding:0" />
+          <h:message
+            for="validationErrorMsg"
+            style="margin-top:2px !important;"
+            styleClass="errorMessage" />
+        </h:form>
+      </h:panelGroup>
+
+      <h:form id="actionForm">
+        <h:panelGrid
+          columns="6"
+          styleClass="action">
+          <p:commandButton
+            rendered="#{plateManager.gridView and plate.updatable}"
+            action="#{plateManager.assignSamples}"
+            value="#{messages.save}"
+            process="@this, assignSamples"
+            update="samplesView"
+            style="#{plateManager.savePlateHintRendered ? 'background-color: #090; color: #eee' : ''}">
+            <f:param
+              name="id"
+              value="#{plate.id}" />
+          </p:commandButton>
+          <p:commandButton
+            rendered="#{plateManager.gridView and plate.sampleAssignmentEditable}"
+            action="#{plateManager.cancel}"
+            value="#{messages.cancel}"
+            immediate="true">
+            <f:param
+              name="id"
+              value="#{plate.id}" />
+          </p:commandButton>
+          <p:commandButton
+            rendered="#{not empty plateManager.selectedSamples}"
+            value="#{plateManager.gridView ? ''.concat(messages.table.concat(' ').concat(messages.view)) : ''.concat(messages.grid.concat(' ').concat(messages.view))}"
+            action="#{plateManager.setGridView(not plateManager.gridView)}"
+            update="samplesView"
+            oncomplete="fixOversize();" />
+          <p:button
+            rendered="#{not empty plate.samplePlatePositions and plate.updatable}"
+            outcome="edit-batch-samples.xhtml"
+            value="#{messages.edit} #{messages.samples}">
+            <f:param
+              name="id"
+              value="#{plate.id}" />
+          </p:button>
+          <p:button
+            rendered="#{plate.sampleAssignmentEditable}"
+            outcome="assignSamples.xhtml"
+            value="#{empty plate.samplePlatePositions ? messages.assignSamples : messages.reassignSamples}">
+            <f:param
+              name="id"
+              value="#{plate.id}" />
+          </p:button>
+        </h:panelGrid>
+      </h:form>
+    </h:panelGroup>
+    <ui:include src="/plate/assign-multiplexids-modal.xhtml" />
+  </c:if>
+</ui:composition>

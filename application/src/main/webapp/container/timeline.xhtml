@@ -1,0 +1,89 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('timeline')}">
+    <h:panelGroup id="timeline-tab-content">
+      <h:panelGrid columns="1">
+        <h:panelGroup>
+          <p:timeline
+            id="completeTimeline"
+            value="#{timelineModel}"
+            var="entity"
+            min="#{containerTimelineManager.minDate}"
+            max="#{containerTimelineManager.maxDate}"
+            height="600px"
+            width="800px"
+            selectable="false"
+            zoomable="true"
+            moveable="true"
+            stackEvents="true"
+            eventStyle="box"
+            showCurrentTime="true">
+            <p:column rendered="#{entity.getClass().getSimpleName() eq 'Object[]'}">
+              <p:link
+                outcome="/#{containerTimelineManager.instance.classLabelLowerCase}/show.xhtml"
+                title="#{containerTimelineManager.instance.classLabelLowerCase}"
+                value="#{entity[2]}#{entity[1]}">
+                <f:param
+                  name="id"
+                  value="#{containerTimelineManager.id}" />
+                <f:param
+                  name="tab"
+                  value="#{entity[3]}" />
+                <f:param
+                  name="filterValueCreated"
+                  value="#{containerTimelineManager.getDateAsFormattedString(entity[0])}" />
+              </p:link>
+            </p:column>
+            <p:column rendered="#{entity.getClass().getSimpleName() eq 'StandardContainerStatus'}">
+              <h:outputText
+                value="#{entity.name}"
+                styleClass="#{entity.name}" />
+            </p:column>
+          </p:timeline>
+        </h:panelGroup>
+        <h:outputText value="&#160;" />
+        <h:panelGroup rendered="#{not empty containerTimelineManager.getSelectableTimelineEvents()}">
+          <p:selectManyCheckbox
+            id="timelineGrid"
+            value="#{containerTimelineManager.selectedTimelines}"
+            layout="grid"
+            columns="5">
+            <f:selectItems
+              value="#{containerTimelineManager.getSelectableTimelineEvents()}"
+              var="item"
+              itemLabel="#{item.label} (#{item.shortCut})"
+              itemDisabled="#{not containerTimelineManager.selectedTimelines.contains(item) and containerTimelineManager.isTimeLineEventDisabled(item)}" />
+            <p:ajax
+              event="change"
+              global="true"
+              update="timeline-tab-content"
+              onstart="PF('mpWait').show();"
+              oncomplete="PF('mpWait').hide();" />
+          </p:selectManyCheckbox>
+        </h:panelGroup>
+        <h:outputText value="&#160;" />
+        <h:panelGrid
+          columns="2"
+          rendered="#{not empty containerTimelineManager.getSelectableTimelineEvents()}"
+          styleClass="action">
+          <p:commandButton
+            action="#{containerTimelineManager.toggleAllTimelines(true)}"
+            value="#{messages.selectAll}"
+            disabled="#{containerTimelineManager.renderedSelectAll}"
+            process="timeline-tab-content"
+            update="timeline-tab-content" />
+          <p:commandButton
+            action="#{containerTimelineManager.toggleAllTimelines(false)}"
+            value="#{messages.deselectAll}"
+            disabled="#{containerTimelineManager.renderedDeSelectAll}"
+            process="timeline-tab-content"
+            update="timeline-tab-content" />
+        </h:panelGrid>
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

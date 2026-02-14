@@ -1,0 +1,38 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  template="booking-template.xhtml">
+  <ui:define name="pageHeader">
+    <fo:static-content flow-name="xsl-region-before">
+      <ui:include src="booking-header.xhtml" />
+    </fo:static-content>
+    <fo:static-content flow-name="xsl-region-after">
+      <ui:include src="booking-footer.xhtml" />
+    </fo:static-content>
+  </ui:define>
+
+  <ui:define name="customerDetailsPage">
+    <fo:block-container
+      space-after="2cm"
+      font-size="9pt">
+      <ui:include src="booking-customer-details.xhtml" />
+    </fo:block-container>
+  </ui:define>
+
+  <ui:define name="summaryDetailsPage">
+    <ui:include src="booking-details.xhtml">
+      <ui:param
+        name="charges"
+        value="#{booking.groupedChargesByServiceAndDiscount}" />
+    </ui:include>
+  </ui:define>
+
+  <ui:define name="fullDetailsPage">
+    <ui:include src="booking-charges-details.xhtml" />
+    <ui:include src="booking-charges.xhtml">
+      <ui:param
+        name="charges"
+        value="#{booking.chargesOrderByServiceAndDiscount}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

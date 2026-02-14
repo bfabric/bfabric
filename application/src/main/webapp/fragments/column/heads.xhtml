@@ -1,0 +1,19 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('heads')}">
+    <p:column sortBy="#{collectionHelper.printNames(entity.heads)}"
+              sortable="#{not tableReference.lazy}"
+              filterBy="#{collectionHelper.printNames(entity.heads)}"
+              filterable="#{not tableReference.lazy}"
+              headerText="#{messages.head}"
+              exportValue="#{collectionHelper.printNames(entity.heads)}">
+      <ui:repeat value="#{entity.heads}" var="item">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param name="instance" value="#{item}" />
+        </ui:include>
+        <p:spacer width="10" />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

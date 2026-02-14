@@ -1,0 +1,94 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:set
+    var="listingRows"
+    value="#{sessionManager.listingRows}"
+    scope="session" />
+  <o:resolveComponent
+    name="tableReference"
+    for="#{tableContext}#{tableType}#{constants.TABLE}" />
+  <p:treeTable
+    rendered="#{showEmpty or contentSize > 0}"
+    id="#{tableContext}#{tableType}#{constants.TABLE}"
+    widgetVar="#{tableContext}#{tableType}"
+    value="#{treeTableContent}"
+    var="entity"
+    currentPageReportTemplate="#{messages.total}: #{contentSize}"
+    paginator="#{paginator == null or paginator}"
+    paginatorAlwaysVisible="true"
+    paginatorPosition="bottom"
+    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} #{(rowsPerPageDropdown ne 'none') ? '{RowsPerPageDropdown}' : ''}"
+    rowsPerPageTemplate="5,10,20,50,100,200#{(rowsPerPageDropdown eq 'all') and contentSize > 200 ? ','.concat(contentSize) : ''}"
+    rows="#{(paginator == null or paginator) ? (not empty customListingRows ? customListingRows : sessionManager.listingRows) : contentSize}"
+    rowStyleClass="#{rowStyleClass}"
+    styleClass="tableStyleClass"
+    tableStyleClass="treeTableStyleClass">
+    <c:if test="#{empty nodeExpandListener}">
+      <p:ajax
+        event="expand"
+        global="false"
+        oncomplete="fixOversize(); resizeFirstColumn();" />
+    </c:if>
+    <c:if test="#{not empty nodeExpandListener}">
+      <p:ajax
+        event="expand"
+        listener="#{nodeExpandListener}"
+        global="false"
+        oncomplete="fixOversize(); resizeFirstColumn();" />
+    </c:if>
+    <c:if test="#{empty nodeCollapseListener}">
+      <p:ajax
+        event="collapse"
+        global="false"
+        oncomplete="fixOversize(); resizeFirstColumn();" />
+    </c:if>
+    <c:if test="#{not empty nodeCollapseListener}">
+      <p:ajax
+        event="collapse"
+        listener="#{nodeCollapseListener}"
+        global="false"
+        oncomplete="fixOversize(); resizeFirstColumn();" />
+    </c:if>
+    <c:if test="#{empty pageListener and empty customListingRows}">
+      <p:ajax
+        event="page"
+        global="false"
+        oncomplete="fixOversize(); resizeFirstColumn();" />
+    </c:if>
+    <c:if test="#{not empty pageListener and not empty customListingRows}">
+      <p:ajax
+        event="page"
+        global="false"
+        oncomplete="pageListener();" />
+    </c:if>
+    <c:if test="#{include == null}">
+      <ui:include src="/#{tableType}/columns.xhtml" />
+    </c:if>
+    <c:if test="#{include != null}">
+      <ui:include src="#{include}" />
+    </c:if>
+  </p:treeTable>
+  <c:if test="#{not empty pageListener and not empty customListingRows}">
+    <p:remoteCommand
+      name="pageListener"
+      actionListener="#{pageListener}"
+      global="false"
+      immediate="true"
+      oncomplete="fixOversize(); resizeFirstColumn();"
+      update="@none">
+      <f:attribute
+        name="#{constants.TABLE_CLIENT_ID}"
+        value="#{tableReference.clientId}" />
+    </p:remoteCommand>
+  </c:if>
+  <p:remoteCommand
+    name="resizeFirstColumn"
+    global="false"
+    immediate="true"
+    oncomplete="if(#{showEmpty or contentSize > 0}) {resizeTreeTable('#{treetableFormId}:#{tableContext}#{tableType}#{constants.TABLE}');}"
+    update="@none" />
+</ui:composition>

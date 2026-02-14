@@ -1,0 +1,229 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:panelGroup>
+    <o:resolveComponent
+      name="tableReference"
+      for="#{tableContext}#{tableType}#{constants.TABLE}" />
+    <p:dataTable
+      rendered="#{showEmpty or tableContent.size() > 0}"
+      id="#{tableContext}#{tableType}#{constants.TABLE}"
+      widgetVar="#{tableContext}#{tableType}"
+      value="#{collectionHelper.getDatatableContent(tableContent, not empty editable and editable)}"
+      var="entity"
+      rows="#{dataTableHelper.getRows(paginator, customListingRows, maximumRowsPerPage, tableContent.size())}"
+      currentPageReportTemplate="#{messages.total}: {totalRecords} / #{tableContent.size()} #{messages.rows}"
+      paginator="#{(paginator == null or paginator) and (dataTableHelper.isRowsPerPageTemplateShown(paginator, customListingRows, maximumRowsPerPage, tableContent.size())  eq 'true')}"
+      paginatorAlwaysVisible="true"
+      paginatorPosition="bottom"
+      paginatorTemplate="{CurrentPageReport} #{(paginatorLinks ne 'none') ? '{JumpToPageInput} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}' : ''} #{(rowsPerPageDropdown ne 'none') and (dataTableHelper.isRowsPerPageTemplateShown(paginator, customListingRows, maximumRowsPerPage, tableContent.size())  eq 'true') ? '{RowsPerPageDropdown}' : ''} #{(exporters == null or exporters) ? '{Exporters}' : ''}"
+      rowsPerPageTemplate="#{not empty customRowsPerPageTemplate ? customRowsPerPageTemplate : dataTableHelper.getRowsPerPageTemplate(tableContext.concat(tableType).concat(constants.TABLE), tableContent.size(), rowsPerPageDropdown eq 'all')}"
+      styleClass="#{styleClass}"
+      style="#{style}"
+      columnClasses="#{columnClasses}"
+      filterDelay="500"
+      skipChildren="false"
+      editable="#{editable != null and editable}"
+      editMode="cell"
+      scrollable="#{scrollable}"
+      scrollWidth="#{scrollWidth}"
+      scrollHeight="#{scrollHeight}"
+      frozenRows="#{frozenRows}"
+      frozenColumns="#{frozenColumns}"
+      selection="#{selection}"
+      disabledSelection="#{disabledSelection}"
+      rowSelectMode="checkbox"
+      rowStyleClass="#{rowStyleClass}"
+      rowTitle="#{rowTitle}"
+      rowKey="#{dataTableHelper.hasColumnId(entity) ? entity.id : rowKey}"
+      rowIndexVar="rowIndex"
+      sortMode="multiple">
+      <p:ajax
+        event="filter"
+        global="false"
+        oncomplete="refreshExporter(); fixOversize();" />
+      <p:ajax
+        event="sort"
+        global="false"
+        oncomplete="fixOversize();" />
+      <c:if test="#{empty pageListener and empty customListingRows}">
+        <p:ajax
+          event="page"
+          global="#{not empty pageListenerGlobal and pageListenerGlobal ? pageListenerGlobal : false}"
+          oncomplete="fixOversize();" />
+      </c:if>
+      <c:if test="#{not empty pageListener and not empty customListingRows}">
+        <p:ajax
+          event="page"
+          global="#{not empty pageListenerGlobal and pageListenerGlobal ? pageListenerGlobal : false}"
+          oncomplete="pageListener();" />
+      </c:if>
+      <!-- ignoreAutoUpdate set to true in order to avoid facesMessages from disappearing -->
+      <p:ajax
+        event="cellEdit"
+        global="false"
+        ignoreAutoUpdate="true" />
+      <c:if test="#{update != null}">
+        <c:if test="#{empty rowSelectRadioListener}">
+          <p:ajax
+            event="rowSelect"
+            global="false"
+            update="#{update}" />
+          <p:ajax
+            event="rowSelectRadio"
+            global="false"
+            update="#{update}" />
+        </c:if>
+        <c:if test="#{not empty rowSelectRadioListener}">
+          <p:ajax
+            event="rowSelect"
+            global="false"
+            listener="#{rowSelectRadioListener}"
+            update="#{update}" />
+          <p:ajax
+            event="rowSelectRadio"
+            global="false"
+            listener="#{rowSelectRadioListener}"
+            update="#{update}" />
+        </c:if>
+        <c:if test="#{empty itemUnselectListener}">
+          <p:ajax
+            event="rowUnselectCheckbox"
+            global="false"
+            update="#{update}" />
+        </c:if>
+        <c:if test="#{not empty itemUnselectListener}">
+          <p:ajax
+            event="rowUnselectCheckbox"
+            global="false"
+            listener="#{itemUnselectListener}"
+            update="#{update}" />
+        </c:if>
+        <c:if test="#{empty itemSelectListener}">
+          <p:ajax
+            event="rowSelectCheckbox"
+            global="false"
+            update="#{update}" />
+        </c:if>
+        <c:if test="#{not empty itemSelectListener}">
+          <p:ajax
+            event="rowSelectCheckbox"
+            global="false"
+            listener="#{itemSelectListener}"
+            update="#{update}" />
+        </c:if>
+        <c:if test="#{empty toggleSelectListener}">
+          <p:ajax
+            event="toggleSelect"
+            global="false"
+            update="#{update}" />
+        </c:if>
+        <c:if test="#{not empty toggleSelectListener}">
+          <p:ajax
+            event="toggleSelect"
+            global="false"
+            listener="#{toggleSelectListener}"
+            update="#{update}" />
+        </c:if>
+      </c:if>
+      <f:facet name="{Exporters}">
+        <h:panelGroup id="exporters">
+          <!--
+          <h:outputText
+            value="tableReference=#{tableReference} tableContext=#{tableContext} tableType=#{tableType} tableContent=#{tableContent.size()} filteredDataTableSize=#{dataTableHelper.getFilteredDataTableSize(tableReference, tableContent)} exportable=#{dataTableHelper.isExportable(tableReference, tableContent)}" />
+          <p:spacer width="10" />
+          -->
+          <h:panelGroup id="nonExportableButtons" rendered="#{dataTableHelper.isExportable(tableReference, tableContent) ne 'true'}" styleClass="false">
+            <h:outputText value="#{messages.exportCSV}" />
+            <p:spacer width="10" />
+            <h:outputText value="#{messages.exportXLS}" />
+            <p:spacer width="10" rendered="#{tableType eq 'instrumentreservation' or tableType eq 'event'}" />
+            <h:outputText value="#{messages.exportICS}" rendered="#{tableType eq 'instrumentreservation' or tableType eq 'event'}" />
+            <p:tooltip for="nonExportableButtons" value="#{messages.exportDisabledHint}" />
+          </h:panelGroup>
+          <h:panelGroup rendered="#{dataTableHelper.isExportable(tableReference, tableContent) eq 'true'}">
+            <p:commandLink
+              ajax="false"
+              value="#{messages.exportCSV}"
+              title="#{messages.exportCSVHint}"
+              immediate="true">
+              <p:dataExporter
+                visibleOnly="false"
+                type="csv"
+                target="#{tableContext}#{tableType}#{constants.TABLE}"
+                fileName="#{tableContext}_#{tableType}#{exportSuffix}" />
+            </p:commandLink>
+            <p:spacer width="10" />
+            <p:commandLink
+              ajax="false"
+              value="#{messages.exportXLS}"
+              title="#{messages.exportXLSHint}"
+              immediate="true">
+              <p:dataExporter
+                visibleOnly="false"
+                type="xlsxstream"
+                target="#{tableContext}#{tableType}#{constants.TABLE}"
+                fileName="#{tableContext}_#{tableType}#{exportSuffix}" />
+            </p:commandLink>
+            <p:spacer width="10" rendered="#{tableType eq 'instrumentreservation' or tableType eq 'event'}" />
+            <p:commandLink
+              rendered="#{tableType eq 'instrumentreservation' or tableType eq 'event'}"
+              ajax="false"
+              value="#{messages.exportICS}"
+              title="#{messages.exportICSHint}"
+              immediate="true">
+              <p:dataExporter
+                visibleOnly="false"
+                type="text"
+                target="#{tableContext}#{tableType}#{constants.TABLE}"
+                fileName="#{tableContext}_#{tableType}#{exportSuffix}"
+                exporter="#{dataExportManager.icsExporter}" />
+            </p:commandLink>
+          </h:panelGroup>
+          <p:spacer width="10" />
+          <p:commandButton rendered="#{identityManager.hasCurrentUserRole('admin')}" id="toggler" type="button" value="Columns" />
+          <p:columnToggler datasource="#{tableContext}#{tableType}#{constants.TABLE}" trigger="toggler">
+            <p:ajax />
+          </p:columnToggler>
+          <p:spacer width="20" />
+        </h:panelGroup>
+      </f:facet>
+      <c:if test="#{include == null}">
+        <ui:include src="/#{tableType}/columns.xhtml" />
+      </c:if>
+      <c:if test="#{include != null}">
+        <ui:include src="#{include}" />
+      </c:if>
+    </p:dataTable>
+    <p:message
+      for="#{tableContext}#{tableType}#{constants.TABLE}"
+      styleClass="errorMessage" />
+    <c:if test="#{not empty pageListener and not empty customListingRows}">
+      <p:remoteCommand
+        name="pageListener"
+        actionListener="#{pageListener}"
+        global="false"
+        immediate="true"
+        oncomplete="fixOversize();"
+        update="@none">
+        <f:attribute
+          name="#{constants.TABLE_CLIENT_ID}"
+          value="#{tableReference.clientId}" />
+      </p:remoteCommand>
+    </c:if>
+    <p:remoteCommand
+      name="refreshExporter"
+      global="false"
+      immediate="true"
+      update="@([id$=exporters])" />
+    <c:if test="#{(showEmpty or tableContent.size() > 0) and not empty filterValueCreated}">
+      <script>$(document).ready(function () {
+          PF('#{tableContext.concat(tableType)}').filter();
+      });</script>
+    </c:if>
+  </h:panelGroup>
+</ui:composition>

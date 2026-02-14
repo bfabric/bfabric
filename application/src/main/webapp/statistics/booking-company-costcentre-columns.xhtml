@@ -1,0 +1,76 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/statistics/fragments/column/year-quarter-month-week.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.companyId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.companyName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[4]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[5]}" />
+    <ui:param
+      name="valueClass"
+      value="company" />
+  </ui:include>
+  <p:column
+    rendered="#{not hideColumns.contains('costcentreId')}"
+    sortBy="#{entity[9]}"
+    filterBy="#{entity[9]}"
+    headerText="#{messages.costCentreId}">
+    <p:link
+      rendered="#{not empty entity[9]}"
+      outcome="/costcentre/show.xhtml"
+      value="#{entity[9]}">
+      <f:param
+        name="id"
+        value="#{entity[9]}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+  </p:column>
+  <p:column
+    rendered="#{not hideColumns.contains('costcentreCode')}"
+    sortBy="#{entity[6]}"
+    filterBy="#{entity[6]}"
+    headerText="#{messages.costCentre}">
+    <p:link
+      rendered="#{not empty entity[6]}"
+      outcome="/costcentre/show.xhtml"
+      value="#{entity[6]}">
+      <f:param
+        name="id"
+        value="#{entity[9]}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+  </p:column>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.bookings}" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+  </ui:include>
+  <p:column
+    sortBy="#{entity[8]}"
+    filterBy="#{entity[8]}"
+    headerText="#{messages.total} CHF">
+    <h:outputText
+      value="#{entity[8]}"
+      style="float:right">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+</ui:composition>

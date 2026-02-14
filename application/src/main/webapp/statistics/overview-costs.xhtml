@@ -1,0 +1,91 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.costs} #{messages.overview}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p:spacer height="10" />
+    <h:panelGrid columns="2">
+      <p:barChart
+        model="#{barChart.getHorizontalStacked([statisticsList.getInstrumentsCostsYearlyCHF(), statisticsList.getInstrumentsCostsYearlyUSD(), statisticsList.getInstrumentsCostsYearlyEUR(), statisticsList.getInstrumentsCostsYearlyGBP()], [messages.chf, messages.usd, messages.eur, messages.gbp], messages.kpiCostExpensesInstrument, messages.total, messages.year, null)}"
+        style="width:500px" />
+      <p:barChart
+        model="#{barChart.getHorizontalStacked([statisticsList.getPurchasesCostsYearlyCHF(), statisticsList.getPurchasesCostsYearlyUSD(), statisticsList.getPurchasesCostsYearlyEUR(), statisticsList.getPurchasesCostsYearlyGBP()], [messages.chf, messages.usd, messages.eur, messages.gbp], messages.kpiCostExpensesPurchase, messages.total, messages.year, null)}"
+        style="width:500px" />
+      <h:panelGroup>
+        <p:spacer height="20" />
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="instruments-price-per-year" /> <ui:param name="label" value="#{messages.instrumentCostsPerYear}" /> </ui:include>
+      </h:panelGroup>
+      <h:panelGroup>
+        <p:spacer height="20" />
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="purchase-costs" /> <ui:param name="label" value="#{messages.purchasesCostsPerYear}" /> </ui:include>
+      </h:panelGroup>
+    </h:panelGrid>
+    <p:spacer height="20" />
+    <h:form>
+      <h:panelGrid columns="1">
+        <h:outputText value="#{messages.top10} #{messages.suppliers} #{messages.byYear}" styleClass="bold" />
+        <p:selectOneMenu
+          value="#{statisticsManager.selectedYear}"
+          valueChangeListener="#{statisticsManager.selectedYearChanged}"
+          filter="true"
+          filterMatchMode="contains">
+          <f:selectItem itemLabel="#{messages.selectYear}" />
+          <f:selectItems
+            value="#{statisticsList.getYearSupplier()}"
+            var="item" />
+          <p:ajax
+            event="change"
+            global="false"
+            update="supplierPerYear" />
+        </p:selectOneMenu>
+      </h:panelGrid>
+      <p:spacer height="10" />
+      <h:panelGrid id="supplierPerYear" columns="3">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="supplierPerYear" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsList.getTopSupplierPerYear(statisticsManager.selectedYear)}" />
+          <ui:param
+            name="include"
+            value="/statistics/overview-cost-supplier-per-year-columns.xhtml" />
+          <ui:param
+            name="rowsPerPageDropdown"
+            value="all" />
+          <ui:param
+            name="exportSuffix"
+            value="#{statisticsManager.selectedYear}" />
+        </ui:include>
+        <p:spacer width="20" />
+        <p:barChart
+          model="#{barChart.getHorizontal(statisticsList.getTopSupplierPerYear(statisticsManager.selectedYear),totalAmountCHF,null,messages.suppliers,null,null)}"
+          style="height:300px;width:500px;" />
+      </h:panelGrid>
+
+      <p:spacer height="10" />
+
+      <p>
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="supplier-costs" /> <ui:param name="label" value="#{messages.supplierCostsPerYear}" /> </ui:include>
+        <p:spacer width="20" />
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="purchases-per-supplier" /> <ui:param name="label" value="#{messages.purchasesBySupplier}/#{messages.technology}" />
+        </ui:include>
+        <p:spacer width="20" />
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="consumables-per-supplier" /> <ui:param name="label" value="#{messages.consumablesBySupplier}/#{messages.instrument}" />
+        </ui:include>
+        <p:spacer width="20" />
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="contract-costs" /> <ui:param name="label" value="#{messages.contractsCostsPerYear}" /> </ui:include>
+      </p>
+    </h:form>
+  </ui:define>
+</ui:composition>

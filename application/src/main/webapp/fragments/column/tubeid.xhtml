@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('tubeId')}">
+    <p:column
+      sortBy="#{entity.tubeIdPadded}"
+      filterBy="#{entity.tubeId}"
+      filterable="#{filterable == null ? true : filterable}"
+      headerText="#{messages.tubeId}"
+      exportValue="#{entity.tubeId}">
+      <c:if test="#{empty orderItemEntity}">
+        <h:outputText
+          rendered="#{empty orderItemEntity}"
+          value="#{entity.tubeId}" />
+      </c:if>
+      <h:panelGroup rendered="#{not empty orderItemEntity}">
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="entityValue"
+            value="#{entity.tubeId}" />
+          <ui:param
+            name="instance"
+            value="#{orderItemEntity}" />
+          <ui:param
+            name="styleClass"
+            value="#{empty styleClass ? orderItemEntity.rowStyleClassCoupled : ''.concat(styleClass).concat(' ').concat(orderItemEntity.rowStyleClassCoupled)}" />
+        </ui:include>
+        <h:panelGroup rendered="#{not empty orderItemEntity.rowStyleClassCoupled}">
+          <i class="fas fa-exclamation warn" />
+        </h:panelGroup>
+      </h:panelGroup>
+    </p:column>
+  </c:if>
+</ui:composition>

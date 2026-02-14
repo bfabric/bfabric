@@ -1,0 +1,28 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/users.xhtml" />
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{role.parents}" />
+    <ui:param
+      name="label"
+      value="#{messages.parentRoles}" />
+    <ui:param
+      name="tab"
+      value="parents" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{role.groups}" />
+    <ui:param
+      name="label"
+      value="#{messages.groups}" />
+    <ui:param
+      name="tab"
+      value="childroles" />
+  </ui:include>
+</ui:composition>

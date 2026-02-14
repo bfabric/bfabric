@@ -1,0 +1,137 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeInstitutes}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{instituteManager.institute}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{instituteManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{instituteManager.institute.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{instituteManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{instituteManager.institute.name}" />
+          <f:selectItem itemValue="#{instituteManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{instituteManager.merged.name}" />
+
+        <h:outputText value="#{messages.department}" />
+        <h:outputText value="#{instituteManager.institute.department.name} - #{instituteManager.institute.department.organization.name}" />
+        <h:selectOneRadio
+          id="department"
+          layout="lineDirection"
+          value="#{instituteManager.mergeSelection.department}"
+          converter="omnifaces.SelectItemsConverter">
+          <f:selectItem itemValue="#{instituteManager.institute.department}" />
+          <f:selectItem itemValue="#{instituteManager.merged.department}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{instituteManager.merged.department.name} - #{instituteManager.institute.department.organization.name}" />
+
+        <c:if test="#{not empty instituteManager.institute.jointDepartment or not empty instituteManager.merged.jointDepartment}">
+          <h:outputText value="#{messages.jointDepartment}" />
+          <p:dataTable
+            value="#{instituteManager.institute.jointDepartment}"
+            var="item">
+            <p:column headerText="#{messages.name}">
+              <h:outputText value="#{item.name}" />
+            </p:column>
+            <p:column headerText="#{messages.organization}">
+              <h:outputText value="#{item.organization.name}" />
+            </p:column>
+          </p:dataTable>
+          <h:selectOneRadio
+            id="jointDepartment"
+            layout="lineDirection"
+            required="true"
+            value="#{instituteManager.mergeSelection.jointDepartmentAsList}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{instituteManager.institute.jointDepartmentAsList}" />
+            <f:selectItem itemValue="#{instituteManager.merged.jointDepartmentAsList}" />
+          </h:selectOneRadio>
+          <p:dataTable
+            value="#{instituteManager.merged.jointDepartment}"
+            var="item">
+            <p:column headerText="#{messages.name}">
+              <h:outputText value="#{item.name}" />
+            </p:column>
+            <p:column headerText="#{messages.organization}">
+              <h:outputText value="#{item.organization.name}" />
+            </p:column>
+          </p:dataTable>
+        </c:if>
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.members}" />
+        <h:outputText value="#{instituteManager.institute.members.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{instituteManager.merged.members.size()}" />
+
+        <h:outputText value="#{messages.projects}" />
+        <h:outputText value="#{instituteManager.institute.projects.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{instituteManager.merged.projects.size()}" />
+
+        <h:outputText value="#{messages.orders}" />
+        <h:outputText value="#{instituteManager.institute.orders.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{instituteManager.merged.orders.size()}" />
+
+        <h:outputText value="#{messages.bookings}" />
+        <h:outputText value="#{instituteManager.institute.bookings.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{instituteManager.merged.bookings.size()}" />
+
+        <h:outputText value="#{messages.userBillingInfo}" />
+        <h:outputText value="#{instituteManager.institute.userBillingInfos.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{instituteManager.merged.userBillingInfos.size()}" />
+
+        <h:outputText value="#{messages.userGroup}" />
+        <h:outputText value="#{instituteManager.institute.userGroups.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{instituteManager.merged.userGroups.size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{instituteManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{instituteManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

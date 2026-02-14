@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.usersMerged}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="usermerge" />
+      <ui:param
+        name="tableContent"
+        value="#{userList.usersMerged}" />
+      <ui:param
+        name="include"
+        value="/user/usersmerged-columns.xhtml" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

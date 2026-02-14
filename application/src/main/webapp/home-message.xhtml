@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.deployerFGCZ and instance.processesSamples and not instance.inFinalState and not identityManager.hasCurrentUserRole('containerManager')}">
+  </c:if>
+  <c:if test="#{not configuration.environmentProduction and not identityManager.hasCurrentUserRole('containerManager')}">
+    <p style="background-color: #ff0000; color: white; padding: 10px;">
+      <h:outputText value="#{configuration.deploymentBranchVersion} - WARNING: THIS IS NOT THE PRODUCTIVE SYSTEM! DO NOT PLACE ANY PROJECTS/ORDERS IF YOU ARE NOT TESTING!" />
+    </p>
+  </c:if>
+</ui:composition>

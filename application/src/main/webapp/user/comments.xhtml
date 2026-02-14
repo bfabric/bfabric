@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('comments') and (identityManager.hasCurrentUserRole('containerReader') or user.equals(currentUser))}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="comment" />
+      <ui:param
+        name="tableContext"
+        value="#{user.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{commentList.getLazyModelByCreatedByUser(user)}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

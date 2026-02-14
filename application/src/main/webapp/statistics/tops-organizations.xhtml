@@ -1,0 +1,63 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.top} #{messages.organizations}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:panelGroup styleClass="statistics-block">
+      <p:dataTable
+        value="#{statisticsList.view('statisticscontainerorganization')}"
+        var="item">
+        <p:column
+          headerText="#{messages.containers}"
+          styleClass="textright">
+          <h:outputText value="#{item[2]}" />
+        </p:column>
+        <p:column headerText="#{messages.organization}">
+          <p:link
+            rendered="#{not empty item[0]}"
+            outcome="/organization/show.xhtml"
+            value="#{item[1]}">
+            <f:param
+              name="id"
+              value="#{item[0]}" />
+          </p:link>
+        </p:column>
+      </p:dataTable>
+    </h:panelGroup>
+    <h:panelGroup styleClass="statistics-block">
+      <p:dataTable
+        value="#{statisticsList.view('statisticsuserorganization')}"
+        var="item">
+        <p:column
+          headerText="#{messages.users}"
+          styleClass="textright">
+          <h:outputText value="#{item[2]}" />
+        </p:column>
+        <p:column header="#{messages.organization}">
+          <p:link
+            rendered="#{not empty item[0]}"
+            outcome="/organization/show.xhtml"
+            value="#{item[1]}">
+            <f:param
+              name="id"
+              value="#{item[0]}" />
+          </p:link>
+        </p:column>
+      </p:dataTable>
+    </h:panelGroup>
+    <br />
+    <h:panelGroup style="margin-left:-4px;" styleClass="statistics-block">
+      <p:pieChart model="#{pieChart.get(statisticsList.organizationTops, null, 'right', null)}" />
+    </h:panelGroup>
+  </ui:define>
+</ui:composition>

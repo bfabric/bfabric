@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.CommentDiscriminator" />
+  <c:if test="#{sidebarHelper.isTab('results')}">
+    <ui:include src="/comment/list-by-parent-with-create.xhtml">
+      <ui:param
+        name="category"
+        value="#{constants.COMMENT_CATEGORY_RESULT}" />
+      <ui:param
+        name="type"
+        value="#{CommentDiscriminator.ORDER_RESULT}" />
+      <ui:param
+        name="parent"
+        value="#{order}" />
+      <ui:param
+        name="comments"
+        value="#{order.resultsCurrentUser}" />
+      <ui:param
+        name="showform"
+        value="#{order.renderedAddResultButton}" />
+    </ui:include>
+    <ui:include src="/comment/datascroller-listeners.xhtml" />
+  </c:if>
+</ui:composition>

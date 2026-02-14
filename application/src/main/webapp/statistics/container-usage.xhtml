@@ -1,0 +1,44 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.container} #{messages.usage}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="containerUsage" />
+      <ui:param
+        name="tableContent"
+        value="#{statisticsList.containerUsage}" />
+      <ui:param
+        name="include"
+        value="/statistics/container-usage-columns.xhtml" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="all" />
+    </ui:include>
+    <h:panelGrid
+      title="#{messages.refreshWarningHint}"
+      columns="2"
+      columnClasses=", normal-middle"
+      styleClass="action">
+      <p:commandButton
+        action="#{statisticsService.refreshMaterializedView('containerUsage')}"
+        value="#{messages.refresh}" />
+      <h:panelGroup>
+        <i class="fas fa-exclamation-circle warning" />
+        <h:outputText value="&#160;#{messages.refreshWarning}" />
+      </h:panelGroup>
+    </h:panelGrid>
+  </ui:define>
+</ui:composition>

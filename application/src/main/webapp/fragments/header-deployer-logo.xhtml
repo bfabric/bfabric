@@ -1,0 +1,6 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:outputText value="&#160;" styleClass="logo" />
+  <h:outputText rendered="#{configuration.environmentProduction}" value="#{configuration.deployerAbbreviation} " style="color: #{configuration.deployerColor}" styleClass="environment" />
+  <h:outputText rendered="#{not configuration.environmentProduction}" value="#{configuration.deploymentBranchVersion} - WARNING: THIS IS NOT THE PRODUCTIVE SYSTEM!" styleClass="environment" />
+</ui:composition>

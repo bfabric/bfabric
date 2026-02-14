@@ -1,0 +1,172 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('dashboard')}">
+    <div class="cardBox">
+      <c:if test="#{order.project == null and order.memberShowState}">
+        <ui:include src="/fragments/dashboard/members-cardbox.xhtml" />
+      </c:if>
+
+      <ui:include src="/fragments/dashboard/comments-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/notes-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/results-cardbox.xhtml" />
+
+      <c:if test="#{configuration.dataManagementEnabled}">
+        <ui:include src="/fragments/dashboard/samples-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/workunits-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/resources-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/datasets-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/plates-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/runs-cardbox.xhtml">
+          <ui:param name="showAlways" value="#{order.hasCurrentUserRole('labManager')}" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{configuration.workflowEnabled}">
+        <ui:include src="/fragments/dashboard/workflows-cardbox.xhtml">
+          <ui:param name="showAlways" value="#{order.accepted and order.hasCurrentUserRole('containerReader')}" />
+        </ui:include>
+      </c:if>
+
+      <ui:include src="/fragments/dashboard/offers-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/charges-cardbox.xhtml">
+        <ui:param name="showAlways" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+      </ui:include>
+
+      <ui:include src="/fragments/dashboard/bookings-cardbox.xhtml">
+        <ui:param name="showAlways" value="#{order.renderedBookings}" />
+      </ui:include>
+
+      <ui:include src="/fragments/dashboard/instrumentreservations-cardbox.xhtml">
+        <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+      </ui:include>
+
+      <ui:include src="/fragments/dashboard/feedbacks-cardbox.xhtml">
+        <ui:param name="enabled" value="#{order.feedbacksRendered}" />
+      </ui:include>
+
+      <ui:include src="/fragments/dashboard/mails-cardbox.xhtml">
+        <ui:param name="enabled" value="#{order.mailsUserReadable}" />
+      </ui:include>
+    </div>
+
+    <ui:include src="/fragments/dashboard/last.xhtml" />
+    <ui:include src="/fragments/dashboard/members.xhtml" />
+
+    <div class="hide-table-header dashboard-grid">
+      <div class="cardBoxDetails cardBoxShadow">
+        <div class="card-header">
+          <h3>
+            <h:outputText value="#{messages.details}" title="#{messages.details}" />
+            <p:link styleClass="iconBox">
+              <f:param name="id" value="#{order.id}" />
+              <f:param name="tab" value="details" />
+              <i class="fas fa-up-right-from-square" />
+            </p:link>
+          </h3>
+        </div>
+        <table class="content-table">
+          <c:if test="#{not empty order.serviceType}">
+            <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+              <ui:include src="/fragments/dashboard-box.xhtml">
+                <ui:param name="messages" value="#{messages.serviceType}" />
+                <ui:param name="value" value="#{order.serviceType.name}" />
+              </ui:include>
+            </c:if>
+            <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+              <tr>
+                <td class="header-table">
+                  <h:outputText value="#{messages.serviceType}" />
+                </td>
+                <td>
+                  <ui:include src="/fragments/entity-link-name.xhtml">
+                    <ui:param name="instance" value="#{order.serviceType}" />
+                  </ui:include>
+                </td>
+              </tr>
+            </c:if>
+          </c:if>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.requiresProject}" />
+              <ui:param name="value" value="#{order.requiresProject}" />
+            </ui:include>
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.processesSamples}" />
+              <ui:param name="value" value="#{order.processesSamples}" />
+            </ui:include>
+            <tr>
+              <td class="header-table">
+                <h:outputText value="#{messages.sampleType}" />
+              </td>
+              <td>
+                <ui:include src="/fragments/entity-link-name.xhtml">
+                  <ui:param name="instance" value="#{order.sampleType}" />
+                </ui:include>
+              </td>
+            </tr>
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.summary}" />
+              <ui:param name="value" value="#{stringHelper.truncate(order.summaryTrimmed, 400)}" />
+              <ui:param name="title" value="#{order.summary}" />
+            </ui:include>
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.serviceColumnEnabled}" />
+              <ui:param name="value" value="#{order.serviceColumnEnabled}" />
+            </ui:include>
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.processesPlates}" />
+              <ui:param name="value" value="#{order.processesPlates}" />
+            </ui:include>
+            <ui:include src="/fragments/dashboard-box.xhtml">
+              <ui:param name="messages" value="#{messages.plateSubmissionProposalLimit}" />
+              <ui:param name="value" value="#{order.plateSubmissionProposalLimit}" />
+            </ui:include>
+          </c:if>
+        </table>
+      </div>
+      <ui:include src="/fragments/dashboard/affiliation.xhtml" />
+    </div>
+  </c:if>
+  <!--<div class="hide-table-header dashboard-grid-min-content">
+    <div class="cardBoxShadow">
+      <div class="card-header">
+        <h3>
+          <h:outputText value="#{messages.orderItems}" title="#{messages.orderItems}" />
+        </h3>
+      </div>
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="tableType"
+          value="orderitem" />
+        <ui:param
+          name="tableContext"
+          value="#{order.tableContext}" />
+        <ui:param
+          name="tableContent"
+          value="#{order.orderItems}" />
+        <ui:param
+          name="orderEntity"
+          value="#{order}" />
+        <ui:param
+          name="filterable"
+          value="false" />
+        <ui:param
+          name="specificColumns"
+          value="#{order.processesPlates or order.areSampleTypeSpecificAttributesEditable() ? null : [SampleAttributeEnum.MOLARITY_POOL]}" />
+        <ui:param
+          name="hideColumns"
+          value="chargeCount,#{order.processesPlates ? 'tubeId' : ''}" />
+        <ui:param
+          name="showColumns"
+          value="#{order.processesPlates and identityManager.hasCurrentUserRole('containerManager') ? 'entityId' : ''}, #{not empty orderManager.showUserSubmittedEditColumn and orderManager.showUserSubmittedEditColumn ? 'userSubmittedEdit' : ''}" />
+        <ui:param
+          name="rowTitle"
+          value="#{entity.rowTitleCoupled}" />
+      </ui:include>
+    </div>
+  </div>-->
+</ui:composition>

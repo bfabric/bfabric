@@ -1,0 +1,161 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml">
+        <ui:param
+          name="showOldId"
+          value="#{not empty booking.oldId and identityManager.hasCurrentUserRole('bookingManager')}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/parent.xhtml" />
+
+      <h:outputText value="#{messages.billingAddress}" />
+      <h:outputText value="#{booking.postalAddress}" />
+
+      <ui:include src="/fragments/details/debitornumber.xhtml">
+        <ui:param
+          name="instance"
+          value="#{booking.billingInfo}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/vatnumber.xhtml">
+        <ui:param
+          name="instance"
+          value="#{booking.billingInfo}" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/referencenumber.xhtml">
+        <ui:param
+          name="instance"
+          value="#{booking.billingInfo}" />
+      </ui:include>
+
+      <h:outputText value="#{messages.charges} (#{booking.charges.size()})" />
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/charge/grouped-columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="booking" />
+        <ui:param
+          name="tableContent"
+          value="#{booking.charges}" />
+        <ui:param
+          name="rowsPerPageDropdown"
+          value="all" />
+        <ui:param
+          name="styleClass"
+          value="inner" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/executionperiod.xhtml" />
+      <ui:include src="/fragments/details/bookingissuer.xhtml" />
+      <ui:include src="/fragments/details/booker.xhtml" />
+      <ui:include src="/fragments/details/bookingtype.xhtml" />
+      <ui:include src="/fragments/details/account.xhtml" />
+      <ui:include src="/fragments/details/costcentre.xhtml" />
+      <ui:include src="/fragments/details/financialcenter.xhtml" />
+      <ui:include src="/fragments/details/bookingnr.xhtml" />
+      <ui:include src="/fragments/details/bookingdate.xhtml" />
+
+      <c:if test="#{not empty booking.currency.code}">
+        <h:outputText value="#{messages.currency}" />
+        <h:outputText value="#{booking.currency.code}" />
+      </c:if>
+
+      <c:if test="#{not booking.currency.default}">
+        <h:outputText value="#{messages.currencyRate}" />
+        <h:outputText value="#{booking.currencyRate}" />
+      </c:if>
+
+      <h:outputText value="#{messages.totalCharges}" />
+      <h:outputText value="#{booking.totalCharges}">
+        <f:convertNumber pattern="0.00" />
+      </h:outputText>
+
+      <h:outputText value="#{messages.tax}" />
+      <h:outputText value="#{booking.tax}">
+        <f:convertNumber pattern="0.00" />
+      </h:outputText>
+
+      <h:outputText value="#{messages.subTotal}" />
+      <h:outputText value="#{booking.subTotal}">
+        <f:convertNumber pattern="0.00" />
+      </h:outputText>
+
+      <h:outputText value="#{messages.roundingValue}" />
+      <h:outputText value="#{booking.roundingValue}">
+        <f:convertNumber pattern="0.00" />
+      </h:outputText>
+
+      <h:outputText value="#{messages.total}" />
+      <h:outputText value="#{booking.total}">
+        <f:convertNumber pattern="0.00" />
+      </h:outputText>
+
+      <ui:include src="/fragments/details/sapNumber.xhtml" />
+      <ui:include src="/fragments/details/sapNumberNext.xhtml" />
+      <ui:include src="/fragments/details/saprecordedby.xhtml" />
+      <ui:include src="/fragments/details/paid.xhtml" />
+      <ui:include src="/fragments/details/paymentDate.xhtml" />
+      <ui:include src="/fragments/details/cancellationDate.xhtml" />
+      <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid columns="11" styleClass="action">
+      <h:form rendered="#{booking.transferEnabled}">
+        <p:commandButton ajax="false" action="#{bookingManager.testReadETH()}" value="Read ETH" />
+      </h:form>
+      <h:form rendered="#{booking.transferEnabled}">
+        <p:commandButton ajax="false" action="#{bookingManager.testWriteETH()}" value="Write ETH" />
+      </h:form>
+      <h:form rendered="#{booking.exportETHISRendered}">
+        <p:commandButton ajax="false" actionListener="#{booking.exportForETHIS}" value="#{messages.exportETHIS}" title="#{messages.exportETHISHint}" />
+      </h:form>
+      <p:button value="#{messages.pdfExport}" href="#{booking.exportPDFLink}" />
+      <p:button rendered="#{booking.transferEnabled}" value="#{messages.transferETH}" href="#{booking.transferLink}" />
+      <ui:include src="/fragments/button/edit-delete-list.xhtml" />
+      <h:form
+        rendered="#{booking.deletable}"
+        onsubmit="#{bookingManager.resetRefererURL()}">
+        <p:commandButton
+          action="#{bookingManager.removeCascade}"
+          value="#{messages.deleteCascade}"
+          title="#{messages.bookingDeleteCascade}">
+          <p:confirm
+            header="#{messages.warning}"
+            message="#{messages.confirmBookingDeleteCascade}"
+            icon="ui-icon-alert" />
+          <ui:include src="/fragments/confirm-dialog.xhtml" />
+        </p:commandButton>
+      </h:form>
+    </h:panelGrid>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/charge/grouped-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="groupedcharges" />
+      <ui:param
+        name="tableContent"
+        value="#{booking.groupedChargesByServiceAndDiscount}" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="all" />
+      <ui:param
+        name="hideColumns"
+        value="entityId" />
+    </ui:include>
+    <ui:include src="/fragments/button/prevNextInContainer.xhtml" />
+  </c:if>
+</ui:composition>

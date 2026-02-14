@@ -1,0 +1,33 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('annotationReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.annotations}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist-with-create.xhtml">
+      <ui:param
+        name="tableType"
+        value="annotation" />
+      <ui:param
+        name="annotationTypeFilter"
+        value="#{annotationManager.annotationTypeFilter}" />
+    </ui:include>
+
+    <c:if test="#{not empty annotationManager.annotationTypeFilter}">
+      <script>$(document).ready(function () {
+          if (PF('allannotation')) {
+              PF('allannotation').filter();
+          }
+      });</script>
+    </c:if>
+  </ui:define>
+</ui:composition>

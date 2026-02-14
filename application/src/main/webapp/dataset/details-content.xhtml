@@ -1,0 +1,50 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGrid
+    columns="2"
+    columnClasses="rtd,ltd">
+    <ui:include src="/fragments/details/idlink-name.xhtml" />
+    <ui:include src="/fragments/details/parent.xhtml" />
+    <ui:include src="/fragments/details/datasetTemplate.xhtml" />
+    <ui:include src="/fragments/details/workunit.xhtml" />
+
+    <c:if test="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager') and not empty dataset.run}">
+      <h:outputText value="#{messages.run}" />
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{dataset.run}" />
+      </ui:include>
+    </c:if>
+
+    <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml">
+      <ui:param
+        name="entity"
+        value="#{dataset}" />
+    </ui:include>
+  </h:panelGrid>
+
+  <p:spacer height="10" />
+
+  <c:if test="#{not dataset.contentEmpty and not hideContent}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/dataset/item-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="#{dataset.tableContext}_item" />
+      <ui:param
+        name="tableContent"
+        value="#{dataset.items}" />
+      <ui:param
+        name="dataset"
+        value="#{dataset}" />
+    </ui:include>
+  </c:if>
+
+  <p:spacer height="10" />
+</ui:composition>

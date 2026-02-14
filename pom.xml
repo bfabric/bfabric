@@ -1,0 +1,476 @@
+<project
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.bfabric</groupId>
+  <artifactId>bfabric</artifactId>
+  <version>13</version>
+  <packaging>pom</packaging>
+
+  <name>B-Fabric</name>
+  <description>This is the meta-project for the different B-Fabric sub-projects</description>
+  <url>https://bfabric.org/</url>
+
+  <properties>
+    <distribution.site.url>file:///tmp</distribution.site.url>
+    <root.basedir>${basedir}</root.basedir>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <jdk.version>1.8</jdk.version>
+    <deployTechnicalSiteDirectory />
+    <maven.version>3.9.6</maven.version>
+    <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+    <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
+    <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
+    <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
+    <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+    <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
+    <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
+    <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+    <maven-jxr-plugin.version>3.3.2</maven-jxr-plugin.version>
+    <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+    <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+    <maven-project-info-reports-plugin.version>2.9</maven-project-info-reports-plugin.version>
+    <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
+    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <maven-scm-plugin.version>2.2.1</maven-scm-plugin.version>
+    <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
+    <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+    <maven-spotbugs-plugin.version>4.8.6.6</maven-spotbugs-plugin.version><!-- 4.9.1.0 does not work -->
+    <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+    <maven-surefire-report-plugin.version>3.5.2</maven-surefire-report-plugin.version>
+    <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
+    <payara.version>5.2022.5</payara.version>
+    <payara.min.version>5.2022.5</payara.min.version>
+    <postgresql.version>16</postgresql.version>
+    <postgresql.min.version>16</postgresql.min.version>
+    <postgresql.driver.version>42.7.8</postgresql.driver.version>
+    <sql-maven-plugin.version>3.0.0</sql-maven-plugin.version>
+    <taglist-maven-plugin.version>3.2.2</taglist-maven-plugin.version>
+    <versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
+    <wagon-webdav.version>3.4.1</wagon-webdav.version>
+    <wagon-ssh.version>3.5.3</wagon-ssh.version>
+    <wagon-ssh-external.version>2.8</wagon-ssh-external.version>
+  </properties>
+
+  <organization>
+    <name>Functional Genomics Center Zurich, UZH/ETH Zurich</name>
+    <url>https://www.fgcz.ch/</url>
+  </organization>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/bfabric/bfabric/issues</url>
+  </issueManagement>
+
+  <scm>
+    <connection>scm:git:https://github.com/bfabric/bfabric.git</connection>
+    <developerConnection>scm:git:https://github.com/bfabric/bfabric.git</developerConnection>
+    <url>https://github.com/bfabric/bfabric</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>can.tuerker</id>
+      <name>Can Türker</name>
+    </developer>
+    <developer>
+      <id>claudio.cannizzaro</id>
+      <name>Claudio Cannizzaro</name>
+    </developer>
+    <developer>
+      <id>adrian.altermatt</id>
+      <name>Adrian Altermatt</name>
+    </developer>
+    <developer>
+      <id>fuat.akal</id>
+      <name>Fuat Akal</name>
+    </developer>
+    <developer>
+      <id>bhargav.bhatt</id>
+      <name>Bhargav Bhatt</name>
+    </developer>
+    <developer>
+      <id>marc.chetelat</id>
+      <name>Marc-Alain Chételat</name>
+    </developer>
+    <developer>
+      <id>roger.cruz</id>
+      <name>Roger Cruz</name>
+    </developer>
+    <developer>
+      <id>c.decker</id>
+      <name>Christian Decker</name>
+      <timezone />
+    </developer>
+    <developer>
+      <id>ali.fakheri</id>
+      <name>Ali Fakheri</name>
+    </developer>
+    <developer>
+      <id>michael.fetzer</id>
+      <name>Michael Fetzer</name>
+    </developer>
+    <developer>
+      <id>ankan.ghosh</id>
+      <name>Ankan Ghosh</name>
+    </developer>
+    <developer>
+      <id>ugur.guerel</id>
+      <name>Ugur Gürel</name>
+    </developer>
+    <developer>
+      <id>dieter.joho</id>
+      <name>Dieter Joho</name>
+    </developer>
+    <developer>
+      <id>felix</id>
+      <name>Felix Knecht</name>
+    </developer>
+    <developer>
+      <id>aleksandar.markovic</id>
+      <name>Aleksandar Markovic</name>
+    </developer>
+    <developer>
+      <id>lucas.marti</id>
+      <name>Lucas Marti</name>
+    </developer>
+    <developer>
+      <id>giacomo</id>
+      <name>Giacomo Pati</name>
+    </developer>
+    <developer>
+      <id>matthias.scherrer</id>
+      <name>Matthias Scherrer</name>
+    </developer>
+    <developer>
+      <id>benedikt.thelen</id>
+      <name>Benedikt Thelen</name>
+    </developer>
+    <developer>
+      <id>blagoja.trajkovski</id>
+      <name>Blagoja Trajkovski</name>
+    </developer>
+    <developer>
+      <id>zehra.turgut</id>
+      <name>Zehra Turgut</name>
+    </developer>
+    <developer>
+      <id>bogdan.veres</id>
+      <name>Bogdan Veres</name>
+    </developer>
+  </developers>
+
+  <build>
+    <extensions>
+      <extension>
+        <!-- Adding a Protocol to Deploy the Site (support for webdav) -->
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>${wagon-webdav.version}</version>
+      </extension>
+      <extension>
+        <!-- Adding a Protocol to Deploy the Site (support for ssh/scp) -->
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>${wagon-ssh-external.version}</version>
+      </extension>
+    </extensions>
+    <pluginManagement>
+      <plugins>
+        <!-- Order by groupId / artifactId / scope -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${maven-antrun-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven-assembly-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${jdk.version}</source>
+            <target>${jdk.version}</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven-install-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${maven-release-plugin.version}</version>
+          <configuration>
+            <tagBase>https://www.bfabric.org/repo/bfabric/tags/</tagBase>
+            <goals>deploy</goals>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven-resources-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-plugin</artifactId>
+          <version>${maven-scm-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>attach-descriptor</id>
+              <goals>
+                <goal>attach-descriptor</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.wagon</groupId>
+              <artifactId>wagon-ssh</artifactId>
+              <version>${wagon-ssh.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven-war-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>${maven-pmd-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>${maven-spotbugs-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>sql-maven-plugin</artifactId>
+          <version>${sql-maven-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.postgresql</groupId>
+              <artifactId>postgresql</artifactId>
+              <version>${postgresql.driver.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>taglist-maven-plugin</artifactId>
+          <version>${taglist-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${maven-site-plugin.version}</version>
+        <configuration>
+          <outputEncoding>UTF-8</outputEncoding>
+          <inputEncoding>UTF-8</inputEncoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>${maven.version}</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>${jdk.version}</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <!-- Order matters. First project-info-reports, second jxr. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${maven-project-info-reports-plugin.version}</version>
+        <configuration>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>summary</report>
+              <report>project-team</report>
+              <report>issue-tracking</report>
+              <report>scm</report>
+              <report>distribution-management</report>
+              <report>cim</report>
+              <report>license</report>
+              <report>dependencies</report>
+              <report>dependency-convergence</report>
+              <report>plugins</report>
+              <report>modules</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven-dependency-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependency-updates-report</report>
+              <report>plugin-updates-report</report>
+              <report>property-updates-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${maven-pmd-plugin.version}</version>
+        <configuration>
+          <linkXRef>false</linkXRef>
+          <rulesets>
+            <!-- Custom local file system rule set: Avoid print "Overriding method merely calls super UselessOverridingMethod" -->
+            <ruleset>${root.basedir}/src/resources/maven-pmd-plugin-ruleset.xml</ruleset>
+          </rulesets>
+          <renderProcessingErrors>false</renderProcessingErrors>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${maven-spotbugs-plugin.version}</version>
+        <configuration>
+          <omitVisitors>FindReturnRef</omitVisitors>
+          <xmlOutput>true</xmlOutput>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>${taglist-maven-plugin.version}</version>
+        <configuration>
+          <tagListOptions>
+            <tagClasses>
+              <tagClass>
+                <displayName>Todo Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>todo</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                  <tag>
+                    <matchString>fixme</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+            </tagClasses>
+          </tagListOptions>
+          <linkXRef>false</linkXRef>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <modules>
+    <module>application</module>
+  </modules>
+  <profiles>
+    <profile>
+      <id>all</id>
+      <modules>
+        <module>application</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>application</id>
+      <modules>
+        <module>application</module>
+      </modules>
+    </profile>
+  </profiles>
+</project>

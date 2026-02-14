@@ -1,0 +1,94 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:table
+    table-layout="fixed"
+    width="100%">
+    <fo:table-column column-width="60mm" />
+    <fo:table-body>
+      <fo:table-row>
+        <fo:table-cell>
+          <fo:block
+            font-weight="bold"
+            padding-top="2mm"
+            padding-bottom="3mm">
+            <h:outputText value="#{configuration.deployerName}" />
+          </fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+      <fo:table-row>
+        <fo:table-cell>
+          <fo:block font-size="7.5pt">
+            <h:outputText value="#{booking.bookingIssuer.name}" />
+          </fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+      <fo:table-row>
+        <fo:table-cell>
+          <fo:block font-size="7.5pt">
+            <h:outputText value="#{booking.bookingIssuer.address.street}" />
+          </fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+      <fo:table-row>
+        <fo:table-cell>
+          <fo:block font-size="7.5pt">
+            <h:outputText value="#{booking.bookingIssuer.address.fullCity}" />
+          </fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+      <c:if test="#{not empty booking.bookingIssuer.phone}">
+        <fo:table-row>
+          <fo:table-cell>
+            <fo:block font-size="7.5pt">
+              <h:outputText value="#{booking.bookingIssuer.phone}" />
+            </fo:block>
+          </fo:table-cell>
+        </fo:table-row>
+      </c:if>
+      <fo:table-row>
+        <fo:table-cell>
+          <fo:block font-size="7.5pt">
+            <h:outputText value="#{booking.bookingIssuer.email}" />
+          </fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+      <fo:table-row>
+        <fo:table-cell>
+          <fo:block font-size="7.5pt">
+            <h:outputText value="&#160;" />
+          </fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+      <c:if test="#{not empty booking.container.coach}">
+        <fo:table-row>
+          <fo:table-cell>
+            <fo:block font-size="7.5pt">
+              <h:outputText value="#{messages.coach}: #{booking.container.coach.name}" />
+            </fo:block>
+          </fo:table-cell>
+        </fo:table-row>
+        <fo:table-row>
+          <fo:table-cell>
+            <fo:block font-size="7.5pt">
+              <h:outputText value="&#160;" />
+            </fo:block>
+          </fo:table-cell>
+        </fo:table-row>
+      </c:if>
+      <fo:table-row>
+        <fo:table-cell>
+          <fo:block font-size="7.5pt">
+            <h:outputText value="#{configuration.deployerAddressCity}, " />
+            <h:outputText value="#{booking.modified}">
+              <f:convertDateTime type="localDate" pattern="#{configuration.accessRequestManagerDatePattern}" />
+            </h:outputText>
+          </fo:block>
+        </fo:table-cell>
+      </fo:table-row>
+    </fo:table-body>
+  </fo:table>
+</ui:composition>

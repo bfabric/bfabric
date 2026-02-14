@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="downloadFolderDialog"
+    widgetVar="downloadFolderDialog"
+    dynamic="false"
+    closable="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.downloadFolder}" />
+    </f:facet>
+    <h:panelGrid styleClass="noborder">
+      <h:outputFormat
+        value="#{messages.resourceDownloadFolderHint}" />
+    </h:panelGrid>
+    <h:panelGrid>
+      <h:outputText value="#{resourceList.resourceUriDownloadFolder}" />
+    </h:panelGrid>
+  </p:dialog>
+</ui:composition>

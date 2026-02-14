@@ -1,0 +1,177 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{importResourceManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{importResource.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.application}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="application" />
+            <ui:param
+              name="value"
+              value="#{importResource.application}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{importResourceManager.getImportApplications}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="@this" />
+            <ui:param
+              name="ajaxClear"
+              value="true" />
+            <ui:param
+              name="clearUpdate"
+              value="@this" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.storage}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="storage"
+              value="#{importResource.storage}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem itemLabel="" />
+              <f:selectItems
+                value="#{storageList.enabledStorages}"
+                var="item"
+                itemLabel="#{item.getTruncatedDisplayName(80)}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.relativePath}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="relativePath"
+              value="#{importResource.relativePath}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.url}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="uri"
+              value="#{importResource.url}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.container}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="container" />
+            <ui:param
+              name="value"
+              value="#{importResource.container}" />
+            <ui:param
+              name="emptyMessage"
+              value="#{messages.emptyMessageContainer}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{containerList.getAcceptedReadableContainers}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="sample" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.id}" />
+            <ui:param
+              name="includeColumns"
+              value="/container/autocomplete-columns.xhtml" />
+          </ui:include>
+
+          <h:outputText value="#{messages.size}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="size"
+              value="#{importResource.size}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.fileChecksum}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="fileChecksum"
+              value="#{importResource.fileChecksum}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.fileDate}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:datePicker
+              id="fileDate"
+              value="#{importResource.fileDate}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.expirationDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="expirationDate"
+              value="#{importResource.expirationDate}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.sample}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="sample"
+              value="#{importResourceManager.importResource.sample}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem itemLabel="" />
+              <f:selectItems
+                value="#{importResourceManager.importResource.container.samples}"
+                var="item"
+                itemLabel="#{item.displayName}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.report}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="report"
+              value="#{importResource.report}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{importResource.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-edit-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

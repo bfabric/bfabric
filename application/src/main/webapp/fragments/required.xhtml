@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/edit.xhtml">
+    <ui:param
+      name="required"
+      value="#{not empty required ? required : true}" />
+  </ui:include>
+</ui:composition>

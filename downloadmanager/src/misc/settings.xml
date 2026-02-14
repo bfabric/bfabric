@@ -1,0 +1,26 @@
+<!-- vim: set sts=4 sw=4 et ai si: -->
+<!-- https://maven.apache.org/settings.html -->
+<settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="https://maven.apache.org/SETTINGS/1.0.0"
+          xsi:schemaLocation="https://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <localRepository />
+  <interactiveMode />
+  <offline />
+  <pluginGroups />
+  <servers />
+  <mirrors />
+  <proxies />
+  <profiles>
+    <profile>
+      <id>bfabric-deploy</id>
+      <properties>
+        <bfabric.keystore.file>src/misc/BFABRICDEV.p12</bfabric.keystore.file>
+        <bfabric.keystore.alias>bfabricdev</bfabric.keystore.alias>
+        <bfabric.keystore.password>${env.BFABRIC_KEYSTORE_PASSWORD}</bfabric.keystore.password>
+      </properties>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>bfabric-deploy</activeProfile>
+  </activeProfiles>
+</settings>

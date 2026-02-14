@@ -1,0 +1,83 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+
+  <c:set
+    var="sampleEntity"
+    value="#{entity}" />
+  <c:set
+    var="type"
+    value="#{plateSampleBatchManager.sampleType.name}"
+    scope="request" />
+
+  <p:column headerText="#{messages.platePosition}">
+    <h:outputText value="#{bean.samplePlatePositions[entity]}" />
+  </p:column>
+
+  <c:if test="#{not empty plateSampleBatchManager.plateSubmission and plateSampleBatchManager.plateSubmission}">
+    <p:column headerText="#{messages.name}">
+      <h:outputText value="#{entity.name}" />
+    </p:column>
+  </c:if>
+
+  <c:if test="#{not empty plateSampleBatchManager.types}">
+    <p:column headerText="#{messages.type}">
+      <h:outputText value="#{entity.type}" />
+    </p:column>
+  </c:if>
+
+  <c:forEach
+    items="#{plateSampleBatchManager.getAttributeEnums()}"
+    var="sampleAttributeEnum">
+    <ui:decorate template="/fragments/batch/sample-attribute-column.xhtml">
+      <ui:param
+        name="columnId"
+        value="#{sampleAttributeEnum.name}" />
+      <ui:param
+        name="rendered"
+        value="#{sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEXED ? false : true}" />
+      <ui:param
+        name="headerText"
+        value="#{sampleAttributeEnum.labelWithUnit}" />
+      <ui:param
+        name="displayRequired"
+        value="#{not empty plateSampleBatchManager.types ? false : sampleAttributeHelper.isDisplayRequired(sampleAttributeEnum, plateSampleBatchManager.type)}" />
+      <ui:param
+        name="displayRequiredCell"
+        value="#{sampleAttributeHelper.isDisplayRequiredCell(sampleAttributeEnum, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="cellInputEnabled"
+        value="#{sampleAttributeEnum eq SampleAttributeEnum.TUBE_ID ? sampleAttributeHelper.isTubeIdEditable(sampleEntity) : (sampleAttributeHelper.isSizeGenomeEstimated(sampleAttributeEnum) ? sampleAttributeHelper.isSizeGenomeEstimatedAndRendered(sampleAttributeEnum, sampleEntity.container, sampleEntity.sampleType.name) : sampleAttributeHelper.isCellInputEnabled(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType))}" />
+      <ui:param
+        name="watermarkValue"
+        value="#{sampleAttributeHelper.isSizeGenomeEstimated(sampleAttributeEnum) ? (not sampleAttributeHelper.isSizeGenomeEstimatedAndRendered(sampleAttributeEnum, sampleEntity.container, sampleEntity.sampleType.name) ? messages.disabled : null) : sampleAttributeHelper.getWatermarkValueForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="watermarkValueHint"
+        value="#{sampleAttributeHelper.isSizeGenomeEstimated(sampleAttributeEnum) and not sampleAttributeHelper.isSizeGenomeEstimatedAndRendered(sampleAttributeEnum, sampleEntity.container, sampleEntity.sampleType.name) ? messages.sizeGenomeEstimatedWatermarkValueHint : sampleAttributeHelper.getWatermarkValueHintForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="hideValueIfFieldDisabled"
+        value="#{not (sampleAttributeEnum eq SampleAttributeEnum.TUBE_ID and !sampleAttributeHelper.isTubeIdEditable(sampleEntity))}" />
+      <ui:param
+        name="value"
+        value="#{sampleEntity[fn:replace(sampleAttributeEnum.name.concat('DELIMITER_VALUE'),'DELIMITER_VALUE','')]}" />
+      <ui:param
+        name="sampleAttributeEnum"
+        value="#{sampleAttributeEnum}" />
+    </ui:decorate>
+  </c:forEach>
+
+  <ui:include src="/customattribute/edit-batch-columns.xhtml">
+    <ui:param
+      name="manager"
+      value="#{bean}" />
+  </ui:include>
+
+  <p:column id="generate-button" rendered="#{false}" />
+</ui:composition>

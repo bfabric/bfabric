@@ -1,0 +1,67 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{configuration.instrumentReservationEnabled and sidebarHelper.isTab('reservations') and identityManager.hasCurrentUserRole('instrumentManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrumentreservation" />
+      <ui:param
+        name="tableContext"
+        value="#{instrument.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{instrument.reservations}" />
+      <ui:param
+        name="hideColumns"
+        value="instrument_" />
+    </ui:include>
+    <h:panelGrid
+      columns="5"
+      styleClass="action">
+      <p:button
+        outcome="/instrumentschedule/show.xhtml"
+        value="#{messages.schedule}"
+        rendered="#{instrument.bookableByCurrentUser}">
+        <f:param
+          name="instrumentId"
+          value="#{instrument.id}" />
+      </p:button>
+      <p:button
+        rendered="#{not empty instrument.reservations}"
+        outcome="/instrumentreservationshift/shift.xhtml"
+        value="#{messages.shift}">
+        <f:param
+          name="instrumentId"
+          value="#{instrument.id}" />
+        <f:param
+          value="true"
+          name="shiftInit" />
+      </p:button>
+      <c:if test="#{not empty instrument.reservations}">
+        <ui:include src="/fragments/sync-instrumentreservations-button.xhtml">
+          <ui:param
+            name="callerEntity"
+            value="#{instrument}" />
+          <ui:param
+            name="contextManager"
+            value="#{contextManager}" />
+        </ui:include>
+        <ui:include src="/fragments/sync-button.xhtml">
+          <ui:param
+            name="callerEntity"
+            value="#{instrument}" />
+          <ui:param
+            name="contextManager"
+            value="#{contextManager}" />
+          <ui:param
+            name="urlContainingToken"
+            value="#{instrument.urlCalendarForUserInstrumentReservations}" />
+        </ui:include>
+      </c:if>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

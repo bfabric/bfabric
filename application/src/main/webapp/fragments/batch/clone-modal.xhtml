@@ -1,0 +1,60 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="cloneItemPanel"
+    widgetVar="cloneItemDialog"
+    dynamic="true"
+    closable="false"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.cloneItem} '#{cloneItemName}'" />
+    </f:facet>
+
+    <h:form id="itemClone">
+      <h:panelGrid
+        columns="2"
+        styleClass="content-subheader"
+        style="border-top: none !important; margin-top: 0 !important;">
+        <h:outputText
+          value="#{messages.hint}:" />
+        <h:outputText
+          value="#{messages.cloneItemHint}"
+          styleClass="warn width-300" />
+      </h:panelGrid>
+      <h:panelGrid columns="2">
+        <h:outputText value="#{messages.clones}" />
+        <p:spinner
+          onkeypress="return false;"
+          value="#{manager.cloneItemCount}"
+          min="1"
+          max="#{manager.maxNumberOfNewBatchItems}"
+          size="4"
+          decimalPlaces="0"
+          thousandSeparator="" />
+        <h:outputText value="* #{manager.editItemMaximumNumberOfClonesHint}" />
+      </h:panelGrid>
+      <h:panelGroup styleClass="height-20" />
+      <h:panelGrid columns="2">
+        <p:commandButton
+          id="applyButton"
+          action="#{manager.addClones}"
+          value="#{messages.create}"
+          global="true"
+          update="#{applyButtonUpdate}"
+          styleClass="cloneItemsApplyButton"
+          onclick="hasChanged=true; setNavigateAway('.cloneItemsApplyButton[id$=\'applyButton\']'); jQuery(this).change();"
+          oncomplete="hideDialogOnSuccess(args, 'cloneItemDialog'); jumpToPage('batch', args.jumpToPage); fixOversize();" />
+        <p:commandButton
+          process="@this"
+          value="#{messages.cancel}"
+          global="false"
+          oncomplete="PF('cloneItemDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

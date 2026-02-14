@@ -1,0 +1,46 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.EnvironmentEnum" />
+  <p:column
+    exportable="false"
+    headerText="#{messages.delete}">
+    <p:commandLink
+      action="#{systemPropertyManager.remove(entity)}"
+      value="#{messages.delete}"
+      rendered="#{entity.deletable}" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.id}">
+    <p:link
+      outcome="edit.xhtml"
+      value="#{entity.id}"
+      title="#{entity.entityInfo}">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+    </p:link>
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}name"
+    headerText="#{messages.name}">
+    <p:link
+      outcome="edit.xhtml"
+      value="#{entity.name}"
+      title="#{entity.entityInfo}">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+    </p:link>
+  </p:column>
+  <ui:include src="/fragments/column/systempropertydiscriminator.xhtml" />
+  <ui:include src="/fragments/column/value.xhtml" />
+  <ui:include src="/fragments/column/environment.xhtml" />
+  <ui:include src="/fragments/column/deployer.xhtml" />
+  <ui:include src="/fragments/column/instance.xhtml" />
+  <ui:include src="/fragments/column/requiredrole.xhtml" />
+  <ui:include src="/fragments/column/comment.xhtml" />
+</ui:composition>

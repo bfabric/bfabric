@@ -1,0 +1,15 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param name="headerText" value="#{messages.projectStatus}" />
+    <ui:param name="value" value="#{stringHelper.toLowerCase(entity[1])}" />
+    <ui:param name="styleClass" value="#{stringHelper.toLowerCase(entity[1])}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param name="headerText" value="#{messages.projects}" />
+    <ui:param name="value" value="#{entity[2]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param name="headerText" value="#{messages.samples}" />
+    <ui:param name="value" value="#{entity[3]}" />
+  </ui:include>
+</ui:composition>

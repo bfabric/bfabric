@@ -1,0 +1,221 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeServices}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{serviceManager.service}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{serviceManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{serviceManager.service.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{serviceManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{serviceManager.service.name}" />
+          <f:selectItem itemValue="#{serviceManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{serviceManager.merged.name}" />
+
+        <h:outputText value="#{messages.serviceType}" />
+        <ui:include src="/fragments/entity-link-displayname.xhtml">
+          <ui:param
+            name="instance"
+            value="#{serviceManager.service.serviceType}" />
+        </ui:include>
+        <h:selectOneRadio
+          id="serviceType"
+          layout="lineDirection"
+          value="#{serviceManager.mergeSelection.serviceType}"
+          converter="omnifaces.SelectItemsConverter">
+          <f:selectItem itemValue="#{serviceManager.service.serviceType}" />
+          <f:selectItem itemValue="#{serviceManager.merged.serviceType}" />
+        </h:selectOneRadio>
+        <ui:include src="/fragments/entity-link-displayname.xhtml">
+          <ui:param
+            name="instance"
+            value="#{serviceManager.merged.serviceType}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.enabled}" />
+        <h:outputText value="#{serviceManager.service.enabled}" />
+        <h:selectOneRadio
+          id="enabled"
+          layout="lineDirection"
+          value="#{serviceManager.mergeSelection.enabled}">
+          <f:selectItem itemValue="#{serviceManager.service.enabled}" />
+          <f:selectItem itemValue="#{serviceManager.merged.enabled}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{serviceManager.merged.enabled}" />
+
+        <h:outputText value="#{messages.orderPosition}" />
+        <h:outputText value="#{serviceManager.service.orderPosition}" />
+        <h:selectOneRadio
+          id="orderPosition"
+          layout="lineDirection"
+          value="#{serviceManager.mergeSelection.orderPosition}">
+          <f:selectItem itemValue="#{serviceManager.service.orderPosition}" />
+          <f:selectItem itemValue="#{serviceManager.merged.orderPosition}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{serviceManager.merged.orderPosition}" />
+
+        <c:if test="#{not empty serviceManager.service.serviceCode or not empty serviceManager.merged.serviceCode}">
+          <h:outputText value="#{messages.serviceCode}" />
+          <h:outputText value="#{serviceManager.service.serviceCode.name}" />
+          <h:selectOneRadio
+            id="serviceCode"
+            layout="lineDirection"
+            value="#{serviceManager.mergeSelection.serviceCode}">
+            <f:selectItem itemValue="#{serviceManager.service.serviceCode}" />
+            <f:selectItem itemValue="#{serviceManager.merged.serviceCode}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{serviceManager.merged.serviceCode.name}" />
+        </c:if>
+
+        <c:if test="#{not empty serviceManager.service.description or not empty serviceManager.merged.description}">
+          <h:outputText value="#{messages.description}" />
+          <h:outputText value="#{serviceManager.service.getDescriptionTrunc(40)}" title="#{serviceManager.service.description}" />
+          <h:selectOneRadio
+            id="description"
+            layout="lineDirection"
+            value="#{serviceManager.mergeSelection.description}">
+            <f:selectItem itemValue="#{serviceManager.service.description}" />
+            <f:selectItem itemValue="#{serviceManager.merged.description}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{serviceManager.merged.getDescriptionTrunc(40)}" title="#{serviceManager.merged.description}" />
+        </c:if>
+
+        <h:outputText value="#{messages.price}" />
+        <p:dataTable
+          id="serviceOrganizationTypeTableService"
+          value="#{serviceManager.service.serviceOrganizationTypePricesAsList}"
+          var="item">
+          <p:column headerText="#{messages.organizationType}">
+            <h:outputText value="#{item.organizationType.name}" />
+          </p:column>
+          <p:column headerText="#{messages.basicPrice}">
+            <h:outputText value="#{item.basicPrice}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </p:column>
+          <p:column headerText="#{messages.additionalPrice}">
+            <h:outputText value="#{item.additionalPrice}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </p:column>
+        </p:dataTable>
+        <h:selectOneRadio
+          id="prices"
+          layout="lineDirection"
+          required="true"
+          value="#{serviceManager.switchPrices}">
+          <f:selectItem itemValue="#{false}" />
+          <f:selectItem itemValue="#{true}" />
+        </h:selectOneRadio>
+        <p:dataTable
+          id="serviceOrganizationTypeTableMerged"
+          value="#{serviceManager.merged.serviceOrganizationTypePricesAsList}"
+          var="item">
+          <p:column headerText="#{messages.organizationType}">
+            <h:outputText value="#{item.organizationType.name}" />
+          </p:column>
+          <p:column headerText="#{messages.basicPrice}">
+            <h:outputText value="#{item.basicPrice}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </p:column>
+          <p:column headerText="#{messages.additionalPrice}">
+            <h:outputText value="#{item.additionalPrice}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+          </p:column>
+        </p:dataTable>
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.children}" />
+        <h:outputText value="#{serviceManager.service.children.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.children.size()}" />
+
+        <h:outputText value="#{messages.parents}" />
+        <h:outputText value="#{serviceManager.service.parents.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.parents.size()}" />
+
+        <h:outputText value="#{messages.offeredCharges}" />
+        <h:outputText value="#{serviceManager.service.offeredCharges.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.offeredCharges.size()}" />
+
+        <h:outputText value="#{messages.charges}" />
+        <h:outputText value="#{serviceManager.service.charges.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.charges.size()}" />
+
+        <h:outputText value="#{messages.orders}" />
+        <h:outputText value="#{orderList.getLazyModelByServiceId(serviceManager.service.id).size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{orderList.getLazyModelByServiceId(serviceManager.merged.id).size()}" />
+
+        <h:outputText value="#{messages.orderItems}" />
+        <h:outputText value="#{serviceManager.service.orderItems.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.orderItems.size()}" />
+
+        <h:outputText value="#{messages.users}" />
+        <h:outputText value="#{serviceManager.service.users.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.users.size()}" />
+
+        <h:outputText value="#{messages.trackingUsers}" />
+        <h:outputText value="#{serviceManager.service.trackingUsers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.trackingUsers.size()}" />
+
+        <h:outputText value="#{messages.instruments}" />
+        <h:outputText value="#{serviceManager.service.instruments.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceManager.merged.instruments.size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{serviceManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{serviceManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

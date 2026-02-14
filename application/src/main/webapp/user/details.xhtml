@@ -1,0 +1,357 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGroup id="show-user">
+      <h:panelGroup rendered="#{not user.emailActive}">
+        <p style="background-color: #ff0000; color: white; padding: 10px;">
+          <h:outputText value="#{messages.userEmailInactiveHint}" />
+        </p>
+      </h:panelGroup>
+      <h:panelGroup rendered="#{not user.emailVerified}">
+        <p style="background-color: #ff0000; color: white; padding: 10px;">
+          <h:outputText value="#{messages.userEmailNotVerifiedHint}" />
+        </p>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id.xhtml" />
+        <ui:include src="/fragments/details/login.xhtml" />
+        <ui:include src="/fragments/details/invalidloginattempts.xhtml" />
+        <ui:include src="/fragments/details/title.xhtml" />
+        <ui:include src="/fragments/details/salutation.xhtml" />
+        <ui:include src="/fragments/details/firstname.xhtml" />
+        <ui:include src="/fragments/details/lastname.xhtml" />
+
+        <c:if test="#{not empty user.userBillingInfo}">
+          <h:outputText value="#{messages.userBillingInfo}" />
+          <h:panelGroup>
+            <h:outputText value="#{user.userBillingInfo.entityAsText}" />
+            <c:if test="#{user.userBillingInfoInstituteDifferent}">
+              <i class="fas fa-exclamation-circle pending" title="#{messages.userBillingInfoInstituteDifferentHint}" />
+            </c:if>
+            <c:if test="#{user.userBillingInfoZurichUniversityDifferent}">
+              <i class="fas fa-exclamation-circle warning" title="#{messages.userBillingInfoZurichUniversityDifferentHint}" />
+            </c:if>
+          </h:panelGroup>
+        </c:if>
+
+        <ui:include src="/fragments/details/institute.xhtml" />
+        <c:if test="#{not empty user.division and user.updatable}">
+          <ui:include src="/fragments/details/division.xhtml" />
+        </c:if>
+
+        <c:if test="#{user.updatable or (not empty user.institute and identityManager.hasCurrentUserRole('user'))}">
+          <h:outputText value="#{messages.email}" />
+          <h:panelGroup styleClass="noborder rightpadding">
+            <h:outputText value="#{user.email}" />
+            <ui:include src="/fragments/user-hints.xhtml">
+              <ui:param name="instance" value="#{user}" />
+            </ui:include>
+          </h:panelGroup>
+
+          <ui:include src="/fragments/details/phone.xhtml" />
+          <ui:include src="/fragments/details/address.xhtml" />
+          <ui:include src="/fragments/details/address-room.xhtml" />
+          <ui:include src="/fragments/details/address-supplement.xhtml" />
+        </c:if>
+
+        <c:if test="#{not empty user.privateEmail and (user.equals(currentUser) or identityManager.hasCurrentUserRole('admin'))}">
+          <ui:include src="/fragments/details/privateemail.xhtml" />
+        </c:if>
+
+        <c:if
+          test="#{not empty user.homePhone and (identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser) or identityManager.hasCurrentUserRole('employee') and user.employee)}">
+          <h:outputText value="#{messages.homePhone}" />
+          <h:outputText value="#{user.homePhone}" />
+        </c:if>
+
+        <c:if test="#{identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser)}">
+          <c:if test="#{not empty user.fullHomeAddress}">
+            <h:outputText value="#{messages.homeAddress}" />
+            <h:outputLink value="#{user.homeAddress.mapLink}" target="_blank" rel="noopener">
+              <h:outputText value="#{user.fullHomeAddress}" />
+            </h:outputLink>
+          </c:if>
+
+          <c:if test="#{not empty user.homeAddress.supplement}">
+            <h:outputText value="#{messages.homeAddress} #{messages.supplement}" />
+            <h:outputText value="#{user.homeAddress.supplement}" />
+          </c:if>
+
+          <c:if test="#{not empty user.birthDate}">
+            <h:outputText value="#{messages.birthDate}" />
+            <h:outputText value="#{user.birthDate}" />
+          </c:if>
+
+          <c:if test="#{not empty user.empDegree and identityManager.hasCurrentUserRole('userManager')}">
+            <h:outputText value="#{messages.empDegree}" />
+            <h:outputText value="#{user.empDegree}" />
+          </c:if>
+
+          <c:if test="#{user.updatable and configuration.accessRequestEnabled}">
+            <c:if test="#{not empty user.accessCardNumber}">
+              <h:outputText value="#{messages.accessCardNumber}" />
+              <h:outputText value="#{user.accessCardNumber}" />
+            </c:if>
+
+            <c:if test="#{not empty user.accessCardCode}">
+              <h:outputText value="#{messages.accessCardCode}" />
+              <h:outputText value="#{user.accessCardCode}" />
+            </c:if>
+
+            <c:if test="#{not empty user.accessCardExpiryDate}">
+              <h:outputText value="#{messages.accessCardExpiryDate}" />
+              <h:outputText value="#{user.accessCardExpiryDate}" />
+            </c:if>
+          </c:if>
+        </c:if>
+
+        <c:if test="#{user.updatable}">
+          <h:outputText value="#{messages.massMailEnabled}" />
+          <h:outputText value="#{user.massMailEnabled}" styleClass="#{not user.massMailEnabled}" />
+
+          <h:outputText value="#{messages.computerLoginActivated}" />
+          <h:outputText value="#{user.computerLoginActivated}" styleClass="#{not user.computerLoginActivated}" />
+
+          <h:outputText value="#{messages.computerLoginEnabled}" />
+          <h:outputText value="#{user.computerLoginEnabled}" styleClass="#{not user.computerLoginEnabled}" />
+
+          <h:outputText value="#{messages.dataAccessEnabled}" />
+          <h:outputText value="#{user.dataAccessEnabled}" styleClass="#{not user.dataAccessEnabled}" />
+        </c:if>
+
+        <c:if test="#{user.emailActiveRendered}">
+          <h:outputText value="#{messages.emailActive}" />
+          <h:outputText value="#{user.emailActive}" styleClass="#{not user.emailActive}" />
+        </c:if>
+
+        <c:if test="#{user.emailVerifiedRendered}">
+          <h:outputText value="#{messages.emailVerified}" />
+          <h:outputText value="#{user.emailVerified}" styleClass="#{not user.emailVerified}" />
+        </c:if>
+
+        <c:if test="#{user.emailVerifiedRendered}">
+          <h:outputText value="#{messages.accountEnabled}" />
+          <h:outputText value="#{user.accountEnabled}" styleClass="#{not user.accountEnabled}" />
+        </c:if>
+
+        <c:if test="#{user.webServicePasswordRendered}">
+          <h:outputText value="#{messages.passwordWS}" />
+          <h:outputText value="#{user.passwordWS}" />
+        </c:if>
+
+        <c:if test="#{not empty user.sshPublicKey and (user.equals(currentUser) or identityManager.hasCurrentUserRole('admin'))}">
+          <ui:include src="/fragments/details/sshPublicKey.xhtml" />
+        </c:if>
+
+        <c:if test="#{user.shibbolethIdRendered}">
+          <h:outputText value="#{messages.shibbolethId}" />
+          <h:outputText value="#{user.shibbolethId}" />
+        </c:if>
+
+        <c:if test="#{not empty user.description and identityManager.hasCurrentUserRole('userManager')}">
+          <h:outputText value="#{messages.description}" />
+          <h:outputText value="#{user.description}" styleClass="preformat" />
+        </c:if>
+
+        <c:if test="#{not empty user.image.content}">
+          <h:outputText value="#{messages.image}" />
+          <p:graphicImage value="#{user.image.streamedContent}" stream="false" />
+
+          <c:if test="#{identityManager.hasCurrentUserRole('admin') or user.equals(currentUser)}">
+            <h:outputText value="#{messages.avatar}" />
+            <p:avatar shape="circle">
+              <p:graphicImage value="#{user.image.streamedContent}" stream="false" />
+            </p:avatar>
+          </c:if>
+        </c:if>
+
+        <c:if test="#{identityManager.hasCurrentUserRole('userReader')}">
+          <c:if test="#{not empty user.backup}">
+            <h:outputText value="#{messages.backup}" />
+            <ui:include src="/fragments/backup-link.xhtml" />
+          </c:if>
+
+          <c:if test="#{not empty user.backupOf}">
+            <h:outputText value="#{messages.backupOf}" />
+            <h:panelGroup styleClass="inner-repeat">
+              <ui:repeat value="#{user.backupOf}" var="item">
+                <ui:include src="/fragments/user-link.xhtml">
+                  <ui:param name="instance" value="#{item}" />
+                </ui:include>
+                <br />
+              </ui:repeat>
+            </h:panelGroup>
+          </c:if>
+        </c:if>
+
+        <c:if test="#{user.updatable}">
+          <h:outputText value="#{messages.lastLoginDate}" />
+          <h:outputText rendered="#{not empty user.lastLoginDate}" value="#{user.lastLoginDate}" />
+          <h:outputText rendered="#{empty user.lastLoginDate}" value="#{messages.noLastLoginDateHint}" styleClass="warning" />
+
+          <c:if test="#{not empty user.lastActionTime}">
+            <h:outputText value="#{messages.lastActionTime}" />
+            <h:outputText value="#{user.lastActionTime}" />
+          </c:if>
+
+          <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+        </c:if>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="15"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit.xhtml" />
+        <p:commandButton
+          rendered="#{identityManager.hasCurrentUserRole('admin')}"
+          action="#{userManager.switchAccountEnabled}"
+          value="#{user.accountEnabled ? messages.disable : messages.enable}"
+          title="#{user.accountEnabled ? messages.disableUserHint : messages.enableUserHint}" />
+        <p:button
+          rendered="#{user.changePasswordAllowed}"
+          outcome="/user/change-password.xhtml"
+          value="#{messages.changePassword}">
+          <f:param
+            name="id"
+            value="#{user.id}" />
+        </p:button>
+        <p:button
+          rendered="#{user.accessRequestable}"
+          outcome="/accessrequest/request-access.xhtml"
+          value="#{messages.requestAccess}"
+          title="#{messages.requestAccessHint}">
+          <f:param
+            name="id"
+            value="#{user.id}" />
+        </p:button>
+        <p:button
+          outcome="/eventschedule/show.xhtml"
+          value="#{messages.schedule}"
+          rendered="#{user.eventScheduleRendered}">
+          <f:param
+            name="userId"
+            value="#{user.id}" />
+        </p:button>
+        <ui:include src="/fragments/button/delete.xhtml" />
+        <p:commandButton
+          actionListener="#{userManager.resetShibbolethId}"
+          value="#{messages.resetShibbolethId}"
+          title="#{messages.resetShibbolethIdHint}"
+          rendered="#{user.updatable and not empty user.shibbolethId}"
+          global="false"
+          update="show-user" />
+        <p:commandButton
+          rendered="#{identityManager.hasCurrentUserRole('admin')}"
+          actionListener="#{userManager.setSystemUser()}"
+          value="#{messages.setSystemUser}"
+          title="#{messages.setSystemUserHint}"
+          global="false"
+          update="show-user" />
+        <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('admin')}">
+          <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('employeeManager')}">
+        <h:panelGrid styleClass="content-subheader-normal">
+          <h:panelGroup rendered="#{not user.empDegreeConsistent}" styleClass="info">
+            <p>
+              <h:outputText rendered="#{not user.hasRoleEmployee()}" value="#{messages.empDegreeRoleInconsistentHint}" />
+              <h:outputText rendered="#{user.hasRoleEmployee()}" value="#{messages.empDegreeZeroInconsistentHint}" />
+            </p>
+            <p:spacer />
+          </h:panelGroup>
+          <h:panelGrid columns="4">
+            <p:commandButton
+              rendered="#{not user.empDegreeConsistent and not user.hasRoleEmployee()}"
+              action="#{userManager.grantRoleEmployee}"
+              value="#{messages.grantRoleEmployee}"
+              title="#{messages.grantRoleEmployeeHint}" />
+            <p:commandButton
+              rendered="#{not user.empDegreeConsistent and user.hasRoleEmployee()}"
+              action="#{userManager.revokeRoleEmployee}"
+              value="#{messages.revokeRoleEmployee}" />
+            <h:form
+              id="employeeManagerForm"
+              rendered="#{not user.internal and (not user.empDegreeConsistent and user.hasRoleEmployee() or user.empDegreeConsistent and not user.hasRoleEmployee())}">
+              <h:panelGrid
+                columns="3"
+                styleClass="nospace">
+                <p:inputNumber
+                  id="empDegree"
+                  value="#{user.empDegree}"
+                  minValue="0"
+                  maxValue="100"
+                  decimalPlaces="0"
+                  styleClass="editWidthSmaller buttonField"
+                  pt:placeholder="#{messages.degree}">
+                  <p:ajax
+                    event="change"
+                    global="false"
+                    process="@this"
+                    update="@([id$=employeeEntry])" />
+                </p:inputNumber>
+                <p:commandButton
+                  id="employeeEntry"
+                  disabled="#{user.employeeEntryButtonDisabled}"
+                  action="#{userManager.employeeEntry}"
+                  value="#{messages.employeeEntry}"
+                  title="#{messages.employeeEntryHint}"
+                  styleClass="noleftbordernomarginbottom">
+                  <p:confirm
+                    header="#{messages.employeeEntry}"
+                    message="#{messages.employeeEntryHint} #{messages.confirmActionMessage}"
+                    icon="ui-icon-alert" />
+                  <ui:include src="/fragments/confirm-dialog.xhtml" />
+                </p:commandButton>
+              </h:panelGrid>
+            </h:form>
+            <p:commandButton
+              rendered="#{user.employee}"
+              action="#{userManager.employeeLeave}"
+              value="#{messages.employeeLeave}"
+              title="#{messages.employeeLeaveHint}">
+              <p:confirm
+                header="#{messages.employeeLeave}"
+                message="#{messages.employeeLeaveHint} #{messages.confirmActionMessage}"
+                icon="ui-icon-alert" />
+              <ui:include src="/fragments/confirm-dialog.xhtml">
+                <ui:param
+                  name="confirmDialogWidth"
+                  value="400" />
+              </ui:include>
+            </p:commandButton>
+          </h:panelGrid>
+        </h:panelGrid>
+      </h:panelGroup>
+    </h:panelGroup>
+
+    <h:panelGrid
+      rendered="#{not user.enabled}"
+      styleClass="content-subheader-normal">
+      <h:outputText
+        rendered="#{currentUser.equals(user)}"
+        value="#{messages.userEmailVerifiedRequiredPersonalNote}"
+        styleClass="warning" />
+      <h:outputText
+        rendered="#{not currentUser.equals(user)}"
+        value="#{messages.userEmailVerifiedRequiredNote}"
+        styleClass="warning" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      rendered="#{configuration.accessRequestEnabled and user.hasPendingAccessRequest() and currentUser.equals(user)}"
+      styleClass="content-subheader-normal">
+      <h:outputText value="#{messages.pendingAccessRequestNote}" styleClass="warning" />
+      <h:outputText value="#{messages.pendingAccessRequestNotEditableNote}" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

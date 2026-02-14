@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  id="fullPage"
+  lang="en">
+<ui:param name="instance" value="#{entityManager.instance}" />
+
+<f:metadata>
+  <ui:insert name="metadata" />
+  <f:event type="postAddToView" listener="#{sessionManager.printFacesMessages}" />
+  <f:viewParam name="tab" value="#{sidebarHelper.tab}" />
+</f:metadata>
+
+<f:view contentType="text/html">
+  <h:head>
+    <title><ui:insert name="pageTitle" /></title>
+    <meta name="application-name" content="#{configuration.applicationName}" />
+    <meta name="name" content="#{configuration.applicationName}" />
+    <meta name="description" content="#{configuration.applicationName}: #{messages.metaDescription}" />
+    <meta name="copyright" content="#{configuration.deployerName}" />
+    <meta name="author" content="#{configuration.deployerName}" />
+    <meta name="keywords" content="#{configuration.applicationNameVariations} #{configuration.deployerName}" />
+    <meta name="background-color" content="#ffffff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <c:if test="#{not configuration.environmentProduction}">
+      <meta name="robots" content="noindex, nofollow" />
+    </c:if>
+    <script src="#{facesContext.externalContext.requestContextPath}/js/util.js?uuid=#{confManager.randomUUID}"></script>
+    <script src="#{facesContext.externalContext.requestContextPath}/js/downloadmanager.js?uuid=#{confManager.randomUUID}"></script>
+    <link href="#{facesContext.externalContext.requestContextPath}/images/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href="#{facesContext.externalContext.requestContextPath}/images/favicon-32x32.png" rel="icon" type="image/png" sizes="32x32" />
+    <link href="#{facesContext.externalContext.requestContextPath}/images/favicon-16x16.png" rel="icon" type="image/png" sizes="16x16" />
+    <link href="#{facesContext.externalContext.requestContextPath}/manifest.webmanifest" rel="manifest" />
+    <link href="#{facesContext.externalContext.requestContextPath}/css/gui.css?uuid=#{confManager.randomUUID}" rel="stylesheet" type="text/css" />
+    <h:outputStylesheet library="webjars" name="font-awesome/7.1.0/css/all.min-jsf.css" />
+    <h:outputStylesheet library="webjars" name="font-awesome/7.1.0/css/v4-shims.min-jsf.css" />
+  </h:head>
+
+  <h:body id="body">
+    <ui:include src="/fragments/please-wait-panel.xhtml" />
+
+    <h:panelGroup id="qrCodePage" style="display: none;">
+      <ui:include src="/fragments/qr-code.xhtml" />
+    </h:panelGroup>
+
+    <c:set var="currentUser" value="#{identityManager.currentUser}" />
+    <c:set var="contextContainer" value="#{contextManager.contextContainer}" />
+
+    <!-- The header contains 1) module-specific header menu, 2) b-fabric logo, 3) module tabs, and 4) user (logout) menu -->
+    <h:panelGroup id="header" layout="block" styleClass="header#{configuration.deployer.value.toLowerCase()}"
+                  style="background-color:#{configuration.headerBackgroundColor}">
+      <ui:include src="/fragments/header-menu.xhtml" />
+    </h:panelGroup>
+
+    <!-- The subheader contains: 1) search bar, 2) messages bar, and 3) page title -->
+    <h:panelGroup id="subheader" styleClass="subheader">
+      <!-- Search bar -->
+      <c:if test="#{loggedIn}">
+        <h:panelGrid id="searchBar" columns="1" columnClasses="search-line" styleClass="gradient max-width">
+          <ui:include src="/fragments/search.xhtml" />
+        </h:panelGrid>
+      </c:if>
+
+      <!-- Messages bar -->
+      <ui:include src="/fragments/view-message.xhtml" />
+
+      <!-- Page title -->
+      <h:panelGrid id="pageTitle" columns="2" columnClasses="max-width,nowrap" styleClass="page-title">
+        <h:panelGroup layout="block" styleClass="textEllipsis pageTitleEllipsis">
+          <ui:insert name="pageTitle" />
+          <ui:insert name="pageTitleExtension" />
+        </h:panelGroup>
+        <h:panelGroup id="pageTitleSuffix">
+          <ui:insert name="pageTitleSuffix" />
+          <p:link id="refreshButton" rendered="#{uriHelper.renderRefreshedUrl}" title="#{messages.refreshHint}" immediate="true">
+            <i class="fas fa-rotate icon-button icon-button-padding" />
+            <c:forEach var="item" items="#{uriHelper.requestParametersWithoutCid}">
+              <f:param name="#{item.key}" value="#{item.value}" />
+            </c:forEach>
+          </p:link>
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:panelGroup>
+
+    <h:panelGrid columns="2" styleClass="align-top" columnClasses=",#{sidebar eq 'true'? 'main-content-sidebar' : 'main-content'}">
+      <h:panelGroup id="sidebar" rendered="#{sidebar eq 'true'}" styleClass="sidebar">
+        <!-- Not logged in -->
+        <ui:include src="/fragments/login-menu.xhtml" />
+        <!-- The sidebar content -->
+        <ui:insert name="sidebarContent" />
+      </h:panelGroup>
+      <h:panelGroup id="main-content" layout="block">
+        <h:panelGroup id="contentBody" styleClass="content-body">
+          <ui:insert name="body" />
+        </h:panelGroup>
+        <p:outputPanel>
+          <h:form style="display:none" prependId="false">
+            <h:inputHidden id="maximumSeverity" value="#{facesContext.maximumSeverity.ordinal}" />
+          </h:form>
+        </p:outputPanel>
+      </h:panelGroup>
+    </h:panelGrid>
+    <h:panelGrid id="footer" columns="1" styleClass="page-footer align-top">
+      <ui:include src="/fragments/footer-menu.xhtml" />
+    </h:panelGrid>
+  </h:body>
+</f:view>
+</html>

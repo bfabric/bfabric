@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('userSamplesCount')}">
+    <p:column
+      sortable="#{empty sortable ? false : sortable}"
+      filterable="#{empty filterable ? false : filterable}"
+      field="#{fieldPrefix}userSamplesCount"
+      headerText="#{messages.userSamples}" />
+  </c:if>
+</ui:composition>

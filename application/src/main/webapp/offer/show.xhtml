@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{offerManager}" />
+
+  <ui:decorate template="/fragments/sidebar/show.xhtml">
+    <ui:define name="pageTitleExtension">
+      <h:outputText
+        value=" (expired)"
+        styleClass="expired"
+        rendered="#{offer.expired}" />
+      <h:panelGroup rendered="#{offer.locked}">
+        <i class="fas fa-lock locked" title="#{messages.offerLockedHint}" />
+      </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="pageTitleSuffix">
+      <h:panelGroup rendered="#{offer.exportable}">
+        <ui:include src="/offer/download-icon-padding.xhtml" />
+      </h:panelGroup>
+      <p:commandLink rendered="#{offer.sendButtonRendered}" action="#{offerManager.sendOffer}">
+        <i class="fas fa-paper-plane icon-button-padding" title="#{messages.offerSendHint}" />
+        <p:confirm header="#{messages.warning}" message="#{messages.offerSendConfirm}" icon="ui-icon-alert" />
+        <ui:include src="/fragments/confirm-dialog.xhtml" />
+      </p:commandLink>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

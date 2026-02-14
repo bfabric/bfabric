@@ -1,0 +1,37 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('employeeReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.employeeContacts}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="user" />
+      <ui:param
+        name="tableContext"
+        value="contacts" />
+      <ui:param
+        name="tableContent"
+        value="#{userList.employeesRegular}" />
+      <ui:param
+        name="showColumns"
+        value="phone, room, backupOf" />
+      <ui:param
+        name="hideColumns"
+        value="entityId, company, division, institute, emailActive, emailVerified, computerLoginEnabled, dataAccessEnabled, computerLoginActivated, massMailEnabled, invalidLoginAttempts, LastLoginDate, LastActionTime, lastActionTime, createdBy, createdOn" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

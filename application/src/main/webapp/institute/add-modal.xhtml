@@ -1,0 +1,98 @@
+<!--
+    This modal panel is used to add organizations, departments and institutes.
+    All the application logic is located in the instituteManager, however.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="addInstitutePanel"
+    widgetVar="addInstituteDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.addNew}" />
+    </f:facet>
+    <h:form id="addInstitute">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.organizationType}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{affiliationHelper.organizationType.name}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.organization}" />
+        <h:panelGroup rendered="#{affiliationHelper.showOrganization}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="organizationName"
+              value="#{affiliationHelper.organization.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not affiliationHelper.showOrganization}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{affiliationHelper.organization.name}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.department}" />
+        <h:panelGroup rendered="#{affiliationHelper.showDepartment}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="departmentName"
+              value="#{affiliationHelper.department.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not affiliationHelper.showDepartment}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{affiliationHelper.department.name}" />
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGrid
+        rendered="#{affiliationHelper.showInstitute}"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.institute}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="instituteName"
+            value="#{affiliationHelper.institute.name}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:outputText value="#{messages.addAffiliationHint}" />
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="saveInstituteButton"
+          actionListener="#{affiliationHelper.save}"
+          value="#{messages.save}"
+          global="false"
+          update="addInstitute, @([id$=department]), @([id$=organization]), @([id$=organizationType]), #{affiliationHelper.showInstitute ? '@([id$=institute])' : ''}"
+          oncomplete="hideDialogOnSuccess(args, 'addInstituteDialog')">
+          <p:resetInput target="#{affiliationHelper.resetInput}" />
+        </p:commandButton>
+        <p:commandButton
+          actionListener="#{instituteManager.cancelEdit}"
+          value="#{messages.cancel}"
+          id="cancelInstituteButton"
+          immediate="true"
+          global="false"
+          oncomplete="PF('addInstituteDialog').hide()">
+        </p:commandButton>
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

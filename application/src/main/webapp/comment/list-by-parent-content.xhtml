@@ -1,0 +1,100 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup>
+    <c:set var="commentsPinned" value="#{commentHelper.getCommentsPinned(parent)}" />
+    <h:panelGroup
+      id="commentPinnedGroup"
+      rendered="#{identityManager.hasCurrentUserRole('employee')}">
+      <p:spacer
+        rendered="#{not empty commentsPinned}"
+        height="20" />
+      <h:panelGrid columns="1">
+        <h:outputText
+          rendered="#{not empty commentsPinned}"
+          value="#{messages.pinnedComments} (#{commentsPinned.size()})"
+          styleClass="bold" />
+        <p:dataScroller
+          rendered="#{not empty commentsPinned}"
+          id="#{category}sPinned"
+          value="#{commentsPinned}"
+          var="commentPinnedItem"
+          widgetVar="commentsPinnedDataScrollerWidgetVar"
+          chunkSize="#{sessionManager.dataScrollerChunkSize}"
+          styleClass="noborder comments oversize pinned">
+          <c:if test="#{empty skipLoadListenerPinned or not skipLoadListenerPinned}">
+            <p:ajax
+              event="load"
+              oncomplete="detectViewPort()" />
+          </c:if>
+          <ui:include src="datascroller-content.xhtml">
+            <ui:param
+              name="commentItem"
+              value="#{commentPinnedItem}" />
+            <ui:param
+              name="panelStyleClass"
+              value="pinned-comment-header" />
+            <ui:param
+              name="loadMoreButtonRendered"
+              value="#{commentsPinned.size() > sessionManager.dataScrollerChunkSize}" />
+          </ui:include>
+        </p:dataScroller>
+      </h:panelGrid>
+      <p:spacer
+        rendered="#{not empty commentsPinned}"
+        height="20" />
+    </h:panelGroup>
+
+    <h:panelGroup>
+      <h:panelGrid columns="1">
+        <h:outputText
+          rendered="#{not empty commentsPinned}"
+          value="#{messages.all} #{messages.comments} (#{comments.size()})"
+          styleClass="bold" />
+        <p:dataScroller
+          rendered="#{not empty comments}"
+          id="#{category}s"
+          value="#{comments}"
+          var="commentItem"
+          widgetVar="commentsDataScrollerWidgetVar"
+          chunkSize="#{sessionManager.dataScrollerChunkSize}"
+          styleClass="noborder comments oversize">
+          <c:if test="#{empty skipLoadListener or not skipLoadListener}">
+            <p:ajax
+              event="load"
+              oncomplete="detectViewPort()" />
+            <p:remoteCommand
+              name="loadListener"
+              actionListener="#{commentHelper.loadListener}"
+              global="false"
+              process="@this"
+              update="@none">
+              <f:attribute
+                name="dataScrollerId"
+                value="#{enclosingFormId}:#{category}s" />
+              <f:attribute
+                name="dataScrollerPinnedId"
+                value="#{enclosingFormId}:#{category}sPinned" />
+            </p:remoteCommand>
+          </c:if>
+          <ui:include src="datascroller-content.xhtml">
+            <ui:param
+              name="commentItem"
+              value="#{commentItem}" />
+          </ui:include>
+        </p:dataScroller>
+      </h:panelGrid>
+      <c:if test="#{not empty includeDataScrollerListeners and includeDataScrollerListeners}">
+        <ui:include src="/comment/datascroller-listeners.xhtml" />
+      </c:if>
+    </h:panelGroup>
+  </h:panelGroup>
+  <c:if test="#{not empty filterValueCreated}">
+    <script>$(document).ready(function () {
+        filterDataScrollItems('commentsDataScrollerWidgetVar', "#{filterValueCreated}");
+    });</script>
+  </c:if>
+</ui:composition>

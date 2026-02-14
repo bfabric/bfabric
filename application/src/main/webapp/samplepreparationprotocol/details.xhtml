@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/type.xhtml" />
+      <ui:include src="/fragments/details/discriminator.xhtml" />
+      <ui:include src="/fragments/details/technologies.xhtml" />
+      <ui:include src="/fragments/details/strandedness.xhtml" />
+      <ui:include src="/fragments/details/adapter1.xhtml" />
+      <ui:include src="/fragments/details/adapter2.xhtml" />
+      <ui:include src="/fragments/details/instruments.xhtml" />
+      <ui:include src="/fragments/details/sequencingapplications.xhtml" />
+      <ui:include src="/fragments/details/sampletypes.xhtml" />
+      <ui:include src="/fragments/details/predecessor.xhtml" />
+      <ui:include src="/fragments/details/options.xhtml" />
+      <ui:include src="/fragments/details/instrumentreadconfigurations.xhtml" />
+      <ui:include src="/fragments/details/description-enabled-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="7"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <ui:include src="/fragments/button/edit-options.xhtml" />
+      <c:if test="#{identityManager.hasCurrentUserRole('employee')}">
+        <ui:include src="/fragments/button/switchenabled.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,112 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <p:dialog
+    id="assignSampleValuesModalPanel"
+    widgetVar="assignSampleValuesModalDialog"
+    resizable="false"
+    closable="false"
+    onShow="repositionDialog()">
+    <style type="text/css">
+        .htAutocompleteArrow {
+            float: left !important;
+            color: inherit !important;
+        }
+    </style>
+    <f:facet name="header">
+      <h:outputText value="#{messages.edit} #{messages.sample} #{messages.details}" />
+    </f:facet>
+    <h:form id="assignSampleValues">
+      <h:panelGroup id="sampleValuesGroup">
+        <h:outputText
+          rendered="#{bean.sampleNamesNotEditable and not empty bean.order}"
+          value="#{messages.sampleNamesNotEditable}"
+          styleClass="warn" />
+        <pe:sheet
+          id="sampleValuesSheet"
+          widgetVar="sampleValuesSheetWidgetVar"
+          value="#{bean.samplesInEditList}"
+          var="sampleInEditList"
+          maxCols="#{bean.sampleAttributeEnumsForModalPanel.size() + 2}"
+          maxRows="#{bean.samplesInEditList.size()}"
+          resizableCols="false"
+          resizableRows="false"
+          rowKey="#{sampleInEditList.hashCode()}"
+          showRowHeaders="true"
+          width="1000"
+          height="#{bean.samplesInEditList.size() > 10 ? null : (bean.samplesInEditList.size() > 5 ? '250' : '200')}"
+          styleClass="sheet">
+          <pe:sheetcolumn
+            headerText="#{messages.tubeId}"
+            readOnly="true"
+            value="#{sampleInEditList.tubeId}"
+            colWidth="120" />
+          <pe:sheetcolumn
+            rendered="#{not empty bean.order}"
+            headerText="#{messages.name}"
+            readOnly="#{bean.sampleNamesNotEditable}"
+            value="#{sampleInEditList.userSampleName}"
+            validatorMessage="#{messages.userSampleNamesValidatorMessage}"
+            trimWhitespace="true"
+            colWidth="150">
+            <f:validateRegex pattern="#{constants.SAMPLE_IN_EDIT_LIST_NAME_CHARACTERS_REGEXP}" />
+          </pe:sheetcolumn>
+          <c:forEach
+            items="#{bean.sampleAttributeEnumsForModalPanel}"
+            var="sampleAttributeEnumVar">
+            <c:if test="#{not sampleAttributeEnumVar.annotationTypeMultiValued}">
+              <c:if test="#{not sampleAttributeEnumVar.selectionType}">
+                <pe:sheetcolumn
+                  headerText="#{sampleAttributeEnumVar.labelWithUnit}"
+                  value="#{sampleInEditList.sampleAttributeEnumNameValueMap[sampleAttributeEnumVar.name]}"
+                  colWidth="#{sampleAttributeEnumVar eq SampleAttributeEnum.SIZE_GENOME_ESTIMATED ? '200' : '150'}" />
+              </c:if>
+              <c:if test="#{sampleAttributeEnumVar.selectionType}">
+                <c:if test="#{sampleAttributeEnumVar.annotationType or sampleAttributeEnumVar.selectionAndNotAnnotationType}">
+                  <!-- Note: Autocomplete is not lazy. -->
+                  <pe:sheetcolumn
+                    headerText="#{sampleAttributeEnumVar.labelWithUnit}"
+                    value="#{sampleInEditList.sampleAttributeEnumNameValueMap[sampleAttributeEnumVar.name]}"
+                    colType="autocomplete"
+                    selectItems="#{bean.cachedSampleAttributeSelectionValuesMap[sampleAttributeEnumVar.label]}"
+                    autoCompleteStrict="false"
+                    autoCompleteVisibleRows="10"
+                    colWidth="#{sampleAttributeEnumVar.enumType ? '150' : (sampleAttributeEnumVar eq SampleAttributeEnum.INSTRUMENT or sampleAttributeEnumVar eq SampleAttributeEnum.SAMPLE_PREPARATION_PROTOCOL ? '350' : '200')}" />
+                </c:if>
+              </c:if>
+            </c:if>
+          </c:forEach>
+        </pe:sheet>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="applyButton"
+          rendered="#{not empty bean.editList}"
+          action="#{bean.assignSampleValues}"
+          value="#{messages.apply}"
+          global="true"
+          styleClass="assignSampleValuesApplyButton"
+          onclick="hasChanged=true; setNavigateAway('.assignSampleValuesApplyButton[id$=\'applyButton\']'); jQuery(this).change();"
+          oncomplete="hideDialogOnSuccess(args, 'assignSampleValuesModalDialog'); fixOversize();"
+          update="assignSampleValues, #{constants.EDIT}:batchtable, #{constants.EDIT}:buttons, #{constants.EDIT}:batchtable:generate-button, #{constants.EDIT}:invalidExcelEditWarning" />
+        <p:commandButton
+          value="#{messages.cancel}"
+          action="#{bean.cancelAssignSampleValues}"
+          global="false"
+          onclick="hasChanged=false;"
+          oncomplete="PF('assignSampleValuesModalDialog').hide(); fixOversize();"
+          update="#{constants.EDIT}:invalidExcelEditWarning" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

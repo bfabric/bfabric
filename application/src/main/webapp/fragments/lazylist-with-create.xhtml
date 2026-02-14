@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="lazylist.xhtml" />
+
+  <h:panelGrid
+    rendered="#{empty buttonRendered or buttonRendered}"
+    columns="1"
+    styleClass="action">
+    <p:button
+      outcome="edit.xhtml"
+      value="#{messages.create}">
+      <c:if test="#{includeContextContainerParam}">
+        <ui:include src="/fragments/context-container-param.xhtml" />
+      </c:if>
+    </p:button>
+  </h:panelGrid>
+</ui:composition>

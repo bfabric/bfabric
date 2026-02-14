@@ -1,0 +1,78 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    sortBy="#{entity[0]}"
+    filterBy="#{entity[0]} - #{entity[2]}"
+    headerText="#{messages.name}">
+    <p:link
+      rendered="#{not empty entity[0]}"
+      outcome="/#{duplicateManager.mergeableClass.toLowerCase()}/show.xhtml"
+      value="#{entity[0]} - #{entity[2]}">
+      <f:param
+        name="id"
+        value="#{entity[0]}" />
+    </p:link>
+  </p:column>
+  <p:column
+    sortBy="#{entity[1]}"
+    filterBy="#{entity[1]} - #{entity[3]}"
+    headerText="#{messages.name}">
+    <p:link
+      rendered="#{not empty entity[1]}"
+      outcome="/#{duplicateManager.mergeableClass.toLowerCase()}/show.xhtml"
+      value="#{entity[1]} - #{entity[3]}">
+      <f:param
+        name="id"
+        value="#{entity[1]}" />
+    </p:link>
+  </p:column>
+  <p:column
+    exportable="false"
+    headerText="#{messages.action}">
+    <p:link
+      rendered="#{not empty entity[0] and not empty entity[1]}"
+      outcome="/#{duplicateManager.mergeableClass.toLowerCase()}/merge.xhtml"
+      value="#{messages.merge}">
+      <f:param
+        name="type"
+        value="#{duplicateManager.mergeableClass.toLowerCase()}" />
+      <f:param
+        name="id"
+        value="#{entity[0]}" />
+      <f:param
+        name="mergeId"
+        value="#{entity[1]}" />
+    </p:link>
+  </p:column>
+  <p:column
+    rendered="#{not hideColumns.contains('ignore')}"
+    exportable="false"
+    headerText="#{messages.ignore}">
+    <p:commandLink
+      action="#{duplicateManager.ignore(duplicateManager.mergeableClass.toLowerCase(), entity[0], entity[1], entity[2], entity[3])}"
+      value="#{messages.ignore}"
+      global="false"
+      update="@form" />
+  </p:column>
+  <p:column
+    rendered="#{duplicateManager.mergeableClass.toLowerCase().equals('user')}"
+    exportable="false"
+    headerText="#{messages.mergeRequest}">
+    <h:outputText
+      value="#{entity[5]}"
+      rendered="#{not empty entity[5]}" />
+    <p:commandLink
+      action="#{duplicateManager.mergeRequest('user', entity[0], entity[1])}"
+      value="#{messages.mergeRequest}"
+      rendered="#{entity[6]}"
+      global="false"
+      update="@form" />
+    <h:outputText
+      value=" "
+      rendered="#{entity[6]}">
+    </h:outputText>
+  </p:column>
+</ui:composition>

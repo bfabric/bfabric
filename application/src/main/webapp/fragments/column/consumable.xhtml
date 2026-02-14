@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('consumable')}">
+    <p:column
+      field="#{fieldPrefix}consumable.name"
+      headerText="#{messages.consumable}">
+      <c:if test="#{not noLinks.contains('consumable')}">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.consumable}" />
+        </ui:include>
+      </c:if>
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,487 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:panelGrid
+    columns="2"
+    columnClasses="rtdm, ltd">
+    <h:outputText value="#{messages.instrument}" />
+    <ui:include src="/fragments/autocomplete-required.xhtml">
+      <ui:param
+        name="listContext"
+        value="instrument" />
+      <ui:param
+        name="value"
+        value="#{instrumentReservation.instrument}" />
+      <ui:param
+        name="disabled"
+        value="#{instrumentReservationManager.isInstrumentSelectionDisabled()}" />
+      <o:methodParam
+        name="completeMethod"
+        value="#{instrumentReservationManager.getResultListBookableIncludingFiltered}" />
+      <ui:param
+        name="itemSelectUpdate"
+        value="@this, instrumentInfo" />
+      <ui:param
+        name="ajaxClear"
+        value="true" />
+      <ui:param
+        name="clearUpdate"
+        value="@this, instrumentInfo" />
+      <ui:param
+        name="itemLabel"
+        value="#{item.label}" />
+    </ui:include>
+
+    <c:if test="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+      <h:outputText value="#{messages.instrumentReservationType}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <h:selectOneMenu id="type" required="true" value="#{instrumentReservation.instrumentReservationType}" styleClass="editWidthExtraLarge" converter="omnifaces.SelectItemsConverter">
+          <f:selectItem itemLabel="#{messages.selectAnItem}" itemDisabled="true" />
+          <f:selectItems value="#{instrumentReservationTypeList.resultListOrderByName}" var="item" itemLabel="#{item.name}" />
+          <p:ajax event="change" global="false" update="bookerContainerUserInfo" />
+        </h:selectOneMenu>
+      </ui:decorate>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('instrumentManager') and instrumentReservation.instrumentReservationSetting.operatorRequired}">
+        <h:outputText value="#{messages.operator}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="operator"
+            value="#{instrumentReservation.operator}"
+            styleClass="editWidthExtraLarge"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem
+              itemLabel="#{messages.selectAnItem}"
+              itemDisabled="true" />
+            <f:selectItems
+              value="#{instrumentReservation.getOperatorsIncludingUser(instrumentReservation.operator)}"
+              var="item"
+              itemLabel="#{item.fullLastFirstName}  #{instrumentReservationManager.existsFutureCollidingEventByUser(item) ? messages.operatorNotAvailableHint : ''}" />
+          </h:selectOneMenu>
+        </ui:decorate>
+      </c:if>
+    </c:if>
+  </h:panelGrid>
+
+  <h:panelGroup id="instrumentInfo">
+    <h:panelGroup rendered="#{not empty instrumentReservation.instrument}">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.booker}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="booker" />
+          <ui:param
+            name="value"
+            value="#{instrumentReservation.booker}" />
+          <ui:param
+            name="disabled"
+            value="#{not identityManager.hasCurrentUserRole('instrumentReader')}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{instrumentReservation.getEmployeesIncludingBooker}" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.fullLastFirstName}" />
+        </ui:include>
+      </h:panelGrid>
+
+      <h:panelGroup id="bookerContainerUserInfo">
+        <h:panelGroup rendered="#{instrumentReservation.instrumentReservationType.containerAssociated}">
+          <ui:include src="/fragments/select-containers.xhtml">
+            <ui:param
+              name="value"
+              value="#{instrumentReservation.containersAsList}" />
+            <ui:param
+              name="multiple"
+              value="true" />
+            <ui:param
+              name="required"
+              value="true" />
+            <ui:param
+              name="completeMethod"
+              value="#{instrumentReservationManager.getBookableContainers}" />
+            <o:methodParam
+              name="itemUnselectListener"
+              value="#{instrumentReservationManager.containersUnselect}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="user" />
+            <ui:param
+              name="itemUnselectUpdate"
+              value="bookerContainerUserInfo" />
+          </ui:include>
+
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+              <h:outputText value="#{messages.serviceType}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:selectOneMenu
+                  id="serviceType"
+                  value="#{instrumentReservation.serviceType}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemLabel="" />
+                  <f:selectItems
+                    var="item"
+                    value="#{serviceTypeList.resultList}"
+                    itemLabel="#{item.name}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{identityManager.hasCurrentUserRole('labManager')}">
+              <h:outputText value="#{messages.run}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param name="listContext" value="run" />
+                  <ui:param name="value" value="#{instrumentReservation.run}" />
+                  <o:methodParam name="completeMethod" value="#{runService.getFiltered}" />
+                  <ui:param name="itemSelectUpdate" value="@this, instrumentInfo" />
+                  <ui:param name="ajaxClear" value="true" />
+                  <ui:param name="clearUpdate" value="@this, instrumentInfo" />
+                  <ui:param name="itemLabel" value="#{item.displayName}" />
+                </ui:include>
+              </ui:decorate>
+            </c:if>
+
+            <h:outputText
+              value="#{messages.user}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="user"
+                value="#{instrumentReservation.user}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" />
+                <f:selectItems
+                  value="#{instrumentReservation.containersMembers}"
+                  var="item"
+                  itemLabel="#{item.fullLastFirstName}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{instrumentReservation.instrumentReservationType.chargeable}">
+          <h:panelGrid
+            rendered="#{identityManager.hasCurrentUserRole('instrumentReader')}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.chargeable}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="chargeable"
+                value="#{instrumentReservation.chargeable}">
+              </h:selectBooleanCheckbox>
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText
+          rendered="#{instrumentReservation.allDayRendered}"
+          value="#{messages.allDay}" />
+        <h:panelGroup rendered="#{instrumentReservation.allDayRendered}">
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="allDay"
+              value="#{instrumentReservation.allDayEvent}"
+              disabled="#{instrumentReservation.allDayEventCheckboxDisabled}">
+              <p:ajax
+                event="change"
+                update="startDateGrid,endDateGrid"
+                listener="#{instrumentReservation.allDayEventChanged}"
+                immediate="true" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.startDate}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:panelGrid
+            id="startDateGrid"
+            columns="5"
+            styleClass="noborder-rightpadding"
+            title="#{messages.reservationStartDateHint} #{instrumentReservation.instrumentReservationSetting.slotMinTime}">
+            <p:datePicker
+              id="startDate"
+              value="#{instrumentReservation.startDateSlot}"
+              disabledDays="#{instrumentReservation.instrumentReservationSetting.disabledWeekends}"
+              mindate="#{instrumentReservation.instrumentReservationSetting.validFrom}"
+              maxdate="#{instrumentReservation.instrumentReservationSetting.validUntil}"
+              showTime="false"
+              inputStyle="width:75px"
+              yearNavigator="true"
+              hideOnDateTimeSelect="true">
+              <p:ajax
+                event="dateSelect"
+                listener="#{instrumentReservationManager.startDateChanged}"
+                update="startDateError, endDateError, startDateGrid, endDateGrid, repeaterDetails"
+                process="startDateGrid, endDateGrid"
+                global="false" />
+            </p:datePicker>
+            <h:selectOneMenu
+              rendered="#{not empty instrumentReservation.instrumentReservationSetting.startTimes}"
+              id="startTime"
+              value="#{instrumentReservation.startTime}"
+              disabled="#{instrumentReservation.allDayEvent}"
+              required="true"
+              styleClass="editWidthSmall"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{instrumentReservation.instrumentReservationSetting.startTimes}"
+                var="item"
+                itemLabel="#{stringHelper.getTimeFormat(item)}" />
+              <p:ajax
+                event="change"
+                listener="#{instrumentReservationManager.startDateChanged}"
+                update="startDateError, endDateError, startDateGrid, endDateGrid, repeaterDetails"
+                process="startDateGrid, endDateGrid"
+                global="false" />
+            </h:selectOneMenu>
+            <p:message
+              id="startDateError"
+              for="startDate"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.endDate}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:panelGrid
+            id="endDateGrid"
+            columns="3"
+            styleClass="noborder-rightpadding"
+            title="#{messages.reservationEndDateHint} #{instrumentReservation.instrumentReservationSetting.slotMaxTime}">
+            <p:datePicker
+              id="endDate"
+              value="#{instrumentReservation.endDateSlot}"
+              disabledDays="#{instrumentReservation.instrumentReservationSetting.disabledWeekends}"
+              mindate="#{instrumentReservation.instrumentReservationSetting.validFrom}"
+              maxdate="#{instrumentReservation.instrumentReservationSetting.validUntil}"
+              showTime="false"
+              inputStyle="width:75px"
+              yearNavigator="true"
+              hideOnDateTimeSelect="true">
+              <p:ajax
+                event="dateSelect"
+                listener="#{instrumentReservationManager.endDateChanged}"
+                update="startDateError, endDateError, startDateGrid, endDateGrid, repeaterDetails"
+                process="startDateGrid, endDateGrid"
+                global="false" />
+            </p:datePicker>
+            <h:selectOneMenu
+              id="endTime"
+              value="#{instrumentReservation.endTime}"
+              disabled="#{instrumentReservation.allDayEvent}"
+              required="true"
+              styleClass="editWidthSmall"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{instrumentReservation.instrumentReservationSetting.endTimes}"
+                var="item"
+                itemLabel="#{stringHelper.getTimeFormat(item)}" />
+              <p:ajax
+                event="change"
+                listener="#{instrumentReservationManager.endDateChanged}"
+                update="startDateError, endDateError, startDateGrid, endDateGrid, repeaterDetails"
+                process="startDateGrid, endDateGrid"
+                global="false" />
+            </h:selectOneMenu>
+            <p:message
+              id="endDateError"
+              for="endDate"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.description}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputTextarea
+            id="description"
+            value="#{instrumentReservation.description}"
+            rows="3"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGroup
+        id="repeaterDetails">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{not instrumentReservation.managed and not instrumentReservation.repeatable}">
+          <h:outputText value="#{messages.repeat}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{messages.repeatNotPossible}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{not instrumentReservation.managed and instrumentReservation.repeatable}">
+          <h:outputText value="#{messages.repeat}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="repeat"
+              value="#{instrumentReservation.repeaterHelper.repeat}"
+              valueChangeListener="#{instrumentReservation.repeatChanged}"
+              immediate="true"
+              styleClass="editWidthSmall">
+              <f:selectItem
+                itemValue="#{true}"
+                itemLabel="#{messages.yes}" />
+              <f:selectItem
+                itemValue="#{false}"
+                itemLabel="#{messages.no}" />
+              <p:ajax
+                event="change"
+                update="repeaterDetails" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{not instrumentReservation.managed and instrumentReservation.repeatable and instrumentReservation.repeaterHelper.repeat}">
+          <h:outputText value="#{messages.every}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              columns="3"
+              title="#{messages.repeatPeriodicHint}">
+              <p:spinner
+                id="weeks"
+                value="#{instrumentReservation.repeaterHelper.weeks}"
+                valueChangeListener="#{instrumentReservation.repeaterWeeksChanged}"
+                required="true"
+                min="#{instrumentReservation.repeaterHelperWeeksMin}"
+                max="#{instrumentReservation.repeaterHelperWeeksMax}"
+                size="3"
+                decimalPlaces="0"
+                thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  update="repeatEndDate"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.weeks}" />
+              <p:message
+                id="weeksError"
+                for="weeks"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.until}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="repeatEndDate"
+              value="#{instrumentReservation.repeaterHelper.endDate}"
+              mindate="#{instrumentReservation.repeaterHelperValidUntilMinDate}"
+              maxdate="#{instrumentReservation.repeaterHelperValidUntilMaxDate}"
+              required="true">
+              <p:ajax
+                event="dateSelect"
+                listener="#{instrumentReservation.repeaterEndChanged}"
+                update="repeatEndDate"
+                global="false" />
+            </p:datePicker>
+          </ui:decorate>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('instrumentManager') and instrumentReservation.instrumentReservationSetting.approvalRequired}">
+        <h:panelGrid
+          id="approved-form"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.approved}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneRadio
+              value="#{instrumentReservation.approved}"
+              valueChangeListener="#{instrumentReservation.approvedChanged()}">
+              <f:selectItem
+                itemValue="true"
+                itemLabel="#{messages.yes}" />
+              <f:selectItem
+                itemValue="false"
+                itemLabel="#{messages.no}" />
+              <p:ajax
+                event="change"
+                update="approved-form" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <c:if test="#{not empty instrumentReservation.approved}">
+            <h:outputText value="#{messages.approvalDate}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <p:datePicker
+                id="approvalDate"
+                value="#{instrumentReservation.approvalDate}"
+                maxdate="#{now}"
+                required="true" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.approvedBy}" />
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="listContext"
+                value="instrumentReservationApprovedBy" />
+              <ui:param
+                name="value"
+                value="#{instrumentReservation.approvedBy}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{instrumentReservation.getEmployeesIncludingApprovedBy}" />
+              <ui:param
+                name="required"
+                value="true" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullLastFirstName}" />
+            </ui:include>
+          </c:if>
+
+          <h:outputText value="#{messages.approvalNote}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="approvalNote"
+              value="#{instrumentReservation.approvalNote}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+      </c:if>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        rendered="#{instrumentReservationManager.renderedSendEmailCheckbox}">
+        <h:outputText value="#{messages.sendEmailNotification}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectBooleanCheckbox
+            id="sendMail"
+            value="#{instrumentReservation.sendMailNotification}">
+            <p:ajax
+              event="change"
+              listener="#{instrumentReservation.sendMailNotificationChanged}"
+              immediate="true" />
+          </h:selectBooleanCheckbox>
+        </ui:decorate>
+      </h:panelGrid>
+    </h:panelGroup>
+  </h:panelGroup>
+</ui:composition>

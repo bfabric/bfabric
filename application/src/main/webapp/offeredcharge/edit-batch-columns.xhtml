@@ -1,0 +1,233 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <p:column
+    exportable="false"
+    style="text-align:center">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.delete}" />
+      </div>
+    </f:facet>
+    <p:commandButton
+      actionListener="#{offeredChargeBatchManager.deleteChanged(entity)}"
+      value="#{messages.delete}"
+      global="true"
+      process="@this"
+      update="@([id$=batchtable]), @([id$=addNewBatchItemsSpinner]), @([id$=addNewBatchItemsButton]), @([id$=buttons])"
+      oncomplete="fixOversize();"
+      styleClass="inline"
+      style="width:50px;min-width:50px" />
+  </p:column>
+
+  <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+  <ui:include src="/fragments/batch/select-one-menu-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.SERVICE}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.SERVICE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.service}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.SERVICE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.service}" />
+    <ui:param
+      name="items"
+      value="#{serviceList.getEnabledServicesForOfferIncluding(entity.service.id)}" />
+    <ui:param
+      name="style"
+      value="width:450px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/string-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.SERVICE_CODE}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.SERVICE_CODE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.serviceCodeName}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.SERVICE_CODE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.serviceCodeName}" />
+    <ui:param
+      name="columnInputEnabled"
+      value="false" />
+    <ui:param
+      name="style"
+      value="width:100px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.TOTAL}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.TOTAL)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.quantity}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.TOTAL)}" />
+    <ui:param
+      name="value"
+      value="#{entity.total}" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.BASIC_PRICE}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.BASIC_PRICE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.basicPrice}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.BASIC_PRICE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.basicPrice}" />
+    <ui:param
+      name="columnInputEnabled"
+      value="false" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/number-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.TOTAL_PRICE}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.TOTAL_PRICE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.total} #{messages.price}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.TOTAL_PRICE)}" />
+    <ui:param
+      name="value"
+      value="#{offeredChargeBatchManager.getTotalPrice(entity)}" />
+    <ui:param
+      name="columnInputEnabled"
+      value="false" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/select-one-menu-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.TAX_TYPE}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.TAX_TYPE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.taxType}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.TAX_TYPE)}" />
+    <ui:param
+      name="value"
+      value="#{entity.taxType}" />
+    <ui:param
+      name="items"
+      value="#{taxTypeList.resultList}" />
+    <ui:param
+      name="style"
+      value="width:75px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/select-one-menu-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.CHARGER}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.CHARGER)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.charger}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.CHARGER)}" />
+    <ui:param
+      name="value"
+      value="#{entity.charger}" />
+    <ui:param
+      name="items"
+      value="#{userList.getEmployeesIncludingUser(entity.charger)}" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/string-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.DESCRIPTION}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.DESCRIPTION)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.description}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.DESCRIPTION)}" />
+    <ui:param
+      name="value"
+      value="#{entity.description}" />
+    <ui:param
+      name="style"
+      value="width:450px" />
+  </ui:include>
+
+  <ui:include src="/fragments/batch/string-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.NOTES}" />
+    <ui:param
+      name="rendered"
+      value="#{offeredChargeBatchManager.isRenderedColumn(constants.NOTES)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.notes}" />
+    <ui:param
+      name="displayRequired"
+      value="#{offeredChargeBatchManager.isAttributeRequired(constants.NOTES)}" />
+    <ui:param
+      name="value"
+      value="#{entity.notes}" />
+    <ui:param
+      name="style"
+      value="width:250px" />
+  </ui:include>
+</ui:composition>

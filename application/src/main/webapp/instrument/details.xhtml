@@ -1,0 +1,403 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name-label.xhtml" />
+
+      <c:if test="#{not empty instrument.parent}">
+        <h:outputText value="#{messages.parentInstrument}" />
+        <h:panelGroup>
+          <ui:include src="/fragments/entity-link.xhtml">
+            <ui:param
+              name="instance"
+              value="#{instrument.parent}" />
+            <ui:param
+              name="entityValue"
+              value="#{instrument.label}" />
+          </ui:include>
+          <h:outputText
+            rendered="#{instrument.parent.available}"
+            value=" available"
+            styleClass="green" />
+          <h:outputText
+            rendered="#{instrument.parent.up}"
+            value=" up"
+            styleClass="green" />
+          <h:outputText
+            rendered="#{instrument.parent.bookable}"
+            value=" bookable"
+            styleClass="green" />
+          <h:outputText
+            rendered="#{not instrument.parent.available}"
+            value=" unavailable"
+            styleClass="warning" />
+          <h:outputText
+            rendered="#{not instrument.parent.up}"
+            value=" down"
+            styleClass="warning" />
+          <h:outputText
+            rendered="#{not instrument.parent.bookable}"
+            value=" unbookable"
+            styleClass="warning" />
+        </h:panelGroup>
+      </c:if>
+
+      <h:outputText value="#{messages.supervisor}" />
+      <ui:include src="/fragments/supervisor-link.xhtml" />
+
+      <h:outputText value="#{messages.admin}" />
+      <ui:include src="/fragments/admin-link.xhtml" />
+
+      <ui:include src="/fragments/details/technologies.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      id="status"
+      columns="2"
+      columnClasses="rtd, ltd">
+      <h:outputText value="#{messages.up}" />
+      <h:panelGroup>
+        <h:form>
+          <h:outputText
+            value="#{instrument.instrumentStatusInfo.up} "
+            styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.up)}" />
+          <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusUp}"
+              value="#{instrument.startDateStatusUp}" />
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusUp}"
+              value="&#160;#{messages.duration}: #{instrument.durationUpTimeNowAsText}" />
+            <h:outputText value="&#160;#{messages.total}: #{instrument.durationUpTimeTotalNowAsText}" />
+            <p:commandLink
+              rendered="#{instrument.available}"
+              action="#{entityManager.switchUp}"
+              immediate="true"
+              global="false"
+              update="@form">
+              <h:panelGroup rendered="#{instrument.up}">
+                <i class="fas fa-stop-circle warning" title="#{messages.switchStatus} #{messages.down}" />
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not instrument.up}">
+                <i class="fas fa-play-circle running" title="#{messages.switchStatus} #{messages.up}" />
+              </h:panelGroup>
+              <f:param
+                name="id"
+                value="#{instrument.id}" />
+            </p:commandLink>
+          </h:panelGroup>
+        </h:form>
+      </h:panelGroup>
+
+      <h:outputText value="#{messages.bookable}" />
+      <h:panelGroup>
+        <h:form>
+          <h:outputText
+            value="#{instrument.instrumentStatusInfo.bookable} "
+            styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.bookable)}" />
+          <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusBookable}"
+              value="#{instrument.startDateStatusBookable}" />
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusBookable}"
+              value="&#160;#{messages.duration}: #{instrument.durationBookableTimeNowAsText}" />
+            <h:outputText value="&#160;#{messages.total}: #{instrument.durationBookableTimeTotalNowAsText}" />
+            <p:commandLink
+              rendered="#{instrument.available}"
+              action="#{entityManager.switchBookable}"
+              immediate="true"
+              global="false"
+              update="@form">
+              <h:panelGroup rendered="#{instrument.bookable}">
+                <i class="fas fa-times-circle warning" title="#{messages.switchStatus} #{messages.bookable}" />
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not instrument.bookable}">
+                <i class="fas fa-check-circle running" title="#{messages.switchStatus} #{messages.notBookable}" />
+              </h:panelGroup>
+              <f:param
+                name="id"
+                value="#{instrument.id}" />
+            </p:commandLink>
+          </h:panelGroup>
+        </h:form>
+      </h:panelGroup>
+
+      <h:outputText value="#{messages.userVisible}" />
+      <h:panelGroup>
+        <h:form>
+          <h:outputText
+            value="#{instrument.instrumentStatusInfo.userVisible} "
+            styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.userVisible)}" />
+          <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusUserVisible}"
+              value="#{instrument.startDateStatusUserVisible}" />
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusUserVisible}"
+              value="&#160;#{messages.duration}: #{instrument.durationUserVisibleTimeNowAsText}" />
+            <h:outputText value="&#160;#{messages.total}: #{instrument.durationUserVisibleTimeTotalNowAsText}" />
+            <p:commandLink
+              rendered="#{instrument.bookable}"
+              action="#{entityManager.switchUserVisible}"
+              immediate="true"
+              global="false"
+              update="@form">
+              <h:panelGroup rendered="#{instrument.userVisible}">
+                <i class="fas fa-times-circle warning" title="#{messages.switchStatus} #{messages.notUserVisible}" />
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not instrument.userVisible}">
+                <i class="fas fa-check-circle running" title="#{messages.switchStatus} #{messages.userVisible}" />
+              </h:panelGroup>
+              <f:param
+                name="id"
+                value="#{instrument.id}" />
+            </p:commandLink>
+          </h:panelGroup>
+        </h:form>
+      </h:panelGroup>
+
+      <h:outputText value="#{messages.userBookable}" />
+      <h:panelGroup>
+        <h:form>
+          <h:outputText
+            value="#{instrument.instrumentStatusInfo.userBookable} "
+            styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.userBookable)}" />
+          <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusUserBookable}"
+              value="#{instrument.startDateStatusUserBookable}" />
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusUserBookable}"
+              value="&#160;#{messages.duration}: #{instrument.durationUserBookableTimeNowAsText}" />
+            <h:outputText value="&#160;#{messages.total}: #{instrument.durationUserBookableTimeTotalNowAsText}" />
+            <p:commandLink
+              rendered="#{instrument.userVisible}"
+              action="#{entityManager.switchUserBookable}"
+              immediate="true"
+              global="false"
+              update="@form">
+              <h:panelGroup rendered="#{instrument.userBookable}">
+                <i class="fas fa-times-circle warning" title="#{messages.switchStatus} #{messages.notUserBookable}" />
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not instrument.userBookable}">
+                <i class="fas fa-check-circle running" title="#{messages.switchStatus} #{messages.userBookable}" />
+              </h:panelGroup>
+              <f:param
+                name="id"
+                value="#{instrument.id}" />
+            </p:commandLink>
+          </h:panelGroup>
+        </h:form>
+      </h:panelGroup>
+
+      <h:outputText value="#{messages.runEnabled}" />
+      <h:panelGroup>
+        <h:form>
+          <h:outputText
+            value="#{instrument.instrumentStatusInfo.runEnabled} "
+            styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.runEnabled)}" />
+          <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusRunEnabled}"
+              value="#{instrument.startDateStatusRunEnabled}" />
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusRunEnabled}"
+              value="&#160;#{messages.duration}: #{instrument.durationRunEnabledTimeNowAsText}" />
+            <h:outputText value="&#160;#{messages.total}: #{instrument.durationRunEnabledTimeTotalNowAsText}" />
+            <p:commandLink
+              action="#{entityManager.switchRunEnabled}"
+              immediate="true"
+              global="false"
+              update="@form">
+              <h:panelGroup rendered="#{instrument.runEnabled}">
+                <i class="fas fa-times-circle warning" title="#{messages.switchStatus} #{messages.notRunEnabled}" />
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not instrument.runEnabled}">
+                <i class="fas fa-check-circle running" title="#{messages.switchStatus} #{messages.runEnabled}" />
+              </h:panelGroup>
+              <f:param
+                name="id"
+                value="#{instrument.id}" />
+            </p:commandLink>
+          </h:panelGroup>
+        </h:form>
+      </h:panelGroup>
+
+      <h:outputText value="#{messages.available}" />
+      <h:panelGroup>
+        <h:form>
+          <h:outputText
+            value="#{instrument.instrumentStatusInfo.available} "
+            styleClass="#{stringHelper.toGreenRed(instrument.instrumentStatusInfo.available)}" />
+          <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusAvailable}"
+              value="#{instrument.startDateStatusAvailable}" />
+            <h:outputText
+              rendered="#{not empty instrument.startDateStatusAvailable}"
+              value="&#160;#{messages.duration}: #{instrument.durationAvailableTimeNowAsText}" />
+            <h:outputText value="&#160;#{messages.total}: #{instrument.durationAvailableTimeTotalNowAsText}" />
+            <p:commandLink
+              action="#{entityManager.switchAvailable}"
+              immediate="true"
+              global="false"
+              update="@form">
+              <h:panelGroup rendered="#{instrument.available}">
+                <i class="fas fa-times-circle warning" title="#{messages.switchStatus} #{messages.notAvailable}" />
+              </h:panelGroup>
+              <h:panelGroup rendered="#{not instrument.available}">
+                <i class="fas fa-check-circle running" title="#{messages.switchStatus} #{messages.available}" />
+              </h:panelGroup>
+              <f:param
+                name="id"
+                value="#{instrument.id}" />
+            </p:commandLink>
+          </h:panelGroup>
+        </h:form>
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <c:if test="#{not empty instrument.operators}">
+        <h:outputText value="#{messages.operators}" />
+        <h:outputText value="#{instrument.operatorsAsString}" />
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+        <c:if test="#{not empty instrument.bookers}">
+          <h:outputText value="#{messages.bookers}" />
+          <h:outputText value="#{instrument.bookersAsString}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.trainedUsers}">
+          <h:outputText value="#{messages.trainedUsers}" />
+          <h:outputText value="#{instrument.trainedUsersAsString}" />
+        </c:if>
+
+        <ui:include src="/fragments/details/servicetypes.xhtml" />
+
+        <h:outputText
+          value="#{messages.defaultService}"
+          rendered="#{not empty instrument.service}" />
+        <h:outputText
+          value="#{instrument.service.displayName}"
+          rendered="#{not empty instrument.service and not identityManager.hasCurrentUserRole('instrumentReader')}" />
+        <ui:include src="/fragments/entity-link-displayname.xhtml">
+          <ui:param
+            name="rendered"
+            value="#{not empty instrument.service and identityManager.hasCurrentUserRole('instrumentReader')}" />
+          <ui:param
+            name="instance"
+            value="#{instrument.service}" />
+        </ui:include>
+
+        <c:if test="#{not empty instrument.serialNumber}">
+          <h:outputText value="#{messages.serialNumber}" />
+          <h:outputText value="#{instrument.serialNumber}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.inventoryNumber}">
+          <h:outputText value="#{messages.inventoryNumber}" />
+          <h:outputText value="#{instrument.inventoryNumber}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.location}">
+          <h:outputText value="#{messages.location}" />
+          <h:outputText value="#{instrument.location}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.computer}">
+          <h:outputText value="#{messages.computer}" />
+          <h:outputText value="#{instrument.computer}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.installationDate}">
+          <h:outputText value="#{messages.installationDate}" />
+          <h:outputText value="#{instrument.installationDate}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.purchasedDate}">
+          <h:outputText value="#{messages.purchasedDate}" />
+          <h:outputText value="#{instrument.purchasedDate}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.purchasedPrice}">
+          <h:outputText value="#{messages.purchasedPrice}" />
+          <h:panelGroup>
+            <h:outputText value="#{instrument.purchasedPrice}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+            <h:outputText value="&#160;#{instrument.currency.code}" />
+          </h:panelGroup>
+        </c:if>
+
+        <c:if test="#{not empty instrument.seller}">
+          <h:outputText value="#{messages.seller}" />
+          <h:outputText value="#{instrument.seller}" />
+        </c:if>
+
+        <c:if test="#{not empty instrument.sellerContact}">
+          <h:outputText value="#{messages.sellerContact}" />
+          <h:outputText value="#{instrument.sellerContact}" />
+        </c:if>
+      </c:if>
+
+      <ui:include src="/fragments/details/description.xhtml" />
+
+      <!--
+            <h:outputText value="#{messages.description}" />
+            <p:textEditor value="#{instrument.description}" readonly="true" toolbarVisible="false" height="300px" width="800px" style="margin-bottom:10px" />
+      -->
+
+      <c:if test="#{not empty instrument.image.content}">
+        <h:outputText value="#{messages.image}" />
+        <p:graphicImage
+          value="#{instrument.image.streamedContent}"
+          stream="false" />
+
+        <h:outputText value="#{messages.avatar}" />
+        <p:avatar shape="circle">
+          <p:graphicImage
+            value="#{instrument.image.streamedContent}"
+            stream="false" />
+        </p:avatar>
+      </c:if>
+
+      <ui:include src="/fragments/details/annotation.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="7"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <p:button
+        outcome="/instrumentschedule/show.xhtml"
+        value="#{messages.schedule}"
+        rendered="#{instrument.bookableByCurrentUser}">
+        <f:param
+          name="instrumentId"
+          value="#{instrument.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <p:button
+        outcome="list.xhtml"
+        value="#{messages.list}"
+        rendered="#{instrument.creatable}" />
+    </h:panelGrid>
+
+    <ui:include src="/fragments/button/switchinstrumentstatus.xhtml" />
+    <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,195 @@
+<!--
+    This template is used in both the project tree and the sample show screen.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+
+  <h:panelGrid
+    id="details"
+    columns="2"
+    columnClasses="rtd,ltd">
+    <!--
+        <h:outputText value="updatable1" />
+        <h:outputText value="#{sample.getContainer().isExtensible() and not sample.isInNonUpdatableOrder() and not sample.isInNonUpdatablePlate() and not sample.isInNonUpdatableRun()}" />
+        <h:outputText value="not sample.isAssignedToRuns()" />
+        <h:outputText value="#{not sample.isAssignedToRuns() }" />
+        <h:outputText value="sample.isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()" />
+        <h:outputText value="#{sample.isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()}" />
+        <h:outputText value="not sample.isInNonUpdatableRun()" />
+        <h:outputText value="#{(not sample.isInNonUpdatableRun() or sample.isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()) and not sample.isOnRunTypeAndOnDemultiplexedOrFinishedRun()}" />
+        <h:outputText value="sample.isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()" />
+        <h:outputText value="#{sample.isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()}" />
+        <h:outputText value="not sample.isUserSampleInMultiplexType()" />
+        <h:outputText value="#{not sample.isUserSampleInMultiplexType()}" />
+        <h:outputText value="updatable" />
+        <h:outputText value="#{sample.updatable}" />
+        <h:outputText value="getContainer().isExtensible()()" />
+        <h:outputText value="#{sample.getContainer().isExtensible()}" />
+        <h:outputText value="isInNonUpdatableOrder()" />
+        <h:outputText value="#{sample.isInNonUpdatableOrder()}" />
+        <h:outputText value="isInNonUpdatablePlate()" />
+        <h:outputText value="#{sample.isInNonUpdatablePlate()}" />
+        <h:outputText value="isInNonUpdatableRun()" />
+        <h:outputText value="#{sample.isInNonUpdatableRun()}" />
+        <h:outputText value="isAssignedToRuns()" />
+        <h:outputText value="#{sample.isAssignedToRuns()}" />
+        <h:outputText value="isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()" />
+        <h:outputText value="#{sample.isMultiplexedTypeAndOnOnlyPendingOrReadyRuns()}" />
+        <h:outputText value="isOnRunTypeAndOnDemultiplexedOrFinishedRun()" />
+        <h:outputText value="#{sample.isOnRunTypeAndOnDemultiplexedOrFinishedRun()}" />
+        <h:outputText value="isUserSampleInMultiplexType()" />
+        <h:outputText value="#{sample.isUserSampleInMultiplexType()}" />
+    -->
+    <ui:include src="/fragments/details/idlink-name.xhtml" />
+    <ui:include src="/fragments/details/parent.xhtml" />
+
+    <h:outputText value="#{messages.type}" />
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param
+        name="instance"
+        value="#{sample.sampleType}" />
+    </ui:include>
+
+    <c:if test="#{not empty sample.parents}">
+      <h:outputText value="#{messages.parents}" />
+      <h:panelGroup id="parents">
+        <c:if test="#{currentUser.parentSamplesMaximumDisplayAmount lt sample.parents.size()}">
+          <p:commandButton
+            rendered="#{not sample.checked}"
+            value="#{messages.show} (#{sample.parents.size()})"
+            action="#{sample.check()}"
+            oncomplete="fixOversize();"
+            update="parents" />
+          <p:commandButton
+            rendered="#{sample.checked}"
+            value="#{messages.hide}"
+            action="#{sample.uncheck()}"
+            oncomplete="fixOversize();"
+            style="margin-bottom:4px"
+            update="parents" />
+        </c:if>
+        <h:panelGroup
+          rendered="#{currentUser.parentSamplesMaximumDisplayAmount ge sample.parents.size() or sample.checked}"
+          styleClass="inner-repeat">
+          <ui:repeat
+            value="#{not sample.multiplexedType or sample.multiplexedByUser ? sample.parentsOrderedByName : sample.parentsOrderedByTubeIdOrName}"
+            var="parentSample">
+            <ui:include src="/fragments/entity-link.xhtml">
+              <ui:param
+                name="entityValue"
+                value="#{not sample.multiplexedType ? parentSample.displayName : parentSample.tubeId}" />
+              <ui:param
+                name="instance"
+                value="#{parentSample}" />
+            </ui:include>
+            <br />
+          </ui:repeat>
+        </h:panelGroup>
+      </h:panelGroup>
+    </c:if>
+
+    <c:if test="#{not empty sample.userDecision}">
+      <h:outputText value="#{messages.userDecision}" />
+      <h:outputText value="#{sample.userDecision}" style="color:#{sample.userDecision.color}" />
+    </c:if>
+
+    <c:if test="#{not empty sample.replaces}">
+      <h:outputText value="#{messages.replaces}" />
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{sample.replaces}" />
+      </ui:include>
+    </c:if>
+
+    <c:if test="#{not empty sample.replacements}">
+      <h:outputText value="#{messages.replacements}" />
+      <h:panelGroup styleClass="inner-repeat">
+        <ui:repeat value="#{sample.replacements}" var="item">
+          <ui:include src="/fragments/entity-link-displayname.xhtml">
+            <ui:param name="instance" value="#{item}" />
+          </ui:include>
+          <br />
+        </ui:repeat>
+      </h:panelGroup>
+    </c:if>
+
+    <c:if test="#{not empty sample.controlSample}">
+      <h:outputText value="#{messages.linkedControlSample}" />
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{sample.controlSample}" />
+      </ui:include>
+    </c:if>
+
+    <c:forEach
+      items="#{sampleList.getSampleAttributeEnums(sample.sampleType)}"
+      var="sampleAttributeEnum">
+      <c:if test="#{not empty instance[sampleAttributeEnum.name]}">
+        <h:outputText value="#{messages[sampleAttributeEnum.name]}" />
+        <h:panelGroup>
+          <c:if test="#{sampleAttributeEnum.annotationTypeSingleValued}">
+            <ui:include src="/fragments/entity-link-name.xhtml">
+              <ui:param
+                name="instance"
+                value="#{instance[sampleAttributeEnum.name]}" />
+            </ui:include>
+          </c:if>
+
+          <c:if test="#{sampleAttributeEnum.annotationTypeMultiValued}">
+            <ui:repeat
+              value="#{instance[sampleAttributeEnum.name]}"
+              var="annotationItem">
+              <ui:include src="/fragments/entity-link-name.xhtml">
+                <ui:param
+                  name="instance"
+                  value="#{annotationItem}" />
+              </ui:include>
+              <br />
+            </ui:repeat>
+          </c:if>
+
+          <c:if test="#{not sampleAttributeEnum.annotationType}">
+            <h:panelGroup>
+              <h:outputText
+                value="#{instance[sampleAttributeEnum.name].label}"
+                rendered="#{sampleAttributeEnum.enumType}" />
+              <p:link
+                rendered="#{sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.enumType}"
+                outcome="/#{(sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT_2) ? 'multiplexkit' : sampleAttributeEnum.name.toLowerCase()}/show.xhtml"
+                value="#{instance[sampleAttributeEnum.name].name}">
+                <f:param
+                  name="id"
+                  value="#{instance[sampleAttributeEnum.name].id}" />
+              </p:link>
+              <h:outputText
+                value="#{instance[sampleAttributeEnum.name]}"
+                rendered="#{not sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.localDateType and not sampleAttributeEnum.localDateTimeType}"
+                styleClass="#{sampleAttributeEnum eq SampleAttributeEnum.DESCRIPTION ? 'preformat' : ''}" />
+              <h:outputText
+                value="#{instance[sampleAttributeEnum.name]}"
+                rendered="#{sampleAttributeEnum.localDateType}" />
+              <h:outputText
+                value="#{instance[sampleAttributeEnum.name]}"
+                rendered="#{sampleAttributeEnum.localDateTimeType}" />
+            </h:panelGroup>
+          </c:if>
+          <c:if test="#{not empty sampleAttributeEnum.unit}">
+            <h:outputText value="&#160;#{sampleAttributeEnum.unit}" />
+          </c:if>
+        </h:panelGroup>
+      </c:if>
+    </c:forEach>
+
+    <ui:include src="/fragments/details/fraction.xhtml" />
+    <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    <ui:include src="/fragments/details/customattributes-quality-control-values.xhtml" />
+  </h:panelGrid>
+</ui:composition>

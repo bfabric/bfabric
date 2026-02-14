@@ -1,0 +1,19 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.usersPerYear}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p>
+    <h:outputText value="#{messages.usersPerYearHint}" />
+    </p>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableContext" value="all" />
+      <ui:param name="tableContent" value="#{statisticsList.usersPerYear}" />
+      <ui:param name="include" value="/statistics/users-per-year-columns.xhtml" />
+      <ui:param name="rowsPerPageDropdown" value="all" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

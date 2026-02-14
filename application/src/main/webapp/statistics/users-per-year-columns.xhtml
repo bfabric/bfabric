@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param name="headerText" value="#{messages.users}" />
+    <ui:param name="value" value="#{entity[1]}" />
+  </ui:include>
+</ui:composition>

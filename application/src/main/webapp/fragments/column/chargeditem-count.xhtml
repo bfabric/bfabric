@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('chargedOrderItemCount')}">
+    <p:column
+      field="#{fieldPrefix}chargedOrderItemCount"
+      headerText="#{messages.chargedOrderItemCount}"
+      filterMatchMode="exact" />
+  </c:if>
+</ui:composition>

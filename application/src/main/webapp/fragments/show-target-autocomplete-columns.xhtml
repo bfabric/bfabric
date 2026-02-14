@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:ajax
+    event="keydown"
+    global="false"
+    process="@this, key, contextautocomplete"
+    update="targetButton"
+    listener="#{contextManager.keydownListener}"
+    onstart="document.getElementById('#{key.clientId}').value=event.key;" />
+  <ui:include src="/container/autocomplete-columns.xhtml" />
+</ui:composition>

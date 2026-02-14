@@ -1,0 +1,50 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.login}" />
+    <ui:param
+      name="value"
+      value="#{entity[0]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.loginMerged}" />
+    <ui:param
+      name="value"
+      value="#{entity[1]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.merged}" />
+    <ui:param
+      name="value"
+      value="#{entity[2]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.mergedBy}" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.mergeRequested}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.mergeRequestedBy}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+</ui:composition>

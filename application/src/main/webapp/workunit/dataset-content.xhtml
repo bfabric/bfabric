@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/show-datatable.xhtml">
+    <ui:param name="include" value="/dataset/item-columns.xhtml" />
+    <ui:param name="tableContext" value="#{datasetEntity.tableContext}_item" />
+    <ui:param name="tableContent" value="#{datasetEntity.items}" />
+    <ui:param name="dataset" value="#{datasetEntity}" />
+  </ui:include>
+</ui:composition>

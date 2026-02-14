@@ -1,0 +1,115 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.projects} #{messages.overview}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p:spacer height="10" />
+    <h:panelGrid columns="1">
+      <h:panelGroup>
+        <p:lineChart
+          model="#{lineChart.get([statisticsList.getOrganizationsUZHProjectsYearly(), statisticsList.getOrganizationsETHProjectsYearly(), statisticsList.getOrganizationsETHUZHProjectsYearly()], messages.kpiProjectOrganization, null, null, null, [messages.uzhZurich, messages.ethZurich, messages.ethzUzh])}"
+          style="height:350px; width:900px" />
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <p:spacer height="20" />
+    <h:panelGrid columns="5">
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getProjectPerOrganizationZH(), messages.projectOrganizationZH, null, null)}"
+        style="width:300px" />
+      <p:spacer width="20" />
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getProjectPerOrgCom(), messages.projectOrganizationCompany, null, ['0033CC', 'CCCC00'])}"
+        style="width:300px" />
+      <p:spacer width="20" />
+      <h:panelGroup>
+        <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="project-per-year" /> <ui:param name="label" value="#{messages.projects} #{messages.per} #{messages.year}" />
+        </ui:include></p>
+        <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="project-per-organization" /> <ui:param name="label" value="#{messages.projectsCubeCoach}" /> </ui:include></p>
+        <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="project-per-company" /> <ui:param name="label" value="#{messages.projectsByCompany}" /> </ui:include></p>
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <p:spacer height="20" />
+    <h:panelGrid columns="3">
+      <p:lineChart
+        model="#{lineChart.get([statisticsList.getYearlyProjectTechGenomics(), statisticsList.getYearlyProjectTechProteomics(), statisticsList.getYearlyProjectTechMetabolomics()], messages.projectPerTechnology, null, null, ['FF0000', 'FF9900', '996600'], [messages.genomics, messages.proteomics, messages.metabolomicsBiophysics])}"
+        style="height:280px; width:600px" />
+      <p:spacer width="20" />
+      <p:pieChart
+        model="#{pieChart.get(statisticsList.getProjectTechnology(), messages.projectPerTechnology, messages.days, ['FF0000', 'FF9900', '996600'])}"
+        style="width:300px" />
+    </h:panelGrid>
+    <h:panelGrid columns="3">
+      <h:panelGroup>
+        <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="project-per-technology" /> <ui:param name="label" value="#{messages.projectsByTechnology}" /> </ui:include></p>
+      </h:panelGroup>
+    </h:panelGrid>
+
+    <p:spacer height="50" />
+
+    <h:outputText value="#{messages.top10} #{messages.projectsCubeCoach} #{messages.byYear}" />
+    <p />
+    <h:form>
+      <h:panelGrid columns="1">
+        <h:panelGroup>
+          <p:selectOneMenu
+            value="#{statisticsManager.selectedYear}"
+            valueChangeListener="#{statisticsManager.selectedYearChanged}"
+            filter="true"
+            filterMatchMode="contains">
+            <f:selectItem itemLabel="#{messages.selectYear}" />
+            <f:selectItems
+              value="#{statisticsList.getYearCoach()}"
+              var="item" />
+            <p:ajax
+              event="change"
+              global="false"
+              update="projectCoaches" />
+          </p:selectOneMenu>
+        </h:panelGroup>
+      </h:panelGrid>
+      <p:spacer height="10" />
+      <h:panelGrid id="projectCoaches" columns="3">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="projectCoaches" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsList.getTopCoachPerYear(statisticsManager.selectedYear)}" />
+          <ui:param
+            name="include"
+            value="/statistics/overview-project-coach-per-year-columns.xhtml" />
+          <ui:param
+            name="rowsPerPageDropdown"
+            value="all" />
+          <ui:param
+            name="exportSuffix"
+            value="#{statisticsManager.selectedYear}" />
+        </ui:include>
+        <p:spacer width="20" />
+        <p:barChart
+          model="#{barChart.getHorizontal(statisticsList.getTopCoachPerYear(statisticsManager.selectedYear),messages.coachedProjectsTotal,null,messages.projects,null,null)}"
+          style="height:300px;width:400px" />
+      </h:panelGrid>
+
+      <p>
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="project-coach-cube" /> <ui:param name="label" value="#{messages.projectsCubeCoach}" /> </ui:include>
+        <p:spacer width="20" />
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="project-charges" /> <ui:param name="label" value="#{messages.charges}" /> </ui:include>
+        <p:spacer width="20" />
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="container-usage" /> <ui:param name="label" value="#{messages.usage}" /> </ui:include>
+      </p>
+    </h:form>
+  </ui:define>
+</ui:composition>

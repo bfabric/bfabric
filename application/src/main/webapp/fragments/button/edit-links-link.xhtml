@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:link
+    rendered="#{parent.editable}"
+    outcome="/link/edit-batch-with-create.xhtml"
+    title="#{messages.linksEditHint}">
+    <f:param
+      name="parentId"
+      value="#{parent.id}" />
+    <f:param
+      name="parentClassName"
+      value="#{parent.trimmedClassName}" />
+    <i class="fas fa-external-link-square-alt" />
+  </p:link>
+</ui:composition>

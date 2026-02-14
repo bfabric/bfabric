@@ -1,0 +1,101 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event type="preRenderView" listener="#{identityManager.restrict(offeredChargeBatchManager.offer.updatable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.edit} #{messages.charges}" />
+  </ui:define>
+
+  <ui:param name="bean" value="#{offeredChargeBatchManager}" />
+
+  <ui:define name="body">
+    <script>
+        //<![CDATA[
+        function isValidSubmit(args) {
+            return (args && !args.validationFailed);
+        }
+        //]]>
+    </script>
+    <h:form
+      id="#{constants.EDIT}"
+      styleClass="navigate-away-class">
+      <h:panelGroup id="edit-batch-offeredcharge-batchtable">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="batch" />
+          <ui:param
+            name="tableContent"
+            value="#{offeredChargeBatchManager.editList}" />
+          <ui:param
+            name="include"
+            value="/offeredcharge/edit-batch-columns.xhtml" />
+          <ui:param
+            name="editable"
+            value="true" />
+          <ui:param
+            name="styleClass"
+            value="batchEditTable" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="addNewBatchItemsPanel"
+        columns="1"
+        styleClass="action">
+        <h:panelGrid
+          columns="2"
+          styleClass="nospace topline">
+          <p:spinner
+            id="addNewBatchItemsSpinner"
+            disabled="#{offeredChargeBatchManager.addNewBatchItemsDisabled}"
+            value="#{offeredChargeBatchManager.numberOfNewBatchItems}"
+            min="1"
+            max="#{offeredChargeBatchManager.maxNumberOfNewBatchItems}"
+            size="5"
+            decimalPlaces="0"
+            thousandSeparator="">
+            <p:ajax
+              event="change"
+              global="false" />
+          </p:spinner>
+          <p:commandButton
+            id="addNewBatchItemsButton"
+            disabled="#{offeredChargeBatchManager.addNewBatchItemsDisabled}"
+            action="#{offeredChargeBatchManager.addNewBatchItems}"
+            value="#{messages.add} #{messages.charges}"
+            title="#{offeredChargeBatchManager.addNewBatchItemsDisabled ? offeredChargeBatchManager.itemLimitExceededHint : messages.addNewItemsHint}"
+            immediate="true"
+            styleClass="noleftborderselect"
+            update="@([id$=edit-batch-offeredcharge-batchtable]), addNewBatchItemsPanel, buttons"
+            process="@this"
+            oncomplete="fixOversize();" />
+        </h:panelGrid>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="buttons"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{offeredChargeBatchManager.save}"
+          disabled="#{empty offeredChargeBatchManager.editList and empty offeredChargeBatchManager.deleteList}"
+          value="#{messages.save}"
+          oncomplete="if(!isValidSubmit(args)){hasChanged=true;} fixOversize();"
+          onclick="hasChanged=false;"
+          update="@form">
+        </p:commandButton>
+        <p:commandButton
+          action="#{offeredChargeBatchManager.cancelEdit}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

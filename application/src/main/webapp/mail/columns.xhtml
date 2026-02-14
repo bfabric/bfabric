@@ -1,0 +1,60 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.MailTypeEnum" />
+  <ui:include src="/fragments/column/id.xhtml" />
+  <p:column
+    field="#{fieldPrefix}message"
+    headerText="#{messages.message}"
+    exportValue="#{entity.messagePlainText}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+      <ui:param
+        name="entityValue"
+        value="#{entity.getMessageTrunc(50)}" />
+      <ui:param
+        name="entityHint"
+        value="#{entity.messagePlainText}" />
+    </ui:include>
+  </p:column>
+  <ui:include src="/fragments/column/subject.xhtml" />
+  <p:column
+    field="#{fieldPrefix}recipientsAddressList"
+    headerText="#{messages.recipients}"
+    exportValue="#{entity.recipientsAddressList}">
+    <h:outputText
+      value="#{stringHelper.truncate(entity.recipientsAddressList, 50)}"
+      title="#{entity.recipientsAddressList}" />
+  </p:column>
+
+  <p:column
+    field="#{fieldPrefix}type"
+    headerText="#{messages.type}"
+    filterMatchMode="exact">
+    <f:facet name="filter">
+      <h:selectOneMenu
+        id="type"
+        onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{mailList.getFilterableMailTypesByParentEntity(parentEntity)}"
+          var="item"
+          itemLabel="#{item.name()}" />
+      </h:selectOneMenu>
+    </f:facet>
+  </p:column>
+
+  <ui:include src="/fragments/column/parentclass.xhtml">
+    <ui:param
+      name="parentClassNames"
+      value="#{mailList.parentClassNames}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/parentid.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

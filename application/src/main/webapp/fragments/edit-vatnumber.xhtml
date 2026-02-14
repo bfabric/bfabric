@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup id="financeSourceVatNumber">
+    <h:panelGrid
+      rendered="#{rendered}"
+      columns="2"
+      columnClasses="rtdm, ltd">
+      <h:outputText value="#{messages.vatNumber}" />
+      <ui:decorate template="/fragments/edit.xhtml">
+        <h:inputText
+          id="vatNumber"
+          value="#{callerEntity.vatNumber}"
+          title="#{messages.vatNumberHint}"
+          styleClass="editWidthExtraLarge" />
+      </ui:decorate>
+    </h:panelGrid>
+    <h:panelGrid
+      rendered="#{rendered or identityManager.hasCurrentUserRole('bookingManager')}"
+      columns="2"
+      columnClasses="rtdm, ltd">
+      <h:outputText value="#{messages.referenceNumber}" />
+      <ui:decorate template="/fragments/edit.xhtml">
+        <h:inputText
+          id="referenceNumber"
+          value="#{callerEntity.referenceNumber}"
+          title="#{messages.referenceNumberHint}"
+          styleClass="editWidthExtraLarge" />
+      </ui:decorate>
+    </h:panelGrid>
+  </h:panelGroup>
+</ui:composition>

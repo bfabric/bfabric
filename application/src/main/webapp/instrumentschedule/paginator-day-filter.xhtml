@@ -1,0 +1,37 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <tr>
+    <td class="instrumentreservationfirstcolumn"><h:selectOneMenu
+      value="#{sessionManager.technologyFilter}"
+      valueChangeListener="#{sessionManager.technologyFilterChanged}"
+      immediate="true"
+      converter="omnifaces.SelectItemsConverter">
+      <f:selectItem itemLabel="#{messages.noFilter}" />
+      <f:selectItems
+        value="#{instrumentList.technologiesByBookableInstruments}"
+        var="item"
+        itemLabel="#{item.name}" />
+      <p:ajax
+        event="change"
+        immediate="true"
+        update="overviewForm"
+        oncomplete="fixOversize();" />
+    </h:selectOneMenu></td>
+    <ui:repeat
+      var="slot"
+      value="#{agendaInstrumentReservationHelper.headSlots}">
+      <td
+        class="slotHeader #{slot.dayHeaderStyleClass}"
+        style="#{slot.dayColor}">
+        <h:outputText
+          value="#{slot.dayOfMonth}" />
+        <br />
+        <h:outputText
+          value="#{slot.weekday}" />
+      </td>
+    </ui:repeat>
+  </tr>
+</ui:composition>

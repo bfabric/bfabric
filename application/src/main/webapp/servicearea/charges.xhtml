@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('charges')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="charge" />
+      <ui:param
+        name="tableContext"
+        value="#{serviceArea.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{chargeList.getLazyModelByServiceAreaId(serviceArea.id)}" />
+      <ui:param
+        name="hideColumns"
+        value="serviceArea" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

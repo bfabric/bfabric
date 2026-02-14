@@ -1,0 +1,58 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('request')}">
+    <h:form id="requestContainer">
+      <h:panelGrid
+        rendered="#{not feedbackTemplate.feedbackTemplateType.general}"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{feedbackTemplate.feedbackTemplateType.project ? messages.project : messages.order}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="container" />
+          <ui:param
+            name="value"
+            value="#{feedbackTemplateManager.currentContainer}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{feedbackTemplate.feedbackTemplateType.project ? projectService.getProjects : orderService.getOrdersFiltered}" />
+          <ui:param
+            name="required"
+            value="true" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.id}" />
+          <ui:param
+            name="includeColumns"
+            value="/container/autocomplete-columns.xhtml" />
+        </ui:include>
+
+        <h:panelGrid styleClass="action">
+          <p:commandButton
+            action="#{feedbackTemplateManager.request}"
+            value="#{messages.requestFeedback}"
+            update="@form" />
+        </h:panelGrid>
+      </h:panelGrid>
+    </h:form>
+
+    <h:panelGrid
+      rendered="#{feedbackTemplate.feedbackTemplateType.general}"
+      styleClass="action">
+      <p:button
+        widgetVar="button"
+        outcome="/mail/send.xhtml"
+        value="#{messages.requestFeedback}">
+        <f:param
+          name="feedbackTemplateId"
+          value="#{feedbackTemplate.id}" />
+      </p:button>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

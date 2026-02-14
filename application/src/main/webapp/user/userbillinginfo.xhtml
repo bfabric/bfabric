@@ -1,0 +1,200 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('userbillinginfo') and (identityManager.hasCurrentUserRole('admin') or user.identityUser)}">
+    <h:form id="#{constants.EDIT}">
+      <p style="font-weight: normal; padding: 0 10px;">
+        <h:outputText value="#{messages.billingInfoHint}" styleClass="warning" />
+      </p>
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.title}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="title"
+            value="#{user.userBillingInfo.title}"
+            styleClass="editWidthExtraLarge">
+            <f:selectItem itemLabel="" />
+            <f:selectItem itemValue="Dr." />
+            <f:selectItem itemValue="Prof. Dr." />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.salutation}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:selectOneMenu
+            id="salutation"
+            value="#{user.userBillingInfo.salutation}"
+            styleClass="editWidthExtraLarge">
+            <f:selectItem
+              itemLabel="#{messages.select}"
+              itemDisabled="true"
+              noSelectionOption="true" />
+            <f:selectItem itemValue="Mr" />
+            <f:selectItem itemValue="Ms" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.firstName}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="firstName"
+            value="#{user.userBillingInfo.firstName}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.lastName}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="lastName"
+            value="#{user.userBillingInfo.lastName}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <ui:include src="/fragments/select-affiliations.xhtml">
+        <ui:param
+          name="callerEntity"
+          value="#{user.userBillingInfo}" />
+        <ui:param
+          name="caller"
+          value="userBillingInfo" />
+        <ui:param
+          name="clearButtonSpecificTarget"
+          value="vatNumber, referenceNumber" />
+      </ui:include>
+
+      <p style="font-weight: normal; padding: 0 10px;">
+        <h:outputText value="#{messages.billingAddressHint}" styleClass="warning" />
+      </p>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.billingAddress} #{messages.street}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="address"
+            value="#{user.userBillingInfo.address.street}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.billingAddress} #{messages.zip}" title="#{messages.zipHint}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="zip"
+            value="#{user.userBillingInfo.address.zip}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.billingAddress} #{messages.city}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="city"
+            value="#{user.userBillingInfo.address.city}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.billingAddress} #{messages.country}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="country" />
+          <ui:param
+            name="value"
+            value="#{user.userBillingInfo.address.country}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{countryService.getCountriesByIdOrNameFiltered}" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.displayName}" />
+          <ui:param
+            name="required"
+            value="true" />
+        </ui:include>
+
+        <h:outputText value="#{messages.billingEmail}" title="#{messages.billingEmailHint}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <ui:param
+            name="componentId"
+            value="email" />
+          <h:panelGroup>
+            <h:inputText
+              id="email"
+              value="#{user.userBillingInfo.email}"
+              title="#{messages.billingEmailHint}"
+              validator="#{user.userBillingInfo.validateEmail}"
+              styleClass="editWidthExtraLarge"
+              pt:placeholder="#{messages.billingEmailHint}" />
+          </h:panelGroup>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <ui:include src="/fragments/edit-financesource.xhtml">
+        <ui:param
+          name="callerEntity"
+          value="#{user.userBillingInfo}" />
+      </ui:include>
+
+      <ui:include src="/fragments/edit-vatnumber.xhtml">
+        <ui:param
+          name="rendered"
+          value="#{user.userBillingInfo.organizationType.external}" />
+        <ui:param
+          name="required"
+          value="#{(not user.managed or not empty user.userBillingInfo.oldVatNumber or not empty user.userBillingInfo.oldReferenceNumber) and user.userBillingInfo.organizationType.external}" />
+        <ui:param
+          name="callerEntity"
+          value="#{user.userBillingInfo}" />
+      </ui:include>
+
+      <p><h:outputText value="#{messages.billingInfoAcknowledgeHint}" styleClass="warn" /></p>
+
+      <h:panelGrid
+        columns="4"
+        styleClass="action">
+        <p:commandButton
+          action="#{userManager.save}"
+          value="#{messages.save}"
+          update="@form" />
+        <p:commandButton
+          rendered="#{user.resetBillingInfoRendered}"
+          actionListener="#{user.resetBillingInfo}"
+          value="#{messages.reset}"
+          hint="#{messages.resetBillingInfoHint}"
+          immediate="true"
+          resetValues="true"
+          update="@form" />
+        <p:commandButton
+          rendered="#{not user.userBillingInfo.isEmpty()}"
+          actionListener="#{user.clearBillingAccount}"
+          value="#{messages.clear}"
+          immediate="true"
+          resetValues="true"
+          update="@form" />
+        <p:commandButton
+          rendered="#{user.userBillingInfo.managed}"
+          action="#{userManager.removeUserBillingInfo()}"
+          value="#{messages.delete}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/company/add-modal.xhtml">
+      <ui:param
+        name="callerEntity"
+        value="#{user.userBillingInfo}" />
+      <ui:param
+        name="caller"
+        value="userBillingInfo" />
+    </ui:include>
+    <ui:include src="/institute/add-modal.xhtml" />
+  </c:if>
+</ui:composition>

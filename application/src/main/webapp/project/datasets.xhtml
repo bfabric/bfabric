@@ -1,0 +1,51 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('datasets') and project.accepted}">
+    <c:if test="#{project.orders.size() > 0 and datasetList.getLazyModelByContainers(project.associatedContainers).size() > 0}">
+      <ui:include src="/fragments/switch.xhtml">
+        <ui:param
+          name="widgetVarName"
+          value="'projectdataset'" />
+        <ui:param
+          name="type"
+          value="dataset" />
+        <ui:param
+          name="count"
+          value="#{datasetList.getLazyModelByContainers(project.associatedContainers).size()}" />
+        <ui:param
+          name="update"
+          value="#{project.tableContext}datasettableform" />
+      </ui:include>
+    </c:if>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="dataset" />
+      <ui:param
+        name="tableContext"
+        value="#{project.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{datasetList.getLazyModelByContainerId(project.id, project.associatedContainers, projectManager.containerAll)}" />
+      <ui:param
+        name="hideColumns"
+        value="#{not entityManager.containerAll ? 'container' : ''}" />
+    </ui:include>
+    <h:panelGrid
+      columns="1"
+      styleClass="action">
+      <p:button
+        outcome="/dataset/edit.xhtml"
+        value="#{messages.create}"
+        rendered="#{project.extensible}">
+        <f:param
+          name="containerId"
+          value="#{project.id}" />
+      </p:button>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

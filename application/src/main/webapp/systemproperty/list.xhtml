@@ -1,0 +1,105 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('user')}" />
+    <f:viewAction action="#{sessionManager.printFacesMessages}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.systemProperties}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <c:if test="#{identityManager.hasCurrentUserRole('configurationManager')}">
+      <h:form id="contextPropertyForm">
+        <h:panelGrid
+          columns="4"
+          styleClass="rightpadding table-header-margin">
+          <h:outputText value="#{messages.deployer}" />
+          <h:outputText value="#{messages.environment}" />
+          <h:outputText value="#{messages.instance}" />
+          <h:outputText value="#{messages.filterActiveOnly}" />
+          <h:selectOneMenu
+            id="deployer"
+            value="#{configuration.deployer}"
+            immediate="true"
+            valueChangeListener="#{contextPropertyManager.deployerChanged}"
+            styleClass="editWidthMedium"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItems
+              value="#{contextPropertyManager.allEnabledDeployer}"
+              var="item"
+              itemLabel="#{item.value}" />
+            <p:ajax
+              event="change"
+              global="false" />
+          </h:selectOneMenu>
+          <h:selectOneMenu
+            id="environment"
+            value="#{configuration.environment}"
+            immediate="true"
+            valueChangeListener="#{contextPropertyManager.environmentChanged}"
+            styleClass="editWidthMedium"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItems
+              value="#{contextPropertyManager.allEnabledEnvironment}"
+              var="item"
+              itemLabel="#{item.value}" />
+            <p:ajax
+              event="change"
+              global="false" />
+          </h:selectOneMenu>
+          <h:selectOneMenu
+            id="instance"
+            value="#{configuration.instance}"
+            immediate="true"
+            valueChangeListener="#{contextPropertyManager.instanceChanged}"
+            styleClass="editWidthMedium"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItems
+              value="#{contextPropertyManager.allEnabledInstance}"
+              var="item"
+              itemLabel="#{item.value}" />
+            <p:ajax
+              event="change"
+              global="false" />
+          </h:selectOneMenu>
+          <p:selectBooleanButton value="#{systemPropertyList.filterActiveOnly}" valueChangeListener="#{systemPropertyList.filterActiveOnlyChanged}"
+                                 onLabel="#{messages.yes}" offLabel="#{messages.no}" styleClass="editWidthSmall" style="padding:2px 6px;">
+            <p:ajax event="change" update="@this, @([id$=systempropertytableform])" global="false" />
+          </p:selectBooleanButton>
+        </h:panelGrid>
+      </h:form>
+    </c:if>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="systemproperty" />
+      <ui:param
+        name="tableContent"
+        value="#{identityManager.hasCurrentUserRole('configurationManager') ? systemPropertyList.properties : systemPropertyList.getSystemPropertiesByRoles(currentUser.roles)}" />
+      <ui:param
+        name="include"
+        value="/systemproperty/columns.xhtml" />
+    </ui:include>
+
+    <c:if test="#{identityManager.hasCurrentUserRole('configurationManager')}">
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:button
+          outcome="edit.xhtml"
+          value="#{messages.addSystemProperty}" />
+        <p:button
+          outcome="add-contextproperty.xhtml"
+          value="#{messages.addContextProperty}" />
+      </h:panelGrid>
+    </c:if>
+  </ui:define>
+</ui:composition>

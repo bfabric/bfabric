@@ -1,0 +1,166 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{storageManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <o:importConstants type="org.bfabric.enums.ExecutableContextEnum" />
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{storage.name}"
+              title="#{messages.storageNameHint}"
+              disabled="#{storage.local}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{storage.supervisorEditable}">
+            <ui:include src="/fragments/supervisor-autocomplete-required.xhtml">
+              <ui:param
+                name="instance"
+                value="#{storage}" />
+            </ui:include>
+          </c:if>
+
+          <h:outputText value="#{messages.containerFolderPrefix}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="containerFolderPrefix"
+              value="#{storage.containerFolderPrefix}"
+              title="#{messages.storageContainerFolderPrefixHint}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{storage.description}"
+              title="#{messages.storageDescriptionHint}"
+              disabled="#{storage.local}"
+              rows="10"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.local}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="local"
+              value="#{storage.local}"
+              title="#{messages.storageLocalHint}"
+              disabled="true" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.technologies}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectManyCheckbox id="technologies"
+                                  value="#{storage.technologies}"
+                                  collectionType="java.util.HashSet"
+                                  styleClass="rightpadding"
+                                  layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(storage.technologies))}"
+                                  converter="omnifaces.SelectItemsConverter">
+              <f:selectItems value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(storage.technologies)}"
+                             var="item"
+                             itemLabel="#{item.nameWithEnabledMessage}"
+                             itemDescription="#{item.description}" />
+            </h:selectManyCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{storage.enabled}"
+              title="#{messages.storageEnabledHint}"
+              disabled="#{storage.local}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGroup id="executable">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText
+              value="#{messages.storage} #{messages.executable}"
+              rendered="#{not empty storage.executable or executableList.getResultListByContext(ExecutableContextEnum.STORAGE).size() > 0}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:panelGrid
+                columns="3"
+                styleClass="noborder-rightpadding">
+                <h:outputText
+                  value="#{storage.executable.displayName}"
+                  rendered="#{not empty storage.executable.displayName}" />
+                <c:if test="#{executableList.getResultListByContext(ExecutableContextEnum.STORAGE).size() > 0}">
+                  <p:commandButton
+                    value="#{messages.replace}"
+                    immediate="true"
+                    oncomplete="PF('selectStorageExecutableModalDialog').show()"
+                    styleClass="inlinemiddle"
+                    rendered="#{not empty storage.executable}"
+                    update="#{constants.EDIT}:executable" />
+                  <p:commandButton
+                    value="#{messages.select}"
+                    immediate="true"
+                    oncomplete="PF('selectStorageExecutableModalDialog').show()"
+                    styleClass="inlinemiddle"
+                    rendered="#{empty storage.executable}" />
+                </c:if>
+                <p:commandButton
+                  action="#{storageManager.deselectStorageExecutable()}"
+                  value="#{messages.deselect}"
+                  immediate="true"
+                  styleClass="inlinemiddle"
+                  rendered="#{storageManager.deselectStorageExecutableAvailable}"
+                  update="#{constants.EDIT}:executable" />
+              </h:panelGrid>
+            </ui:decorate>
+
+            <h:outputText
+              value="#{messages.parameters}"
+              rendered="#{not empty storage.parametersInUse}" />
+            <h:panelGroup rendered="#{not empty storage.parametersInUse}">
+              <ui:decorate template="/fragments/display.xhtml">
+                <ui:include src="/fragments/datatable.xhtml">
+                  <ui:param
+                    name="tableType"
+                    value="parameter" />
+                  <ui:param
+                    name="tableContext"
+                    value="storageExecutable" />
+                  <ui:param
+                    name="tableContent"
+                    value="#{storage.parametersInUse}" />
+                  <ui:param
+                    name="include"
+                    value="/parameter/edit-columns.xhtml" />
+                  <ui:param
+                    name="styleClass"
+                    value="inner" />
+                </ui:include>
+              </ui:decorate>
+            </h:panelGroup>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-edit-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+      <ui:include src="/storage/select-executable-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

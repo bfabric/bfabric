@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instrumentStatusInfoRunEnabled')}">
+    <p:column
+      field="#{fieldPrefix}instrumentStatusInfo.runEnabled"
+      headerText="#{messages.runEnabled}"
+      filterMatchMode="exact"
+      title="#{messages.instrumentStatusRunEnabled}"
+      styleClass="#{entity.instrumentStatusInfo.runEnabled ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="runEnabled" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.runEnabled)}"
+        styleClass="#{stringHelper.toGreenRed(entity.runEnabled)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,739 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(user.editable)}" />
+  </f:metadata>
+
+  <ui:param
+    name="entityManager"
+    value="#{userManager}" />
+
+  <ui:define name="pageTitle">
+    <c:if test="#{not user.managed}">
+      <h:outputText value="#{messages.register} #{user.classLabel}" />
+    </c:if>
+    <c:if test="#{user.managed}">
+      <h:outputText value="#{messages.edit}  #{user.classLabel} : #{user.displayName}" />
+    </c:if>
+  </ui:define>
+
+  <ui:define name="body">
+    <!-- must be inside the body -->
+    <o:importConstants type="org.bfabric.enums.RoleEnum" />
+
+    <h:panelGroup rendered="#{not user.managed}">
+      <p>
+        IMPORTANT NOTE: Do not create more than one #{configuration.applicationName} user account for yourself. Duplicate user accounts cause communication problems/costs. If you have
+        forgotten your login details, please go to <a href="#{configuration.baseUrl}user/password-lost.html">#{messages.forgotLoginDetails}</a> and provide your login name or email
+        address you used for the registration to receive your login details (login name and password) via email. If you have forgotten both your login name and email address, then contact our <a
+        href="mailto:#{configuration.supportEmail}">support</a> please.
+      </p>
+    </h:panelGroup>
+
+    <h:panelGroup id="downloadDirectoryPathInvalid">
+      <h:outputText
+        rendered="#{user.downloadDirectoryPathInvalid}"
+        value="#{messages.downloadDirectoryPathInvalid}"
+        styleClass="warning" />
+    </h:panelGroup>
+
+    <h:form id="#{constants.EDIT}">
+      <h:panelGroup id="groupOne">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{user.managed}">
+            <h:outputText value="#{messages.login}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText
+                value="#{user.login}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.title}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="title"
+              value="#{user.title}"
+              styleClass="editWidthExtraLarge">
+              <f:selectItem itemLabel="" />
+              <f:selectItem itemValue="Dr." />
+              <f:selectItem itemValue="Prof. Dr." />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.salutation}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="salutation"
+              value="#{user.salutation}"
+              styleClass="editWidthExtraLarge">
+              <f:selectItem
+                itemLabel="#{messages.select}"
+                itemDisabled="true"
+                noSelectionOption="true" />
+              <f:selectItem itemValue="Mr" />
+              <f:selectItem itemValue="Ms" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="nameGroup"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.firstName}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="firstName"
+              value="#{user.firstName}"
+              valueChangeListener="#{user.setGeneratedLoginName}"
+              styleClass="editWidthExtraLarge">
+              <p:ajax
+                event="change"
+                global="false"
+                update="loginGrid, nameGroup" />
+            </h:inputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.lastName}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="lastName"
+              value="#{user.lastName}"
+              valueChangeListener="#{user.setGeneratedLoginName}"
+              styleClass="editWidthExtraLarge">
+              <p:ajax
+                event="change"
+                global="false"
+                immediate="true"
+                update="loginGrid, nameGroup" />
+            </h:inputText>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="loginGrid"
+          rendered="#{not user.managed}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              value="#{messages.loginHint}"
+              styleClass="pending" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.login}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="login"
+              value="#{user.login}"
+              autocomplete="off"
+              validator="#{user.validateLogin}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          rendered="#{not user.managed}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="&#160;" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              value="#{messages.passwordHint}"
+              styleClass="pending" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.password}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:password
+              id="newPassword"
+              converter="charArrayConverter"
+              value="#{userManager.password}"
+              redisplay="true"
+              autocomplete="off"
+              validator="#{user.validatePassword}"
+              maxlength="32"
+              styleClass="editWidthExtraLarge">
+              <f:attribute
+                name="loginId"
+                value="#{constants.EDIT}:login" />
+              <f:attribute
+                name="firstNameId"
+                value="#{constants.EDIT}:firstName" />
+              <f:attribute
+                name="lastNameId"
+                value="#{constants.EDIT}:lastName" />
+            </p:password>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.confirmPassword}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:password
+              id="confirmNewPassword"
+              converter="charArrayConverter"
+              value="#{userManager.confirmPassword}"
+              validator="#{user.validateConfirmPassword}"
+              redisplay="true"
+              autocomplete="off"
+              maxlength="32"
+              styleClass="editWidthExtraLarge">
+              <f:attribute
+                name="loginId"
+                value="#{constants.EDIT}:login" />
+              <f:attribute
+                name="firstNameId"
+                value="#{constants.EDIT}:firstName" />
+              <f:attribute
+                name="lastNameId"
+                value="#{constants.EDIT}:lastName" />
+            </p:password>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/select-affiliations.xhtml">
+          <ui:param
+            name="callerEntity"
+            value="#{user}" />
+          <ui:param
+            name="caller"
+            value="user" />
+        </ui:include>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.email}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="email"
+              value="#{user.email}"
+              validator="#{user.validateEmail}"
+              valueChangeListener="#{user.emailChangeListener}"
+              styleClass="editWidthExtraLarge">
+            </h:inputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.phone}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              id="phone"
+              columns="8"
+              styleClass="noborder-rightpadding">
+              <h:outputText value="#{messages.countryCode}" />
+              <h:selectOneMenu
+                id="phoneCountryCode"
+                value="#{user.phoneNumber.countryCode}"
+                styleClass="width-auto">
+                <f:selectItems
+                  var="item"
+                  value="#{countryList.countryDialingCodes}"
+                  itemLabel="#{item}" />
+              </h:selectOneMenu>
+              <h:outputText value="#{messages.areaCode}" />
+              <p:inputMask
+                id="phoneAreaCode"
+                value="#{user.phoneNumber.areaCode}"
+                mask="9[999]"
+                size="4" />
+              <p:message
+                for="phoneAreaCode"
+                styleClass="errorMessage" />
+              <h:outputText value="#{messages.localNumber}" />
+              <p:inputMask
+                id="phoneLocalNumber"
+                value="#{user.phoneNumber.localNumber}"
+                mask="9[9999999]"
+                size="8" />
+              <p:message
+                for="phoneLocalNumber"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.street}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="address"
+              value="#{user.address.street}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.zip}" title="#{messages.zipHint}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="zip"
+              value="#{user.address.zip}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.city}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="city"
+              value="#{user.address.city}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.country}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="country" />
+            <ui:param
+              name="value"
+              value="#{user.address.country}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{countryService.getCountriesByIdOrNameFiltered}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+            <ui:param
+              name="required"
+              value="true" />
+          </ui:include>
+
+          <h:outputText value="#{messages.address} #{messages.room}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="room"
+              value="#{user.address.room}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.address} #{messages.supplement}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="supplement"
+              value="#{user.address.supplement}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGroup id="groupTwo">
+        <c:if test="#{user.equals(currentUser) or identityManager.hasCurrentUserRole('admin') }">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.privateEmail}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="privateEmail"
+                value="#{user.privateEmail}"
+                styleClass="editWidthExtraLarge">
+              </h:inputText>
+            </ui:decorate>
+          </h:panelGrid>
+        </c:if>
+
+        <c:if test="#{user.managed and identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser)}">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.homePhone}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="required"
+                value="#{userManager.completeRequired or user.privateInfoRequired}" />
+              <h:panelGrid
+                id="homePhone"
+                columns="9"
+                styleClass="noborder-rightpadding">
+                <h:outputText value="#{messages.countryCode}" />
+                <h:selectOneMenu
+                  id="homePhoneCountryCode"
+                  value="#{user.homePhoneNumber.countryCode}"
+                  required="#{userManager.completeRequired or user.privateInfoRequired}"
+                  styleClass="width-auto">
+                  <f:selectItem
+                    itemLabel="-"
+                    itemDisabled="#{userManager.completeRequired or user.privateInfoRequired}" />
+                  <f:selectItems
+                    var="item"
+                    value="#{countryList.countryDialingCodes}"
+                    itemLabel="#{item}" />
+                  <p:ajax
+                    event="change"
+                    global="false"
+                    update="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+                </h:selectOneMenu>
+                <h:outputText value="#{messages.areaCode}" />
+                <p:inputMask
+                  id="homePhoneAreaCode"
+                  value="#{user.homePhoneNumber.areaCode}"
+                  mask="9[999]"
+                  size="4"
+                  required="#{userManager.completeRequired or user.privateInfoRequired}">
+                  <p:ajax
+                    event="change"
+                    global="false"
+                    update="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+                </p:inputMask>
+                <p:message
+                  for="homePhoneAreaCode"
+                  styleClass="errorMessage" />
+                <h:outputText value="#{messages.localNumber}" />
+                <p:inputMask
+                  id="homePhoneLocalNumber"
+                  value="#{user.homePhoneNumber.localNumber}"
+                  mask="9[9999999]"
+                  size="8"
+                  required="#{userManager.completeRequired or user.privateInfoRequired}">
+                  <p:ajax
+                    event="change"
+                    global="false"
+                    update="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+                </p:inputMask>
+                <p:message
+                  for="homePhoneLocalNumber"
+                  styleClass="errorMessage" />
+              </h:panelGrid>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.homeStreet}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="required"
+                value="#{userManager.completeRequired or user.privateInfoRequired}" />
+              <h:inputText
+                id="homeStreet"
+                value="#{user.homeAddress.street}"
+                required="#{userManager.completeRequired or user.privateInfoRequired}"
+                styleClass="editWidthExtraLarge">
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+              </h:inputText>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.homeAddress} #{messages.zip}" title="#{messages.zipHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="required"
+                value="#{userManager.completeRequired or user.privateInfoRequired}" />
+              <h:inputText
+                id="homeZip"
+                value="#{user.homeAddress.zip}"
+                required="#{userManager.completeRequired or user.privateInfoRequired}"
+                styleClass="editWidthExtraLarge">
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+              </h:inputText>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.homeAddress} #{messages.city}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="required"
+                value="#{userManager.completeRequired or user.privateInfoRequired}" />
+              <h:inputText
+                id="homeCity"
+                value="#{user.homeAddress.city}"
+                required="#{userManager.completeRequired or user.privateInfoRequired}"
+                styleClass="editWidthExtraLarge">
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+              </h:inputText>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.homeAddress} #{messages.country}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="required"
+                value="#{userManager.completeRequired or user.privateInfoRequired}" />
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="homeCountry" />
+                <ui:param
+                  name="value"
+                  value="#{user.homeAddress.country}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{countryService.getCountriesByIdOrNameFiltered}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.displayName}" />
+                <o:methodParam
+                  name="clearButtonListener"
+                  value="#{user.homeAddress.setCountry(null)}" />
+                <ui:param
+                  name="itemSelectUpdate"
+                  value="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+                <ui:param
+                  name="clearButtonSpecificUpdate"
+                  value="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+              </ui:include>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.homeAddress} #{messages.supplement}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="homeSupplement"
+                value="#{user.homeAddress.supplement}"
+                styleClass="editWidthExtraLarge">
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="@this, #{constants.EDIT}:privateInfoAddressWarningGroup, #{constants.EDIT}:buttons" />
+              </h:inputText>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.birthDate}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="required"
+                value="#{userManager.completeRequired or user.privateInfoRequired}" />
+              <p:datePicker
+                id="birthdate"
+                value="#{user.birthDate}"
+                maxdate="#{LocalDate.now()}"
+                required="#{userManager.completeRequired or user.privateInfoRequired}">
+              </p:datePicker>
+            </ui:decorate>
+
+            <c:if test="#{identityManager.hasCurrentUserRole('employeeManager')}">
+              <h:outputText value="#{messages.empDegree}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputMask
+                  id="empDegree"
+                  value="#{user.empDegree}"
+                  mask="9[99]"
+                  size="3"
+                  styleClass="editWidthSmall" />
+              </ui:decorate>
+            </c:if>
+
+            <c:if test="#{user.managed and configuration.accessRequestEnabled}">
+              <h:outputText
+                value="#{messages.accessCardNumber}"
+                title="#{messages.accessCardNumberHint}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputText
+                  id="accessCardNumber"
+                  value="#{user.accessCardNumber}"
+                  title="#{messages.accessCardNumberHint}"
+                  validator="#{user.validateAccessCardNumber}"
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+              <h:outputText
+                value="#{messages.accessCardCode}"
+                title="#{messages.accessCardCodeHint}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:inputText
+                  id="accessCardCode"
+                  value="#{user.accessCardCode}"
+                  title="#{messages.accessCardCodeHint}"
+                  validator="#{user.validateAccessCardCode}"
+                  styleClass="editWidthExtraLarge" />
+              </ui:decorate>
+
+              <h:outputText
+                value="#{messages.accessCardExpiryDate}"
+                title="#{messages.accessCardExpiryDateHint}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:datePicker
+                  id="accessCardExpiryDate"
+                  value="#{user.accessCardExpiryDate}"
+                  title="#{messages.accessCardExpiryDateHint}">
+                </p:datePicker>
+              </ui:decorate>
+            </c:if>
+          </h:panelGrid>
+        </c:if>
+
+        <c:if test="#{user.equals(currentUser) or identityManager.hasCurrentUserRole('admin') }">
+          <h:panelGrid columns="2" columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.sshPublicKey}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputTextarea id="sshPublicKey" value="#{user.sshPublicKey}" rows="3" styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGrid>
+        </c:if>
+      </h:panelGroup>
+
+      <c:if test="#{user.managed and identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser)}">
+        <ui:include src="/fragments/edit/image.xhtml">
+          <ui:param
+            name="parent"
+            value="#{user}" />
+          <ui:param
+            name="image"
+            value="#{user.image}" />
+        </ui:include>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.backup}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="backup" />
+              <ui:param
+                name="value"
+                value="#{user.backup}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{user.getPotentialBackups}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullLastFirstName}" />
+              <o:methodParam
+                name="clearButtonListener"
+                value="#{user.setBackup(null)}" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+            </ui:include>
+          </ui:decorate>
+
+          <c:if test="#{not empty user.backupOf}">
+            <h:outputText value="#{messages.backupOf}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:panelGroup styleClass="inner-repeat">
+                <ui:repeat value="#{user.backupOf}" var="item">
+                  <ui:include src="/fragments/user-link.xhtml">
+                    <ui:param name="instance" value="#{item}" />
+                  </ui:include>
+                  <br />
+                </ui:repeat>
+              </h:panelGroup>
+            </ui:decorate>
+          </c:if>
+
+        </h:panelGrid>
+      </c:if>
+
+      <h:panelGroup id="groupThree">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{user.managed}">
+            <h:outputText value="#{messages.description}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputTextarea
+                id="description"
+                value="#{user.description}"
+                title="#{messages.userDescriptionHint}"
+                rows="3"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{user.massMailEnabledRendered}">
+            <h:outputText value="#{messages.massMailEnabled}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="massMailEnabled"
+                value="#{user.massMailEnabled}" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText
+            value="#{messages.emailActive}"
+            rendered="#{user.emailActiveRendered}" />
+          <h:panelGroup rendered="#{user.emailActiveRendered}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="active"
+                value="#{user.emailActive}"
+                title="#{messages.emailActiveHint}">
+                <p:ajax
+                  event="click"
+                  global="false"
+                  update="buttons" />
+              </h:selectBooleanCheckbox>
+              <h:outputText
+                value="#{messages.emailActiveDisclaimer}"
+                styleClass="pending"
+                rendered="#{user.emailNoticeRendered}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <c:if test="#{user.availableRendered}">
+            <h:outputText value="#{messages.available}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:triStateCheckbox
+                id="available"
+                value="#{user.available}"
+                styleClass="tri-state-chkbox"
+                converter="triStateCheckboxConverter">
+              </p:triStateCheckbox>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="buttons"
+        columns="5"
+        styleClass="action">
+        <c:if test="#{user.saveButtonRendered}">
+          <p:commandButton
+            action="#{userManager.save}"
+            value="#{messages.save}"
+            process="#{constants.EDIT}:buttons, #{constants.EDIT}:groupOne, #{constants.EDIT}:groupTwo, #{constants.EDIT}:groupThree, @([id$=imageUpload])"
+            update="@form"
+            oncomplete="fixOversize();" />
+        </c:if>
+        <ui:decorate template="/fragments/button/edit-cancel.xhtml" />
+        <p:commandButton
+          rendered="#{user.clearPrivateInfoRendered}"
+          value="#{messages.clearPrivateInfo}"
+          onclick="PF('clearPrivateInfoDialog').show();"
+          immediate="true" />
+        <p:commandButton
+          rendered="#{user.clearPrivateInfoAddressRendered}"
+          action="#{user.clearPrivateInfoAddress}"
+          value="#{messages.clearPrivateInfoAddress}"
+          update="@form" />
+        <!--
+        <p:commandButton
+          rendered="#{user.anonymizeRendered}"
+          value="#{messages.anonymize}"
+          onclick="PF('anonymizeDialog').show();"
+          immediate="true" />
+        -->
+      </h:panelGrid>
+
+      <h:panelGroup id="privateInfoAddressWarningGroup">
+        <h:outputText
+          rendered="#{user.privateInfoAddressWarningRendered}"
+          value="#{messages.clearPrivateInfoAddressWarning}"
+          styleClass="warn" />
+      </h:panelGroup>
+    </h:form>
+
+    <ui:include src="/company/add-modal.xhtml">
+      <ui:param
+        name="callerEntity"
+        value="#{user}" />
+      <ui:param
+        name="caller"
+        value="user" />
+    </ui:include>
+    <ui:include src="/institute/add-modal.xhtml" />
+    <ui:include src="/user/confirm-clearprivateinfo-modal.xhtml" />
+    <ui:include src="/user/confirm-anonymize-modal.xhtml" />
+  </ui:define>
+</ui:composition>

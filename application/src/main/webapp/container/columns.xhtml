@@ -1,0 +1,22 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/name-trunc.xhtml" />
+  <ui:include src="/fragments/column/discriminator.xhtml" />
+
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{projectList.projectStatusEnums}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <ui:include src="/fragments/column/coach.xhtml" />
+  <ui:include src="/fragments/column/affiliation.xhtml" />
+  <ui:include src="/fragments/column/budgetofficer.xhtml" />
+  <ui:include src="/fragments/column/requester.xhtml" />
+  <ui:include src="/fragments/column/billing-info.xhtml" />
+  <ui:include src="/fragments/column/finance.xhtml" />
+  <ui:include src="/fragments/column/internal.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

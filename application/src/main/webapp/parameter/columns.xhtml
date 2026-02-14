@@ -1,0 +1,99 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    field="#{fieldPrefix}id"
+    headerText="#{messages.id}">
+    <h:outputText
+      value="#{entity.id}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}type"
+    headerText="#{messages.parameterType}">
+    <h:outputText
+      value="#{entity.type}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}key"
+    headerText="#{messages.key}">
+    <h:outputText
+      value="#{entity.key}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}label"
+    headerText="#{messages.label}">
+    <h:outputText
+      value="#{entity.label}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}value"
+    headerText="#{messages.value}">
+    <h:outputText
+      value="#{entity.value}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/description.xhtml">
+    <ui:param
+      name="styleClass"
+      value="#{entity.inUseStyleClass}" />
+  </ui:include>
+
+  <p:column
+    field="#{fieldPrefix}inUse"
+    headerText="#{messages.inUse}">
+    <h:outputText
+      value="#{entity.inUse}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}modifiable"
+    headerText="#{messages.modifiable}">
+    <h:outputText
+      value="#{entity.modifiable}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}required"
+    headerText="#{messages.required}">
+    <h:outputText
+      value="#{entity.required}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    id="context"
+    field="#{fieldPrefix}context"
+    headerText="#{messages.context}">
+    <h:outputText
+      value="#{entity.context}"
+      styleClass="#{entity.inUseStyleClass}" />
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('delete') and app.editable}"
+    exportable="false">
+    <f:facet name="header">
+      <h:panelGrid
+        columns="1"
+        styleClass="nospace noborder">
+        <h:outputText value="#{messages.delete}" />
+        <p:commandButton
+          action="#{applicationManager.removeParameters()}"
+          value="#{messages.all}"
+          global="false"
+          update="@form, sidebar" />
+      </h:panelGrid>
+    </f:facet>
+    <p:commandButton
+      action="#{applicationManager.removeParameter(entity)}"
+      value="#{messages.delete}"
+      global="false"
+      update="@form, sidebar"
+      styleClass="inline" />
+  </p:column>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{(identityManager.hasCurrentUserRole('containerReader') or user.equals(currentUser)) and not empty user.plates}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="plate" />
+      <ui:param
+        name="tableContext"
+        value="#{user.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{user.plates}" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

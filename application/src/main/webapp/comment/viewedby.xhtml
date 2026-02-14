@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('viewedBy')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="user" />
+      <ui:param
+        name="tableContext"
+        value="#{comment.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{comment.viewedBy}" />
+      <ui:param
+        name="hideColumns"
+        value="entityId, company, emailAddress, active, emailVerified, computerLoginEnabled, dataAccessEnabled, computerLoginActivated, massMailEnabled, invalidLoginAttempts, LastLoginDate, LastActionTime, createdBy, createdOn" />
+    </ui:include>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,225 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('instrumentReader')}" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('instrumentReader')}">
+    <ui:include src="/fragments/sidebar/states.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{instrument.instrumentEventsLazyModel}" />
+    <ui:param
+      name="label"
+      value="#{messages.instrumentEvents}" />
+    <ui:param
+      name="tab"
+      value="instrumentEvents" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('instrumentReader') or instrument.eventCreatable}" />
+    <ui:param
+      name="showAlways"
+      value="#{identityManager.hasCurrentUserRole('instrumentReader') or instrument.eventCreatable}" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('instrumentReader')}">
+    <c:if test="#{configuration.instrumentReservationEnabled}">
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.reservationSettings}" />
+        <ui:param
+          name="label"
+          value="#{messages.reservationSettings}" />
+        <ui:param
+          name="tab"
+          value="reservationsettings" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.reservations}" />
+        <ui:param
+          name="label"
+          value="#{messages.reservations}" />
+        <ui:param
+          name="tab"
+          value="reservations" />
+      </ui:include>
+    </c:if>
+
+    <ui:include src="/fragments/sidebar/notes.xhtml" />
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{instrument.childInstruments}" />
+      <ui:param
+        name="label"
+        value="#{messages.childInstruments}" />
+      <ui:param
+        name="tab"
+        value="childinstruments" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/contracts.xhtml" />
+
+    <ui:include src="/fragments/sidebar/workunits.xhtml">
+      <ui:param name="content" value="#{workunitList.getLazyModelByInstrumentId(instrument.id)}" />
+    </ui:include>
+    <ui:include src="/fragments/sidebar/applications.xhtml" />
+
+    <ui:include src="/fragments/sidebar/charges.xhtml" />
+    <ui:include src="/fragments/sidebar/samplepreparationprotocols.xhtml" />
+
+    <c:if test="#{configuration.orderEnabled}">
+      <ui:include src="/fragments/sidebar/orders.xhtml" />
+
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.instrumentDataDeliveries}" />
+        <ui:param
+          name="label"
+          value="#{messages.instrumentDataDeliveries}" />
+        <ui:param
+          name="tab"
+          value="datadeliveries" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.instrumentDataPackages}" />
+        <ui:param
+          name="label"
+          value="#{messages.dataPackages}" />
+        <ui:param
+          name="tab"
+          value="datapackages" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.instrumentReadConfigurations}" />
+        <ui:param
+          name="label"
+          value="#{messages.readConfigurations}" />
+        <ui:param
+          name="tab"
+          value="readconfigurations" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.runUnitTypes}" />
+        <ui:param
+          name="label"
+          value="#{messages.runUnitTypes}" />
+        <ui:param
+          name="tab"
+          value="rununittypes" />
+        <ui:param
+          name="enabled"
+          value="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.runs}" />
+        <ui:param
+          name="label"
+          value="#{messages.runs}" />
+        <ui:param
+          name="tab"
+          value="runs" />
+        <ui:param
+          name="enabled"
+          value="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager')}" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/set.xhtml">
+        <ui:param
+          name="content"
+          value="#{instrument.demultiplexing}" />
+        <ui:param
+          name="label"
+          value="#{messages.demultiplexing}" />
+        <ui:param
+          name="tab"
+          value="demultiplexing" />
+      </ui:include>
+    </c:if>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{instrument.associatedDatasets}" />
+      <ui:param
+        name="label"
+        value="#{messages.associatedDatasets}" />
+      <ui:param
+        name="tab"
+        value="associateddatasets" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{instrument.bookers}" />
+      <ui:param
+        name="label"
+        value="#{messages.bookers}" />
+      <ui:param
+        name="tab"
+        value="bookers" />
+      <ui:param
+        name="enabled"
+        value="#{configuration.labEnabled and identityManager.hasCurrentUserRole('instrumentReader')}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{instrument.trainedUsers}" />
+      <ui:param
+        name="label"
+        value="#{messages.trainedUsers}" />
+      <ui:param
+        name="tab"
+        value="trainedusers" />
+      <ui:param
+        name="enabled"
+        value="#{configuration.labEnabled and identityManager.hasCurrentUserRole('instrumentReader')}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{instrument.operators}" />
+      <ui:param
+        name="label"
+        value="#{messages.operators}" />
+      <ui:param
+        name="tab"
+        value="operators" />
+      <ui:param
+        name="enabled"
+        value="#{configuration.labEnabled and identityManager.hasCurrentUserRole('instrumentReader')}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/mails.xhtml" />
+    <ui:include src="/fragments/sidebar/statistics.xhtml" />
+  </c:if>
+</ui:composition>

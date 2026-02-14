@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('affiliationReader')}" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/sidebar/members.xhtml" />
+    <ui:include src="/fragments/sidebar/projects.xhtml" />
+    <ui:include src="/fragments/sidebar/orders.xhtml" />
+    <ui:include src="/fragments/sidebar/bookedcharges.xhtml">
+      <ui:param
+        name="content"
+        value="#{statisticsList.getBookedChargeDivision(division.id)}" />
+    </ui:include>
+  </c:if>
+  <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+    <ui:include src="/fragments/sidebar/userBillingInfos.xhtml" />
+  </c:if>
+</ui:composition>

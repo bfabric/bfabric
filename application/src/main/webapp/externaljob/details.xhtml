@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+      <ui:include src="/fragments/details/cliententity.xhtml" />
+      <ui:include src="/fragments/details/action.xhtml" />
+      <ui:include src="/fragments/details/executable.xhtml" />
+      <ui:include src="/fragments/details/executablecontext.xhtml" />
+      <ui:include src="/fragments/details/status.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      <ui:include src="/fragments/details/log.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action">
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+
+    <ui:include src="/fragments/details/states-grid.xhtml" />
+
+    <h:form id="logPollingForm" rendered="#{not empty externalJob.log and externalJob.renderedRefresh}">
+      <p:poll interval="60" update="log, logPollingForm" oncomplete="var $textarea = $('#log'); $textarea.scrollTop($textarea[0].scrollHeight);" />
+    </h:form>
+
+    <c:if test="#{not empty externalJob.log}">
+      <script>$(document).ready(function () {
+          var $textarea = $('#log');
+          $textarea.scrollTop($textarea[0].scrollHeight);
+      });</script>
+    </c:if>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,151 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.Membership"-->
+  <!--@elvariable id="parentContainer" type="org.bfabric.entity.Container"-->
+  <!--@elvariable id="parentContainerManager" type="org.bfabric.manager.ContainerManager"-->
+  <c:if test="#{sidebarHelper.isTab('members') and parentContainer.memberShowState}">
+    <c:set
+      value="#{parentContainer.showFormerMembers}"
+      var="showFormerContainerMembers"
+      scope="session" />
+    <h:form id="show-members">
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="tableContext"
+          value="#{parentContainer.tableContext}_member" />
+        <ui:param
+          name="tableContent"
+          value="#{membershipList.getCurrentLazyModel(parentContainer)}" />
+        <ui:param
+          name="include"
+          value="/container/membership-columns.xhtml" />
+        <ui:param
+          name="showColumns"
+          value="switch,remove" />
+        <ui:param
+          name="styleClass"
+          value="column-width-auto" />
+        <ui:param
+          name="rowStyleClass"
+          value="#{entity.user.rowStyleClass}" />
+      </ui:include>
+
+      <c:if test="#{parentContainer.memberAddable}">
+        <h:panelGrid
+          columns="1"
+          styleClass="action align-middle">
+          <p:commandButton
+            rendered="#{showFormerContainerMembers and not membershipList.getFormerLazyModel(parentContainer).isEmpty() }"
+            action="#{parentContainer.switchShowFormerMembers()}"
+            value="#{messages.showFormerMembers}"
+            global="false" />
+          <p:commandButton
+            rendered="#{not showFormerContainerMembers}"
+            action="#{parentContainer.switchShowFormerMembers()}"
+            value="#{messages.addMember}"
+            title="#{messages.addMemberHint}"
+            global="false" />
+        </h:panelGrid>
+      </c:if>
+
+      <h:panelGroup styleClass="height-20" />
+
+      <h:panelGroup>
+        <c:if test="#{showFormerContainerMembers and not empty userList.getPotentialMembers(parentContainer)}">
+          <h:panelGrid
+            columns="2"
+            styleClass="action align-middle">
+            <b>#{messages.potentialMembers}</b>
+            <h:outputText value=" add a user as a member or manager to the parentContainer" />
+          </h:panelGrid>
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="tableContext"
+              value="potentialmembers" />
+            <ui:param
+              name="tableContent"
+              value="#{userList.getPotentialMembers(parentContainer)}" />
+            <ui:param
+              name="include"
+              value="/container/member-columns.xhtml" />
+            <ui:param
+              name="parentContainer"
+              value="#{parentContainer}" />
+            <ui:param
+              name="exporters"
+              value="false" />
+            <ui:param
+              name="styleClass"
+              value="column-width-auto" />
+            <ui:param
+              name="hideColumns"
+              value="lastLoginDate, lastActionTime, emailActive, avatar" />
+            <ui:param
+              name="lazy"
+              value="true" />
+          </ui:include>
+        </c:if>
+
+        <c:if test="#{not showFormerContainerMembers and not membershipList.getFormerLazyModel(parentContainer).isEmpty()}">
+          <h:panelGrid
+            columns="2"
+            styleClass="action align-middle">
+            <b>#{messages.formerMembers}</b>
+          </h:panelGrid>
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="tableContext"
+              value="formermembers" />
+            <ui:param
+              name="tableContent"
+              value="#{membershipList.getFormerLazyModel(parentContainer)}" />
+            <ui:param
+              name="include"
+              value="/container/membership-columns.xhtml" />
+            <ui:param
+              name="showColumns"
+              value="addMember,addMgr" />
+            <ui:param
+              name="hideColumns"
+              value="role" />
+            <ui:param
+              name="styleClass"
+              value="column-width-auto" />
+            <ui:param
+              name="lazy"
+              value="true" />
+          </ui:include>
+        </c:if>
+      </h:panelGroup>
+
+      <h:panelGrid
+        rendered="#{showFormerContainerMembers}"
+        columns="2"
+        styleClass="action align-middle">
+        <p:commandButton
+          value="#{messages.registerUser}"
+          action="#{parentContainerManager.createNewMember}"
+          title="#{messages.createProjectUser}"
+          immediate="true"
+          update="addUser"
+          oncomplete="PF('addUserDialog').show()" />
+        <h:outputText value="&#160;#{messages.registerMemberHint}" />
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/user/add-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{parentContainerManager}" />
+    </ui:include>
+
+    <ui:include src="/container/trackers.xhtml">
+      <ui:param
+        name="container"
+        value="#{parentContainer}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

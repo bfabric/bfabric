@@ -1,0 +1,40 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui">
+  <p:column>
+    <f:facet name="header">
+      <h:panelGrid columns="1" styleClass="nospace noborder">
+        <h:outputText value="#{messages.supervisor}" />
+        <ui:include src="/fragments/autocomplete.xhtml">
+          <ui:param name="componentId" value="reassign-supervisor-all" />
+          <ui:param name="value" value="#{dutyManager.selectedUser}" />
+          <o:methodParam name="completeMethod" value="#{dutyManager.getEmployees}" />
+          <o:methodParam name="valueChangeListener" value="#{dutyManager.reassignSupervisorForAllListener}" />
+          <ui:param name="ajaxChange" value="true" />
+          <ui:param name="forceSelection" value="true" />
+          <ui:param name="itemSelectUpdate" value="@this, @([id$=reassign-supervisor])" />
+          <!--@elvariable id="item" type="org.bfabric.entity.User"-->
+          <ui:param name="itemLabel" value="#{item.firstLastName}" />
+          <ui:param name="styleClass" value="editWidth" />
+          <ui:param name="inputStyleClass" value="editWidth" />
+        </ui:include>
+      </h:panelGrid>
+    </f:facet>
+    <ui:include src="/fragments/autocomplete.xhtml">
+      <ui:param name="componentId" value="reassign-supervisor" />
+      <ui:param name="value" value="#{entity.supervisor}" />
+      <!--@elvariable id="entity" type="org.bfabric.entity.api.HasSupervisor"-->
+      <o:methodParam name="completeMethod" value="#{dutyManager.getEmployees}" />
+      <o:methodParam name="valueChangeListener" value="#{entity.supervisorChangedListener}" />
+      <ui:param name="required" value="true" />
+      <ui:param name="forceSelection" value="true" />
+      <ui:param name="clearButtonRendered" value="false" />
+      <!--@elvariable id="item" type="org.bfabric.entity.User"-->
+      <ui:param name="itemLabel" value="#{item.firstLastName}" />
+      <ui:param name="styleClass" value="editWidth" />
+      <ui:param name="inputStyleClass" value="editWidth" />
+    </ui:include>
+  </p:column>
+</ui:composition>

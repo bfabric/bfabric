@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.application}">
+    <h:outputText value="#{messages.application}" />
+    <h:panelGroup>
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{instance.application}" />
+      </ui:include>
+      <ui:include src="/application/help.xhtml">
+        <ui:param
+          name="instance"
+          value="#{instance.application}" />
+      </ui:include>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

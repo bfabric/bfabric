@@ -1,0 +1,369 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('containerManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.addCharges}" />
+  </ui:define>
+
+  <ui:define name="body">
+
+    <o:form id="edit-charges-form">
+      <p:dataTable
+        rendered="#{not empty chargesManager.newCharges}"
+        value="#{chargesManager.newCharges}"
+        var="newCharge"
+        id="edit-charges-table">
+        <p:column id="remove">
+          <p:commandButton
+            action="#{chargesManager.removeNewCharge(newCharge)}"
+            oncomplete="fixOversize();"
+            value="#{messages.remove}"
+            title="#{messages.removeCharge}"
+            immediate="true"
+            update="edit-charges-table"
+            styleClass="select" />
+        </p:column>
+        <p:column
+          id="service"
+          width="150">
+          <f:facet name="header">
+            <h:panelGroup>
+              <h:selectOneMenu
+                id="service-select-all"
+                value="#{chargesManager.allRowsService}"
+                title="#{messages.trackedServicesHint}"
+                style="width: 150px;"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="clear" />
+                <f:selectItems
+                  value="#{currentUser.trackedServices}"
+                  var="item"
+                  itemLabel="#{item.fullName}" />
+                <p:ajax
+                  event="change"
+                  listener="#{chargesManager.changeServiceForAllRows}"
+                  update="edit-charges-table" />
+              </h:selectOneMenu>
+              <div>
+                <h:outputText value="#{messages.service}" />
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <h:selectOneMenu
+            id="service-select"
+            value="#{newCharge.service}"
+            title="#{messages.trackedServicesHint}"
+            style="width: 150px;"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemLabel="" />
+            <f:selectItems
+              value="#{currentUser.trackedServices}"
+              var="item"
+              itemLabel="#{item.fullName}" />
+          </h:selectOneMenu>
+          <div>
+            <h:message
+              for="service-select"
+              styleClass="errorMessageField" />
+          </div>
+        </p:column>
+
+        <p:column
+          id="project"
+          width="150">
+          <f:facet name="header">
+            <h:panelGroup>
+              <h:selectOneMenu
+                id="project-select-all"
+                value="#{chargesManager.allRowsProject}"
+                title="#{messages.trackedContainersHint}"
+                style="width: 150px;"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="clear" />
+                <f:selectItems
+                  value="#{currentUser.chargebleTrackedContainers}"
+                  var="item"
+                  itemLabel="#{item.id}" />
+                <p:ajax
+                  event="change"
+                  listener="#{chargesManager.changeProjectForAllRows}"
+                  update="edit-charges-table" />
+              </h:selectOneMenu>
+              <div>
+                <h:outputText value="#{messages.container}" />
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <h:selectOneMenu
+            id="project-select"
+            value="#{newCharge.container}"
+            title="#{messages.trackedContainersHint}"
+            style="width: 150px;"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemLabel="" />
+            <f:selectItems
+              value="#{currentUser.chargebleTrackedContainers}"
+              var="item"
+              itemLabel="#{item.id}" />
+          </h:selectOneMenu>
+          <div>
+            <h:message
+              for="project-select"
+              styleClass="errorMessageField" />
+          </div>
+        </p:column>
+
+        <p:column
+          id="total"
+          width="100">
+          <f:facet name="header">
+            <h:panelGroup>
+              <h:inputText
+                id="total-input-all"
+                value="#{chargesManager.allRowsTotal}"
+                style="width: 100px;">
+                <p:ajax
+                  event="change"
+                  listener="#{chargesManager.changeTotalForAllRows}"
+                  update="edit-charges-table" />
+              </h:inputText>
+              <div>
+                <h:outputText value="#{messages.total}" />
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <h:inputText
+            id="total-input"
+            value="#{newCharge.total}"
+            style="width: 100px;">
+            <f:convertNumber pattern="0.00" />
+          </h:inputText>
+          <div>
+            <h:message
+              for="total-input"
+              styleClass="errorMessageField" />
+          </div>
+        </p:column>
+
+        <p:column
+          id="not-accounted"
+          width="100">
+          <f:facet name="header">
+            <h:panelGroup>
+              <h:inputText
+                id="not-accounted-input-all"
+                value="#{chargesManager.allRowsNotAccounted}"
+                title="#{messages.notAccountedHint}"
+                style="width: 100px;">
+                <p:ajax
+                  event="change"
+                  listener="#{chargesManager.changeNotAccountedForAllRows}"
+                  update="edit-charges-table" />
+              </h:inputText>
+              <div>
+                <h:outputText value="#{messages.notAccounted}">
+                  <f:convertNumber pattern="0.00" />
+                </h:outputText>
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <h:inputText
+            id="not-accounted-input"
+            value="#{newCharge.notAccounted}"
+            title="#{messages.notAccountedHint}"
+            style="width: 100px;">
+            <f:convertNumber pattern="0.00" />
+          </h:inputText>
+          <div>
+            <h:message
+              for="not-accounted-input"
+              styleClass="errorMessageField" />
+          </div>
+        </p:column>
+        <p:column id="date">
+          <f:facet name="header">
+            <h:panelGroup>
+              <p:datePicker
+                id="date-all"
+                value="#{chargesManager.allRowsDate}">
+                <p:ajax
+                  event="dateSelect"
+                  listener="#{chargesManager.changeDateForAllRows}"
+                  update="edit-charges-table" />
+              </p:datePicker>
+              <div>
+                <h:outputText value="#{messages.date}" />
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <p:datePicker
+            id="date-calendar"
+            value="#{newCharge.date}" />
+          <div>
+            <h:message
+              for="date-calendar"
+              styleClass="errorMessageField" />
+          </div>
+        </p:column>
+        <p:column
+          id="description"
+          width="150">
+          <f:facet name="header">
+            <h:panelGroup>
+              <h:inputText
+                value="#{chargesManager.allRowsDescription}"
+                maxlength="256"
+                style="width:150px"
+                id="description-input-all">
+                <p:ajax
+                  event="change"
+                  listener="#{chargesManager.changeDescriptionForAllRows}"
+                  update="edit-charges-table" />
+              </h:inputText>
+              <div>
+                <h:outputText value="#{messages.description}" />
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <h:inputText
+            id="description-input"
+            value="#{newCharge.description}"
+            style="width:150px"
+            maxlength="256" />
+        </p:column>
+        <p:column
+          id="notes"
+          width="150">
+          <f:facet name="header">
+            <h:panelGroup>
+              <h:inputText
+                value="#{chargesManager.allRowsNotes}"
+                maxlength="256"
+                style="width:150px"
+                id="notes-input-all">
+                <p:ajax
+                  event="change"
+                  listener="#{chargesManager.changeNotesForAllRows}"
+                  update="edit-charges-table" />
+              </h:inputText>
+              <div>
+                <h:outputText value="#{messages.notes}" />
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <h:inputText
+            id="notes-input"
+            value="#{newCharge.notes}"
+            style="width:150px"
+            maxlength="256" />
+        </p:column>
+        <p:column id="billable">
+          <f:facet name="header">
+            <h:panelGroup>
+              <h:selectBooleanCheckbox
+                id="billable-checkbox-all"
+                value="#{chargesManager.allRowsBillable}"
+                title="#{messages.billableHint}">
+                <p:ajax
+                  event="change"
+                  listener="#{chargesManager.changeBillableForAllRows}"
+                  update="edit-charges-table" />
+              </h:selectBooleanCheckbox>
+              <div>
+                <h:outputText value="#{messages.billable}" />
+              </div>
+            </h:panelGroup>
+          </f:facet>
+          <h:selectBooleanCheckbox
+            id="billable-checkbox"
+            value="#{newCharge.billable}"
+            title="#{messages.billableHint}" />
+        </p:column>
+      </p:dataTable>
+
+      <h:panelGrid
+        columns="8"
+        styleClass="action">
+        <p:commandButton
+          action="#{chargesManager.saveNewCharges}"
+          value="#{messages.save}"
+          update="@form"
+          styleClass="select">
+          <o:ignoreValidationFailed />
+        </p:commandButton>
+        <span />
+        <h:panelGrid
+          columns="2"
+          styleClass="nospace topline">
+          <p:spinner
+            id="number-new-lines"
+            value="#{chargesManager.numberOfNewLines}"
+            min="1"
+            max="50"
+            stepFactor="1"
+            size="3"
+            decimalPlaces="0"
+            thousandSeparator=""
+            onkeypress="return false">
+            <p:ajax
+              event="change"
+              process="number-new-lines" />
+          </p:spinner>
+          <p:commandButton
+            actionListener="#{chargesManager.addLinesToNewCharges()}"
+            value="#{messages.addItems}"
+            title="#{messages.addNewItemsHint}"
+            immediate="true"
+            update="edit-charges-table"
+            styleClass="noleftborderselect" />
+        </h:panelGrid>
+        <span />
+        <p:button
+          outcome="#{currentUser.urlShowScreen}"
+          value="#{messages.customizeUserSelections}"
+          title="#{messages.customizeUserSelectionsHint}"
+          styleClass="select">
+          <f:param
+            name="id"
+            value="#{currentUser.id}" />
+          <f:param
+            name="tab"
+            value="settings" />
+        </p:button>
+      </h:panelGrid>
+    </o:form>
+
+    <h:panelGroup id="charges-list">
+      <h:panelGroup rendered="#{not empty chargesManager.charges}">
+        <h:panelGrid styleClass="content-subheader">
+          <h:outputText value="#{messages.my} #{messages.charges}" />
+        </h:panelGrid>
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableType"
+            value="charge" />
+          <ui:param
+            name="tableContext"
+            value="editcharges" />
+          <ui:param
+            name="tableContent"
+            value="#{chargesManager.charges}" />
+          <ui:param
+            name="showColumns"
+            value="project" />
+          <ui:param
+            name="hideColumns"
+            value="accounted, price, discountedPrice, chargeDiscount, orderDiscount, _order, instrumentReservation, taxType, institute, department, organization, prePayment, booking, createdBy, createdOn" />
+        </ui:include>
+      </h:panelGroup>
+    </h:panelGroup>
+  </ui:define>
+</ui:composition>

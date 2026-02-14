@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:commandButton
+    action="#{entityManager.switchRunEnabled}"
+    value="#{instance.runEnabled ? messages.notRunEnabled : messages.runEnabled}"
+    title="#{messages.switchStatus} #{instance.runEnabled ? messages.notRunEnabled : messages.runEnabled}"
+    update="@form"
+    oncomplete="fixOversize();" />
+</ui:composition>

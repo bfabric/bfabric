@@ -1,0 +1,12 @@
+{
+  "lang": "en",
+  "name": "B-Fabric",
+  "short_name": "bfabric",
+  "description": "B-Fabric: The unique data management system providing a powerful and flexible infrastructure for managing projects and integrating any kind of data.",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "display": "standalone",
+  "orientation": "landscape",
+  "start_url": ".",
+  "icons": [{"src":"images/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"images/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}]
+}

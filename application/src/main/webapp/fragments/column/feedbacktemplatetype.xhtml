@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('feedbackTemplateType')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('storageReader')}">
+      <p:column
+        field="#{fieldPrefix}feedbackTemplateType.name"
+        headerText="#{messages.feedbackTemplateType}"
+        filterMatchMode="exact">
+        <f:facet name="filter">
+          <h:selectOneMenu id="feedbackTemplateType" onchange="PF('#{tableContext}#{tableType}').filter()">
+            <f:selectItem itemLabel="#{messages.noFilter}" />
+            <f:selectItems
+              value="#{feedbackTemplateTypeList.resultList}"
+              var="item"
+              itemValue="#{item.name}"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </f:facet>
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param name="instance" value="#{entity.feedbackTemplateType}" />
+        </ui:include>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('storageReader')}">
+      <p:column field="#{fieldPrefix}feedbackTemplateType.name" headerText="#{messages.feedbackTemplateType}" />
+    </c:if>
+  </c:if>
+</ui:composition>

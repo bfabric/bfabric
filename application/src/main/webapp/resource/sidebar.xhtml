@@ -1,0 +1,26 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+
+  <ui:include src="/fragments/sidebar/succeedingworkunits.xhtml">
+    <ui:param
+      name="hint"
+      value="#{messages.resourceSucceedingWorkunitsHint}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/succeedingdatasets.xhtml">
+    <ui:param
+      name="hint"
+      value="#{messages.resourceSucceedingDatasetsHint}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/accesses.xhtml">
+    <ui:param
+      name="content"
+      value="#{instance.enabledAccesses}" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/tree.xhtml" />
+</ui:composition>

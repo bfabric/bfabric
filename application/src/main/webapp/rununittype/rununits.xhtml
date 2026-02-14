@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('rununits')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="rununit" />
+      <ui:param
+        name="tableContext"
+        value="#{runUnittype.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{runUnitType.runUnits}" />
+      <ui:param
+        name="hideColumns"
+        value="runUnitType" />
+    </ui:include>
+  </c:if>
+</ui:composition>

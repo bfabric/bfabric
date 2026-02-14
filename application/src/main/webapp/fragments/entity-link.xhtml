@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:link
+    rendered="#{not empty instance and (empty rendered or rendered) and not empty instance.urlShowScreen and instance.readable}"
+    outcome="#{instance.urlShowScreen}"
+    value="#{entityValue != null ? entityValue : instance.id}"
+    title="#{entityHint != null ? entityHint : instance.entityInfo}"
+    styleClass="#{styleClass}">
+    <f:param
+      name="id"
+      value="#{instance.id}" />
+    <f:param
+      name="tab"
+      value="#{not empty tab ? tab : constants.DETAILS}" />
+  </p:link>
+  <h:outputText rendered="#{not empty entityValue and (empty rendered or rendered) and (empty instance or empty instance.urlShowScreen or not instance.readable)}"
+                value="#{entityValue}" />
+</ui:composition>

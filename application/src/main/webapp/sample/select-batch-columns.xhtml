@@ -1,0 +1,98 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+
+  <c:set
+    var="type"
+    value="#{sampleBatchManager.sampleType.name}"
+    scope="request" />
+
+  <p:column
+    exportable="false"
+    headerText="#{messages.select}">
+    <h:selectBooleanCheckbox
+      id="selectextractslink"
+      value="#{entity.checked}"
+      title="#{messages.selectSampleCheckHint}">
+      <p:ajax global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+
+  <p:column
+    id="#{sampleName}#{constants.COLUMN}"
+    field="name"
+    headerText="#{messages.sampleName}"
+    exportValue="#{entity.name}">
+    <h:panelGrid
+      styleClass="noborder nopadding"
+      style="width:150px !important;">
+      <h:outputText
+        value="#{entity.name}"
+        title="#{entity.name}"
+        styleClass="textEllipsis" />
+    </h:panelGrid>
+  </p:column>
+
+  <p:columns
+    value="#{sampleBatchManager.getAttributeEnums(sampleBatchManager.sampleType.name)}"
+    var="sampleAttributeEnum"
+    headerText="#{sampleAttributeEnum.labelWithUnit}"
+    filterable="#{not sampleAttributeEnum.annotationTypeMultiValued}"
+    filterBy="#{entity[sampleAttributeEnum.name]}"
+    sortable="#{not sampleAttributeEnum.annotationTypeMultiValued}"
+    sortBy="#{entity[sampleAttributeEnum.name]}">
+    <f:facet name="filter">
+      <h:selectOneMenu
+        rendered="#{sampleAttributeEnum.enumType}"
+        onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{sampleAttributeEnum.getEnumValues(false)}"
+          var="item"
+          itemLabel="#{item.label}" />
+      </h:selectOneMenu>
+    </f:facet>
+    <h:outputText
+      rendered="#{sampleAttributeEnum.booleanType}"
+      value="#{entity[sampleAttributeEnum.name]}" />
+    <h:outputText
+      rendered="#{sampleAttributeEnum.enumType and not empty entity[sampleAttributeEnum.name]}"
+      value="#{entity[sampleAttributeEnum.name].label}" />
+    <h:outputText
+      rendered="#{sampleAttributeEnum.annotationTypeMultiValued}"
+      value="#{collectionHelper.print(entity[sampleAttributeEnum.name])}" />
+    <h:outputText
+      rendered="#{sampleAttributeEnum.annotationTypeSingleValued}"
+      value="#{entity[sampleAttributeEnum.name].name}" />
+    <p:link
+      rendered="#{sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.enumType and not empty entity[sampleAttributeEnum.name]}"
+      outcome="/#{(sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT_2) ? 'multiplexkit' : sampleAttributeEnum.name.toLowerCase()}/show.xhtml"
+      value="#{entity[sampleAttributeEnum.name].name}">
+      <f:param
+        name="id"
+        value="#{entity[sampleAttributeEnum.name].id}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+    <h:outputText
+      rendered="#{not sampleAttributeEnum.booleanType and not sampleAttributeEnum.annotationType and not sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.localDateType and not sampleAttributeEnum.localDateTimeType}"
+      value="#{stringHelper.truncate(entity[sampleAttributeEnum.name], 40)}"
+      title="#{entity[sampleAttributeEnum.name]}" />
+    <h:outputText
+      rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateType}"
+      value="#{entity[sampleAttributeEnum.name]}" />
+    <h:outputText
+      rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateTimeType}"
+      value="#{entity[sampleAttributeEnum.name]}" />
+  </p:columns>
+
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/customattributes-quality-control-values.xhtml" />
+</ui:composition>

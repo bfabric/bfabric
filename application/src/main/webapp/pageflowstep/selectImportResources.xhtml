@@ -1,0 +1,123 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup id="availableImportResources">
+    <h:outputText
+      value="#{messages.available} #{messages.importResources}"
+      styleClass="bold" />
+
+    <ui:include src="/fragments/datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/pageflowstep/selectImportResources-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="availableImportResources" />
+      <ui:param
+        name="tableContent"
+        value="#{importResourceList.getAvailableLinkImportResources(workunit.application, workunit.linkImport)}" />
+      <!-- Only set the filterValue to the context container for the selection (source). -->
+      <ui:param
+        name="filterValue"
+        value="#{contextManager.containerFilterValue}" />
+      <ui:param
+        name="styleClass"
+        value="nowrap" />
+      <ui:param
+        name="showEmpty"
+        value="true" />
+      <ui:param
+        name="selected"
+        value="false" />
+    </ui:include>
+    <script>$(document).ready(function () {
+        if (PF('availableImportResources')) {
+            PF('availableImportResources').filter();
+        }
+    });</script>
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <p:commandButton
+        actionListener="#{resourceHelper.selectImportResources()}"
+        title="#{messages.selectAllMarkedImportResourcesHint}"
+        value="#{messages.selectMarked} #{messages.importResources}"
+        update="@form"
+        oncomplete="if(PF('availableImportResources')){PF('availableImportResources').filter();} fixOversize();" />
+      <p:commandButton
+        actionListener="#{resourceHelper.markImportResources('edit:availableImportResourcestable', 'edit:selectedimportresourcestable')}"
+        value="#{messages.selectAll} #{messages.resources}"
+        title="#{messages.selectAllResourcesOnPageHint}"
+        immediate="true"
+        global="false"
+        update="@form"
+        oncomplete="if(PF('availableImportResources')){PF('availableImportResources').filter();} fixOversize();" />
+    </h:panelGrid>
+  </h:panelGroup>
+
+  <h:panelGrid
+    id="selectedimportresources"
+    styleClass="content-subheader-normal"
+    rendered="#{not empty resourceHelper.selectedImportResources}">
+    <h:outputText
+      value="#{messages.selectedResources}"
+      styleClass="bold" />
+
+    <ui:include src="/fragments/datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/pageflowstep/selectImportResources-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="selectedimportresources" />
+      <ui:param
+        name="tableContent"
+        value="#{resourceHelper.selectedImportResources}" />
+      <ui:param
+        name="styleClass"
+        value="nowrap" />
+      <ui:param
+        name="selected"
+        value="true" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <p:commandButton
+        actionListener="#{resourceHelper.deselectImportResources(false)}"
+        value="#{messages.deselectMarkedResources}"
+        title="#{messages.deselectMarkedResourcesHint}"
+        oncomplete="if(PF('selectedimportresources')){PF('selectedimportresources').filter();}"
+        update="@form" />
+      <p:commandButton
+        actionListener="#{resourceHelper.deselectImportResources(true)}"
+        value="#{messages.deselectAllResources}"
+        update="@form" />
+    </h:panelGrid>
+  </h:panelGrid>
+
+  <h:panelGrid
+    id="selectImportResources-buttons"
+    columns="2"
+    styleClass="action">
+    <p:commandButton
+      action="#{workunitManager.next}"
+      value="#{messages.next}"
+      immediate="true"
+      rendered="#{not empty resourceHelper.selectedImportResources}"
+      oncomplete="fixOversize();"
+      update="pageTitle, @form" />
+    <p:commandButton
+      action="#{workunitManager.cancel}"
+      value="#{messages.cancel}"
+      immediate="true" />
+  </h:panelGrid>
+
+  <h:panelGroup
+    style="display:block"
+    styleClass="action">If a file is missing, please contact the application supervisor <a
+    href="mailto:#{workunit.application.supervisor.email}">#{workunit.application.supervisor.name}</a>.
+  </h:panelGroup>
+</ui:composition>

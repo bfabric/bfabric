@@ -1,0 +1,27 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+  <h:form>
+    <h:panelGrid columns="1" width="100%" styleClass="oversize">
+      <p:tree id="tree" value="#{containerTreeManager.getTreeNode(instance)}" var="item" selectionMode="single"
+              selection="#{containerTreeManager.currentNode}" dynamic="true" style="border:0">
+        <p:ajax event="expand" update="tree" listener="#{containerTreeManager.onNodeExpand}" />
+        <p:ajax event="collapse" update="tree" listener="#{containerTreeManager.onNodeCollapse}" />
+        <p:treeNode>
+          <h:outputText rendered="#{item.class.getSimpleName().equals('String')}" value="#{item}" />
+          <p:link rendered="#{not item.class.getSimpleName().equals('String')}" title="#{item.entityInfo}"
+                  outcome="/#{item.showScreenLink}" value="#{item.displayName}" styleClass="treeNode" />
+          <p:link rendered="#{item.class.getSimpleName().equals('Workunit')}" title="#{item.application.entityInfo}"
+                  outcome="/#{item.application.showScreenLink}" value="#{item.application.name}" styleClass="treeNode2" />
+        </p:treeNode>
+        <p:treeNode type="leaf">
+          <h:outputText rendered="#{item.class.getSimpleName().equals('String')}" value="#{item}" />
+          <p:link rendered="#{not item.class.getSimpleName().equals('String')}" title="#{item.entityInfo}"
+                  outcome="/#{item.showScreenLink}" value="#{item.displayName}" styleClass="treeNode" />
+          <p:link rendered="#{item.class.getSimpleName().equals('Workunit')}" title="#{item.application.entityInfo}"
+                  outcome="/#{item.application.showScreenLink}" value="#{item.application.name}" styleClass="treeNode2" />
+        </p:treeNode>
+      </p:tree>
+    </h:panelGrid>
+  </h:form>
+</ui:composition>

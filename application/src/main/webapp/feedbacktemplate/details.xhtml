@@ -1,0 +1,61 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGroup id="show-feedbacktemplate">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id-name.xhtml" />
+        <ui:include src="/fragments/details/description.xhtml" />
+        <ui:include src="/fragments/details/feedbacktemplatetype.xhtml" />
+
+        <h:outputText
+          rendered="#{feedbackTemplate.feedbackTemplateType.project}"
+          value="#{messages.templateDefaultProject}" />
+        <h:outputText
+          rendered="#{feedbackTemplate.feedbackTemplateType.order}"
+          value="#{messages.templateDefaultOrder}" />
+        <h:outputText
+          rendered="#{feedbackTemplate.feedbackTemplateType.project || feedbackTemplate.feedbackTemplateType.order}"
+          value="#{feedbackTemplate.defaultForType}" />
+
+        <h:outputText value="#{messages.enabled}" />
+        <h:outputText
+          value="#{feedbackTemplate.enabled}"
+          styleClass="#{not feedbackTemplate.enabled}" />
+
+        <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="7"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit.xhtml" />
+        <h:form rendered="#{feedbackTemplateManager.disableRendered}">
+          <p:commandButton
+            action="#{feedbackTemplateManager.switchEnabled}"
+            value="#{messages.disable}" />
+        </h:form>
+        <h:form rendered="#{feedbackTemplateManager.enableRendered}">
+          <p:commandButton
+            action="#{feedbackTemplateManager.switchEnabled}"
+            value="#{messages.enable}" />
+        </h:form>
+        <h:form rendered="#{feedbackTemplateManager.setDefaultForTypeRendered}">
+          <p:commandButton action="#{feedbackTemplateManager.switchDefaultForType}"
+                           value="#{messages.setDefaultForType}" />
+        </h:form>
+        <h:form rendered="#{feedbackTemplateManager.unsetDefaultForTypeRendered}">
+          <p:commandButton action="#{feedbackTemplateManager.switchDefaultForType}"
+                           value="#{messages.unsetDefaultForType}" />
+        </h:form>
+        <ui:include src="/fragments/button/clone.xhtml" />
+        <ui:include src="/fragments/button/delete.xhtml" />
+        <ui:include src="/fragments/button/list.xhtml" />
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

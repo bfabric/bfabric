@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('defaultUserGroup')}">
+    <p:column
+      field="#{fieldPrefix}defaultUserGroup.name"
+      headerText="#{messages.defaultUserGroup}"
+      filterMatchMode="exact">
+      <f:facet name="filter">
+        <h:selectOneMenu
+          id="defaultUserGroup"
+          onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{userGroupList.resultList}"
+            var="item"
+            itemLabel="#{item.name}" />
+        </h:selectOneMenu>
+      </f:facet>
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.defaultUserGroup}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

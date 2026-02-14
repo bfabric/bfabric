@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup rendered="#{not empty tasksList and tasksRendered}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="order" />
+      <ui:param
+        name="tableContext"
+        value="task" />
+      <ui:param
+        name="tableContent"
+        value="#{tasksList}" />
+      <ui:param
+        name="showColumns"
+        value="stateModifiedBy, stateModifiedOn" />
+      <ui:param
+        name="hideColumns"
+        value="dependentServiceType, #{showStatus ? '': 'status, customStatus'}#{hideOldId ? 'oldProjectOrderId,': ''} oldServiceOrderId, contact, budgetOfficer, serviceArea, department, institute, company, division, orderItemCount, chargeableOrderItemCount, chargedOrderItemCount, chargeCount, billableChargeCount, bookedChargeCount, bookings, billingCustomer, billingEmail, billingAddress, offer, remarks, summary, customAttributes, createdBy, createdOn, sequencingApplication, instrument, libraryProtocol, numberOfSamples, numberOfCellsNuclei, insertSize, sequencingApplicationIndexLength, totalNumberOfInstrumentDataPackages, instrumentDataPackage, consumable, instrumentReadConfiguration, demultiplexing, numberOfChips, dataProduced, numberOfRunsSequencing,numberOfRunsTapeStation, userBenchUsage, kitsUsed, hoursRequested, storageModel, costCentre, pspElement, euGrant, sampleRetention, mailTrackingNumber" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

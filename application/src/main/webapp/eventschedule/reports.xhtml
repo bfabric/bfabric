@@ -1,0 +1,49 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('agendaManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.reports}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="agendareports">
+      <p>
+        <p:spinner
+          value="#{agendaEventManager.selectedYear}"
+          title="#{messages.reportYearHint}"
+          min="2007"
+          max="2050"
+          stepFactor="1"
+          size="6"
+          decimalPlaces="0"
+          thousandSeparator="">
+          <p:ajax
+            event="change"
+            update="agendareports"
+            global="false" />
+        </p:spinner>
+      </p>
+      <p>
+        <p:commandLink
+          value="#{messages.agendaOverviewReport}"
+          title="#{messages.agendaOverviewReportHint}"
+          action="#{sessionManager.showDownloadStartedMessage}"
+          oncomplete="location.href='../report-templates/agenda-overview-fop.pdf?year=#{agendaEventManager.selectedYear}'; return false;" />
+      </p>
+      <p>
+        <p:commandLink
+          value="#{messages.agendaVacationReport}"
+          title="#{messages.agendaVacationReportHint}"
+          action="#{sessionManager.showDownloadStartedMessage}"
+          oncomplete="location.href='../report-templates/agenda-vacation-fop.pdf?year=#{agendaEventManager.selectedYear}'; return false;" />
+      </p>
+    </h:form>
+  </ui:define>
+</ui:composition>

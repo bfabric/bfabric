@@ -1,0 +1,98 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeDivisions}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{divisionManager.division}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{divisionManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{divisionManager.division.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{divisionManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{divisionManager.division.name}" />
+          <f:selectItem itemValue="#{divisionManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{divisionManager.merged.name}" />
+
+        <h:outputText value="#{messages.company}" />
+        <h:outputText value="#{divisionManager.division.company.name}" />
+        <h:selectOneRadio
+          id="company"
+          layout="lineDirection"
+          value="#{divisionManager.mergeSelection.company}"
+          converter="omnifaces.SelectItemsConverter">
+          <f:selectItem itemValue="#{divisionManager.division.company}" />
+          <f:selectItem itemValue="#{divisionManager.merged.company}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{divisionManager.merged.company.name}" />
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.members}" />
+        <h:outputText value="#{divisionManager.division.members.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{divisionManager.merged.members.size()}" />
+
+        <h:outputText value="#{messages.projects}" />
+        <h:outputText value="#{divisionManager.division.projects.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{divisionManager.merged.projects.size()}" />
+
+        <h:outputText value="#{messages.orders}" />
+        <h:outputText value="#{divisionManager.division.orders.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{divisionManager.merged.orders.size()}" />
+
+        <h:outputText value="#{messages.userBillingInfo}" />
+        <h:outputText value="#{divisionManager.division.userBillingInfos.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{divisionManager.merged.userBillingInfos.size()}" />
+
+        <h:outputText value="#{messages.userGroup}" />
+        <h:outputText value="#{divisionManager.division.userGroups.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{divisionManager.merged.userGroups.size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{divisionManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{divisionManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

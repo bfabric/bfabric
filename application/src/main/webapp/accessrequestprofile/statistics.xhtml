@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('statistics') and identityManager.hasCurrentUserRole('accessRequestManager')}">
+    <c:set
+      value="#{statisticsList.getAccessRequestProfilePerYear(accessRequestProfile)}"
+      var="tableContent" />
+    <h:form>
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/accessrequestprofile/accessrequestprofileperyear-columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="#{accessRequestProfile.tableContext}_statistics" />
+        <ui:param
+          name="tableContent"
+          value="#{tableContent}" />
+        <ui:param
+          name="rowsPerPageDropdown"
+          value="all" />
+      </ui:include>
+    </h:form>
+    <c:if test="#{empty tableContent}">
+      <h:outputText value="#{messages.statisticsPerYearNotAvailable}" />
+    </c:if>
+    <c:if test="#{not empty tableContent}">
+      <p:spacer height="20" />
+      <p:barChart
+        model="#{barChart.getHorizontal(statisticsList.getAccessRequestProfile(accessRequestProfile), messages.accessRequests, null, messages.accessRequestProfile, null, null, null)}"
+        style="width:400px" />
+    </c:if>
+  </c:if>
+</ui:composition>

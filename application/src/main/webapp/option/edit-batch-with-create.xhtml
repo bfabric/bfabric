@@ -1,0 +1,32 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event type="preRenderView" listener="#{identityManager.restrictRole('containerManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{empty optionParent.options ? messages.addOption : messages.editOptions}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="edit-options">
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param name="tableContext" value="options" />
+        <ui:param name="tableContent" value="#{optionParent.options}" />
+        <ui:param name="parent" value="#{optionParent}" />
+        <ui:param name="include" value="/option/edit-batch-columns.xhtml" />
+        <ui:param name="showEmpty" value="true" />
+        <ui:param name="editable" value="true" />
+        <ui:param name="paginator" value="false" />
+      </ui:include>
+
+      <h:panelGrid columns="2" styleClass="action">
+        <p:commandButton action="#{optionsManager.save}" value="#{messages.save}" update="@form" />
+        <p:commandButton action="#{optionsManager.cancel}" value="#{messages.cancel}" immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

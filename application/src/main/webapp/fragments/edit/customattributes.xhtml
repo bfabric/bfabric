@@ -1,0 +1,91 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGrid
+    id="addCustomAttribute"
+    columns="2"
+    columnClasses="rtdm, ltd">
+    <h:outputText value="Custom Attribute Name" />
+    <ui:decorate template="/fragments/display.xhtml">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rightpadding,"
+        styleClass="noborder align-middle">
+        <h:outputText
+          value="Value"
+          style="font-weight:bold" />
+        <p:commandLink
+          rendered="#{empty instance.customAttributes}"
+          actionListener="#{instance.addCustomAttribute}"
+          title="#{messages.addCustomAttributeHint}"
+          process="edit:customAttributes, edit:addCustomAttribute"
+          update="edit:customAttributes, edit:addCustomAttribute"
+          styleClass="font-larger">
+          <i class="fas fa-plus-square" />
+        </p:commandLink>
+      </h:panelGrid>
+    </ui:decorate>
+  </h:panelGrid>
+
+  <h:panelGroup id="customAttributes">
+    <ui:repeat
+      id="customAttribute"
+      value="#{instance.customAttributes}"
+      var="item">
+      <h:panelGrid
+        columns="3"
+        columnClasses="rtdm, ttd, ltd">
+        <h:inputText
+          id="attributeName"
+          value="#{item.name}"
+          valueChangeListener="#{item.customAttributeNameChanged}"
+          style="text-align:right;font-weight:bold;width:165px;margin-left:5px">
+        </h:inputText>
+        <h:panelGrid
+          columns="2"
+          columnClasses="ttdRequired, ttd"
+          cellspacing="0"
+          cellpadding="0">
+          <h:outputText
+            value="*"
+            title="#{messages.requiredHint}"
+            styleClass="required" />
+          <h:panelGrid
+            columns="5"
+            styleClass="noborder align-middle">
+            <h:inputText
+              id="attributeValue"
+              value="#{item.value}"
+              valueChangeListener="#{item.customAttributeValueChanged}"
+              styleClass="editWidthExtraLarge">
+            </h:inputText>
+            <p:commandLink
+              actionListener="#{instance.addCustomAttribute}"
+              title="#{messages.addCustomAttributeHint}"
+              process="edit:customAttributes"
+              update="edit:customAttributes"
+              styleClass="icon-paddingleft font-larger">
+              <i class="fas fa-plus-square" />
+            </p:commandLink>
+            <p:commandLink
+              actionListener="#{instance.removeCustomAttribute(item)}"
+              title="#{messages.removeCustomAttributeHint}"
+              process="edit:customAttributes, edit:addCustomAttribute"
+              update="edit:customAttributes, edit:addCustomAttribute"
+              immediate="true"
+              styleClass="icon-paddingleft font-larger">
+              <i class="fas fa-minus-square" />
+            </p:commandLink>
+            <p:message
+              for="attributeName"
+              styleClass="errorMessage" />
+            <p:message
+              for="attributeValue"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </h:panelGrid>
+      </h:panelGrid>
+    </ui:repeat>
+  </h:panelGroup>
+</ui:composition>

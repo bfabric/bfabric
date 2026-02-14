@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.accounted}">
+    <h:outputText value="#{messages.accounted}" title="#{messages.accountedHint}" />
+    <h:outputText value="#{instance.accounted}" title="#{messages.accountedHint}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </c:if>
+</ui:composition>

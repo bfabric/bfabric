@@ -1,0 +1,49 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="cloneSamplePanel"
+    widgetVar="cloneSampleDialog"
+    dynamic="true"
+    closable="false"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.cloneSample} #{sampleBatchManager.currentSample.name}" />
+    </f:facet>
+
+    <h:form id="sampleClone">
+      <h:panelGrid columns="2">
+        <h:outputText value="#{messages.clones}" />
+        <p:spinner
+          onkeypress="return false;"
+          value="#{sampleBatchManager.cloneCount}"
+          min="1"
+          max="#{sampleBatchManager.maxNumberOfNewBatchItems}"
+          size="4"
+          decimalPlaces="0"
+          thousandSeparator="" />
+      </h:panelGrid>
+      <h:panelGroup styleClass="height-20" />
+      <h:panelGrid columns="2">
+        <p:commandButton
+          id="applyButton"
+          action="#{sampleBatchManager.addClones}"
+          value="#{messages.create}"
+          global="true"
+          update="@([id$=edit-batch-sample-batchtable])"
+          styleClass="cloneSamplesApplyButton"
+          onclick="hasChanged=true; setNavigateAway('.cloneSamplesApplyButton[id$=\'applyButton\']'); jQuery(this).change();"
+          oncomplete="hideDialogOnSuccess(args, 'cloneSampleDialog'); fixOversize();" />
+        <p:commandButton
+          process="@this"
+          value="#{messages.cancel}"
+          global="false"
+          oncomplete="PF('cloneSampleDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

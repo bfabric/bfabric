@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/datatable.xhtml">
+    <ui:param
+      name="tableContext"
+      value="user" />
+    <ui:param
+      name="tableContent"
+      value="#{parent.matchingUsers}" />
+    <ui:param
+      name="include"
+      value="/user/select-columns.xhtml" />
+    <ui:param
+      name="rowsPerPageDropdown"
+      value="none" />
+  </ui:include>
+</ui:composition>

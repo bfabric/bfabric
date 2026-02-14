@@ -1,0 +1,20 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param name="headerText" value="#{messages.orderId}" />
+  </ui:include>
+  <ui:include src="/fragments/column/project.xhtml" />
+  <ui:include src="/fragments/column/servicetype.xhtml" />
+  <ui:include src="/fragments/column/services.xhtml" />
+  <ui:include src="/fragments/column/name.xhtml" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param name="statusEnumList" value="#{orderList.orderStatusEnums}" />
+  </ui:include>
+  <ui:include src="/fragments/column/statemodified.xhtml">
+    <ui:param name="showColumns" value="stateModifiedBy" />
+  </ui:include>
+  <ui:include src="/fragments/column/orderitem-count.xhtml" />
+  <ui:include src="/fragments/column/coach.xhtml" />
+  <ui:include src="/fragments/column/totalbillablecharges.xhtml" />
+  <ui:include src="/fragments/column/offeredTotal.xhtml" />
+  <ui:include src="/fragments/column/instituteorganization.xhtml" />
+</ui:composition>

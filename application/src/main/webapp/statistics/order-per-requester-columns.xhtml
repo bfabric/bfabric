@@ -1,0 +1,130 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.year}" />
+    <ui:param
+      name="value"
+      value="#{entity[0]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.requester} #{messages.id}" />
+    <ui:param
+      name="value"
+      value="#{entity[1]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.firstName}" />
+    <ui:param
+      name="value"
+      value="#{entity[2]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.lastName}" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.total}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.accepted}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.arrived}" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.processing}" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.processed}" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.analyzing}" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.analyzed}" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.finished}" />
+    <ui:param
+      name="value"
+      value="#{entity[11]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.closed}" />
+    <ui:param
+      name="value"
+      value="#{entity[12]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.canceled}" />
+    <ui:param
+      name="value"
+      value="#{entity[13]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.pending}" />
+    <ui:param
+      name="value"
+      value="#{entity[14]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.submitted}" />
+    <ui:param
+      name="value"
+      value="#{entity[15]}" />
+  </ui:include>
+</ui:composition>

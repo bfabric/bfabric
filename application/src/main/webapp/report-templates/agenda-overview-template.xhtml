@@ -1,0 +1,35 @@
+<f:view
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  contentType="text/xml">
+  <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:layout-master-set>
+      <fo:simple-page-master
+        master-name="AgendaPage"
+        page-width="210mm"
+        page-height="297mm"
+        margin-top="0mm"
+        margin-bottom="0mm"
+        margin-left="0mm"
+        margin-right="0mm">
+        <fo:region-body
+          margin-top="10mm"
+          margin-bottom="10mm"
+          margin-left="5mm"
+          margin-right="5mm" />
+        <fo:region-before extent="25mm" />
+        <fo:region-after extent="10mm" />
+      </fo:simple-page-master>
+    </fo:layout-master-set>
+    <!-- Month template: create a new page for every month of the managed year -->
+    <ui:repeat
+      value="#{agendaEventHelperMonths}"
+      var="agendaEventHelperMonth">
+      <fo:page-sequence master-reference="AgendaPage">
+        <ui:insert name="pageHeader" />
+        <ui:insert name="monthlyOverview" />
+      </fo:page-sequence>
+    </ui:repeat>
+  </fo:root>
+</f:view>

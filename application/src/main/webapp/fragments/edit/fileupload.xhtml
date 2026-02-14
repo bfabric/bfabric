@@ -1,0 +1,78 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+>
+  <!--
+    File upload fragment using FileUploadHelper with proper error handling.
+
+    Required parameters:
+      - update: components to update after upload (e.g., "uploadsGrid")
+      - listener: upload listener via o:methodParam (e.g., fileUploadHelper.listener)
+      - multiple: true for multi-file, false for single-file
+
+    Optional parameters:
+      - label: button label (defaults to messages.add)
+      - required: field is required (defaults to false)
+      - sequential: upload files sequentially (defaults to true)
+      - allowTypes: regex for allowed file types (e.g., "/(\.|\/)(pdf)$/")
+      - invalidFileMessage: message for invalid file type
+      - style: inline style
+  -->
+  <p:remoteCommand
+    name="sendUploadClientError"
+    action="#{fileUploadHelper.addClientError}"
+    process="@this" />
+  <p:remoteCommand
+    name="clearUploadErrors"
+    action="#{fileUploadHelper.clearUploadErrors}"
+    process="@this" />
+  <p:fileUpload
+    id="fileupload"
+    widgetVar="fileuploadWidget"
+    label="#{empty label ? messages.add : label}"
+    mode="advanced"
+    sequential="#{empty sequential ? true : sequential}"
+    required="#{empty required ? false : required}"
+    listener="#{listener}"
+    sizeLimit="#{fileUploadHelper.maxAttachmentSize}"
+    invalidSizeMessage="#{messages.invalidSizeMessage} "
+    messageTemplate="{name} ({size}) (Max: #{fileUploadHelper.maxAttachmentSizeInMb} MB)"
+    skinSimple="true"
+    auto="true"
+    multiple="#{multiple}"
+    update="#{update}"
+    style="#{style}"
+    onstart="clearUploadErrors(); PF('mpWait').show()"
+    oncomplete="PF('mpWait').hide()"
+    onvalidationfailure="sendUploadClientError([{name: 'error', value: formatUploadError(msg, #{fileUploadHelper.maxAttachmentSizeInMb})}]); PF('fileuploadWidget').messageContainer.empty();">
+    <c:if test="#{not empty allowTypes}">
+      <f:attribute name="allowTypes" value="#{allowTypes}" />
+    </c:if>
+    <c:if test="#{not empty invalidFileMessage}">
+      <f:attribute name="invalidFileMessage" value="#{invalidFileMessage}" />
+    </c:if>
+  </p:fileUpload>
+  <script>
+    //<![CDATA[
+    var uploadBatchStarted = false;
+
+    function formatUploadError(msg, maxSizeMb) {
+      if (!uploadBatchStarted) {
+        clearUploadErrors();
+        uploadBatchStarted = true;
+        setTimeout(function() { uploadBatchStarted = false; }, 500);
+      }
+
+      var BYTES_PER_GB = 1024 * 1024 * 1024;
+      // Only show GB size and max MB for actual file size errors
+      if (msg.filesize && msg.filesize > 0 && (msg.summary.includes('size') || msg.summary.includes('Size'))) {
+        var sizeGb = (msg.filesize / BYTES_PER_GB).toFixed(1);
+        return msg.summary + ' ' + msg.filename + ' (' + sizeGb + ' GB) (Max: ' + maxSizeMb + ' MB)';
+      }
+      return msg.summary + ' ' + msg.filename;
+    }
+    //]]>
+  </script>
+</ui:composition>

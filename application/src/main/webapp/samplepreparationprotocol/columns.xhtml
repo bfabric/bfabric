@@ -1,0 +1,71 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/type.xhtml" />
+  <ui:include src="/fragments/column/discriminator.xhtml" />
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <ui:include src="/fragments/column/strandedness.xhtml" />
+  <ui:include src="/fragments/column/adapter1.xhtml" />
+  <ui:include src="/fragments/column/adapter2.xhtml" />
+
+  <p:column
+    rendered="#{not hideColumns.contains('instrument')}"
+    headerText="#{messages.instruments}"
+    exportValue="#{collectionHelper.printNames(entity.instruments)}">
+    <ui:repeat
+      rendered="#{not empty entity.instruments}"
+      value="#{entity.instruments}"
+      var="item">
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+        <ui:param
+          name="entityValue"
+          value="#{item.label}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+
+  <p:column
+    rendered="#{not hideColumns.contains('sequencingApplication')}"
+    headerText="#{messages.sequencingApplications}"
+    value="#{collectionHelper.printNames(entity.sequencingApplications)}">
+    <ui:repeat
+      rendered="#{not empty entity.sequencingApplications}"
+      value="#{entity.sequencingApplications}"
+      var="item">
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+
+  <p:column
+    rendered="#{not hideColumns.contains('sampleType')}"
+    headerText="#{messages.sampleTypes}"
+    exportValue="#{collectionHelper.printNames(entity.sampleTypes)}">
+    <ui:repeat
+      value="#{entity.sampleTypes}"
+      var="item">
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/predecessor.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/order-count.xhtml" />
+  <ui:include src="/fragments/column/sample-count.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

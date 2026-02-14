@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{workunit.linkImport}"
+    field="#{fieldPrefix}relativePath"
+    headerText="#{messages.relativePath}"
+    exportValue="#{entity.relativePath}">
+    <h:outputText
+      value="#{stringHelper.truncate(entity.relativePath)}"
+      title="#{entity.uri}" />
+  </p:column>
+
+  <p:column
+    rendered="#{not workunit.linkImport}"
+    field="#{fieldPrefix}uri"
+    headerText="#{messages.url}"
+    exportValue="#{entity.uri}">
+    <h:outputText
+      value="#{stringHelper.truncate(entity.uri)}"
+      title="#{entity.uri}" />
+  </p:column>
+
+  <p:column headerText="#{messages.size}">
+    <h:outputText value="#{entity.printSize}" />
+  </p:column>
+
+  <p:column
+    id="sampleColumn"
+    headerText="#{messages.sample}">
+    <h:outputText
+      rendered="#{not empty entity.sample}"
+      value="#{entity.sample.displayName}" />
+  </p:column>
+</ui:composition>

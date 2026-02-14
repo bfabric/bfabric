@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('valid')}">
+    <p:column
+      field="#{fieldPrefix}valid"
+      headerText="#{messages.valid}"
+      filterMatchMode="exact">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="valid" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.valid)}"
+        styleClass="#{stringHelper.toGreenRed(entity.valid)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

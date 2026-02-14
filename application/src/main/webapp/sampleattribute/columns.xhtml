@@ -1,0 +1,57 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    field="name"
+    headerText="#{messages.name}" />
+
+  <ui:include src="/fragments/column/label.xhtml" />
+  <ui:include src="/fragments/column/classname.xhtml" />
+
+  <p:column
+    field="multiValued"
+    headerText="#{messages.multiValued}" />
+
+  <ui:include src="/fragments/column/unit.xhtml" />
+  <p:column
+    rendered="#{showColumns.contains('required')}"
+    sortBy="#{sampleType.isAttributeRequired(entity)}"
+    filterBy="#{sampleType.isAttributeRequired(entity)}"
+    headerText="#{messages.required}">
+    <ui:include src="/fragments/boolean-filter.xhtml">
+      <ui:param
+        name="idPrefix"
+        value="required" />
+    </ui:include>
+    <h:outputText value="#{stringHelper.toYesNo(sampleType.isAttributeRequired(entity))}" />
+  </p:column>
+
+  <p:column
+    sortBy="#{entity.isAttribute(sampleType.name, true, false)}"
+    filterBy="#{entity.isAttribute(sampleType.name, true, false)}"
+    headerText="#{messages.order}">
+    <h:outputText value="#{entity.isAttribute(sampleType.name, true, false)}" />
+  </p:column>
+
+  <p:column
+    sortBy="#{entity.isAttribute(sampleType.name, true, true)}"
+    filterBy="#{entity.isAttribute(sampleType.name, true, true)}"
+    headerText="#{messages.confirmationForm}">
+    <h:outputText value="#{entity.isAttribute(sampleType.name, true, true)}" />
+  </p:column>
+
+  <p:column
+    rendered="#{showColumns.contains('typesRequired')}"
+    field="typesRequiredAsText"
+    headerText="#{messages.required}">
+    <h:outputText value="#{stringHelper.truncate(entity.typesRequiredAsText, 30)}" title="#{entity.typesRequiredAsText}" />
+  </p:column>
+
+  <p:column
+    rendered="#{showColumns.contains('typesOptional')}"
+    field="typesOptionalAsText"
+    headerText="#{messages.optional}">
+    <h:outputText value="#{stringHelper.truncate(entity.typesOptionalAsText, 30)}" title="#{entity.typesOptionalAsText}" />
+  </p:column>
+</ui:composition>

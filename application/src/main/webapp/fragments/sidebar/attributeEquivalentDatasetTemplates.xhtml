@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param name="content" value="#{content != null ? content : instance.attributeEquivalentDatasetTemplates}" />
+    <ui:param name="label" value="#{not empty label ? label : messages.attributeEquivalentDatasetTemplates}" />
+    <ui:param name="tab" value="#{not empty tab ? tab : 'attributeEquivalentDatasetTemplates'}" />
+  </ui:include>
+</ui:composition>

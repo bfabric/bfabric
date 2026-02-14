@@ -1,0 +1,20 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="instance" type="org.bfabric.entity.ResourceDependent"-->
+  <c:if test="#{not empty instance.relativePath}">
+    <h:outputText value="#{messages.relativePath}" />
+    <h:outputText rendered="#{not instance.streamedContent}" value="#{instance.relativePath}" />
+    <h:form rendered="#{instance.streamedContent}">
+      <p:commandLink value="#{instance.relativePath}" ajax="false">
+        <i class="fas fa-eye download-icon" />
+        <p:fileDownload value="#{instance.defaultStreamedContent}" contentDisposition="inline" store="true" />
+      </p:commandLink>
+      <p:commandLink ajax="false">
+        <i class="fas fa-file-download download-icon" />
+        <p:fileDownload value="#{instance.defaultStreamedContent}" />
+      </p:commandLink>
+    </h:form>
+  </c:if>
+</ui:composition>

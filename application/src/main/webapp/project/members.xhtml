@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/container/members.xhtml">
+    <ui:param
+      name="parentContainer"
+      value="#{project}" />
+    <ui:param
+      name="parentContainerManager"
+      value="#{projectManager}" />
+  </ui:include>
+</ui:composition>

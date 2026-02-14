@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="label"
+      value="#{not empty label ? label : messages.bookedCharges}" />
+    <ui:param
+      name="tab"
+      value="#{not empty tab ? tab : 'bookedcharges'}" />
+    <ui:param
+      name="showAll"
+      value="#{not empty showAll ? showAll : true}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,59 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:dialog
+    id="addSucceedingApplicationsModalPanel"
+    widgetVar="addSucceedingApplicationsModalDialog"
+    dynamic="true"
+    modal="true"
+    height="600px"
+    fitViewport="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.edit} #{messages.succeedingApplications}" />
+    </f:facet>
+    <h:form id="addSucceedingApplicationTableForm">
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="tableType"
+          value="application" />
+        <ui:param
+          name="tableContext"
+          value="addSucceeding" />
+        <ui:param
+          name="tableContent"
+          value="#{applicationManager.potentialSucceedingApplications}" />
+        <ui:param
+          name="showColumns"
+          value="checked" />
+        <ui:param
+          name="hideColumns"
+          value="run,help,pageflow,executable,wrapperCreator,submitter,createdBy,createdOn" />
+        <ui:param
+          name="rowsPerPageDropdown"
+          value="none" />
+      </ui:include>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          actionListener="#{applicationManager.updateSucceedingApplications}"
+          value="#{messages.finish}"
+          immediate="true"
+          global="false"
+          update="@([id$=succeedingApplications])"
+          oncomplete="PF('addSucceedingApplicationsModalDialog').hide()" />
+        <p:commandButton
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          update="@([id$=succeedingApplications])"
+          oncomplete="PF('addSucceedingApplicationsModalDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

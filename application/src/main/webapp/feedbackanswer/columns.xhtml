@@ -1,0 +1,241 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <!-- Note: Do not delete this comment since it is sometimes needed for debugging purposes!
+  <p:column headerText="#{messages.position}">
+    <h:outputText value="#{entity.orderPosition}" />
+  </p:column>
+  <p:column rendered="#{showColumns.contains('showInput')}" headerText="#{messages.answerType}">
+    <h:outputText value="#{entity.question.type.label}" title="#{messages.answerTypeHint}" />
+  </p:column>
+  -->
+  <p:column rendered="#{not showColumns.contains('showInput') and showColumns.contains('showQuestions')}" headerText="#{messages.question}" sortBy="#{entity.question.value}"
+            filterBy="#{entity.question.value}">
+    <h:outputText value="#{entity.question.value}" />
+  </p:column>
+  <p:column rendered="#{showColumns.contains('showInput') or showColumns.contains('showOutput')}" headerText="#{messages.question}">
+    <h:outputText value="#{entity.question.value}" />
+    <h:outputText rendered="#{showColumns.contains('showInput') and entity.question.required}" value=" *" title="#{messages.requiredHint}" styleClass="required" />
+  </p:column>
+  <p:column headerText="#{messages.answer}" field="value" xportValue="#{entity.value}">
+    <p:inputText id="inputText"
+                 rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('inputText')}"
+                 value="#{entity.value}"
+                 readonly="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                 required="#{entity.question.required}"
+                 styleClass="editWidthHuge" />
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('inputText')}" for="inputText" styleClass="errorMessage" />
+    <p:inputTextarea id="inputTextarea"
+                     rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('inputTextarea')}"
+                     value="#{entity.value}"
+                     readonly="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                     required="#{entity.question.required}"
+                     rows="#{entity.question.feedbackQuestionType.rows}"
+                     styleClass="editWidthHuge" />
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('inputTextarea')}" for="inputTextarea" styleClass="errorMessage" />
+    <p:inputNumber id="inputNumber"
+                   rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('inputNumber')}"
+                   value="#{entity.valueNumber}"
+                   readonly="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                   required="#{entity.question.required}"
+                   thousandSeparator=""
+                   decimalPlaces="#{entity.question.feedbackQuestionType.decimalPlacesString}"
+                   minValue="#{entity.question.feedbackQuestionType.minValueString}"
+                   maxValue="#{entity.question.feedbackQuestionType.maxValueString}"
+                   symbol="#{entity.question.feedbackQuestionType.symbol}"
+                   styleClass="editWidthHuge" />
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('inputNumber')}" for="inputNumber" styleClass="errorMessage" />
+    <p:selectOneRadio id="yesNo"
+                      rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadioYesNo')}"
+                      plain="true"
+                      value="#{entity.value}"
+                      disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                      required="#{entity.question.required}">
+      <f:selectItem itemValue="Yes" itemLabel="#{messages.yes}" />
+      <f:selectItem itemValue="No" itemLabel="#{messages.no}" />
+    </p:selectOneRadio>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadioYesNo')}" for="yesNo" styleClass="errorMessage" />
+    <p:selectOneRadio id="trueFalse"
+                      rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadioTrueFalse')}"
+                      plain="true"
+                      value="#{entity.value}"
+                      disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                      required="#{entity.question.required}">
+      <f:selectItem itemValue="True" itemLabel="True" />
+      <f:selectItem itemValue="False" itemLabel="False" />
+    </p:selectOneRadio>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadioTrueFalse')}" for="trueFalse" styleClass="errorMessage" />
+    <p:selectOneRadio id="scale"
+                      rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadioScale') and not empty entity.question.feedbackQuestionType.maxValueIntegerList}"
+                      plain="true"
+                      value="#{entity.value}"
+                      disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                      required="#{entity.question.required}">
+      <f:selectItems value="#{entity.question.feedbackQuestionType.maxValueIntegerList}" var="item" itemLabel="#{item}" />
+    </p:selectOneRadio>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadioScale')}" for="scale" styleClass="errorMessage" />
+    <p:selectOneRadio id="selectOneRadio"
+                      rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadio')}"
+                      plain="true"
+                      value="#{entity.value}"
+                      disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                      required="#{entity.question.required}"
+                      styleClass="checkbox"
+                      columns="#{entity.question.feedbackQuestionType.columns}">
+      <f:selectItems value="#{entity.question.feedbackQuestionType.maxValueIntegerList}" var="item" itemLabel="#{item}" />
+    </p:selectOneRadio>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneRadio')}" for="selectOneRadio" styleClass="errorMessage" />
+    <p:selectOneRadio id="selectOne"
+                      rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOne')}"
+                      plain="true"
+                      value="#{entity.value}"
+                      disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                      required="#{entity.question.required}"
+                      styleClass="checkbox">
+      <f:selectItems value="#{entity.question.customOptionsList}" var="item" itemLabel="#{item}" />
+    </p:selectOneRadio>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOne')}" for="selectOne" styleClass="errorMessage" />
+    <h:selectManyCheckbox id="selectMany"
+                          rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectMany')}"
+                          value="#{entity.valueList}"
+                          disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                          required="#{entity.question.required}"
+                          styleClass="checkbox"
+                          converter="omnifaces.SelectItemsConverter"
+                          collectionType="java.util.ArrayList"
+                          columns="#{entity.question.feedbackQuestionType.columns}">
+      <f:selectItems value="#{entity.question.customOptionsList}" var="item" itemLabel="#{item}" />
+    </h:selectManyCheckbox>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectMany')}" for="selectMany" styleClass="errorMessage" />
+    <h:selectManyCheckbox id="selectManyCheckbox"
+                          rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectManyCheckbox') and empty entity.question.customOptions}"
+                          value="#{entity.valueList}"
+                          disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                          required="#{entity.question.required}"
+                          styleClass="checkbox"
+                          columns="#{entity.question.feedbackQuestionType.columns}">
+      <f:selectItems value="#{entity.question.feedbackQuestionType.maxValueIntegerList}" var="item" itemLabel="#{item}" />
+    </h:selectManyCheckbox>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectManyCheckbox')}" for="selectManyCheckbox" styleClass="errorMessage" />
+    <p:selectOneListbox rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneListbox')}"
+                        id="selectOneListbox"
+                        value="#{entity.value}"
+                        disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                        required="#{entity.question.required}">
+      <f:selectItems value="#{entity.question.feedbackQuestionType.maxValueIntegerList}" var="item" itemLabel="#{item}" />
+    </p:selectOneListbox>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneListbox')}" for="selectOneListbox" styleClass="errorMessage" />
+    <p:selectOneMenu rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneMenu')}"
+                     id="selectOneMenu"
+                     value="#{entity.value}"
+                     disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                     required="#{entity.question.required}">
+      <f:selectItems value="#{entity.question.feedbackQuestionType.maxValueIntegerList}" var="item" itemLabel="#{item}" />
+    </p:selectOneMenu>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneMenu')}" for="selectOneMenu" styleClass="errorMessage" />
+    <p:selectOneButton rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneButton')}"
+                       id="selectOneButton"
+                       value="#{entity.value}"
+                       disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                       required="#{entity.question.required}">
+      <f:selectItems value="#{entity.question.feedbackQuestionType.maxValueIntegerList}" var="item" itemLabel="#{item}" />
+    </p:selectOneButton>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('selectOneButton')}" for="selectOneButton" styleClass="errorMessage" />
+    <p:rating rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('rating')}"
+              id="rating"
+              stars="#{entity.question.feedbackQuestionType.maxValueInteger}"
+              value="#{entity.valueInteger}"
+              readonly="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+              required="#{entity.question.required}">
+      <ui:repeat value="#{entity.question.feedbackQuestionType.maxValueIntegerList}" var="parameter">
+        <f:selectItem itemLabel="#{parameter}" itemValue="#{parameter}" />
+      </ui:repeat>
+    </p:rating>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('rating')}" for="rating" styleClass="errorMessage" />
+    <p:datePicker rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('datePicker')}"
+                  id="datePicker"
+                  value="#{entity.valueDate}"
+                  disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                  required="#{entity.question.required}">
+    </p:datePicker>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('datePicker')}" for="datePicker" styleClass="errorMessage" />
+    <p:datePicker rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('dateTimePicker')}"
+                  id="dateTimePicker"
+                  value="#{entity.valueDateTime}"
+                  disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                  required="#{entity.question.required}">
+    </p:datePicker>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('dateTimePicker')}" for="datePicker" styleClass="errorMessage" />
+    <p:datePicker rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('timePicker')}"
+                  id="timePicker"
+                  value="#{entity.valueTime}"
+                  disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+                  required="#{entity.question.required}"
+                  timeOnly="true">
+    </p:datePicker>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('timePicker')}" for="timePicker" styleClass="errorMessage" />
+    <p:knob rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('knob')}"
+            id="knob"
+            value="#{entity.value}"
+            disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+            required="#{entity.question.required}"
+            max="#{entity.question.feedbackQuestionType.maxValueInteger}"
+            min="#{entity.question.feedbackQuestionType.minValueInteger}"
+            step="#{entity.question.feedbackQuestionType.step}"
+            height="30"
+            width="30">
+    </p:knob>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('knob')}" for="knob" styleClass="errorMessage" />
+    <p:inputText rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('slider')}" id="slider" value="#{entity.value}" placeholder="0" />
+    <p:slider rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('slider')}" for="slider"
+              value="#{entity.value}"
+              disabled="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+              required="#{entity.question.required}"
+              maxValue="#{entity.question.feedbackQuestionType.maxValue}"
+              minValue="#{entity.question.feedbackQuestionType.minValue}"
+              step="#{entity.question.feedbackQuestionType.step}">
+    </p:slider>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('slider')}" for="slider" styleClass="errorMessage" />
+    <p:spinner rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('spinner')}"
+               id="spinner"
+               value="#{entity.value}"
+               readonly="#{showColumns.contains('showOutput') or showColumns.contains('showForQuestion')}"
+               required="#{entity.question.required}"
+               min="#{entity.question.feedbackQuestionType.minValue}"
+               max="#{entity.question.feedbackQuestionType.maxValue}"
+               decimalPlaces="#{entity.question.feedbackQuestionType.decimalPlaces}"
+               stepFactor="#{entity.question.feedbackQuestionType.step}"
+               placeholder="0">
+    </p:spinner>
+    <p:message rendered="#{entity.question.feedbackQuestionType.widgetType.name.equals('spinner')}" for="spinner" styleClass="errorMessage" />
+  </p:column>
+  <p:column rendered="#{showColumns.contains('showForQuestion')}" headerText="#{messages.feedback}" field="feedback.id">
+    <ui:include src="/fragments/entity-link-displayname.xhtml">
+      <ui:param name="instance" value="#{entity.feedback}" />
+    </ui:include>
+  </p:column>
+  <p:column rendered="#{showColumns.contains('showForQuestion')}" headerText="#{messages.user}" field="feedback.user.name"
+            exportValue="#{entity.feedback.user.fullName}">
+    <ui:include src="/fragments/user-link.xhtml">
+      <ui:param name="instance" value="#{entity.feedback.user}" />
+    </ui:include>
+  </p:column>
+  <p:column rendered="#{showColumns.contains('showForStatistics')}" headerText="#{messages.container}"
+            field="feedback.container.id">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param name="instance" value="#{entity.feedback.container}" />
+    </ui:include>
+  </p:column>
+  <p:column rendered="#{showColumns.contains('showForStatistics')}" headerText="#{messages.serviceType}"
+            field="feedback.container.serviceType.name">
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param name="instance" value="#{entity.feedback.container.serviceType}" />
+    </ui:include>
+  </p:column>
+  <p:column rendered="#{showColumns.contains('showForStatistics')}" headerText="#{messages.serviceArea}" field="feedback.container.serviceType.serviceArea.name">
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param name="instance" value="#{entity.feedback.container.serviceType.serviceArea}" />
+    </ui:include>
+  </p:column>
+</ui:composition>

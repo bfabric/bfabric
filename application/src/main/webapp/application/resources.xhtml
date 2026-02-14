@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('resources') and identityManager.hasCurrentUserRole('applicationReader')}">
+  <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="resource" />
+      <ui:param
+        name="tableContext"
+        value="#{app.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{resourceList.getLazyModelByApplicationId(app.id)}" />
+      <ui:param
+        name="hideColumns"
+        value="application" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,55 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ExecutableContextEnum" />
+
+  <p:dialog
+    id="selectStorageExecutableModalPanel"
+    widgetVar="selectStorageExecutableModalDialog"
+    dynamic="true"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.select} #{messages.storage} #{messages.executable}" />
+    </f:facet>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="executable" />
+      <ui:param
+        name="tableContext"
+        value="selectStorageExecutable" />
+      <ui:param
+        name="tableContent"
+        value="#{executableList.getResultListByContext(ExecutableContextEnum.STORAGE)}" />
+      <ui:param
+        name="showColumns"
+        value="selectStorageExecutable" />
+      <ui:param
+        name="hideColumns"
+        value="context, createdBy, createdOn, description, predecessor, version" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="none" />
+      <ui:param
+        name="listingRows"
+        value="20" />
+    </ui:include>
+
+    <h:form>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('selectStorageExecutableModalDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

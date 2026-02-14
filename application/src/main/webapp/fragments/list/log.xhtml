@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('log') and (empty logRendered or logRendered)}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="entitylog" />
+      <ui:param
+        name="tableContext"
+        value="#{instance.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{entityLogList.getEntityLogsLazyModel(instance)}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

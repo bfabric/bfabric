@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('containerManager')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+  <ui:include src="/fragments/sidebar/mails.xhtml" />
+</ui:composition>

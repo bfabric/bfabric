@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core">
+  <h:outputText
+    id="#{formattedPriceId}"
+    value="#{formattedPrice}">
+    <f:convertNumber pattern="0.00" />
+  </h:outputText>
+  <h:panelGroup rendered="#{not empty formattedPriceCurrent and formattedPriceCurrent > 0 and (empty formattedPrice or formattedPriceCurrent.compareTo(formattedPrice) != 0)}" styleClass="warning">
+    <h:outputText value="&#160;#{messages.noteCurrentlySavedValueIs}&#160;" />
+    <h:outputText value="#{formattedPriceCurrent}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </h:panelGroup>
+</ui:composition>

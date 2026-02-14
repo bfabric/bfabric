@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <f:view contentType="text/xml">
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <ui:include src="page-setup-A4-portrait.xhtml" />
+      <!-- Introduce a page number to pass to the stylesheets, this is only necessary if static content like headers change depending on pages -->
+      <fo:page-sequence master-reference="A4-portrait">
+        <ui:insert name="pageHeader" />
+        <fo:flow flow-name="xsl-region-body">
+          <ui:insert name="masterPage" />
+        </fo:flow>
+      </fo:page-sequence>
+
+      <!-- Employee Pages -->
+      <ui:repeat
+        value="#{userList.employeesRegular}"
+        var="employee">
+        <fo:page-sequence master-reference="A4-portrait">
+          <ui:insert name="pageHeader" />
+          <ui:insert name="vacations" />
+        </fo:page-sequence>
+      </ui:repeat>
+    </fo:root>
+  </f:view>
+</ui:composition>

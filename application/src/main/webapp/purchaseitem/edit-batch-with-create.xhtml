@@ -1,0 +1,140 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.edit} #{messages.purchaseItems}: #{messages.purchase} #{purchaseItemBatchManager.purchase.displayName}" />
+  </ui:define>
+
+  <ui:param
+    name="bean"
+    value="#{purchaseItemBatchManager}" />
+
+  <ui:define name="body">
+    <script>
+        //<![CDATA[
+        function isValidSubmit(args) {
+            return (args && !args.validationFailed);
+        }
+        //]]>
+    </script>
+    <h:form
+      id="#{constants.EDIT}"
+      styleClass="navigate-away-class">
+      <h:panelGrid
+        id="currencyGrid"
+        columns="2"
+        columnClasses="bold align-middle, align-middle">
+        <h:outputText value="#{messages.purchaseCurrency}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="currency"
+            value="#{purchaseItemBatchManager.purchase.currency}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItems
+              value="#{currencyList.resultListOrderByCode}"
+              var="item"
+              itemLabel="#{item.code}" />
+          </h:selectOneMenu>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <p:spacer height="10" />
+
+      <h:panelGroup id="edit-batch-purchaseitem-batchtable">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="batch" />
+          <ui:param
+            name="tableContent"
+            value="#{purchaseItemBatchManager.editList}" />
+          <ui:param
+            name="include"
+            value="/purchaseitem/edit-batch-columns.xhtml" />
+          <ui:param
+            name="editable"
+            value="true" />
+          <ui:param
+            name="styleClass"
+            value="batchEditTable" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="addNewBatchItemsPanel"
+        columns="1"
+        styleClass="action">
+        <h:panelGrid
+          columns="2"
+          styleClass="nospace topline">
+          <p:spinner
+            id="addNewBatchItemsSpinner"
+            disabled="#{purchaseItemBatchManager.addNewBatchItemsDisabled}"
+            value="#{purchaseItemBatchManager.numberOfNewBatchItems}"
+            min="1"
+            max="#{purchaseItemBatchManager.maxNumberOfNewBatchItems}"
+            size="5"
+            decimalPlaces="0"
+            thousandSeparator="">
+            <p:ajax
+              event="change"
+              global="false" />
+          </p:spinner>
+          <p:commandButton
+            id="addNewBatchItemsButton"
+            disabled="#{purchaseItemBatchManager.addNewBatchItemsDisabled}"
+            action="#{purchaseItemBatchManager.addNewBatchItems}"
+            value="#{messages.addPurchaseItems}"
+            title="#{purchaseItemBatchManager.addNewBatchItemsDisabled ? purchaseItemBatchManager.itemLimitExceededHint : messages.addNewItemsHint}"
+            immediate="true"
+            styleClass="noleftborderselect"
+            update="@([id$=edit-batch-purchaseitem-batchtable]), addNewBatchItemsPanel, buttons, currencyGrid"
+            process="@this"
+            oncomplete="fixOversize();" />
+        </h:panelGrid>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="buttons"
+        columns="5"
+        styleClass="action align-middle">
+        <p:commandButton
+          action="#{purchaseItemBatchManager.save}"
+          disabled="#{empty purchaseItemBatchManager.editList and empty purchaseItemBatchManager.deleteList}"
+          value="#{messages.save}"
+          oncomplete="if(!isValidSubmit(args)){hasChanged=true;} fixOversize();"
+          onclick="hasChanged=false;"
+          update="@form">
+        </p:commandButton>
+        <p:commandButton
+          action="#{purchaseItemBatchManager.cancelEdit}"
+          value="#{messages.cancel}"
+          immediate="true" />
+        <h:panelGroup>
+          <h:selectBooleanCheckbox
+            id="recalculatePriceCheckbox"
+            value="#{purchaseItemBatchManager.purchase.recalculatePriceChecked}"
+            title="#{messages.recalculatePriceHint}">
+            <p:ajax
+              event="change"
+              listener="#{purchaseItemBatchManager.purchase.recalculatePriceCheckedChanged}"
+              immediate="true" />
+          </h:selectBooleanCheckbox>
+          <h:outputText value="&#160;#{messages.recalculatePurchasePrice}" />
+          <h:panelGroup
+            rendered="#{purchaseItemBatchManager.purchase.isRecalculatePriceNotEqualHintRendered(purchaseItemBatchManager.editList)}"
+            styleClass="warn">
+            <i
+              class="fas fa-exclamation-circle pending"
+              title="#{messages.recalculatePriceNotEqualHint}"
+              style="padding-top:6px;" />
+            <h:outputText value="&#160;#{purchaseItemBatchManager.purchase.getPurchasePriceNotEqualHint(purchaseItemBatchManager.editList)}" />
+          </h:panelGroup>
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

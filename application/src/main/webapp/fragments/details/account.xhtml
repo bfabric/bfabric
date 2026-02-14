@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.account}">
+    <h:outputText value="#{messages.account}" />
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{instance.account}" />
+      <ui:param
+        name="entityValue"
+        value="#{instance.accountNr}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

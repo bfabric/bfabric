@@ -1,0 +1,21 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:o="http://omnifaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/parentclass.xhtml">
+    <ui:param name="parentClassNames" value="#{jobList.parentClassNames}" />
+  </ui:include>
+  <ui:include src="/fragments/column/parentid.xhtml" />
+  <ui:include src="/fragments/column/action.xhtml" />
+  <o:importConstants type="org.bfabric.enums.StatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param name="statusEnumList" value="#{jobList.statusEnums}" />
+  </ui:include>
+  <ui:include src="/fragments/column/requester.xhtml" />
+  <ui:include src="/fragments/column/log.xhtml">
+    <ui:param name="sortable" value="false" />
+    <ui:param name="filterable" value="false" />
+  </ui:include>
+  <ui:include src="/fragments/column/url.xhtml" />
+  <ui:include src="/fragments/column/state-count.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

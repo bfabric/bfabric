@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.dataManagementEnabled}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="label"
+        value="#{not empty label ? label : messages.tree}" />
+      <ui:param
+        name="tab"
+        value="#{not empty tab ? tab : 'tree'}" />
+      <ui:param
+        name="showAlways"
+        value="#{not empty showAlways ? showAlways : instance.renderedTree}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

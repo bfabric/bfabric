@@ -1,0 +1,114 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{showColumns.contains('addbuttonColumn') and not empty tableType and not empty addAllButtonListener and not empty addButtonListener}">
+    <p:column
+      id="#{constants.ADD}#{constants.BUTTON}#{constants.COLUMN}"
+      exportable="false">
+      <f:facet name="header">
+        <h:panelGrid
+          columns="1"
+          style="text-align: center;"
+          styleClass="nospace noborder">
+          <h:outputText value="#{messages.add}" />
+          <p:commandButton
+            id="#{constants.ADD}#{constants.ALL}#{constants.BUTTON}"
+            value="#{messages.all}"
+            title="#{not empty addAllButtonHint ? addAllButtonHint : messages.addAll}"
+            disabled="#{addAllButtonDisabled}"
+            actionListener="#{addAllButtonListener}"
+            process="@this"
+            update="#{addAllButtonUpdate}"
+            oncomplete="fixOversize(); if(PF('#{constants.TARGET}#{tableType}')){PF('#{constants.TARGET}#{tableType}').filter();}; if(args.triggerUpdateTable !== 'undefined' &amp;&amp; args.triggerUpdateTable){console.log('WUT'); updateTable();}"
+            styleClass="select width-auto"
+            style="width:60px;margin-top:2px">
+            <f:attribute
+              name="#{constants.TABLE_CLIENT_ID}"
+              value="#{tableReference.clientId}" />
+          </p:commandButton>
+          <p:remoteCommand
+            name="updateTable"
+            update="#{addAllButtonUpdate}"
+            oncomplete="if(PF('#{constants.TARGET}#{tableType}')){PF('#{constants.TARGET}#{tableType}').filter();}">
+            <o:skipValidators />
+          </p:remoteCommand>
+        </h:panelGrid>
+      </f:facet>
+      <p:commandButton
+        id="#{constants.ADD}#{constants.BUTTON}"
+        value="#{messages.add}"
+        title="#{not empty addButtonHint ? addButtonHint : messages.add}"
+        disabled="#{addButtonDisabled}"
+        actionListener="#{addButtonListener}"
+        disableOnAjax="false"
+        process="@this"
+        update="#{addButtonUpdate}"
+        oncomplete="fixOversize(); if(PF('#{constants.TARGET}#{tableType}')){PF('#{constants.TARGET}#{tableType}').filter();}"
+        styleClass="inline width-auto"
+        style="width:60px">
+        <f:attribute
+          name="#{constants.TABLE_CLIENT_ID}"
+          value="#{tableReference.clientId}" />
+      </p:commandButton>
+    </p:column>
+  </c:if>
+
+  <c:if test="#{showColumns.contains('removebuttonColumn') and not empty tableType and not empty removeAllButtonListener and not empty removeButtonListener}">
+    <p:column
+      id="#{constants.REMOVE}#{constants.BUTTON}#{constants.COLUMN}"
+      exportable="false">
+      <f:facet name="header">
+        <h:panelGrid
+          columns="1"
+          style="text-align: center;"
+          styleClass="nospace noborder">
+          <h:outputText value="&#160;#{messages.remove}" />
+          <p:commandButton
+            id="#{constants.REMOVE}#{constants.ALL}#{constants.BUTTON}"
+            value="#{messages.all}"
+            title="#{not empty removeAllButtonHint ? removeAllButtonHint : messages.removeAll}"
+            disabled="#{removeAllButtonDisabled}"
+            actionListener="#{removeAllButtonListener}"
+            process="@this"
+            update="#{removeAllButtonUpdate}"
+            oncomplete="fixOversize();"
+            styleClass="select width-auto"
+            style="width:60px;margin-top:2px">
+            <f:attribute
+              name="#{constants.TABLE_CLIENT_ID}"
+              value="#{tableReference.clientId}" />
+            <c:if test="#{not empty sourceTableId}">
+              <f:attribute
+                name="#{constants.SOURCE_TABLE_CLIENT_ID}"
+                value="#{sourceTableId}" />
+            </c:if>
+          </p:commandButton>
+        </h:panelGrid>
+      </f:facet>
+      <p:commandButton
+        id="#{constants.REMOVE}#{constants.BUTTON}"
+        value="#{messages.remove}"
+        title="#{not empty removeButtonHint ? removeButtonHint : messages.remove}"
+        disabled="#{removeButtonDisabled}"
+        actionListener="#{removeButtonListener}"
+        process="@this"
+        update="#{removeButtonUpdate}"
+        oncomplete="fixOversize(); if(PF('#{constants.TARGET}#{tableType}')){PF('#{constants.TARGET}#{tableType}').filter();}"
+        styleClass="inline width-auto"
+        style="width:60px">
+        <f:attribute
+          name="#{constants.TABLE_CLIENT_ID}"
+          value="#{tableReference.clientId}" />
+        <c:if test="#{not empty sourceTableId}">
+          <f:attribute
+            name="#{constants.SOURCE_TABLE_CLIENT_ID}"
+            value="#{sourceTableId}" />
+        </c:if>
+      </p:commandButton>
+    </p:column>
+  </c:if>
+</ui:composition>

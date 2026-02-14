@@ -1,0 +1,186 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+      <ui:include src="/fragments/details/internal.xhtml" />
+      <ui:include src="/fragments/details/supplier.xhtml" />
+
+      <c:if test="#{not empty purchase.orderDate}">
+        <h:outputText value="#{messages.orderDate}" />
+        <h:outputText value="#{purchase.orderDate}" />
+      </c:if>
+
+      <c:if test="#{not empty purchase.orderedBy}">
+        <h:outputText value="#{messages.orderedBy}" />
+        <ui:include src="/fragments/user-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{purchase.orderedBy}" />
+        </ui:include>
+      </c:if>
+
+      <ui:include src="/fragments/details/technologies.xhtml" />
+
+      <c:if test="#{not empty purchase.price or purchaseItemBatchManager.purchase.isRecalculatePriceNotEqualHintRendered(purchase.items)}">
+        <h:outputText value="#{messages.price}" />
+        <h:panelGrid
+          columns="5"
+          styleClass="rightpadding">
+          <c:if test="#{not empty purchase.price}">
+            <h:outputText value="#{purchase.price}">
+              <f:convertNumber pattern="0.00" />
+            </h:outputText>
+            <h:outputText value="&#160;#{purchase.currency.code}" />
+          </c:if>
+          <c:if test="#{purchase.isRecalculatePriceNotEqualHintRenderedForPurchase(purchase.items)}">
+            <i
+              class="fas fa-exclamation-circle pending"
+              title="#{messages.recalculatePriceNotEqualHint}"
+              style="padding-top:6px;" />
+            <h:outputText value="&#160;#{purchaseItemBatchManager.purchase.getPurchasePriceNotEqualHint(purchaseItemBatchManager.editList)}" styleClass="warn" />
+            <h:form>
+              <p:commandButton
+                action="#{purchaseManager.recalculatePrice}"
+                value="#{messages.recalculatePrice}" />
+            </h:form>
+          </c:if>
+        </h:panelGrid>
+      </c:if>
+
+      <c:if test="#{not empty purchase.items}">
+        <h:outputText value="#{messages.items} (#{purchase.items.size()})" />
+        <h:panelGroup id="itemsPanel">
+          <ui:include src="/fragments/show-datatable.xhtml">
+            <ui:param
+              name="tableType"
+              value="purchaseitem" />
+            <ui:param
+              name="tableContext"
+              value="purchase" />
+            <ui:param
+              name="tableContent"
+              value="#{purchase.items}" />
+            <ui:param
+              name="showColumns"
+              value="editButton, deleteButton" />
+            <ui:param
+              name="hideColumns"
+              value="purchase" />
+            <ui:param
+              name="styleClass"
+              value="inner" />
+          </ui:include>
+        </h:panelGroup>
+      </c:if>
+
+      <ui:include src="/fragments/details/description.xhtml" />
+
+      <c:if test="#{not empty purchase.p4uNumber}">
+        <h:outputText value="#{messages.p4uNumber}" />
+        <h:outputText value="#{purchase.p4uNumber}" />
+      </c:if>
+
+      <c:if test="#{not empty purchase.orderItemReceivedDate}">
+        <h:outputText value="#{messages.orderItemReceivedDate}" />
+        <h:outputText value="#{purchase.orderItemReceivedDate}" />
+      </c:if>
+
+      <c:if test="#{not empty purchase.orderItemReceivedBy}">
+        <h:outputText value="#{messages.orderItemReceivedBy}" />
+        <ui:include src="/fragments/user-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{purchase.orderItemReceivedBy}" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{not empty purchase.invoiceReceivedDate}">
+        <h:outputText value="#{messages.invoiceReceivedDate}" />
+        <h:outputText value="#{purchase.invoiceReceivedDate}" />
+      </c:if>
+
+      <c:if test="#{not empty purchase.invoiceNumber}">
+        <h:outputText value="#{messages.invoiceNumber}" />
+        <h:outputText value="#{purchase.invoiceNumber}" />
+      </c:if>
+
+      <c:if test="#{not empty purchase.invoicedPrice}">
+        <h:outputText value="#{messages.invoicedPrice}" />
+        <h:panelGroup>
+          <h:outputText value="#{purchase.invoicedPrice}">
+            <f:convertNumber pattern="0.00" />
+          </h:outputText>
+          <h:outputText value="&#160;#{purchase.invoicedCurrency.code}" />
+        </h:panelGroup>
+      </c:if>
+
+      <c:if test="#{not empty purchase.invoicedPriceDefaultCurrency}">
+        <h:outputText value="#{messages.invoicedPriceDefaultCurrency}" />
+        <h:panelGroup>
+          <h:outputText value="#{purchase.invoicedPriceDefaultCurrency}">
+            <f:convertNumber pattern="0.00" />
+          </h:outputText>
+          <h:outputText value="&#160;#{configuration.getDefaultCurrencyCode()}" />
+        </h:panelGroup>
+      </c:if>
+
+      <c:if test="#{not empty purchase.payer}">
+        <h:outputText value="#{messages.payer}" />
+        <h:outputText value="#{purchase.payer}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/sapNumber.xhtml" />
+
+      <c:if test="#{not empty purchase.payersReferenceNumber}">
+        <h:outputText value="#{messages.payersReferenceNumber}" />
+        <h:outputText value="#{purchase.payersReferenceNumber}" />
+      </c:if>
+
+      <h:outputText value="#{messages.paid}" />
+      <h:outputText value="#{stringHelper.toYesNo(purchase.paid)}" />
+
+      <ui:include src="/fragments/details/users.xhtml" />
+
+      <c:if test="#{not empty purchase.comment}">
+        <h:outputText value="#{messages.comment}" />
+        <h:outputText value="#{purchase.comment}" styleClass="preformat" />
+      </c:if>
+
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="8"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <p:button
+        outcome="/purchaseitem/edit-batch-with-create.xhtml"
+        value="#{empty purchase.items ? messages.add : messages.edit} #{messages.items}"
+        rendered="#{purchase.deletable}">
+        <f:param
+          name="id"
+          value="#{purchase.id}" />
+      </p:button>
+      <p:button
+        outcome="/purchaseitem/edit.xhtml"
+        value="#{messages.addItem}"
+        rendered="#{purchase.deletable}">
+        <f:param
+          name="purchaseId"
+          value="#{purchase.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+      <ui:include src="/fragments/button/orderItemsReceived.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

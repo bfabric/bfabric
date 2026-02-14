@@ -1,0 +1,29 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:o="http://omnifaces.org/ui">
+
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/supervisor.xhtml" />
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <ui:include src="/fragments/column/contracttype.xhtml" />
+  <ui:include src="/fragments/column/instruments.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/referencenumber.xhtml" />
+  <ui:include src="/fragments/column/startdate.xhtml" />
+  <ui:include src="/fragments/column/expirydate.xhtml" />
+
+  <o:importConstants type="org.bfabric.enums.ContractStatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{ContractStatusEnum.values()}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/price.xhtml" />
+  <ui:include src="/fragments/column/currency.xhtml" />
+  <ui:include src="/fragments/column/approvaldate.xhtml" />
+  <ui:include src="/fragments/column/approvedby.xhtml" />
+  <ui:include src="/fragments/column/approvalnote.xhtml" />
+  <ui:include src="/fragments/column/purchases.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

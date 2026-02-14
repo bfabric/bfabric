@@ -1,0 +1,109 @@
+<ui:composition
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+  <!--@elvariable id="instance" type="org.bfabric.entity.Resource"-->
+  <h:panelGroup>
+    <c:if test="#{showName}">
+      <ui:include src="/fragments/entity-link-name.xhtml" />
+      <h:outputText value="&#160;" />
+    </c:if>
+    <c:if test="#{not hideStatus}">
+      <h:outputText
+        value="#{instance.status.label} "
+        title="#{instance.status.hint}"
+        styleClass="#{instance.status.label}" />
+    </c:if>
+    <c:if test="#{not empty printSize}">
+      <h:outputText value="#{instance.printSize}" />
+    </c:if>
+    <p:link
+      rendered="#{instance.downloadManagerDownloadButtonRendered}"
+      outcome="/fragments/download-jnlp.xhtml"
+      title="#{messages.resourceDownloadHint}">
+      <i class="fas fa-download download-icon" />
+      <f:param
+        name="resourceId"
+        value="#{instance.id}" />
+    </p:link>
+    <p:commandLink
+      rendered="#{instance.downloadHttpButtonRendered and instance.downloadButtonRendered}"
+      title="#{messages.resourceDownloadHttpHint}"
+      onclick="remoteGetJson([{name: 'entity', value: '#{instance}'}])">
+      <i class="fas fa-file-download download-icon" />
+    </p:commandLink>
+    <p:remoteCommand
+      name="remoteGetJson"
+      action="#{jsonService.getJson}"
+      oncomplete="download_files(args.json)" />
+    <h:outputLink
+      rendered="#{instance.downloadHttpButtonRendered and not instance.downloadButtonRendered}"
+      value="#{instance.uriDownloadHttp}"
+      title=" #{messages.resourceDownloadHttpHint}">
+      <i class="fas fa-file-download download-icon" />
+      <p:ajax
+        event="click"
+        global="false"
+        listener="#{instance.createDownloadHttpEntityLog()}" />
+    </h:outputLink>
+    <p:commandLink
+      ajax="false"
+      rendered="#{instance.streamedContentDownloadButtonRendered}"
+      actionListener="#{instance.createDownloadHttpEntityLog()}"
+      title=" #{messages.resourceDownloadHttpHint}">
+      <i class="fas fa-file-download download-icon" />
+      <p:fileDownload value="#{instance.defaultStreamedContent}" />
+    </p:commandLink>
+    <p:commandLink
+      ajax="false"
+      rendered="#{instance.streamedContentDownloadButtonRendered}"
+      actionListener="#{instance.createDownloadHttpEntityLog()}"
+      title=" #{messages.resourceDownloadHttpHint}">
+      <i class="fas fa-eye download-icon" />
+      <p:fileDownload value="#{instance.defaultStreamedContent}" contentDisposition="inline" store="true" />
+    </p:commandLink>
+    <h:outputLink
+      rendered="#{instance.webLinkButtonRendered}"
+      value="#{instance.uriWebLink}"
+      title=" #{messages.resourceWebLinkHint}">
+      <i class="fas fa-external-link-square-alt" />
+      <p:ajax
+        event="click"
+        global="false"
+        listener="#{instance.createWebLinkEntityLog()}" />
+    </h:outputLink>
+    <!--
+    <p:commandLink
+      rendered="#{instance.downloadFolderButtonRendered}"
+      actionListener="#{resourceList.setResourceUriDownloadFolder(instance.wgetDownloadCommand)}"
+      oncomplete="PF('downloadFolderDialog').show();"
+      title="#{messages.resourceDownloadFolderHint}"
+      update="downloadFolderDialog"
+      process="@this"
+      global="false">
+      <i class="fas fa-external-link-alt" />
+    </p:commandLink>
+    -->
+    <h:panelGroup rendered="#{instance.downloadFolderButtonRendered}">
+      <p:commandLink id="download-folder-button-#{clipboardid}" ajax="false" title="#{messages.resourceDownloadFolderHint}">
+        <i class="fas fa-external-link-alt" />
+        <p:fileDownload value="#{instance.downloadShellFile}" />
+      </p:commandLink>
+      <pe:clipboard trigger="download-folder-button-#{clipboardid}" action="copy" text="#{instance.wgetDownloadCommand}">
+        <p:ajax event="success" listener="#{contextManager.copyDownloadFolderCommandSuccessfulListener}" />
+        <p:ajax event="error" listener="#{contextManager.copyDownloadFolderCommandFailedListener}" />
+      </pe:clipboard>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{instance.downloadManagerDownloadButtonRendered or instance.downloadButtonRendered or instance.downloadHttpButtonRendered}">
+      <a
+        href="#{configuration.urlUserManual}?page=ResourceDownload"
+        title="#{messages.downloadHelpLink}"
+        target="_blank"
+        rel="noopener"><i class="far fa-question-circle download-icon" /></a>
+      <ui:include src="/resource/download-folder-modal.xhtml" />
+    </h:panelGroup>
+  </h:panelGroup>
+</ui:composition>

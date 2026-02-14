@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('servicetypes')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="servicetype" />
+      <ui:param name="tableContext" value="#{multiplexKit.tableContext}" />
+      <ui:param name="tableContent" value="#{multiplexKit.serviceTypes}" />
+      <ui:param name="hideColumns" value="multiplexKits" />
+    </ui:include>
+  </c:if>
+</ui:composition>

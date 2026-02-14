@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param
+      name="tableType"
+      value="sample" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/name-trunc.xhtml" />
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/tubeid.xhtml" />
+  <ui:include src="/fragments/column/multiplexid.xhtml" />
+  <ui:include src="/fragments/column/multiplexid2.xhtml" />
+  <c:if test="#{not hideColumns.contains('poolName')}">
+    <p:column
+      field="multiplexIdConflictMultiplexedSample.name"
+      headerText="In #{messages.pool}">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="entityValue"
+          value="#{stringHelper.truncate(entity.multiplexIdConflictMultiplexedSample.name)} " />
+        <ui:param
+          name="entity"
+          value="#{entity.multiplexIdConflictMultiplexedSample}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

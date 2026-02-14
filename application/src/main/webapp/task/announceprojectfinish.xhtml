@@ -1,0 +1,19 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-project-items.xhtml">
+    <ui:param
+      name="tasksId"
+      value="announceprojectfinish" />
+    <ui:param
+      name="tasks"
+      value="#{messages.taskAnnounceProjectFinish}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskAnnounceProjectFinishHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{projectList.projectFinishAnnounceTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{sidebarHelper.isTab('announceprojectfinish') and identityManager.hasCurrentUserRole('reviewManager')}" />
+  </ui:include>
+</ui:composition>

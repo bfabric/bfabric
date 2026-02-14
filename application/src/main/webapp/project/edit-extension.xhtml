@@ -1,0 +1,117 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(project.isExtensionReportPendingForYear(projectManager.reportYear))}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText
+      value="#{messages.addReport}"
+      rendered="#{empty project.getExtensionReport(projectManager.reportYear)}" />
+    <h:outputText
+      value="#{messages.editReport}"
+      rendered="#{not empty project.getExtensionReport(projectManager.reportYear)}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form
+      id="edit-extension"
+      enctype="multipart/form-data">
+      <h:panelGrid
+        columns="2"
+        title="#{messages.addExtensionReportHint}"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.project}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <ui:include src="/fragments/entity-link.xhtml">
+            <ui:param
+              name="instance"
+              value="#{project}" />
+          </ui:include>
+        </ui:decorate>
+        <h:outputText
+          value="#{messages.finalReport}"
+          rendered="#{projectManager.reportYear == 3}" />
+        <h:outputText
+          value="#{projectManager.reportYear}. Year #{messages.extensionReport}"
+          rendered="#{projectManager.reportYear != 3}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:panelGrid
+            columns="1"
+            required="true">
+            <h:panelGroup rendered="#{not empty project.getExtensionReport(projectManager.reportYear)}">
+              <p:commandLink
+                ajax="false"
+                value="#{project.getExtensionReport(projectManager.reportYear).name}"
+                styleClass="#{not empty fileUploadHelper.uploadedFiles ? 'removed' : ''}">
+                <i class="fas fa-file-download download-icon" />
+                <p:fileDownload value="#{project.getExtensionReport(projectManager.reportYear).defaultStreamedContent}" />
+              </p:commandLink>
+              <h:outputText
+                value=" (#{numberUtils.getPrintSize(project.getExtensionReport(projectManager.reportYear).size)})"
+                styleClass="#{not empty fileUploadHelper.uploadedFiles ? 'removed' : ''}" />
+            </h:panelGroup>
+            <ui:include src="/fragments/edit/fileupload.xhtml">
+              <o:methodParam name="listener" value="#{fileUploadHelper.listenerSingleUpload}" />
+              <ui:param name="multiple" value="false" />
+              <ui:param name="update" value="@form" />
+              <ui:param name="label" value="#{(empty project.getExtensionReport(projectManager.reportYear) and empty fileUploadHelper.uploadedFiles) ? messages.add : messages.replace}" />
+              <ui:param name="allowTypes" value="/(\\.|\\/)(pdf)$/" />
+              <ui:param name="invalidFileMessage" value="#{messages.invalidFileMessagePDF}" />
+            </ui:include>
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="include"
+                value="/fragments/column/uploadfile.xhtml" />
+              <ui:param
+                name="tableContext"
+                value="uploadfile" />
+              <ui:param
+                name="tableContent"
+                value="#{fileUploadHelper.uploadedFiles}" />
+              <ui:param
+                name="showColumns"
+                value="buttons" />
+              <ui:param
+                name="styleClass"
+                value="noborder hide-table-header" />
+              <ui:param
+                name="paginator"
+                value="false" />
+              <ui:param
+                name="updateOnDelete"
+                value="@form" />
+            </ui:include>
+          </h:panelGrid>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{projectManager.saveReport}"
+          value="#{messages.save}"
+          update="@form" />
+        <p:button
+          outcome="/project/show.xhtml"
+          value="#{messages.cancel}"
+          immediate="true">
+          <f:param
+            name="id"
+            value="#{project.id}" />
+          <f:param
+            name="tab"
+            value="#{constants.DETAILS}" />
+        </p:button>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

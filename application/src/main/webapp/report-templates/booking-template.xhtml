@@ -1,0 +1,25 @@
+<f:view
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  contentType="text/xml">
+  <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <ui:include src="page-setup-A4-portrait.xhtml" />
+    <fo:page-sequence id="summary-details-page" master-reference="A4-portrait">
+      <ui:insert name="pageHeader" />
+      <fo:flow flow-name="xsl-region-body">
+        <ui:insert name="customerDetailsPage" />
+        <ui:insert name="summaryDetailsPage" />
+      </fo:flow>
+    </fo:page-sequence>
+    <c:if test="#{booking.renderedDetailedPrintOut}">
+      <fo:page-sequence id="full-details-page" master-reference="A4-portrait">
+        <ui:insert name="pageHeader" />
+        <fo:flow flow-name="xsl-region-body">
+          <ui:insert name="fullDetailsPage" />
+        </fo:flow>
+      </fo:page-sequence>
+    </c:if>
+  </fo:root>
+</f:view>

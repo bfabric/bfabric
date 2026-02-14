@@ -1,0 +1,7 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.dataManagementEnabled and sidebarHelper.isTab('tree')}">
+    <ui:include src="/fragments/tree.xhtml" />
+  </c:if>
+</ui:composition>

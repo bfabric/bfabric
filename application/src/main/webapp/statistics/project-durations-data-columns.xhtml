@@ -1,0 +1,115 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.technology}" />
+    <ui:param
+      name="value"
+      value="#{entity[11]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.projectId}" />
+    <ui:param
+      name="value"
+      value="#{entity[1]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.pendingToReview}" />
+    <ui:param
+      name="value"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.pendingToReviewHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.reviewToRunning}" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.reviewToRunningHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.pendingToRunning}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.pendingToRunningHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.runningToFinished}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.runningToFinishedHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.pendingToFinished}" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.pendingToFinishedHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.finishedToClosed}" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.finishedToClosedHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.pendingToClosed}" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.pendingToClosedHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.pendingToRejected}" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+    <ui:param
+      name="valueTitle"
+      value="#{messages.pendingToRejectedHint}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.waitingToBeAccepted}" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+</ui:composition>

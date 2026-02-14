@@ -1,0 +1,896 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.tasks}" />
+  </ui:define>
+
+  <ui:param name="sidebar" value="true" />
+
+  <ui:define name="sidebarContent">
+    <h:panelGrid
+      columns="2"
+      columnClasses="sidebar-col-left, sidebar-col-right"
+      styleClass="max-width">
+      <c:if test="#{not currentUser.emailVerified}">
+        <p:link
+          value="#{messages.taskVerifyEmail}"
+          styleClass="#{sidebarHelper.tabStyleClass('verifyemail')}">
+          <f:param
+            name="tab"
+            value="verifyemail" />
+        </p:link>
+        <span />
+      </c:if>
+
+      <c:if test="#{configuration.dataManagementEnabled and identityManager.hasCurrentUserRole('user')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{workunitList.assignSampleTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskAssignSample}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskAssignSampleHint}" />
+          <ui:param
+            name="tab"
+            value="assignsamples" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('reviewManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.coachAssignmentTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskAssignCoach}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskAssignCoachHint}" />
+          <ui:param
+            name="tab"
+            value="assigncoach" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{configuration.instrumentReservationEnabled and identityManager.hasCurrentUserRole('instrumentManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{instrumentReservationList.approvalRequiredTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskApprovalRequiredInstrumentReservation}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskApprovalRequiredInstrumentReservationHint}" />
+          <ui:param
+            name="tab"
+            value="approvalrequiredinstrumentreservation" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{instrumentReservationList.assignOperatorTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskAssignOperatorInstrumentReservation}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskAssignOperatorInstrumentReservationHint}" />
+          <ui:param
+            name="tab"
+            value="assignoperatorinstrumentreservation" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.getProjectCoachTasks(false)}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskCoach}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskCoachHint}" />
+          <ui:param
+            name="tab"
+            value="coachproject" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.bookingRequiredTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskBookingRequired}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskBookingRequiredHint}" />
+          <ui:param
+            name="tab"
+            value="bookingrequiredproject" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{bookingList.nonPaidBookingTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.nonPaidBooking}" />
+          <ui:param
+            name="hint"
+            value="#{messages.nonPaidBookingHint}" />
+          <ui:param
+            name="tab"
+            value="nonPaidBooking" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{workflowStepList.workflowStepTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskWorkflowStep}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskWorkflowStepHint}" />
+          <ui:param
+            name="tab"
+            value="workflowstep" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{(identityManager.hasCurrentUserRole('reviewManager') or identityManager.hasCurrentUserRole('steeringCommittee'))}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.getProjectReviewTasks(false)}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReviewProject}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReviewProjectHint}" />
+          <ui:param
+            name="tab"
+            value="reviewprojectrequest" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('reviewManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.projectFinalDecisionTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReviewFinalDecision}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReviewFinalDecisionHint}" />
+          <ui:param
+            name="tab"
+            value="finaldecisionrequiredprojectrequest" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('user')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.getExtensionReportAddTasks(false)}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskAddExtensionReport}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskAddExtensionReportHint}" />
+          <ui:param
+            name="tab"
+            value="addprojectreport" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('reviewManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.extensionReportApproveTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReviewExtensionReport}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReviewExtensionReportHint}" />
+          <ui:param
+            name="tab"
+            value="reviewprojectreport" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('reviewManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.projectFinishAnnounceTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskAnnounceProjectFinish}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskAnnounceProjectFinishHint}" />
+          <ui:param
+            name="tab"
+            value="announceprojectfinish" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.projectFinishingTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskProjectFinish}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskProjectFinishHint}" />
+          <ui:param
+            name="tab"
+            value="finishproject" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.projectSetPrivateAnnounceTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskProjectSetPrivateAnnounce}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskProjectSetPrivateAnnounceHint}" />
+          <ui:param
+            name="tab"
+            value="announceprivateproject" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.projectSetPrivateTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskProjectSetPrivate}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskProjectSetPrivateHint}" />
+          <ui:param
+            name="tab"
+            value="privateproject" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.projectSetPrivateReminderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskProjectSetPrivateReminder}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskProjectSetPrivateReminderHint}" />
+          <ui:param
+            name="tab"
+            value="privateprojectreminder" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.projectSetPrivatePendingReminderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskProjectSetPrivatePendingReminder}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskProjectSetPrivatePendingReminderHint}" />
+          <ui:param
+            name="tab"
+            value="pendingprojectreminder" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{configuration.orderEnabled}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.submitOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderSubmit}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderSubmitHint}" />
+          <ui:param
+            name="tab"
+            value="submitorders" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.acceptOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderAccept}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderAccept}" />
+          <ui:param
+            name="tab"
+            value="acceptorders" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.acceptOrderRevisionTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderAcceptRevision}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderAcceptRevisionHint}" />
+          <ui:param
+            name="tab"
+            value="acceptrevisions" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.sendOrderSampleTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderSendSample}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderSendSampleHint}" />
+          <ui:param
+            name="tab"
+            value="sendsamples" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.startProcessingOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderStartProcessing}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderStartProcessingHint}" />
+          <ui:param
+            name="tab"
+            value="startprocessingorder" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.finishProcessingOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderFinishProcessing}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderFinishProcessingHint}" />
+          <ui:param
+            name="tab"
+            value="finishprocessingorder" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.startAnalyzingOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderStartAnalyzing}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderStartAnalyzingHint}" />
+          <ui:param
+            name="tab"
+            value="startanalyzingorder" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.finishAnalyzingOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderFinishAnalyzing}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderFinishAnalyzingHint}" />
+          <ui:param
+            name="tab"
+            value="finishanalyzingorder" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.finishOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderFinish}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderFinishHint}" />
+          <ui:param
+            name="tab"
+            value="finishorder" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.closeOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderClose}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderCloseHint}" />
+          <ui:param
+            name="tab"
+            value="closeorder" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.ongoingOrderTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderOngoing}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderOngoingHint}" />
+          <ui:param
+            name="tab"
+            value="ongoingorders" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.checkOrderStatusTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskOrderCheckStatus}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskOrderCheckStatusHint}" />
+          <ui:param
+            name="tab"
+            value="checkorderstatus" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('labManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{plateList.getNonFinishedPlates(identityManager.currentUser.id)}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskPlateFinish}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskPlateFinishHint}" />
+          <ui:param
+            name="tab"
+            value="finishplate" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{runList.getNonFinishedRuns(identityManager.currentUser.id)}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskRunFinish}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskRunFinishHint}" />
+          <ui:param
+            name="tab"
+            value="finishrun" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('employeeManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{userList.reviewEmployeeStatusTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReviewEmployeeStatus}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReviewEmployeeStatusHint}" />
+          <ui:param
+            name="tab"
+            value="reviewemployeestatus" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('reviewManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.coachReassignmentTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignCoach}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignCoachHint}" />
+          <ui:param
+            name="tab"
+            value="reassigncoach" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.coachBackupReassignmentTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignCoachBackup}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignCoachBackupHint}" />
+          <ui:param
+            name="tab"
+            value="reassigncoachbackup" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{projectList.bioinformaticianReassignmentTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignBioinformatician}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignBioinformaticianHint}" />
+          <ui:param
+            name="tab"
+            value="reassignbioinformatician" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{configuration.orderEnabled and identityManager.hasCurrentUserRole('containerManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.reassignOrderCoachTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignOrderCoach}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignOrderCoachHint}" />
+          <ui:param
+            name="tab"
+            value="reassignordercoach" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.reassignOrderCoachBackupTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignOrderCoachBackup}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignOrderCoachBackupHint}" />
+          <ui:param
+            name="tab"
+            value="reassignordercoachbackup" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{orderList.reassignOrderBioinformaticianTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignOrderBioinformatician}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignOrderBioinformaticianHint}" />
+          <ui:param
+            name="tab"
+            value="reassignorderbioinformatician" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('employeeManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{userList.revokeRoleTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskRevokeRole}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskRevokeRoleHint}" />
+          <ui:param
+            name="tab"
+            value="revokerole" />
+        </ui:include>
+
+        <c:if test="#{configuration.instrumentReservationEnabled}">
+          <ui:include src="/fragments/sidebar/tasks.xhtml">
+            <ui:param
+              name="content"
+              value="#{instrumentList.reassignInstrumentSupervisorTasks}" />
+            <ui:param
+              name="label"
+              value="#{messages.taskReassignInstrumentSupervisor}" />
+            <ui:param
+              name="hint"
+              value="#{messages.taskReassignInstrumentSupervisor}" />
+            <ui:param
+              name="tab"
+              value="reassigninstrumentsupervisor" />
+          </ui:include>
+
+          <ui:include src="/fragments/sidebar/tasks.xhtml">
+            <ui:param
+              name="content"
+              value="#{instrumentList.reassignInstrumentAdminTasks}" />
+            <ui:param
+              name="label"
+              value="#{messages.taskReassignInstrumentAdmin}" />
+            <ui:param
+              name="hint"
+              value="#{messages.taskReassignInstrumentAdmin}" />
+            <ui:param
+              name="tab"
+              value="reassigninstrumentadmin" />
+          </ui:include>
+        </c:if>
+
+        <c:if test="#{identityManager.hasCurrentUserRole('serviceManager')}">
+          <ui:include src="/fragments/sidebar/tasks.xhtml">
+            <ui:param
+              name="content"
+              value="#{serviceTypeList.reassignServiceTypeCoachTasks}" />
+            <ui:param
+              name="label"
+              value="#{messages.taskReassignServiceTypeCoach}" />
+            <ui:param
+              name="hint"
+              value="#{messages.taskReassignServiceTypeCoachHint}" />
+            <ui:param
+              name="tab"
+              value="reassignservicetypecoach" />
+          </ui:include>
+
+          <ui:include src="/fragments/sidebar/tasks.xhtml">
+            <ui:param
+              name="content"
+              value="#{serviceTypeList.reassignServiceTypeCoachBackupTasks}" />
+            <ui:param
+              name="label"
+              value="#{messages.taskReassignServiceTypeCoachBackup}" />
+            <ui:param
+              name="hint"
+              value="#{messages.taskReassignServiceTypeCoachBackupHint}" />
+            <ui:param
+              name="tab"
+              value="reassignservicetypecoachbackup" />
+          </ui:include>
+        </c:if>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{userGroupList.reassignUserGroupSupervisorTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignUserGroupSupervisor}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignUserGroupSupervisor}" />
+          <ui:param
+            name="tab"
+            value="reassignusergroupsupervisor" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{submitterList.reassignSubmitterSupervisorTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignSubmitterSupervisor}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignSubmitterSupervisor}" />
+          <ui:param
+            name="tab"
+            value="reassignsubmittersupervisor" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{wrapperCreatorList.reassignWrapperCreatorSupervisorTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignWrapperCreatorSupervisor}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignWrapperCreatorSupervisor}" />
+          <ui:param
+            name="tab"
+            value="reassignwrappercreatorsupervisor" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{executableList.reassignExecutableSupervisorTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignExecutableSupervisor}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignExecutableSupervisor}" />
+          <ui:param
+            name="tab"
+            value="reassignexecutablesupervisor" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{applicationList.reassignApplicationSupervisorTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignApplicationSupervisor}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignApplicationSupervisorHint}" />
+          <ui:param
+            name="tab"
+            value="reassignapplicationsupervisor" />
+        </ui:include>
+
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{storageList.reassignStorageSupervisorTasks}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskReassignStorageSupervisor}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReassignStorageSupervisor}" />
+          <ui:param
+            name="tab"
+            value="reassignstoragesupervisor" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{configuration.accessRequestEnabled and identityManager.hasCurrentUserRole('accessRequestManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{accessRequestList.processAccessRequestTasksLazyModel}" />
+          <ui:param
+            name="label"
+            value="#{messages.taskProcessAccessRequest}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskProcessAccessRequestHint}" />
+          <ui:param
+            name="tab"
+            value="processaccessrequest" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{configuration.feedbackEnabled and identityManager.hasCurrentUserRole('feedbackManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{feedbackList.getUnacknowledgedFeedbacksByTechnology(currentUser.technologyHead)}" />
+          <ui:param
+            name="label"
+            value="#{messages.acknowledgeFeedbacks}" />
+          <ui:param
+            name="hint"
+            value="#{messages.acknowledgeFeedbacks}" />
+          <ui:param
+            name="tab"
+            value="feedbacks" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="label"
+            value="#{messages.taskReleaseAnnotation}" />
+          <ui:param
+            name="hint"
+            value="#{messages.taskReleaseAnnotationHint}" />
+          <ui:param
+            name="tab"
+            value="releaseannotation" />
+          <ui:param
+            name="showAlways"
+            value="true" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('reviewManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param
+            name="content"
+            value="#{containerList.financeSourceToBeChecked}" />
+          <ui:param
+            name="label"
+            value="#{messages.checkFinanceSource}" />
+          <ui:param
+            name="hint"
+            value="#{messages.checkFinanceSourceHint}" />
+          <ui:param
+            name="tab"
+            value="checkfinancesource" />
+        </ui:include>
+      </c:if>
+
+      <c:if test="#{configuration.dataManagementEnabled and identityManager.hasCurrentUserRole('archiveManager')}">
+        <ui:include src="/fragments/sidebar/tasks.xhtml">
+          <ui:param name="content" value="#{jobList.unarchiveJobs}" />
+          <ui:param name="label" value="#{messages.unarchive}" />
+          <ui:param name="hint" value="#{messages.unarchiveHint}" />
+          <ui:param name="tab" value="unarchive" />
+        </ui:include>
+      </c:if>
+    </h:panelGrid>
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="#{sidebarHelper.body}" />
+  </ui:define>
+</ui:composition>

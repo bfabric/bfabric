@@ -1,0 +1,155 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.CommentDiscriminator" />
+  <h:panelGroup id="show-comments">
+    <c:set
+      value="#{commentHelper.orderCommentsShown}"
+      var="isOrderCommentsShown"
+      scope="session" />
+    <c:set
+      value="#{commentHelper.pinnedCommentsShown}"
+      var="isPinnedCommentsShown"
+      scope="session" />
+    <h:panelGroup id="actionsGroup">
+      <h:panelGrid
+        columns="7"
+        styleClass="action"
+        rendered="#{category.equals(constants.COMMENT_CATEGORY_COMMENT) and showform}">
+        <p:button
+          outcome="/comment/edit.xhtml"
+          value="#{messages.addComment}"
+          title="#{isOrderCommentsShown ? messages.addCommentEnableHint : messages.addCommentHint}"
+          rendered="#{not identityManager.hasCurrentUserRole('commentManager')}"
+          disabled="#{isOrderCommentsShown}">
+          <f:param
+            name="parentId"
+            value="#{parent.id}" />
+          <f:param
+            name="type"
+            value="#{type}" />
+          <f:param
+            name="internal"
+            value="false" />
+        </p:button>
+        <p:button
+          outcome="/comment/edit.xhtml"
+          value="#{messages.addExternalComment}"
+          title="#{isOrderCommentsShown ? messages.addCommentEnableHint : messages.addCommentExternalHint}"
+          rendered="#{identityManager.hasCurrentUserRole('commentManager') and not commentHelper.isPlateOrRunComment(type)}"
+          disabled="#{isOrderCommentsShown}">
+          <f:param
+            name="parentId"
+            value="#{parent.id}" />
+          <f:param
+            name="type"
+            value="#{type}" />
+          <f:param
+            name="internal"
+            value="false" />
+        </p:button>
+        <p:button
+          outcome="/comment/edit.xhtml"
+          value="#{messages.addInternalComment}"
+          title="#{isOrderCommentsShown ? messages.addCommentEnableHint : messages.addCommentInternalHint}"
+          rendered="#{identityManager.hasCurrentUserRole('commentManager')}"
+          disabled="#{isOrderCommentsShown}">
+          <f:param
+            name="parentId"
+            value="#{parent.id}" />
+          <f:param
+            name="type"
+            value="#{type}" />
+          <f:param
+            name="internal"
+            value="true" />
+        </p:button>
+        <h:panelGroup rendered="#{commentHelper.isParentContainerTrackable(parent)}">
+          <ui:include src="/fragments/button/track-container.xhtml" />
+        </h:panelGroup>
+        <h:panelGroup rendered="#{commentHelper.isOrderCommentsShowButtonRendered(parent, type)}">
+          <p:commandButton
+            action="#{commentHelper.switchOrderCommentsShown}"
+            value="#{not isOrderCommentsShown ? messages.showOrderComments : messages.hideOrderComments} (#{commentHelper.getOrderCommentCountByProject(parent)})"
+            title="#{not isOrderCommentsShown ? messages.showOrderCommentsHint : messages.hideOrderCommentsHint}"
+            process="@this"
+            update="show-comments"
+            styleClass="#{isOrderCommentsShown ? 'order-comment-header' : ''}" />
+        </h:panelGroup>
+        <h:panelGroup rendered="#{commentHelper.isSwitchPinnedCommentsButtonRendered(parent, type)}">
+          <p:commandButton
+            action="#{commentHelper.switchPinnedCommentsShown}"
+            value="#{not isPinnedCommentsShown ? messages.showPinnedComments : messages.hidePinnedComments} (#{commentHelper.getCountPinnedByParentAndType(parent, type)})"
+            title="#{not isPinnedCommentsShown ? messages.showPinnedCommentsHint : messages.hidePinnedCommentsHint}"
+            process="@this"
+            update="show-comments"
+            styleClass="#{isPinnedCommentsShown ? 'pinned-comment-header' : ''}" />
+        </h:panelGroup>
+        <h:panelGroup rendered="#{commentHelper.isParentContainer(parent)}">
+          <h:panelGroup rendered="#{not empty parent.coach and not parent.coach.available}">
+            <h:outputText value="&#160;#{messages.coach} " />
+            <ui:include src="/fragments/user-link.xhtml">
+              <ui:param
+                name="instance"
+                value="#{parent.coach}" />
+            </ui:include>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{not empty parent.coachBackup and not parent.coachBackup.available}">
+            <h:outputText value="&#160;#{messages.coachBackup} " />
+            <ui:include src="/fragments/user-link.xhtml">
+              <ui:param
+                name="instance"
+                value="#{parent.coachBackup}" />
+            </ui:include>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{not empty parent.bioinformatician and not parent.bioinformatician.available}">
+            <h:outputText value="&#160;#{messages.bioinformatician} " />
+            <ui:include src="/fragments/user-link.xhtml">
+              <ui:param
+                name="instance"
+                value="#{parent.bioinformatician}" />
+            </ui:include>
+          </h:panelGroup>
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:panelGroup>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action"
+      rendered="#{category.equals(constants.COMMENT_CATEGORY_NOTE) and showform}">
+      <p:button
+        outcome="/comment/edit.xhtml"
+        value="#{messages.addNote}">
+        <f:param
+          name="parentId"
+          value="#{parent.id}" />
+        <f:param
+          name="type"
+          value="#{type}" />
+      </p:button>
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action"
+      rendered="#{category.equals(constants.COMMENT_CATEGORY_RESULT) and showform}">
+      <p:button
+        outcome="/comment/edit.xhtml"
+        value="#{messages.addResult}">
+        <f:param
+          name="parentId"
+          value="#{parent.id}" />
+        <f:param
+          name="type"
+          value="#{type}" />
+      </p:button>
+    </h:panelGrid>
+
+    <ui:include src="/comment/list-by-parent.xhtml" />
+  </h:panelGroup>
+</ui:composition>

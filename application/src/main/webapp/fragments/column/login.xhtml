@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('userLogin')}">
+    <p:column
+      sortable="#{empty sortable ? true : sortable}"
+      filterable="#{empty filterable ? true : filterable}"
+      field="#{fieldPrefix}login"
+      headerText="#{messages.login}"
+      exportValue="#{empty entityValue ? entity.login : entityValue.login}">
+      <ui:include src="/fragments/user-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{empty entityValue ? entity : entityValue}" />
+        <ui:param
+          name="entityValue"
+          value="#{empty entityValue ? entity.login : entityValue.login}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

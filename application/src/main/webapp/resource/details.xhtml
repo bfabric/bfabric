@@ -1,0 +1,81 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <!--@elvariable id="instance" type="org.bfabric.entity.Resource"-->
+    <ui:include src="/resource/details-content.xhtml" />
+
+    <h:panelGrid
+      id="detailsActions"
+      columns="6"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <p:commandButton
+        value="#{messages.addToResourceBasket}"
+        actionListener="#{resourceBasketHelper.addResourceToBasket(currentUser.selectedResourceBasket, instance)}"
+        title="#{messages.addResourceToBasketHint}"
+        disabled="#{currentUser.selectedResourceBasket.contains(instance) and identityManager.hasCurrentUserRole('user')}"
+        disableOnAjax="false"
+        update="detailsActions, pageTitle" />
+      <p:commandButton
+        id="markAsJunkButton"
+        value="#{messages.junk}"
+        title="#{messages.markAsJunk}"
+        rendered="#{not instance.junk and instance.junkButtonRendered}"
+        oncomplete="PF('markAsJunkDialog').show()" />
+      <p:commandButton
+        id="unmarkJunk"
+        action="#{resourceManager.junk}"
+        value="#{messages.junkNo}"
+        title="#{messages.junkNoHint}"
+        rendered="#{instance.junk and instance.junkButtonRendered}" />
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+      <p:dialog
+        id="markAsJunkModal"
+        widgetVar="markAsJunkDialog"
+        dynamic="true"
+        resizable="false"
+        modal="true"
+        onShow="repositionDialog()"
+        width="800">
+        <f:facet name="header">
+          <h:outputText
+            id="markAsJunkHeader"
+            value="#{messages.markAsJunk}" />
+        </f:facet>
+        <h:form ajaxSubmit="true">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtd, ltd">
+            <h:outputText value="#{messages.junkComment}" />
+            <h:inputText
+              value="#{instance.junkComment}"
+              title="#{messages.junkCommentHint}"
+              styleClass="editWidthExtraLarge" />
+          </h:panelGrid>
+          <h:panelGrid
+            columns="2"
+            styleClass="action">
+            <p:commandButton
+              action="#{resourceManager.junk}"
+              value="#{messages.save}"
+              title="#{messages.junkHint}"
+              global="false"
+              oncomplete="PF('markAsJunkDialog').hide()"
+              update="@form" />
+            <p:commandButton
+              value="#{messages.cancel}"
+              global="false"
+              oncomplete="PF('markAsJunkDialog').hide()" />
+          </h:panelGrid>
+        </h:form>
+      </p:dialog>
+    </h:panelGrid>
+    <ui:include src="/fragments/button/prevNextInContainer.xhtml" />
+    <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+  </c:if>
+</ui:composition>

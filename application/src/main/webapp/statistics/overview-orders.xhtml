@@ -1,0 +1,111 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.orders} #{messages.overview}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p:spacer height="10" />
+    <h:form>
+      <h:panelGroup>
+        <p:lineChart
+          model="#{lineChart.get([statisticsList.getOrganizationsUZHOrdersYearly(), statisticsList.getOrganizationsETHOrdersYearly(), statisticsList.getOrganizationsETHUZHOrdersYearly(), statisticsList.getOrganizationsOtherOrgOrdersYearly(), statisticsList.getCompaniesOrdersYearly()], messages.kpiOrderOrganization, messages.year, messages.total, ['0033CC', '0099FF', '00DDFF', 'DDDD00', 'BBBB00'], [messages.uzhZurich, messages.ethZurich, messages.ethzUzh, messages.otherOrganizations, messages.companies])}"
+          style="height:350px; width:900px" />
+      </h:panelGroup>
+
+      <p:spacer height="20" />
+
+      <h:panelGrid columns="5">
+        <p:pieChart
+          model="#{pieChart.get(statisticsList.getOrderPerOrgType(), messages.orderOrganizationType, messages.days, ['0033CC', '0099FF', '00DDFF', 'DDDD00', 'BBBB00'])}"
+          style="width:300px" />
+        <p:spacer height="20" />
+        <p:pieChart
+          model="#{pieChart.get(statisticsList.getOrderPerOrganizationZH(), messages.orderOrganizationZH, messages.days, ['0066FF', '0033CC', '000099'])}"
+          style="width:300px" />
+        <p:spacer height="20" />
+        <h:panelGroup>
+          <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="order-per-year" /> <ui:param name="label" value="#{messages.orders} #{messages.per} #{messages.year}" /></ui:include>
+          </p>
+          <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="order-per-organization" /> <ui:param name="label" value="#{messages.ordersByOrganization}" /></ui:include></p>
+          <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="order-organization-charges" /> <ui:param name="label"
+                                                                                                                           value="#{messages.orderChargesByOrganizationService}" /></ui:include></p>
+          <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="order-per-company" /> <ui:param name="label" value="#{messages.ordersByCompany}" /></ui:include></p>
+          <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="order-company-charges" /> <ui:param name="label" value="#{messages.orderChargesByCompanyService}" /></ui:include></p>
+
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <p:spacer height="20" />
+      <h:panelGrid columns="5">
+        <p:lineChart
+          model="#{lineChart.get([statisticsList.getYearlyOrderTechGenomics(), statisticsList.getYearlyOrderTechProteomics(), statisticsList.getYearlyOrderTechMetabolomics()], messages.orderPerTechnology, messages.year, messages.total, ['FF0000', 'FF9900', '996600'], [messages.genomics, messages.proteomics, messages.metabolomicsBiophysics])}"
+          style="height:280px; width:600px" />
+        <p:spacer width="20" />
+        <p:pieChart
+          model="#{pieChart.get(statisticsList.getOrderTechnology(), messages.orderPerTechnology, messages.days, ['FF0000', 'FF9900', '996600'])}"
+          style="width:300px" />
+        <p:spacer width="20" />
+        <h:panelGroup>
+          <p><ui:include src="table-link.xhtml"> <ui:param name="filename" value="order-per-technology" /> <ui:param name="label" value="#{messages.ordersByTechnology}" /></ui:include></p>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <p:spacer height="50" />
+      <h:panelGrid columns="1">
+        <h:outputText value="#{messages.top10} #{messages.order} #{messages.requesters} #{messages.byYear}" styleClass="bold" />
+        <p:selectOneMenu
+          value="#{statisticsManager.selectedYear}"
+          valueChangeListener="#{statisticsManager.selectedYearChanged}"
+          filter="true"
+          filterMatchMode="contains">
+          <f:selectItem itemLabel="#{messages.selectYear}" />
+          <f:selectItems
+            value="#{statisticsList.getYearRequester()}"
+            var="item" />
+          <p:ajax
+            event="change"
+            global="false"
+            update="orderRequesters" />
+        </p:selectOneMenu>
+      </h:panelGrid>
+
+      <p:spacer height="20" />
+      <h:panelGrid id="orderRequesters" columns="3">
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="orderRequesters" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsList.getTopRequesterPerYear(statisticsManager.selectedYear)}" />
+          <ui:param
+            name="include"
+            value="/statistics/overview-orders-requester-per-year-columns.xhtml" />
+          <ui:param
+            name="rowsPerPageDropdown"
+            value="all" />
+          <ui:param
+            name="exportSuffix"
+            value="#{statisticsManager.selectedYear}" />
+        </ui:include>
+        <p:spacer height="20" />
+        <p:barChart
+          model="#{barChart.getHorizontal(statisticsList.getTopRequesterPerYear(statisticsManager.selectedYear), messages.totalRequestedOrders, null, messages.orders, null, null)}"
+          style="width:300px;width:500px" />
+      </h:panelGrid>
+      <p>
+        <ui:include src="table-link.xhtml"> <ui:param name="filename" value="order-per-requester" /> <ui:param name="label" value="#{messages.ordersByRequester}" /></ui:include>
+        <p:spacer width="20" />
+        <ui:include src="table-link.xhtml"><ui:param name="filename" value="order-charges" /> <ui:param name="label" value="#{messages.orders} #{messages.charges}" /></ui:include>
+      </p>
+    </h:form>
+  </ui:define>
+</ui:composition>

@@ -1,0 +1,28 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('serviceType')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <ui:include src="/fragments/column/entity-link-name.xhtml">
+        <ui:param
+          name="field"
+          value="#{fieldPrefix}serviceType.name" />
+        <ui:param
+          name="headerText"
+          value="#{messages.serviceType}" />
+        <ui:param
+          name="instance"
+          value="#{entity.serviceType}" />
+        <ui:param
+          name="styleClass"
+          value="width-200 textEllipsis" />
+      </ui:include>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}serviceType.name"
+        headerText="#{messages.serviceType}" />
+    </c:if>
+  </c:if>
+</ui:composition>

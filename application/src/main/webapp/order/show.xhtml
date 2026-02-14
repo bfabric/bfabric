@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{orderManager}" />
+
+  <ui:decorate template="/fragments/sidebar/show.xhtml">
+    <ui:define name="pageTitleSuffix">
+      <c:if test="#{instance.downloadable}">
+        <ui:include src="/fragments/confirm-download-container-modal.xhtml">
+          <ui:param name="containerId" value="#{instance.id}" />
+          <ui:param name="containerSize" value="#{instance.getFullSize(false)}" />
+          <ui:param name="isContainerProject" value="#{instance.containerProject}" />
+        </ui:include>
+        <p:commandLink
+          title="#{messages.downloadContainerHint}"
+          immediate="true"
+          oncomplete="PF('confirmContainerDownloadDialog').show()">
+          <i class="fas fa-download download-icon icon-button-padding" />
+        </p:commandLink>
+        <a
+          href="#{configuration.urlUserManual}?page=ContainerDownload"
+          title="#{messages.downloadHelpLink}"
+          target="_blank"
+          rel="noopener"><i class="far fa-question-circle download-icon" /></a>
+      </c:if>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

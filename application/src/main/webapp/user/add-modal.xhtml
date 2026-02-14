@@ -1,0 +1,229 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <!--@elvariable id="containerModalUser" type="org.bfabric.entity.User"-->
+  <!--@elvariable id="manager" type="org.bfabric.manager.ContainerManager"-->
+  <c:set
+    value="#{manager.modalUser}"
+    var="containerModalUser"
+    scope="session" />
+  <p:dialog
+    id="addUserPanel"
+    widgetVar="addUserDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText
+        id="addUserHeader"
+        value="#{messages.createUser}" />
+    </f:facet>
+    <h:form id="addUser">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.title}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="title"
+            value="#{containerModalUser.title}"
+            styleClass="editWidthSmall">
+            <f:selectItem itemLabel="" />
+            <f:selectItem itemValue="Dr." />
+            <f:selectItem itemValue="Prof. Dr." />
+            <p:ajax
+              event="change"
+              global="false"
+              update="@this, addUser" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.salutation}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:selectOneMenu
+            id="salutation"
+            value="#{containerModalUser.salutation}"
+            required="true"
+            styleClass="editWidthSmall">
+            <f:selectItem
+              itemLabel="#{messages.select}"
+              itemDisabled="true"
+              noSelectionOption="true" />
+            <f:selectItem itemValue="Mr" />
+            <f:selectItem itemValue="Ms" />
+            <p:ajax
+              event="change"
+              global="false"
+              update="@this, addUser" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.firstName}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="firstName"
+            value="#{containerModalUser.firstName}"
+            styleClass="editWidthExtraLarge">
+            <p:ajax
+              event="change"
+              global="false"
+              update="@this, addUser" />
+          </h:inputText>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.lastName}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="lastName"
+            value="#{containerModalUser.lastName}"
+            styleClass="editWidthExtraLarge">
+            <p:ajax
+              event="change"
+              global="false"
+              update="@this, addUser" />
+          </h:inputText>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <ui:include src="/fragments/select-affiliations.xhtml">
+        <ui:param
+          name="callerEntity"
+          value="#{containerModalUser}" />
+        <ui:param
+          name="caller"
+          value="member" />
+      </ui:include>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.email}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="email"
+            value="#{containerModalUser.email}"
+            validator="#{containerModalUser.validateEmail}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.phone}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:panelGrid
+            id="phone"
+            columns="8"
+            styleClass="noborder-rightpadding">
+            <h:outputText value="#{messages.countryCode}" />
+            <h:selectOneMenu
+              id="selectPhoneCountryCode"
+              value="#{containerModalUser.phoneNumber.countryCode}"
+              required="true">
+              <f:selectItem
+                itemLabel=""
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{countryList.countryDialingCodes}"
+                var="item"
+                itemLabel="#{item}" />
+            </h:selectOneMenu>
+            <h:outputText value="#{messages.areaCode}" />
+            <p:inputMask
+              id="phoneAreaCode"
+              value="#{containerModalUser.phoneNumber.areaCode}"
+              mask="9[999]"
+              size="4" />
+            <p:message
+              for="phoneAreaCode"
+              styleClass="errorMessage" />
+            <h:outputText value="#{messages.localNumber}" />
+            <p:inputMask
+              id="phoneLocalNumber"
+              value="#{containerModalUser.phoneNumber.localNumber}"
+              mask="9[9999999]"
+              size="8" />
+            <p:message
+              for="phoneLocalNumber"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.street}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="address"
+            value="#{containerModalUser.address.street}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.zip}" title="#{messages.zipHint}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="zip"
+            value="#{containerModalUser.address.zip}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.city}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="city"
+            value="#{containerModalUser.address.city}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.country}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="country" />
+          <ui:param
+            name="value"
+            value="#{containerModalUser.address.country}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{countryService.getCountriesByIdOrNameFiltered}" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.displayName}" />
+        </ui:include>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="saveUserButton"
+          action="#{manager.saveNewMember}"
+          value="#{messages.save}"
+          global="true"
+          update="addUser, @([id$=financeSourceGrid]), @([id$=budgetofficerautocomplete]), @([id$=leaderautocomplete]), @([id$=contactautocomplete]), @([id$=requesterautocomplete]), @([id$=billinginfo])"
+          oncomplete="hideDialogOnSuccess(args, 'addUserDialog')" />
+        <p:commandButton
+          id="cancelUserButton"
+          action="cancel"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('addUserDialog').hide()" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        rendered="#{containerModalUser.matchingUserRendered}"
+        columns="1">
+        <h:outputText
+          value="#{messages.userMatchExistsHint}"
+          styleClass="warning" />
+        <ui:include src="/user/select-modal.xhtml">
+          <ui:param
+            name="parent"
+            value="#{containerModalUser}" />
+        </ui:include>
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+  <ui:include src="/institute/add-modal.xhtml" />
+</ui:composition>

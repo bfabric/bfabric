@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(instance.editable)}" />
+  </f:metadata>
+
+  <h:panelGroup>
+    <c:if test="#{not instance.managed}">
+      <h:outputText value="#{messages.create} #{instance.classLabel}" />
+    </c:if>
+    <c:if test="#{instance.managed}">
+      <h:outputText value="#{messages.edit}  #{instance.classLabel} : #{instance.displayName}" />
+    </c:if>
+  </h:panelGroup>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <tr>
+    <td class="instrumentreservationfirstcolumn" />
+    <ui:repeat
+      var="slot"
+      value="#{agendaInstrumentReservationHelper.headSlots}">
+      <td
+        class="slotHeader"
+        style="#{slot.dayColor}">
+        <h:outputText
+          value="#{slot.dayOfMonth}" />
+        <br />
+        <h:outputText
+          value="#{slot.weekday}" />
+      </td>
+    </ui:repeat>
+  </tr>
+</ui:composition>

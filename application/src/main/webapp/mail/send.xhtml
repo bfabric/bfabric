@@ -1,0 +1,416 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('mailSender')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.composeMessage}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="send-mail">
+      <h:panelGroup rendered="#{empty mailBatchManager.sendReportSafeHtml}">
+        <h:panelGrid columns="1">
+          <h:outputText value="#{messages.emailMacroHint}" />
+          <ul>
+            <li>#{messages.emailMacroLogin}</li>
+            <li>#{messages.emailMacroFullname}</li>
+            <li>#{messages.emailMacroEmail}</li>
+          </ul>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.subject}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="subject"
+              required="true"
+              value="#{mailBatchManager.subject}"
+              styleClass="editWidthExtraHuge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.message}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:textEditor
+              id="message"
+              value="#{mailBatchManager.message}"
+              required="true"
+              height="600px"
+              styleClass="editWidthExtraHuge">
+              <f:facet name="toolbar">
+                <span class="ql-formats">
+                  <button class="ql-bold" />
+                  <button class="ql-header" value="1" />
+                  <button class="ql-header" value="2" />
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-list" value="ordered" />
+                  <button class="ql-list" value="bullet" />
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-link" />
+                </span>
+              </f:facet>
+            </p:textEditor>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="recipientsGrid"
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{mailBatchManager.userSelectionEnabled}">
+          <c:if test="#{identityManager.hasCurrentUserRole('programmeManager')}">
+            <h:outputText value="#{messages.force}" />
+            <h:panelGroup styleClass="align-middle">
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:selectBooleanCheckbox
+                  id="forced"
+                  value="#{mailBatchManager.forced}"
+                  valueChangeListener="#{mailBatchManager.forcedChanged}"
+                  immediate="true">
+                  <p:ajax
+                    event="change"
+                    immediate="true"
+                    global="false"
+                    update="send-mail:selectedUsersGrid" />
+                </p:selectBooleanCheckbox>
+                <h:panelGroup styleClass="ui-selectmanycheckbox">
+                  <h:outputLabel
+                    for="forced"
+                    value="#{messages.forceMailSendHint}"
+                    styleClass=" pending" />
+                </h:panelGroup>
+              </ui:decorate>
+            </h:panelGroup>
+          </c:if>
+
+          <h:outputText value="#{messages.roleGroups}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:selectManyCheckbox
+              id="roleGroups"
+              valueChangeListener="#{mailBatchManager.roleGroupsChanged}"
+              immediate="true"
+              layout="grid"
+              columns="3">
+              <f:selectItems
+                value="#{mailBatchManager.roleGroups}"
+                var="item"
+                itemLabel="#{item}"
+                itemValue="#{item}" />
+              <p:ajax
+                event="change"
+                update="send-mail:selectedUsersGrid" />
+            </p:selectManyCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.technology}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:selectManyCheckbox
+              id="technology"
+              valueChangeListener="#{mailBatchManager.technologiesChanged}"
+              immediate="true"
+              layout="grid"
+              columns="4"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{technologyList.resultList}"
+                var="item"
+                itemLabel="#{item.name}"
+                itemValue="#{item}" />
+              <p:ajax
+                event="change"
+                update="send-mail:selectedUsersGrid" />
+            </p:selectManyCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.userGroups}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:selectManyCheckbox
+              id="userGroups"
+              valueChangeListener="#{mailBatchManager.userGroupsChanged}"
+              immediate="true"
+              layout="grid"
+              columns="5"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{mailBatchManager.userGroups}"
+                var="item"
+                itemLabel="#{item.name}"
+                itemValue="#{item}" />
+              <p:ajax
+                event="change"
+                update="send-mail:selectedUsersGrid" />
+            </p:selectManyCheckbox>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="containersGrid"
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{mailBatchManager.userSelectionEnabled}">
+          <h:outputText value="#{messages.container}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid
+              id="containers"
+              columns="6"
+              styleClass="rightpadding">
+              <h:panelGroup styleClass="align-middle">
+                <p:selectBooleanCheckbox
+                  id="containerMembers"
+                  value="#{mailBatchManager.containerMembers}"
+                  title="#{messages.selectContainerMembersHint}">
+                  <p:ajax
+                    process="@this"
+                    global="false" />
+                </p:selectBooleanCheckbox>
+                <h:panelGroup styleClass="ui-selectmanycheckbox">
+                  <h:outputLabel
+                    for="containerMembers"
+                    value="#{messages.member}" />
+                </h:panelGroup>
+              </h:panelGroup>
+              <h:panelGroup styleClass="align-middle">
+                <p:selectBooleanCheckbox
+                  id="containerManagers"
+                  value="#{mailBatchManager.containerManagers}"
+                  title="#{messages.selectContainerManagersHint}">
+                  <p:ajax
+                    process="@this"
+                    global="false" />
+                </p:selectBooleanCheckbox>
+                <h:panelGroup styleClass="ui-selectmanycheckbox">
+                  <h:outputLabel
+                    for="containerManagers"
+                    value="#{messages.manager}" />
+                </h:panelGroup>
+              </h:panelGroup>
+              <p:inputText
+                id="containerId"
+                value="#{mailBatchManager.containerId}"
+                maxlength="5"
+                size="5">
+                <p:ajax
+                  process="@this"
+                  global="false" />
+              </p:inputText>
+              <p:commandButton
+                action="#{mailBatchManager.addContainerMembersManagers()}"
+                value="#{messages.add}"
+                title="#{messages.selectRecipientHint}"
+                immediate="true"
+                update="send-mail:containersGrid, send-mail:selectedUsersGrid">
+                <p:resetInput target="containersGrid" />
+              </p:commandButton>
+            </h:panelGrid>
+          </ui:decorate>
+
+          <c:if test="#{not empty mailBatchManager.containerIds}">
+            <h:outputText value="#{messages.selectedContainers}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <p:dataTable
+                id="containersTable"
+                value="#{mailBatchManager.containerIds}"
+                var="item"
+                styleClass="hide-table-header"
+                style="margin-bottom: 4px">
+                <p:column>
+                  <h:outputText value="#{item}" />
+                </p:column>
+                <p:column>
+                  <h:outputText value="#{stringHelper.truncate(mailBatchManager.containerMap[item], 70)}" />
+                </p:column>
+                <p:column>
+                  <h:outputText value="#{mailBatchManager.addedContainerManagerMembers(item)}" />
+                </p:column>
+                <p:column>
+                  <p:commandButton
+                    action="#{mailBatchManager.deselectContainer(item)}"
+                    value="#{messages.remove}"
+                    immediate="true"
+                    global="false"
+                    update="send-mail:containersGrid, send-mail:selectedUsersGrid"
+                    styleClass="inline">
+                  </p:commandButton>
+                </p:column>
+              </p:dataTable>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="serviceTypesGrid"
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{mailBatchManager.userSelectionEnabled}">
+          <h:outputText value="#{messages.serviceType} (#{messages.requesters})" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid
+              id="serviceTypes"
+              columns="6"
+              styleClass="rightpadding">
+              <p:inputText
+                id="serviceTypeId"
+                value="#{mailBatchManager.serviceTypeId}"
+                maxlength="5"
+                size="5">
+                <p:ajax
+                  process="@this"
+                  global="false" />
+              </p:inputText>
+              <p:commandButton
+                action="#{mailBatchManager.addServiceTypeUsers()}"
+                value="#{messages.add}"
+                title="#{messages.selectRecipientHint}"
+                immediate="true"
+                update="send-mail:serviceTypesGrid, send-mail:selectedUsersGrid">
+                <p:resetInput target="serviceTypesGrid" />
+              </p:commandButton>
+            </h:panelGrid>
+          </ui:decorate>
+
+          <c:if test="#{not empty mailBatchManager.serviceTypeIds}">
+            <h:outputText value="#{messages.selectedServiceTypes}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <p:dataTable
+                id="serviceTypesTable"
+                value="#{mailBatchManager.serviceTypeIds}"
+                var="item"
+                styleClass="hide-table-header"
+                style="margin-bottom: 4px">
+                <p:column>
+                  <h:outputText value="#{item}" />
+                </p:column>
+                <p:column>
+                  <h:outputText value="#{stringHelper.truncate(mailBatchManager.serviceTypeMap[item].displayName, 70)}" />
+                </p:column>
+                <p:column>
+                  <p:commandButton
+                    action="#{mailBatchManager.deselectServiceType(item)}"
+                    value="#{messages.remove}"
+                    immediate="true"
+                    global="false"
+                    update="send-mail:serviceTypesGrid, send-mail:selectedUsersGrid"
+                    styleClass="inline">
+                  </p:commandButton>
+                </p:column>
+              </p:dataTable>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGroup id="selectedUsersGrid">
+          <h:panelGrid
+            rendered="#{mailBatchManager.userSelectionEnabled}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="Selected #{mailBatchManager.selectedSize} Recipients" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:panelGrid
+                id="actions"
+                columns="3"
+                cellspacing="0"
+                cellpadding="0">
+                <p:commandButton
+                  action="#{mailBatchManager.clear}"
+                  value="#{messages.clearRecipients}"
+                  title="#{messages.clearRecipientsHint}"
+                  immediate="true"
+                  global="false"
+                  update="send-mail:recipientsGrid, send-mail:containersGrid, send-mail:serviceTypesGrid, send-mail:selectedUsersGrid">
+                  <p:resetInput target="send-mail:recipientsGrid" />
+                </p:commandButton>
+                <p:commandButton
+                  action="#{mailBatchManager.showDetails}"
+                  value="#{messages.showDetailedSelection}"
+                  title="#{messages.showDetailedSelectionHint}"
+                  rendered="#{not mailBatchManager.detailedSelection or empty mailBatchManager.potentialRecipients}"
+                  immediate="true"
+                  global="false"
+                  update="send-mail:selectedUsersGrid"
+                  disabled="#{empty mailBatchManager.potentialRecipients}" />
+                <p:commandButton
+                  action="#{mailBatchManager.hideDetails}"
+                  value="#{messages.hideDetailedSelection}"
+                  title="#{messages.hideDetailedSelectionHint}"
+                  rendered="#{mailBatchManager.detailedSelection and not empty mailBatchManager.potentialRecipients}"
+                  immediate="true"
+                  global="false"
+                  update="send-mail:selectedUsersGrid" />
+              </h:panelGrid>
+            </ui:decorate>
+          </h:panelGrid>
+
+          <h:panelGrid
+            id="selectedRecipients"
+            rendered="#{mailBatchManager.detailedSelection and not empty mailBatchManager.potentialRecipients}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="&#160;" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="tableContext"
+                  value="sendmailrecipients" />
+                <ui:param
+                  name="tableContent"
+                  value="#{mailBatchManager.potentialRecipients}" />
+                <ui:param
+                  name="include"
+                  value="/mail/send-columns.xhtml" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGrid>
+
+          <h:panelGroup rendered="#{mailBatchManager.selectedSize > 100}">
+            <p><h:outputText value="#{messages.massMailSendHint}" styleClass="warning" /></p>
+          </h:panelGroup>
+
+          <h:panelGrid
+            columns="3"
+            styleClass="action">
+            <p:commandButton
+              actionListener="#{mailBatchManager.sendBatch}"
+              value="#{messages.sendMail}"
+              disabled="#{not mailBatchManager.anyPotentialRecipientsChecked}"
+              update="@form" />
+            <p:commandButton
+              actionListener="#{mailBatchManager.sendMailCheck}"
+              value="#{messages.sendMailCheck}"
+              title="#{messages.sendMailCheckHint}"
+              update="@form" />
+            <p:commandButton
+              action="#{mailBatchManager.cancel}"
+              value="#{messages.cancel}"
+              title="#{messages.cancelSendMailHint}"
+              immediate="true" />
+          </h:panelGrid>
+        </h:panelGroup>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{not empty mailBatchManager.sendReportSafeHtml}">
+        <h:outputText
+          value="#{mailBatchManager.sendReportSafeHtml}"
+          escape="false" />
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <p:commandButton
+            actionListener="#{mailBatchManager.returnToForm}"
+            value="#{messages.returnToForm}"
+            update="@form" />
+          <ui:include src="/fragments/button/home.xhtml" />
+        </h:panelGrid>
+      </h:panelGroup>
+    </h:form>
+  </ui:define>
+</ui:composition>

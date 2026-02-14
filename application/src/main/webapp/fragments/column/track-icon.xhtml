@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('removeMembershipAndTrackContainerIcon') and user.identityUser}">
+    <p:column exportable="false">
+      <f:facet name="header">
+        <h:panelGroup id="headerGroup">
+          <i class="fas fa-link-slash" />
+        </h:panelGroup>
+        <p:tooltip
+          for="headerGroup"
+          showDelay="500"
+          value="#{messages.removeMembershipAndTrackContainerHint}" />
+      </f:facet>
+      <p:commandLink
+        rendered="#{entity.isMemberRemovable(user)}"
+        action="#{userManager.removeMembershipAndTrackContainer(entity, user)}"
+        title="#{messages.removeMembershipAndTrackContainerHint}">
+        <i class="fas fa-link-slash" />
+      </p:commandLink>
+    </p:column>
+  </c:if>
+</ui:composition>

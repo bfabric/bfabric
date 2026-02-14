@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.id}">
+    <h:outputText value="#{messages.id}" />
+    <h:outputText value="#{instance.id}#{showOldId ? ' '.concat(instance.oldId) : ''}" />
+  </c:if>
+</ui:composition>

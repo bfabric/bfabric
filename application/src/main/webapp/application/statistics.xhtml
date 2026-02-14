@@ -1,0 +1,25 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('statistics') and identityManager.hasCurrentUserRole('applicationReader')}">
+  <h:outputText rendered="#{empty statisticsList.getApplicationWorkunitsPerYear(app)}" value="#{messages.statisticsEmptyHint}" />
+    <p:spacer height="20" />
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="include" value="/application/applicationperyear-columns.xhtml" />
+      <ui:param name="tableContext" value="#{app.tableContext}_statistics" />
+      <ui:param name="tableContent" value="#{statisticsList.getApplicationWorkunitsPerYear(app)}" />
+      <ui:param name="rowsPerPageDropdown" value="all" />
+    </ui:include>
+    <p:spacer height="20" />
+    <p:barChart style="width:400px" model="#{barChart.getHorizontal(statisticsList.getApplicationWorkunitsChart(app), messages.workunits, null, messages.application, null, null, null)}" />
+    <p:spacer height="20" />
+    <p:barChart style="width:400px" model="#{barChart.getHorizontal(statisticsList.getApplicationResourcesChart(app), messages.resources, null, messages.application, null, null, null)}" />
+    <p:spacer height="20" />
+    <p:barChart style="width:400px" model="#{barChart.getHorizontal(statisticsList.getApplicationRunsChart(app), messages.runs, null, messages.application, null, null, null)}" />
+    <p:spacer height="20" />
+    <h:form>
+      <p:commandButton action="#{statisticsService.refreshMaterializedView('statistics_applicationid_year')}" value="#{messages.refresh}" />
+    </h:form>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.welcomeTo} #{configuration.deployerName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p>Continue by using the navigation menu.</p>
+  </ui:define>
+</ui:composition>

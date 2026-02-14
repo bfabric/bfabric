@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('requestBclFile')}">
+    <p:column
+      field="#{fieldPrefix}requestBclFile"
+      headerText="#{messages.requestBclFiles}"
+      filterMatchMode="exact">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="requestBclFile" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.requestBclFile)}"
+        styleClass="#{stringHelper.toGreenRed(entity.requestBclFile)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,56 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('selectCheckbox')}">
+    <p:column exportable="false">
+      <f:facet name="header">
+        <h:panelGrid
+          columns="1"
+          styleClass="nospace noborder">
+          <h:outputText value="#{messages.select}" />
+          <h:panelGrid
+            columns="2"
+            styleClass="select-icon">
+            <p:commandLink
+              actionListener="#{dataTableHelper.selectAll(true)}"
+              immediate="true"
+              global="false"
+              update="@form"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <i class="far fa-check-square" />
+            </p:commandLink>
+            <p:commandLink
+              actionListener="#{dataTableHelper.selectAll(false)}"
+              immediate="true"
+              global="false"
+              update="@form"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <i class="far fa-square" />
+            </p:commandLink>
+          </h:panelGrid>
+        </h:panelGrid>
+      </f:facet>
+      <h:selectBooleanCheckbox
+        value="#{dataTableHelper.selectedEntitiesMap[entity]}"
+        title="#{messages.selectBookingHint}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          listener="#{dataTableHelper.selectEntity(entity, dataTableHelper.selectedEntitiesMap[entity])}"
+          update="@this"
+          oncomplete="fixOversize();" />
+      </h:selectBooleanCheckbox>
+    </p:column>
+  </c:if>
+</ui:composition>

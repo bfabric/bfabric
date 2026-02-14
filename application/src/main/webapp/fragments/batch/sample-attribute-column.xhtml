@@ -1,0 +1,113 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{rendered and not empty sampleAttributeEnum.getUiIncludeColumnPath()}">
+    <ui:include src="#{sampleAttributeEnum.getUiIncludeColumnPath()}">
+      <!-- Common values -->
+      <ui:param
+        name="columnId"
+        value="#{columnId}" />
+      <ui:param
+        name="rendered"
+        value="#{rendered}" />
+      <ui:param
+        name="headerText"
+        value="#{headerText}" />
+      <ui:param
+        name="displayRequired"
+        value="#{displayRequired}" />
+      <ui:param
+        name="displayRequiredCell"
+        value="#{displayRequiredCell}" />
+      <ui:param
+        name="cellInputEnabled"
+        value="#{cellInputEnabled}" />
+      <ui:param
+        name="watermarkValue"
+        value="#{watermarkValue}" />
+      <ui:param
+        name="watermarkValueHint"
+        value="#{watermarkValueHint}" />
+      <ui:param
+        name="value"
+        value="#{value}" />
+      <ui:param
+        name="hideValueIfFieldDisabled"
+        value="#{not empty hideValueIfFieldDisabled and not hideValueIfFieldDisabled ? false : true}" />
+      <!-- String type specific values -->
+      <c:if test="#{sampleAttributeEnum.stringType}">
+        <ui:param
+          name="maxLength"
+          value="#{sampleAttributeEnum.maxLength}" />
+      </c:if>
+      <!-- Integer type specific values -->
+      <c:if test="#{sampleAttributeEnum.typeInteger}">
+        <ui:param
+          name="decimalPlaces"
+          value="0" />
+      </c:if>
+      <!-- Selection type specific values -->
+      <c:if test="#{sampleAttributeEnum.selectionType and not sampleAttributeEnum.annotationTypeMultiValued}">
+        <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.SAMPLE_PREPARATION_PROTOCOL and empty type}">
+          <ui:param
+            name="headerInputEnabled"
+            value="false" />
+        </c:if>
+        <ui:param
+          name="items"
+          value="#{bean.getSelectionValuesBySampleAttributeAndSampleType(sampleAttributeEnum, type)}" />
+        <ui:param
+          name="isEnum"
+          value="#{sampleAttributeEnum.enumType}" />
+        <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.QUALITY_CONTROL_TYPE}">
+          <ui:param
+            name="style"
+            value="width:300px !important;" />
+        </c:if>
+        <c:if test="#{sampleAttributeEnum eq SampleAttributeEnum.STATUS}">
+          <ui:param
+            name="style"
+            value="width:250px !important;" />
+        </c:if>
+        <c:if test="#{sampleAttributeEnum.selectionAndNotAnnotationType}">
+          <ui:param
+            name="entitySpecificItems"
+            value="#{bean.getSelectionValuesIncludingBySampleAttributeAndSample(sampleAttributeEnum, sampleEntity)}" />
+          <ui:param
+            name="style"
+            value="width:180px !important;" />
+        </c:if>
+      </c:if>
+      <!-- Illumina library calculation specific values for the CONCENTRATION_INPUT_QC from the initial qc -->
+      <c:if test="#{sampleAttributeEnum.typeDecimal and sampleAttributeEnum eq SampleAttributeEnum.CONCENTRATION_INPUT_QC}">
+        <ui:param
+          name="inputQcConcentrationDropdownRendered"
+          value="true" />
+        <ui:param
+          name="style"
+          value="width:200px !important;" />
+      </c:if>
+      <!-- Illumina library calculation specific values for the MOLARITY from the final qc -->
+      <c:if test="#{sampleAttributeEnum.typeDecimal and sampleAttributeEnum eq SampleAttributeEnum.MOLARITY}">
+        <ui:param
+          name="molarityDropdownRendered"
+          value="true" />
+      </c:if>
+      <!-- Illumina, Nanopore, or PacBio library calculation specific styling for the calculated sample attributes -->
+      <c:if test="#{sampleAttributeEnum.typeDecimal and sampleAttributeHelper.isCalculatedAttribute(sampleAttributeEnum, sampleEntity.type)}">
+        <ui:param
+          name="calculatedAttributeStyle"
+          value="#{sampleEntity.getCalculatedAttributeStyle(sampleAttributeEnum)}" />
+      </c:if>
+      <!-- Multiplex id selection from multiplex kit -->
+      <c:if test="#{sampleAttributeEnum.stringType and (sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_ID_2)}">
+        <ui:param
+          name="multiplexIdSelectionRendered"
+          value="true" />
+        <ui:param
+          name="multiplexIdSelectionDropdownRendered"
+          value="#{not empty sampleEntity and sampleAttributeEnum.isNotMultiplexedButKitSet(sampleEntity)}" />
+      </c:if>
+    </ui:include>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,78 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+  <p:dialog
+    id="assignSamplesToPlateModalPanel"
+    widgetVar="assignSamplesToPlateModalDialog"
+    resizable="false"
+    closable="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.assignSamplesToPlate}" />
+    </f:facet>
+    <h:panelGroup rendered="#{orderItemPlateBatchManager.samplePlateAssignmentOrderWarningRendered}">
+      <h:outputText rendered="#{not bean.editedPlate.hasEmptyPositionsInBetween()}" value="#{messages.samplePlateAssignmentOrderWarning}" styleClass="warn" />
+      <h:outputText rendered="#{bean.editedPlate.hasEmptyPositionsInBetween()}" value="#{messages.samplePlateHasEmptyPositionsInBetween}" styleClass="warning" />
+      <br />
+      <br />
+    </h:panelGroup>
+    <h:form id="assignSamplesToPlate">
+      <h:panelGroup id="sampleNamesGroup">
+        <pe:sheet
+          id="assignSamplesToPlateSheet"
+          widgetVar="assignSamplesToPlateSheetWidgetVar"
+          value="#{bean.editedPlate.samplePlatePositionsPlateSubmissionOrderedByAssignmentOrder}"
+          var="samplePlatePositionInPlate"
+          maxCols="2"
+          maxRows="#{bean.editedPlate.samplePlatePositionsPlateSubmissionOrderedByAssignmentOrder.size()}"
+          resizableCols="false"
+          resizableRows="false"
+          rowKey="#{samplePlatePositionInPlate.hashCode()}"
+          showRowHeaders="true"
+          width="800"
+          styleClass="sheet">
+          <pe:sheetcolumn
+            headerText="#{messages.position}"
+            readOnly="true"
+            value="#{samplePlatePositionInPlate.plate.plateLayout.getGridPosition(samplePlatePositionInPlate.position)}"
+            colWidth="15" />
+          <pe:sheetcolumn
+            headerText="#{messages.name}"
+            value="#{samplePlatePositionInPlate.sample.userSampleName}"
+            validatorMessage="#{messages.userSampleNamesValidatorMessage}"
+            trimWhitespace="true"
+            colWidth="150">
+            <f:validateRegex pattern="#{constants.SAMPLE_IN_EDIT_LIST_NAME_CHARACTERS_REGEXP}" />
+          </pe:sheetcolumn>
+          <p:ajax
+            event="change"
+            global="false" />
+        </pe:sheet>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="applyButton"
+          action="#{bean.assignSamplesToPlate}"
+          value="#{messages.assign}"
+          global="true"
+          styleClass="assignSamplesToPlate"
+          onclick="hasChanged=true; setNavigateAway('.assignSamplesToPlate[id$=\'applyButton\']'); jQuery(this).change();"
+          oncomplete="hideDialogOnSuccess(args, 'assignSamplesToPlateModalDialog'); fixOversize();"
+          update="assignSamplesToPlate, #{constants.EDIT}:batchtable, #{constants.EDIT}:buttons, #{constants.EDIT}:samplePlateAssignmentOrderWarning" />
+        <p:commandButton
+          value="#{messages.cancel}"
+          action="#{bean.cancelAssignSamplesToPlate}"
+          global="false"
+          onclick="hasChanged=false;"
+          oncomplete="PF('assignSamplesToPlateModalDialog').hide(); fixOversize();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.sequencingApplications}">
+    <h:outputText value="#{messages.sequencingApplications}" />
+    <h:panelGroup styleClass="inner-repeat">
+      <ui:repeat
+        value="#{instance.sequencingApplications}"
+        var="item">
+        <ui:include src="/fragments/entity-link-displayname.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+        </ui:include>
+        <br />
+      </ui:repeat>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

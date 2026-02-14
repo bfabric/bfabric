@@ -1,0 +1,51 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('trainedinstruments') and user.identityUserOrUserManager}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrument" />
+      <ui:param
+        name="tableContext"
+        value="#{user.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{user.trainedInstruments}" />
+    </ui:include>
+  </c:if>
+
+  <br />
+
+  <c:if test="#{sidebarHelper.isTab('trainedinstruments') and identityManager.hasCurrentUserRole('instrumentReader')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrument" />
+      <ui:param
+        name="tableContext"
+        value="#{user.tableContext}_training" />
+      <ui:param
+        name="tableContent"
+        value="#{instrumentList.resultList}" />
+      <ui:param
+        name="showColumns"
+        value="selection" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action">
+      <h:form>
+        <p:commandButton
+          action="#{userManager.saveTrainedInstruments()}"
+          value="#{messages.save}"
+          update="@form"
+          oncomplete="fixOversize();" />
+      </h:form>
+    </h:panelGrid>
+
+  </c:if>
+</ui:composition>

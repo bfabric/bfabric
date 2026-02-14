@@ -1,0 +1,100 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:block-container font-size="9pt" font-family="Arial, Helvetica, sans-serif">
+    <fo:block font-weight="bold"><h:outputText value="#{messages.costsFor} #{booking.billingInfo.billingCustomerName}" /></fo:block>
+    <fo:block><h:outputText value="#{booking.container.entityName} Id: #{booking.container.id}  #{booking.container.oldId}" />
+      <c:if test="#{configuration.bookingPdfProjectNameEnabled and booking.container.containerProject}">
+        <h:outputText value=" - #{booking.container.name}" />
+      </c:if>
+    </fo:block>
+    <c:if test="#{configuration.bookingPdfProjectNameEnabled and not booking.container.containerProject and not empty booking.container.project}">
+      <fo:block><h:outputText value="#{booking.container.project.entityName}: #{booking.container.project.displayName}" /></fo:block>
+    </c:if>
+    <c:if test="#{not booking.container.containerProject}">
+      <fo:block><h:outputText value="#{messages.orderDate}: " /><h:outputText value="#{booking.orderDate}">
+        <f:convertDateTime type="localDate" pattern="#{constants.DATE_PATTERN_EU}" />
+      </h:outputText>
+      </fo:block>
+    </c:if>
+    <c:if test="#{booking.billingInfo.billingCustomerName ne booking.container.budgetOfficer.name}">
+      <fo:block><h:outputText value="#{messages.budgetOfficer}: #{booking.container.budgetOfficer.name}" /></fo:block>
+    </c:if>
+    <c:if test="#{not booking.container.containerProject and booking.billingInfo.billingCustomerName ne booking.container.requester.name}">
+      <fo:block><h:outputText value="#{messages.requester}: #{booking.container.requester.name}" /></fo:block>
+    </c:if>
+    <c:if test="#{not empty booking.executionPeriodAsEUFormattedDateString}">
+      <fo:block><h:outputText value="#{messages.executionPeriod}: " /><h:outputText value="#{booking.executionPeriodAsEUFormattedDateString} " /></fo:block>
+    </c:if>
+    <fo:block><h:outputText rendered="#{not empty booking.billingInfo.vatNumber}" value="#{messages.vatNumber}: #{booking.billingInfo.vatNumber}" /></fo:block>
+    <fo:block><h:outputText rendered="#{not empty booking.billingInfo.referenceNumber}" value="#{messages.referenceNumber}: #{booking.billingInfo.referenceNumber}" /></fo:block>
+    <fo:block><h:outputText rendered="#{booking.invoice}" value="#{messages.internalNumber}: " /> <h:outputText rendered="#{booking.umbuchung}" value="#{messages.bookingNumber}: " /><h:outputText
+      value="#{booking.printBookingNr()}" /></fo:block>
+    <fo:block space-after="1cm" />
+
+    <ui:include src="booking-charges.xhtml" />
+
+    <!-- Tax details -->
+    <fo:block space-before="2cm" font-size="9pt" font-family="Arial, Helvetica, sans-serif">
+      <fo:table table-layout="fixed" width="100%">
+        <fo:table-column column-width="109mm" />
+        <fo:table-column column-width="25mm" />
+        <fo:table-body>
+          <fo:table-row font-weight="bold" border-bottom="0.2mm solid">
+            <fo:table-cell>
+              <fo:block>
+                <h:outputText value="#{messages.vatCosts}" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block text-align="right">
+                <h:outputText value="#{messages.vat}" />
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <ui:repeat value="#{booking.groupedChargesByServiceAndTax}" var="groupedChargeEntity">
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <h:outputText value="#{groupedChargeEntity.serviceName}" />
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block text-align="right">
+                  <h:outputText value="#{groupedChargeEntity.tax}">
+                    <f:convertNumber pattern="0.00" />
+                  </h:outputText> (<h:outputText value="#{groupedChargeEntity.taxRate}" />%)
+                </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </ui:repeat>
+        </fo:table-body>
+      </fo:table>
+
+      <!-- Summary of the tax details -->
+      <fo:table table-layout="fixed" width="100%">
+        <fo:table-column column-width="109mm" />
+        <fo:table-column column-width="25mm" />
+        <fo:table-body>
+          <fo:table-row text-align="right" border-top="0.2mm solid">
+            <fo:table-cell>
+              <fo:block font-weight="bold" padding-top="2mm">
+                <h:outputText value="#{messages.total} #{booking.currency.code}" />
+              </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+              <fo:block text-align="right" padding-top="2mm">
+                <h:outputText value="#{booking.tax}">
+                  <f:convertNumber pattern="0.00" />
+                </h:outputText>
+              </fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:block>
+  </fo:block-container>
+</ui:composition>

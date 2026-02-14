@@ -1,0 +1,63 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(workflow.editable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{empty workflow.samples ? messages.assignSamples : messages.reassignSamples}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-assign.xhtml">
+      <ui:param
+        name="entityName"
+        value="#{messages.samples}" />
+      <ui:param
+        name="onSubmit"
+        value="#{workflowManager.resetRefererURL()}" />
+      <ui:param
+        name="tableType"
+        value="sample" />
+      <!-- Parameters for the source table -->
+      <ui:param
+        name="sourceTableContent"
+        value="#{sampleList.lazyModel}" />
+      <ui:param
+        name="addButtonDisabled"
+        value="#{workflowManager.selectedSamples.contains(entity)}" />
+      <ui:param
+        name="addAllButtonListener"
+        value="#{dataTableHelper.addAllEntitiesFromDataTableToSelection(workflowManager.selectedSamples)}" />
+      <ui:param
+        name="addButtonListener"
+        value="#{workflowManager.addSampleToSelection(entity)}" />
+      <!-- Parameters for the target table -->
+      <ui:param
+        name="targetTableContent"
+        value="#{workflowManager.selectedSamples}" />
+      <ui:param
+        name="removeAllButtonListener"
+        value="#{dataTableHelper.removeAllEntitiesFromSelection(workflowManager.selectedSamples)}" />
+      <ui:param
+        name="removeButtonListener"
+        value="#{dataTableHelper.removeEntityFromSelection(workflowManager.selectedSamples, entity)}" />
+      <!-- Parameters for the assignment actions -->
+      <o:methodParam
+        name="saveAction"
+        value="#{workflowManager.assignSamples}" />
+      <o:methodParam
+        name="cancelAction"
+        value="#{workflowManager.cancel}" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

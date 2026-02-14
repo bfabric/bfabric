@@ -1,0 +1,66 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:dialog
+    id="edit-multi-value-fields"
+    widgetVar="edit-multi-value-fields"
+    dynamic="true"
+    closable="false"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.editValueForColumn} #{messages[bean.sampleAttributeEnum.name]}" />
+    </f:facet>
+
+    <h:form>
+      <p:spacer height="10px;" />
+
+      <ui:include src="/fragments/picklist.xhtml">
+        <ui:param
+          name="listContext"
+          value="#{bean.sampleAttributeEnum.name}" />
+        <ui:param
+          name="dualListModel"
+          value="#{bean.allRowsModal}" />
+        <ui:param
+          name="include"
+          value="/fragments/show-entity-name-column.xhtml" />
+        <ui:param
+          name="showFilter"
+          value="true" />
+        <ui:param
+          name="itemLabel"
+          value="#{entity.name}" />
+        <ui:param
+          name="transferRequired"
+          value="true" />
+        <ui:param
+          name="updateOnTransfer"
+          value="@([id$=applyButton])" />
+      </ui:include>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="applyButton"
+          disabled="#{bean.allRowsModal.target.size() eq 0 and bean.sampleAttributeEnum.isAttributeRequired(type)}"
+          action="#{bean.applyChangesToMultiValueFields}"
+          value="#{messages.apply}"
+          global="false"
+          styleClass="editMultiValueFieldsApplyButton"
+          onclick="hasChanged=true; setNavigateAway('.editMultiValueFieldsApplyButton[id$=\'applyButton\']'); jQuery(this).change();"
+          oncomplete="hideDialogOnSuccess(args, 'edit-multi-value-fields');" />
+        <p:commandButton
+          action="#{bean.setAllRowsModal(null)}"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('edit-multi-value-fields').hide();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

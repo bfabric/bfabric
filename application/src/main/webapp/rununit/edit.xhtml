@@ -1,0 +1,111 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{runUnitManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{runUnitManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{runUnit.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.runUnitType}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="runUnitType" />
+            <ui:param
+              name="value"
+              value="#{runUnit.runUnitType}" />
+            <ui:param
+              name="disabled"
+              value="#{not empty runUnit.samples}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{runUnitManager.getRunUnitTypesEnabledIncluding}" />
+            <o:methodParam
+              name="itemSelectListener"
+              value="#{runUnitManager.runUnitTypeSelectListener}" />
+            <ui:param
+              name="ajaxClear"
+              value="true" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="@this, #{constants.EDIT}:physicalSeparation" />
+            <ui:param
+              name="clearUpdate"
+              value="@this, #{constants.EDIT}:physicalSeparation" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.name}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.physicalSeparation}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="physicalSeparation"
+              disabled="#{not empty runUnit.samples}"
+              title="#{messages.physicalSeparationHint}"
+              value="#{runUnit.physicalSeparation}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.cellId}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              value="#{runUnit.cellId}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{runUnit.description}"
+              rows="10"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <!--
+          Important: Run units are only attachable to a run via the run/edit!
+          <h:outputText value="#{messages.run}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="run" />
+              <ui:param
+                name="value"
+                value="#{runUnit.run}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{runService.getFiltered}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+            </ui:include>
+          </ui:decorate>
+          -->
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

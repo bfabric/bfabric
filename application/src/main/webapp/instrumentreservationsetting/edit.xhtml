@@ -1,0 +1,662 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{instrumentReservationSettingManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}" onsubmit="#{instrumentReservationSettingManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.instrument}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText
+              value="#{instrumentReservationSetting.instrument.displayName}"
+              title="#{instrumentReservationSetting.instrument.entityInfo}" />
+          </ui:decorate>
+
+          <c:if test="#{not instrumentReservationSetting.managed}">
+            <h:outputText value="#{messages.validFrom}" title="#{messages.validFromHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <p:datePicker
+                id="validFrom"
+                value="#{instrumentReservationSetting.validFrom}"
+                validator="#{instrumentReservationSetting.validateValidFrom}"
+                required="#{not empty instrumentReservationSetting.instrument.lastReservationSetting}"
+                mindate="#{not empty instrumentReservationSetting.instrument.lastReservationSetting ? instrumentReservationSetting.validFrom : null}"
+                disabledDays="#{instrumentReservationSetting.disabledDays}" />
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{instrumentReservationSetting.managed}">
+            <h:outputText value="#{messages.validFrom}" title="#{messages.validFromHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <p:datePicker
+                id="validFromUpdate"
+                disabled="#{not instrumentReservationSetting.hasModifiableValidFrom}"
+                value="#{instrumentReservationSetting.validFrom}"
+                disabledDays="#{instrumentReservationSetting.disabledDays}"
+                mindate="#{instrumentReservationSetting.updatableValidFromMinDateSlot}"
+                maxdate="#{instrumentReservationSetting.updatableValidFromMaxDateSlot}"
+                showTime="false" />
+              <h:outputText
+                rendered="#{instrumentReservationSetting.hasModifiableValidFrom}"
+                value="&#160;#{messages.updatableWithinHint} #{instrumentReservationSetting.updatableValidFromInterval.intervalAsString}"
+                styleClass="warn" />
+              <h:outputText
+                rendered="#{not instrumentReservationSetting.hasModifiableValidFrom}"
+                value="&#160;#{messages.notUpdatableHint}"
+                styleClass="warn" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.validUntil}" title="#{messages.validUntilHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <p:datePicker
+                value="#{instrumentReservationSetting.validUntil}"
+                disabled="#{not instrumentReservationSetting.hasModifiableValidUntil}"
+                disabledDays="#{instrumentReservationSetting.disabledDays}"
+                mindate="#{instrumentReservationSetting.updatableValidUntilMinDateSlot}"
+                maxdate="#{instrumentReservationSetting.updatableValidUntilMaxDateSlot}"
+                showTime="false" />
+              <h:outputText
+                rendered="#{instrumentReservationSetting.hasModifiableValidUntil}"
+                value="&#160;#{messages.updatableWithinHint} #{instrumentReservationSetting.updatableValidUntilInterval.intervalAsString}"
+                styleClass="warn" />
+              <h:outputText
+                rendered="#{not instrumentReservationSetting.hasModifiableValidUntil}"
+                value="&#160;#{messages.notUpdatableHint}"
+                styleClass="warn" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.weekends}" title="#{messages.weekendsHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="weekends"
+              disabled="#{not instrumentReservationSetting.weekendEditAllowed}"
+              value="#{instrumentReservationSetting.weekends}"
+              title="#{messages.weekendsHint}" />
+          </ui:decorate>
+
+          <c:if test="#{instrumentReservationSetting.attributesUpdatable}">
+            <h:outputText value="#{messages.slotDuration}" title="#{messages.slotDurationHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="slotDuration"
+                value="#{instrumentReservationSetting.slotDuration}"
+                title="#{messages.slotDurationHint}"
+                styleClass="editWidthSmall"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" />
+                <f:selectItems
+                  value="#{instrumentReservationSetting.slotDurations}"
+                  var="item"
+                  itemLabel="#{stringHelper.getTimeFormatHM(item)}" />
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSetting.slotDurationChanged()}"
+                  update="slotShiftTime, minDuration, maxDuration, slotLabelInterval"
+                  global="false" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.slotShiftTime}" title="#{messages.slotShiftTimeHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:panelGroup
+                id="slotShiftTime"
+                title="#{messages.slotShiftTimeHint}">
+                <p:spinner
+                  id="slotShiftTimeHours"
+                  value="#{instrumentReservationSetting.slotShiftTimeHelper.hours}"
+                  disabled="#{instrumentReservationSetting.slotShiftTimeEditDisabled}"
+                  min="0"
+                  max="24"
+                  styleClass="editWidthSmaller"
+                  stepFactor="1"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotShiftTimeHelperChanged()}"
+                    update="slotDuration, minDuration, slotShiftTime, slotLabelInterval, slotMinTime, slotMaxTime"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+                <p:spinner
+                  id="slotShiftTimeMinutes"
+                  value="#{instrumentReservationSetting.slotShiftTimeHelper.minutes}"
+                  disabled="#{instrumentReservationSetting.slotShiftTimeEditDisabled}"
+                  min="0"
+                  max="55"
+                  styleClass="editWidthSmaller"
+                  stepFactor="5"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotShiftTimeHelperChanged()}"
+                    update="slotDuration, minDuration, slotShiftTime, slotLabelInterval, slotMinTime, slotMaxTime"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.minutes}&#160;" />
+              </h:panelGroup>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.slotLabelInterval}" title="#{messages.slotLabelIntervalHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:panelGroup
+                id="slotLabelInterval"
+                title="#{messages.slotLabelIntervalHint}">
+                <p:spinner
+                  id="slotLabelIntervalHours"
+                  value="#{instrumentReservationSetting.slotLabelIntervalHelper.hours}"
+                  disabled="#{instrumentReservationSetting.slotLabelIntervalDisabled}"
+                  min="0"
+                  max="24"
+                  styleClass="editWidthSmaller"
+                  stepFactor="1"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotLabelIntervalHelperChanged()}"
+                    update="slotDuration, minDuration, slotLabelInterval, slotMinTime, slotMaxTime"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+                <p:spinner
+                  id="slotLabelIntervalMinutes"
+                  value="#{instrumentReservationSetting.slotLabelIntervalHelper.minutes}"
+                  disabled="#{not empty instrumentReservationSetting.slotDuration}"
+                  min="0"
+                  max="55"
+                  styleClass="editWidthSmaller"
+                  stepFactor="5"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotLabelIntervalHelperChanged()}"
+                    update="slotDuration, minDuration, slotLabelInterval, slotMinTime, slotMaxTime"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.minutes}&#160;" />
+              </h:panelGroup>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.minDuration}" title="#{messages.minDurationHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:panelGroup id="minDuration">
+                <p:spinner
+                  id="minDurationHours"
+                  value="#{instrumentReservationSetting.minDurationHelper.hours}"
+                  title="#{messages.minDurationHint}"
+                  disabled="#{not empty instrumentReservationSetting.slotDuration}"
+                  min="0"
+                  max="#{instrumentReservationSetting.minDurationMaxHours}"
+                  styleClass="editWidthSmaller"
+                  stepFactor="1"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.minDurationHelperChanged()}"
+                    update="slotDuration, minDuration, slotLabelInterval, slotMinTime, slotMaxTime"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+                <p:spinner
+                  id="minDurationMinutes"
+                  value="#{instrumentReservationSetting.minDurationHelper.minutes}"
+                  disabled="#{not empty instrumentReservationSetting.slotDuration}"
+                  min="0"
+                  max="55"
+                  styleClass="editWidthSmaller"
+                  stepFactor="5"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.minDurationHelperChanged()}"
+                    update="slotDuration, minDuration, slotLabelInterval, slotMinTime, slotMaxTime"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.minutes}&#160;" />
+              </h:panelGroup>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.maxDuration}" title="#{messages.maxDurationHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:panelGroup
+                id="maxDuration"
+                title="#{messages.maxDurationHint}">
+                <p:spinner
+                  id="maxDurationHours"
+                  value="#{instrumentReservationSetting.maxDurationHelper.hours}"
+                  min="#{instrumentReservationSetting.maxDurationMinHours}"
+                  max="#{configuration.instrumentReservationSettingMaxHours}"
+                  styleClass="editWidthSmaller"
+                  stepFactor="1"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.maxDurationHelperChanged()}"
+                    update="maxDuration"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+                <p:spinner
+                  id="maxDurationMinutes"
+                  value="#{instrumentReservationSetting.maxDurationHelper.minutes}"
+                  min="0"
+                  max="55"
+                  styleClass="editWidthSmaller"
+                  stepFactor="5"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.maxDurationHelperChanged()}"
+                    update="maxDuration"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.minutes}&#160;" />
+                <p:commandButton
+                  rendered="#{not instrumentReservationSetting.maxDurationHelper.isEmpty(true)}"
+                  actionListener="#{instrumentReservationSetting.resetMaxDurationHelper()}"
+                  value="#{messages.clear}"
+                  update="maxDuration"
+                  styleClass="editWidthSmaller" />
+              </h:panelGroup>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.slotMinTime}" title="#{messages.slotMinTimeHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:panelGroup
+                id="slotMinTime"
+                title="#{messages.slotMinTimeHint}">
+                <p:spinner
+                  id="slotMinTimeHours"
+                  value="#{instrumentReservationSetting.slotMinTimeHelper.hours}"
+                  disabled="#{instrumentReservationSetting.slotMinTimeHelperDisabled}"
+                  min="0"
+                  max="23"
+                  styleClass="editWidthSmaller"
+                  stepFactor="1"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotMinTimeChanged()}"
+                    update="slotMinTime, slotDuration, minDuration, slotLabelInterval"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+                <p:spinner
+                  id="slotMinTimeMinutes"
+                  value="#{instrumentReservationSetting.slotMinTimeHelper.minutes}"
+                  disabled="#{instrumentReservationSetting.slotMinTimeHelperDisabled}"
+                  min="0"
+                  max="55"
+                  styleClass="editWidthSmaller"
+                  stepFactor="5"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotMinTimeChanged()}"
+                    update="slotMinTime, slotDuration, minDuration, slotLabelInterval"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.minutes}&#160;" />
+                <p:commandButton
+                  rendered="#{not instrumentReservationSetting.slotMinTimeHelper.isEmpty(true)}"
+                  actionListener="#{instrumentReservationSetting.resetSlotMinTimeHelper()}"
+                  value="#{messages.clear}"
+                  update="slotMinTime, slotDuration, minDuration, slotLabelInterval"
+                  styleClass="editWidthSmaller" />
+              </h:panelGroup>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.slotMaxTime}" title="#{messages.slotMaxTimeHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:panelGroup
+                id="slotMaxTime"
+                title="#{messages.slotMaxTimeHint}">
+                <p:spinner
+                  id="slotMaxTimeHours"
+                  value="#{instrumentReservationSetting.slotMaxTimeHelper.hours}"
+                  disabled="#{instrumentReservationSetting.slotMaxTimeHelperDisabled}"
+                  min="0"
+                  max="23"
+                  styleClass="editWidthSmaller"
+                  stepFactor="1"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotMaxTimeChanged()}"
+                    update="slotMaxTime, slotDuration, minDuration, slotLabelInterval"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+                <p:spinner
+                  id="slotMaxTimeMinutes"
+                  value="#{instrumentReservationSetting.slotMaxTimeHelper.minutes}"
+                  disabled="#{instrumentReservationSetting.slotMaxTimeHelperDisabled}"
+                  min="0"
+                  max="55"
+                  styleClass="editWidthSmaller"
+                  stepFactor="5"
+                  rotate="true"
+                  decimalPlaces="0"
+                  thousandSeparator="">
+                  <p:ajax
+                    event="change"
+                    listener="#{instrumentReservationSetting.slotMaxTimeChanged()}"
+                    update="slotMaxTime, slotDuration, minDuration, slotLabelInterval"
+                    global="false" />
+                </p:spinner>
+                <h:outputText value="&#160;#{messages.minutes}&#160;" />
+                <p:commandButton
+                  rendered="#{not instrumentReservationSetting.slotMaxTimeHelper.isEmpty(true)}"
+                  actionListener="#{instrumentReservationSetting.resetSlotMaxTimeHelper()}"
+                  value="#{messages.clear}"
+                  update="slotMaxTime, slotDuration, minDuration, slotLabelInterval"
+                  styleClass="editWidthSmaller" />
+              </h:panelGroup>
+            </ui:decorate>
+
+            <o:importConstants type="java.time.temporal.ChronoUnit" />
+            <h:outputText
+              value="#{messages.chargeTimeUnit}"
+              title="#{messages.chargeTimeUnitHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="chargeTimeUnit"
+                value="#{instrumentReservationSetting.chargeTimeUnit}"
+                disabled="#{instrumentReservationSetting.chargeTimeUnitEditDisabled}"
+                styleClass="editWidthSmall">
+                <f:selectItem
+                  itemLabel="#{ChronoUnit.DAYS}"
+                  itemValue="#{ChronoUnit.DAYS}" />
+                <f:selectItem
+                  itemLabel="#{ChronoUnit.HOURS}"
+                  itemValue="#{ChronoUnit.HOURS}" />
+                <f:selectItem
+                  itemLabel="#{ChronoUnit.MINUTES}"
+                  itemValue="#{ChronoUnit.MINUTES}" />
+                <f:selectItem
+                  itemLabel="#{ChronoUnit.WEEKS}"
+                  itemValue="#{ChronoUnit.WEEKS}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{instrumentReservationSetting.attributesUpdatable}">
+            <h:outputText
+              value="#{messages.operatorRequired}"
+              title="#{messages.operatorRequiredHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="operatorRequired"
+                value="#{instrumentReservationSetting.operatorRequired}" />
+            </ui:decorate>
+
+            <h:outputText
+              value="#{messages.approvalRequired}"
+              title="#{messages.approvalRequiredHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="approvalRequired"
+                value="#{instrumentReservationSetting.approvalRequired}" />
+            </ui:decorate>
+
+            <h:outputText
+              value="#{messages.approvalSkipInternal}"
+              title="#{messages.approvalSkipInternalHint}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="approvalSkipInternal"
+                value="#{instrumentReservationSetting.approvalSkipInternal}" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText
+            value="#{messages.reminderDays}"
+            title="#{messages.reminderDaysHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:spinner
+              id="reminderDays"
+              value="#{instrumentReservationSetting.reminderDays}"
+              min="0"
+              max="30"
+              styleClass="editWidthSmaller"
+              stepFactor="1"
+              rotate="true"
+              decimalPlaces="0"
+              thousandSeparator="">
+            </p:spinner>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookingAheadMaxDuration}" title="#{messages.bookingAheadMaxDurationHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid
+              id="bookingAheadMaxDurationGrid"
+              columns="10">
+              <p:spinner
+                id="bookingAheadMaxDurationGridWeeks"
+                value="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.weeks}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.weeksMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMaxDurationHelperChanged()}"
+                  update="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMaxDurationGridMinutes"
+                  process="bookingAheadMaxDurationGridWeeks, bookingAheadMaxDurationGridDays, bookingAheadMaxDurationGridHours, bookingAheadMaxDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.weeks.toLowerCase()}&#160;" />
+              <p:spinner
+                id="bookingAheadMaxDurationGridDays"
+                value="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.days}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.daysMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMaxDurationHelperChanged()}"
+                  process="bookingAheadMaxDurationGridWeeks, bookingAheadMaxDurationGridDays, bookingAheadMaxDurationGridHours, bookingAheadMaxDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.days.toLowerCase()}&#160;" />
+              <p:spinner
+                id="bookingAheadMaxDurationGridHours"
+                value="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.hours}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.hoursMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMaxDurationHelperChanged()}"
+                  process="bookingAheadMaxDurationGridWeeks, bookingAheadMaxDurationGridDays, bookingAheadMaxDurationGridHours, bookingAheadMaxDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+              <p:spinner
+                id="bookingAheadMaxDurationGridMinutes"
+                value="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.minutes}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMaxDurationHelper.minutesMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMaxDurationHelperChanged()}"
+                  process="bookingAheadMaxDurationGridWeeks, bookingAheadMaxDurationGridDays, bookingAheadMaxDurationGridHours, bookingAheadMaxDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.minutes}&#160;" />
+              <p:commandButton
+                rendered="#{not instrumentReservationSetting.bookingAheadMaxDurationHelper.isEmpty(false)}"
+                actionListener="#{instrumentReservationSetting.resetBookingAheadMaxDurationHelper()}"
+                value="#{messages.clear}"
+                update="bookingAheadMaxDurationGrid"
+                styleClass="editWidthSmaller" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookingAheadMinDuration}" title="#{messages.bookingAheadMinDurationHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid
+              id="bookingAheadMinDurationGrid"
+              columns="10">
+              <p:spinner
+                id="bookingAheadMinDurationGridWeeks"
+                value="#{instrumentReservationSetting.bookingAheadMinDurationHelper.weeks}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMinDurationHelper.weeksMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMinDurationHelperChanged()}"
+                  update="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  process="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.weeks.toLowerCase()}&#160;" />
+              <p:spinner
+                id="bookingAheadMinDurationGridDays"
+                value="#{instrumentReservationSetting.bookingAheadMinDurationHelper.days}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMinDurationHelper.daysMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMinDurationHelperChanged()}"
+                  update="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  process="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.days.toLowerCase()}&#160;" />
+              <p:spinner
+                id="bookingAheadMinDurationGridHours"
+                value="#{instrumentReservationSetting.bookingAheadMinDurationHelper.hours}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMinDurationHelper.hoursMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMinDurationHelperChanged()}"
+                  update="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  process="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.hours.toLowerCase()}&#160;" />
+              <p:spinner
+                id="bookingAheadMinDurationGridMinutes"
+                value="#{instrumentReservationSetting.bookingAheadMinDurationHelper.minutes}"
+                min="0"
+                max="#{instrumentReservationSetting.bookingAheadMinDurationHelper.minutesMax}"
+                styleClass="editWidthSmaller"
+                stepFactor="1"
+                rotate="true"
+                decimalPlaces="0" thousandSeparator="">
+                <p:ajax
+                  event="change"
+                  listener="#{instrumentReservationSettingManager.bookingAheadMinDurationHelperChanged()}"
+                  update="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  process="bookingAheadMinDurationGridWeeks, bookingAheadMinDurationGridDays, bookingAheadMinDurationGridHours, bookingAheadMinDurationGridMinutes"
+                  global="false" />
+              </p:spinner>
+              <h:outputText value="&#160;#{messages.minutes}&#160;" />
+              <p:commandButton
+                rendered="#{not instrumentReservationSetting.bookingAheadMinDurationHelper.isEmpty(false)}"
+                actionListener="#{instrumentReservationSetting.resetBookingAheadMinDurationHelper()}"
+                value="#{messages.clear}"
+                update="bookingAheadMinDurationGrid"
+                styleClass="editWidthSmaller" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <c:if test="#{not instrumentReservationSetting.attributesUpdatable}">
+            <h:outputText value="" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{messages.instrumentReservationSettingAttributesUpdatableHint} #{instrumentReservationSetting.instrumentReservations.size()}" styleClass="warn" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText
+            value="#{messages.chargeable}"
+            title="#{messages.chargeableHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="chargeable"
+              value="#{instrumentReservationSetting.chargeable}">
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.notify}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid columns="4" styleClass="noborder-rightpadding">
+              <h:selectBooleanCheckbox
+                id="notifyInstrumentSupervisor"
+                value="#{instrumentReservationSetting.notifyInstrumentSupervisor}"
+                title="#{messages.notifyInstrumentSupervisorHint}" />
+              <h:outputText value="#{messages.instrumentSupervisor}" />
+              <h:selectBooleanCheckbox
+                id="notifyCoach"
+                value="#{instrumentReservationSetting.notifyCoach}"
+                title="#{messages.notifyCoachHint}" />
+              <h:outputText value="#{messages.coach}" />
+            </h:panelGrid>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

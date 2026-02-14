@@ -1,0 +1,29 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <!--
+        NOTE: SamplePreparationProtocols must be readable by anybody since it is required to place an order!
+        <f:event
+          type="preRenderView"
+          listener="#{identityManager.restrictRole('user')}" />
+    -->
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.samplePreparationProtocols}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist-with-create.xhtml">
+      <ui:param
+        name="tableType"
+        value="samplepreparationprotocol" />
+      <ui:param
+        name="buttonRendered"
+        value="#{identityManager.hasCurrentUserRole('samplePreparationProtocolManager')}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

@@ -1,0 +1,663 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{instrumentManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.label}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{instrument.label}"
+              title="#{messages.instrumentHint}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="fullName"
+              value="#{instrument.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="parentGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.parentInstrument}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="instrumentParent" />
+              <ui:param
+                name="value"
+                value="#{instrument.parent}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{instrumentManager.getPotentialParentInstruments}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="#{constants.EDIT}:parentGrid, #{constants.EDIT}:locationGrid" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <ui:param
+                name="clearUpdate"
+                value="#{constants.EDIT}:parentGrid, #{constants.EDIT}:locationGrid" />
+              <o:methodParam
+                name="clearButtonListener"
+                value="#{instrument.setParent(null)}" />
+              <ui:param
+                name="clearButtonSpecificUpdate"
+                value="#{constants.EDIT}:parentGrid, #{constants.EDIT}:locationGrid" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.label}" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText
+            value="#{messages.supervisor}"
+            rendered="#{!instrument.child}" />
+          <h:panelGroup rendered="#{!instrument.child}">
+            <ui:include src="/fragments/supervisor-autocomplete-required.xhtml">
+              <ui:param
+                name="instance"
+                value="#{instrument}" />
+              <ui:param
+                name="hideSupervisorLabel"
+                value="true" />
+            </ui:include>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.admin}"
+            rendered="#{!instrument.child}" />
+          <h:panelGroup rendered="#{!instrument.child}">
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="listContext"
+                value="instrumentAdmin" />
+              <ui:param
+                name="value"
+                value="#{instrument.admin}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{instrument.getEmployeesIncludingAdmin}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullLastFirstName}" />
+            </ui:include>
+          </h:panelGroup>
+
+          <c:if test="#{technologyList.getTechnologiesEnabledIncludingTechnologies(instrument.technologies).size() > 1}">
+            <h:outputText
+              value="#{messages.technologies}"
+              rendered="#{!instrument.child}" />
+            <h:panelGroup rendered="#{!instrument.child}">
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectManyCheckbox
+                  id="technologies"
+                  value="#{instrument.technologies}"
+                  collectionType="java.util.HashSet"
+                  styleClass="rightpadding"
+                  layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(instrument.technologies))}"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItems
+                    value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(instrument.technologies)}"
+                    var="item"
+                    itemLabel="#{item.nameWithEnabledMessage}" />
+                </h:selectManyCheckbox>
+              </ui:decorate>
+            </h:panelGroup>
+          </c:if>
+
+          <h:outputText
+            value="#{messages.serviceType}"
+            rendered="#{!instrument.child}" />
+          <h:panelGroup
+            id="serviceTypePanelGroup"
+            rendered="#{!instrument.child}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:selectManyMenu
+                id="serviceType"
+                value="#{instrument.serviceTypes}"
+                collectionType="java.util.HashSet"
+                var="st"
+                filter="true"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  var="item"
+                  value="#{serviceTypeList.getResultListEnabledIncludingMultiple(instrument.serviceTypes)}"
+                  itemLabel="#{item.name}" />
+                <p:column>#{st.displayName}</p:column>
+              </p:selectManyMenu>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.defaultService}"
+            rendered="#{!instrument.child}" />
+          <h:panelGroup
+            id="selectionServicePanelGroup"
+            rendered="#{!instrument.child}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="include"
+                  value="/service/select-columns.xhtml" />
+                <ui:param
+                  name="tableContext"
+                  value="#{constants.SERVICE_SELECTION}" />
+                <ui:param
+                  name="tableContent"
+                  value="#{serviceList.getResultListEnabledIncluding(instrument.service.id)}" />
+                <ui:param
+                  name="selectedService"
+                  value="#{instrument.service}" />
+                <ui:param
+                  name="selectionMode"
+                  value="single" />
+                <ui:param
+                  name="selection"
+                  value="#{instrument.service}" />
+                <ui:param
+                  name="update"
+                  value="#{constants.EDIT}:selectedservice" />
+                <ui:param
+                  name="styleClass"
+                  value="inner" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.selectedService}"
+            rendered="#{!instrument.child}" />
+          <h:panelGroup
+            id="selectedservice"
+            rendered="#{!instrument.child}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:panelGroup>
+                <h:outputText
+                  rendered="#{not empty instrument.service}"
+                  value="#{instrument.service.fullName}" />
+                <h:outputText
+                  rendered="#{empty instrument.service}"
+                  value="#{messages.none}" />
+                <p:commandButton
+                  rendered="#{instrument.service != null}"
+                  value="#{messages.clear} #{messages.selection}"
+                  action="#{instrumentManager.clearServiceSelection}"
+                  process="@this"
+                  update="#{constants.EDIT}:selectionServicePanelGroup, selectedservice"
+                  oncomplete="fixOversize();"
+                  style="margin-left: 5px" />
+              </h:panelGroup>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.samplePreparationProtocols}" />
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="listContext"
+              value="samplePreparationProtocols" />
+            <ui:param
+              name="value"
+              value="#{instrument.samplePreparationProtocolsAsList}" />
+            <ui:param
+              name="multiple"
+              value="true" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{instrumentManager.getFilteredInstrumentSamplePreparationProtocols}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+            <ui:param
+              name="includeColumns"
+              value="/samplepreparationprotocol/autocomplete-columns.xhtml" />
+          </ui:include>
+
+          <h:outputText value="#{messages.available}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="available"
+              value="#{instrument.instrumentStatusInfo.available}">
+              <p:ajax
+                event="change"
+                update="runEnabled,up,bookable,userVisible,userBookable"
+                global="false" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.runEnabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="runEnabled"
+              disabled="#{instrument.child or not instrument.available}"
+              value="#{instrument.instrumentStatusInfo.runEnabled}">
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.up}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="up"
+              value="#{instrument.instrumentStatusInfo.up}">
+              <p:ajax
+                event="change"
+                update="available"
+                global="false" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookable}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="bookable"
+              disabled="#{instrument.child}"
+              value="#{instrument.instrumentStatusInfo.bookable}">
+              <p:ajax
+                event="change"
+                update="available,runEnabled,userVisible,userBookable"
+                global="false" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.userVisible}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="userVisible"
+              disabled="#{instrument.child or not instrument.bookable}"
+              value="#{instrument.instrumentStatusInfo.userVisible}">
+              <p:ajax
+                event="change"
+                update="userBookable"
+                global="false" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.userBookable}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="userBookable"
+              disabled="#{instrument.child or not instrument.bookable or not instrument.userVisible}"
+              value="#{instrument.instrumentStatusInfo.userBookable}">
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.bookers}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="instrumentbookers" />
+              <ui:param
+                name="value"
+                value="#{instrument.bookersAsList}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{instrumentManager.getBookers}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullName}" />
+              <ui:param
+                name="includeColumns"
+                value="/user/autocomplete-columns.xhtml" />
+              <ui:param
+                name="scrollHeight"
+                value="388" />
+              <ui:param
+                name="inputStyleClass"
+                value="editWidthExtraLarge" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.trainedUsers}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="instrumenttrainedusers" />
+              <ui:param
+                name="value"
+                value="#{instrument.trainedUsersAsList}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{instrumentManager.getTrainedUsers}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullName}" />
+              <ui:param
+                name="includeColumns"
+                value="/user/autocomplete-columns.xhtml" />
+              <ui:param
+                name="scrollHeight"
+                value="388" />
+              <ui:param
+                name="inputStyleClass"
+                value="editWidthExtraLarge" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.operators}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="instrumentoperators" />
+              <ui:param
+                name="value"
+                value="#{instrument.operatorsAsList}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{instrumentManager.getOperators}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullName}" />
+              <ui:param
+                name="includeColumns"
+                value="/user/autocomplete-columns.xhtml" />
+              <ui:param
+                name="scrollHeight"
+                value="388" />
+              <ui:param
+                name="inputStyleClass"
+                value="editWidthExtraLarge" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.statusComment}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="statusComment"
+              value="#{instrument.instrumentStatusInfo.statusComment}"
+              cols="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.serialNumber}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="serialNumber"
+              value="#{instrument.serialNumber}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.inventoryNumber}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="inventoryNumber"
+              value="#{instrument.inventoryNumber}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="locationGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.location}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="location"
+              value="#{instrument.location}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.computer}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="computer"
+              value="#{instrument.computer}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.installationDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="installationDate"
+              value="#{instrument.installationDate}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.purchasedDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="purchasedDate"
+              value="#{instrument.purchasedDate}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="purchasedPriceGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.purchasedPrice}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              thousandSeparator=""
+              id="purchasedPrice"
+              value="#{instrument.purchasedPrice}"
+              valueChangeListener="#{instrument.purchasedPriceChanged}"
+              styleClass="editWidthExtraLarge">
+              <p:ajax
+                event="change"
+                immediate="true"
+                update="purchasedPriceGrid, currencyGrid" />
+            </p:inputNumber>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="currencyGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.currency}"
+            rendered="#{instrument.isNotNullPurchasedPrice()}" />
+          <h:panelGroup rendered="#{instrument.isNotNullPurchasedPrice()}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:selectOneMenu
+                id="currency"
+                value="#{instrument.currency}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{currencyList.resultListOrderByCode}"
+                  var="item"
+                  itemLabel="#{item.code}" />
+                <p:ajax
+                  event="change"
+                  immediate="true"
+                  update="currencyGrid" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.seller}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="seller"
+              value="#{instrument.seller}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.sellerContact}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="sellerContact"
+              value="#{instrument.sellerContact}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <c:if test="#{instrument.managed}">
+          <ui:include src="/fragments/edit/image.xhtml">
+            <ui:param
+              name="parent"
+              value="#{instrument}" />
+            <ui:param
+              name="image"
+              value="#{instrument.image}" />
+          </ui:include>
+        </c:if>
+
+        <h:panelGrid columns="2" columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.annotation}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:panelGrid columns="2" columnClasses="rightpadding," styleClass="noborder">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param name="listContext" value="annotation" />
+                <ui:param name="componentId" value="annotation" />
+                <ui:param name="value" value="#{instrument.annotation}" />
+                <o:methodParam name="completeMethod" value="#{instrumentManager.getSelectionValuesByInstrumentFiltered}" />
+                <o:methodParam name="valueChangeListener" value="#{instrument.selectionValueChanged}" />
+                <ui:param name="ajaxChange" value="true" />
+                <ui:param name="itemLabel" value="#{item.name}" />
+                <ui:param name="inputStyleClass" value="editWidthExtraLarge" />
+                <ui:param name="styleClass" value="editWidthExtraLarge" />
+              </ui:include>
+
+              <p:commandLink actionListener="#{instrumentManager.createAnnotation()}" title="#{messages.addAnnotationHint}" immediate="true"
+                             oncomplete="PF('addAnnotationDialog').show()" update="addAnnotationPanel">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+                <p:resetInput target="annotation" />
+              </p:commandLink>
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{instrument.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <!--
+                <h:panelGrid
+                  columns="2"
+                  columnClasses="rtdm, ltd">
+                  <h:outputText value="#{messages.description}" />
+                  <ui:decorate template="/fragments/edit.xhtml">
+                    <p:textEditor
+                      value="#{instrument.description}"
+                      height="300px"
+                      style="margin-bottom:10px">
+                      <f:facet name="toolbar">
+                                <span class="ql-formats">
+                                <select class="ql-font" />
+                                <select class="ql-size" />
+                                </span>
+                        <span class="ql-formats">
+                                <button class="ql-bold" />
+                                <button class="ql-italic" />
+                                <button class="ql-underline" />
+                                <button class="ql-strike" />
+                                </span>
+                        <span class="ql-formats">
+                                <select class="ql-color" />
+                                <select class="ql-background" />
+                                </span>
+                        <span class="ql-formats">
+                                <button class="ql-script" value="sub" />
+                                <button class="ql-script" value="super" />
+                                </span>
+                        <span class="ql-formats">
+                                <button class="ql-header" value="1" />
+                                <button class="ql-header" value="2" />
+                                <button class="ql-blockquote" />
+                                <button class="ql-code-block" />
+                                </span>
+                        <span class="ql-formats">
+                                  <button class="ql-list" value="ordered" />
+                                  <button class="ql-list" value="bullet" />
+                                  <button class="ql-indent" value="-1" />
+                                  <button class="ql-indent" value="+1" />
+                                </span>
+                        <span class="ql-formats">
+                                  <button class="ql-direction" value="rtl" />
+                                  <select class="ql-align" />
+                                </span>
+                        <span class="ql-formats">
+                                  <button class="ql-link" />
+                                  <button class="ql-image" />
+                                  <button class="ql-video" />
+                                  <button class="ql-formula" />
+                                </span>
+                        <span class="ql-formats">
+                                  <button class="ql-clean" />
+                                </span>
+                      </f:facet>
+                    </p:textEditor>
+                  </ui:decorate>
+                </h:panelGrid>
+        -->
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/annotation/add-modal.xhtml">
+        <ui:param name="manager" value="#{instrumentManager}" />
+        <ui:param name="batch" value="false" />
+        <ui:param name="updateOnSave" value="@([id$=annotation])" />
+      </ui:include>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

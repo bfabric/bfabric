@@ -1,0 +1,195 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(plateSampleBatchManager.plate.updatableOrUserUpdatable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.edit} #{messages.samples} : #{messages.plate} #{plateSampleBatchManager.plate.name}" />
+  </ui:define>
+
+  <ui:param
+    name="bean"
+    value="#{plateSampleBatchManager}" />
+
+  <ui:define name="body">
+    <script>
+        //<![CDATA[
+        function isValidSubmit(args) {
+            return (args && !args.validationFailed);
+        }
+        //]]>
+    </script>
+    <h:form
+      id="#{constants.EDIT}"
+      styleClass="navigate-away-class">
+      <c:if test="#{not empty plateSampleBatchManager.editList}">
+        <h:panelGrid
+          rendered="#{plateSampleBatchManager.plate.labManagerOrAdmin and not plateSampleBatchManager.plate.plateTypeUserSubmitted}"
+          id="selectedContainers"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.containers} #{messages.filter}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="selectedContainers" />
+              <ui:param
+                name="value"
+                value="#{plateSampleBatchManager.selectedContainersAsList}" />
+              <ui:param
+                name="emptyMessage"
+                value="#{messages.emptyMessageContainer}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{plateSampleBatchManager.getContainersFiltered}" />
+              <o:methodParam
+                name="itemSelectListener"
+                value="#{plateSampleBatchManager.changeEditList}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="@this, #{constants.EDIT}:edit-batch-platesamples-batchtable" />
+              <ui:param
+                name="itemSelectGlobal"
+                value="true" />
+              <o:methodParam
+                name="itemUnselectListener"
+                value="#{plateSampleBatchManager.changeEditList}" />
+              <ui:param
+                name="itemUnselectUpdate"
+                value="@this, #{constants.EDIT}:edit-batch-platesamples-batchtable" />
+              <ui:param
+                name="itemUnselectGlobal"
+                value="true" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.id}" />
+              <ui:param
+                name="includeColumns"
+                value="/container/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:outputText
+          value="#{messages.editPlateSamplesHint}"
+          styleClass="warn" />
+
+        <h:panelGroup id="edit-batch-platesamples-batchtable">
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="tableContext"
+              value="batch" />
+            <ui:param
+              name="tableContent"
+              value="#{plateSampleBatchManager.editList}" />
+            <ui:param
+              name="include"
+              value="/plate/edit-batch-sample-columns.xhtml" />
+            <ui:param
+              name="editable"
+              value="true" />
+            <o:methodParam
+              name="pageListener"
+              value="#{plateSampleBatchManager.pageListener}" />
+            <ui:param
+              name="pageListenerGlobal"
+              value="true" />
+            <ui:param
+              name="customListingRows"
+              value="#{plateSampleBatchManager.customListingRows}" />
+            <ui:param
+              name="customRowsPerPageTemplate"
+              value="5,10,20" />
+            <ui:param
+              name="maximumRowsPerPage"
+              value="20" />
+            <ui:param
+              name="styleClass"
+              value="batchEditTable" />
+          </ui:include>
+        </h:panelGroup>
+      </c:if>
+
+      <h:panelGroup id="invalidExcelEditWarning">
+        <h:outputText rendered="#{plateSampleBatchManager.unsavedChanges}" value="#{messages.unsavedChangesHint}" styleClass="warning" />
+        <h:outputText
+          value="Invalid values could not be applied for some attributes of: #{collectionHelper.print(plateSampleBatchManager.sampleAttributeEnumLabelsInvalidInput)}"
+          styleClass="warning"
+          rendered="#{not empty plateSampleBatchManager.sampleAttributeEnumLabelsInvalidInput}" />
+      </h:panelGroup>
+
+      <c:if test="#{empty plateSampleBatchManager.editList}">
+        <h:outputText
+          value="#{messages.editPlateSamplesEmptyHint}"
+          styleClass="warn" />
+      </c:if>
+
+      <h:panelGrid
+        id="buttons"
+        columns="3"
+        styleClass="action">
+        <p:commandButton
+          rendered="#{not empty plateSampleBatchManager.editList}"
+          action="#{plateSampleBatchManager.save}"
+          value="#{messages.save}"
+          oncomplete="if(!isValidSubmit(args)){hasChanged=true;} fixOversize();"
+          onclick="hasChanged=false;"
+          update="@form">
+          <o:skipValidators />
+        </p:commandButton>
+        <p:commandButton
+          remdered="#{false}"
+          id="assignSampleValuesButton"
+          value="#{messages.excelEdit}"
+          title="#{messages.excelEditHint}"
+          actionListener="#{plateSampleBatchManager.prepareSampleValuesModalPanel()}"
+          immediate="true"
+          style="width:70px;min-width:70px;"
+          oncomplete="PF('assignSampleValuesModalDialog').show();"
+          update="assignSampleValuesModalPanel">
+          <f:attribute
+            name="sampleAttributeEnums"
+            value="#{plateSampleBatchManager.getAttributeEnumsWithoutTubeId()}" />
+        </p:commandButton>
+        <p:commandButton
+          action="#{plateSampleBatchManager.cancelEdit}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/annotation/add-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+      <ui:param
+        name="updateOnSave"
+        value="@([id$=batchtable]), @([id$=addAnnotation])" />
+    </ui:include>
+    <ui:include src="/fragments/batch/edit-multi-value-field.xhtml" />
+    <ui:include src="/fragments/batch/edit-multi-value-fields.xhtml" />
+    <ui:include src="/sample/assign-multiplexids-user-submitted-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+    </ui:include>
+    <ui:include src="/sample/assignSample-values-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

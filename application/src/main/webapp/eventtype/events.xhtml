@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('events')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="event" />
+      <ui:param
+        name="tableContext"
+        value="#{eventType.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{eventType.events}" />
+      <ui:param
+        name="hideColumns"
+        value="eventType, selectCheckbox" />
+    </ui:include>
+  </c:if>
+</ui:composition>

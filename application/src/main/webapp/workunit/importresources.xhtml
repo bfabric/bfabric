@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('importresources') and identityManager.hasCurrentUserRole('admin')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="importresource" />
+      <ui:param
+        name="tableContext"
+        value="#{workunit.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{importResourceList.getLazyModelByWorkunitId(workunit.id)}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

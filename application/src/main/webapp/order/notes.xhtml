@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+
+  <c:if test="#{sidebarHelper.isTab('notes') and identityManager.hasCurrentUserRole('containerReader')}">
+    <o:importConstants type="org.bfabric.enums.CommentDiscriminator" />
+    <ui:include src="/comment/list-by-parent-with-create.xhtml">
+      <ui:param
+        name="category"
+        value="#{constants.COMMENT_CATEGORY_NOTE}" />
+      <ui:param
+        name="type"
+        value="#{CommentDiscriminator.ORDER_NOTE}" />
+      <ui:param
+        name="parent"
+        value="#{order}" />
+      <ui:param
+        name="comments"
+        value="#{order.notesCurrentUser}" />
+      <ui:param
+        name="showform"
+        value="#{order.renderedAddNoteButton}" />
+    </ui:include>
+    <ui:include src="/comment/datascroller-listeners.xhtml" />
+  </c:if>
+</ui:composition>

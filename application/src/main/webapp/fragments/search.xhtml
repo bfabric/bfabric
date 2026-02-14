@@ -1,0 +1,181 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:set
+    value="#{contextManager.contextContainer}"
+    var="searchContextContainer" />
+  <h:panelGrid
+    id="searchline"
+    columns="3"
+    columnClasses=",max-width,">
+    <h:panelGroup
+      id="containerContext"
+      styleClass="nowrap">
+      <h:form id="contextForm">
+        <h:panelGrid
+          columns="4"
+          styleClass="align-middle border"
+          cellspacing="0"
+          cellpadding="0">
+          <h:inputHidden
+            id="key"
+            binding="#{key}"
+            value="#{contextManager.key}" />
+          <h:panelGroup title="#{messages.containerByIdHint}">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="context" />
+              <ui:param
+                name="clearValueOnBlur"
+                value="true" />
+              <ui:param
+                name="skipValidators"
+                value="false" />
+              <ui:param
+                name="forceSelection"
+                value="false" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{containerList.getReadableContainers}" />
+              <o:methodParam
+                name="itemSelectListener"
+                value="#{contextManager.contextContainerChanged}" />
+              <ui:param
+                name="placeholder"
+                value="#{searchContextContainer}" />
+              <ui:param
+                name="emptyMessage"
+                value="#{messages.emptyMessageContainer}" />
+              <ui:param
+                name="widgetVar"
+                value="containerSuggest" />
+              <ui:param
+                name="includeColumns"
+                value="/fragments/show-target-autocomplete-columns.xhtml" />
+              <ui:param
+                name="scrollHeight"
+                value="600" />
+              <ui:param
+                name="dropdown"
+                value="false" />
+              <ui:param
+                name="styleClass"
+                value="search-line-input" />
+              <ui:param
+                name="inputStyleClass"
+                value="search-line-input" />
+              <ui:param
+                name="inputStyle"
+                value="search-line-input" />
+              <ui:param
+                name="title"
+                value="#{messages.containerSelectorHint}" />
+            </ui:include>
+          </h:panelGroup>
+          <p:link id="targetButton"
+                  rendered="#{not empty searchContextContainer}"
+                  outcome="#{searchContextContainer.urlShowScreen}"
+                  title="#{messages.goTo} #{searchContextContainer}"
+                  immediate="true"
+                  styleClass="search-line-button-border-left">
+            <i class="far fa-dot-circle " />
+            <f:param name="id" value="#{searchContextContainer.id}" />
+            <f:param name="tab" value="#{constants.DETAILS}" />
+          </p:link>
+        </h:panelGrid>
+      </h:form>
+    </h:panelGroup>
+    <h:panelGroup
+      id="contextContainerTitle"
+      layout="block"
+      styleClass="textEllipsis">
+      <h:outputText
+        value="&#160;#{searchContextContainer.status.label}"
+        styleClass="#{searchContextContainer.status.label}" />
+      <h:outputText
+        rendered="#{searchContextContainer.extensionReportPendingHintRendered}"
+        value="&#160;&#160;#{messages.pendingExtensionReport}"
+        title="#{messages.pendingExtensionReportHint}"
+        styleClass="warning" />
+      <h:outputText
+        rendered="#{searchContextContainer.extensionReportReviewHintRendered}"
+        value="&#160;&#160;#{messages.reviewExtensionReport}"
+        title="#{messages.reviewExtensionReportHint}"
+        styleClass="warning" />
+      <c:if test="#{searchContextContainer.internal}">
+        <i class="fas fa-star-of-life pending" title="#{messages.internalContainerHint}" />
+      </c:if>
+      <c:if test="#{searchContextContainer.tracked}">
+        <i class="fas fa-eye pending" title="#{messages.trackedContainerIconHint}" />
+      </c:if>
+      <h:outputText value="&#160;&#160;#{searchContextContainer.name}" />
+    </h:panelGroup>
+
+    <h:panelGroup
+      id="searchFragment"
+      styleClass="search-menu">
+      <h:panelGrid
+        columns="2"
+        cellspacing="0"
+        cellpadding="0"
+        styleClass="border">
+        <p:menubar>
+          <p:submenu>
+            <p:menuitem
+              outcome="/query/list-my.xhtml"
+              value="My #{messages.savedQueries}" />
+            <p:menuitem
+              outcome="/query/list-all.xhtml"
+              value="All #{messages.savedQueries}" />
+          </p:submenu>
+        </p:menubar>
+        <h:form
+          id="searchForm"
+          onkeyup="if (event.key === 'Enter') {clickLink(); return false;}">
+          <h:panelGrid
+            columns="2"
+            cellspacing="0"
+            cellpadding="0">
+            <h:inputText
+              id="term"
+              maxlength="30"
+              class="search-line-input"
+              value="#{quickSearchManager.term}"
+              title="#{messages.quickSearchHint}"
+              onfocus="oldVal=this.value;this.value=''"
+              onblur="if(this.value===''){this.value=oldVal}"
+              pt:placeholder="#{messages.searchTerm}">
+              <p:ajax
+                event="keyup"
+                global="false"
+                process="term"
+                update="searchButton" />
+            </h:inputText>
+            <p:link
+              id="searchButton"
+              outcome="/search/show.xhtml"
+              immediate="true"
+              styleClass="search-line-button-border-left">
+              <i class="fas fa-search" />
+              <f:param
+                name="term"
+                value="#{quickSearchManager.getTermParam()}" />
+            </p:link>
+            <p:remoteCommand
+              name="clickLink"
+              process="searchForm:term"
+              update="searchForm:searchButton"
+              oncomplete="document.getElementById('searchForm:searchButton').click();"
+              global="false" />
+          </h:panelGrid>
+        </h:form>
+      </h:panelGrid>
+    </h:panelGroup>
+  </h:panelGrid>
+</ui:composition>

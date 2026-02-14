@@ -1,0 +1,36 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/track-icon.xhtml" />
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/name-trunc.xhtml" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{projectList.projectStatusEnums}" />
+    <ui:param
+      name="showPendingExtensionReportHint"
+      value="true" />
+  </ui:include>
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <ui:include src="/fragments/column/member-count.xhtml" />
+  <ui:include src="/fragments/column/resourcestotalsize.xhtml" />
+  <ui:include src="/fragments/column/importresourcestotalsize.xhtml" />
+  <ui:include src="/fragments/column/totalbookedcharges.xhtml" />
+  <ui:include src="/fragments/column/totalbillablecharges.xhtml" />
+  <ui:include src="/fragments/column/totalpricenonbookedbillablecharges.xhtml" />
+  <ui:include src="/fragments/column/budgetlimit.xhtml" />
+  <ui:include src="/fragments/column/coach.xhtml" />
+  <ui:include src="/fragments/column/affiliation.xhtml" />
+  <ui:include src="/fragments/column/budgetofficer.xhtml" />
+  <ui:include src="/fragments/column/leader.xhtml" />
+  <ui:include src="/fragments/column/contact.xhtml" />
+  <ui:include src="/fragments/column/requester.xhtml" />
+  <ui:include src="/fragments/column/startdate.xhtml" />
+  <ui:include src="/fragments/column/enddate.xhtml" />
+  <ui:include src="/fragments/column/billing-info.xhtml" />
+  <ui:include src="/fragments/column/finance.xhtml" />
+  <ui:include src="/fragments/column/internal.xhtml" />
+  <ui:include src="/fragments/column/orderdataonly.xhtml" />
+  <ui:include src="/fragments/column/failedworkunitscount.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

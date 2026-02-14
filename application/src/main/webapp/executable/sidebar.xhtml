@@ -1,0 +1,40 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/parameters.xhtml" />
+  <ui:include src="/fragments/sidebar/externaljobs.xhtml" />
+  <ui:include src="/fragments/sidebar/applications.xhtml" />
+  <ui:include src="/fragments/sidebar/storages.xhtml" />
+  <ui:include src="/fragments/sidebar/submitters.xhtml" />
+  <ui:include src="/fragments/sidebar/wrappercreators.xhtml" />
+
+  <c:if test="#{executable.context.equals('APPLICATION')}">
+    <ui:include src="/fragments/sidebar/workunits.xhtml">
+      <ui:param
+        name="content"
+        value="#{executable.applicationWorkunits}" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{executable.context.equals('SUBMITTER')}">
+    <ui:include src="/fragments/sidebar/workunits.xhtml">
+      <ui:param
+        name="content"
+        value="#{executable.submitterWorkunits}" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{executable.context.equals('WRAPPERCREATOR')}">
+    <ui:include src="/fragments/sidebar/workunits.xhtml">
+      <ui:param
+        name="content"
+        value="#{executable.wrapperCreatorWorkunits}" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/workunitExecutables.xhtml" />
+  <ui:include src="/fragments/sidebar/slaveExecutables.xhtml" />
+
+  <ui:include src="/fragments/sidebar/successors.xhtml" />
+</ui:composition>

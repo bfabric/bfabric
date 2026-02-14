@@ -1,0 +1,12 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('workunits') and identityManager.hasCurrentUserRole('archiveReader')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="workunit" />
+      <ui:param name="tableContext" value="#{job.tableContext}" />
+      <ui:param name="tableContent" value="#{job.workunits}" />
+      <ui:param name="hideColumns" value="job" />
+      <ui:param name="rowStyleClass" value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

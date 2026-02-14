@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('templates')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="feedbacktemplate" />
+      <ui:param
+        name="tableContext"
+        value="#{feedbackQuestion.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{feedbackQuestion.templates}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

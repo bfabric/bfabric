@@ -1,0 +1,156 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+
+      <ui:include src="/fragments/details/instrument.xhtml">
+        <ui:param
+          name="entityValue"
+          value="#{instrumentReservation.instrument.label} " />
+      </ui:include>
+
+      <c:if test="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+        <h:outputText value="#{messages.instrumentReservationSetting}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{instrumentReservation.instrumentReservationSetting}" />
+          <ui:param
+            name="entityValue"
+            value="#{instrumentReservation.instrumentReservationSetting.validIntervalAsString} " />
+        </ui:include>
+      </c:if>
+
+      <ui:include src="/fragments/details/instrumentreservationtype.xhtml" />
+      <ui:include src="/fragments/details/booker.xhtml" />
+      <ui:include src="/fragments/details/operator.xhtml" />
+      <ui:include src="/fragments/details/user.xhtml" />
+      <ui:include src="/fragments/details/containers.xhtml" />
+      <ui:include src="/fragments/details/servicetype.xhtml" />
+      <ui:include src="/fragments/details/run.xhtml" />
+
+      <h:outputText value="#{messages.startDate}" />
+      <h:outputText value="#{instrumentReservation.startDateAsText}" />
+
+      <h:outputText value="#{messages.endDate}" />
+      <h:outputText value="#{instrumentReservation.endDateAsText}" />
+
+      <h:outputText value="#{messages.accountedDuration}" />
+      <h:outputText value="#{instrumentReservation.durationAccountedWithChargeTimeUnit}" />
+
+      <c:if test="#{instrumentReservation.repeaterEvent}">
+        <h:outputText value="#{messages.repeaterId}" />
+        <p:link
+          outcome="show.xhtml"
+          value="#{instrumentReservation.repeaterId}">
+          <f:param
+            name="id"
+            value="#{instrumentReservation.repeaterId}" />
+          <f:param
+            name="tab"
+            value="#{constants.DETAILS}" />
+        </p:link>
+      </c:if>
+
+      <ui:include src="/fragments/details/chargeable.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/charges.xhtml" />
+
+      <c:if test="#{not empty instrumentReservation.costs}">
+        <h:outputText value="#{messages.costs}" title="#{messages.provisionalCostsHint}" />
+        <h:outputText value="#{instrumentReservation.costs} (#{instrumentReservation.chargeTime} * #{instrumentReservation.unitPrice})" title="#{messages.provisionalCostsHint}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/approvalPending.xhtml" />
+      <ui:include src="/fragments/details/approved.xhtml" />
+      <ui:include src="/fragments/details/approvaldate.xhtml" />
+      <ui:include src="/fragments/details/approvedby.xhtml" />
+      <ui:include src="/fragments/details/approvalnote.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="12"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <p:button
+        outcome="/charge/edit.xhtml"
+        value="#{messages.charge}"
+        rendered="#{instrumentReservation.chargeableByCurrentUser}">
+        <f:param
+          name="instrumentReservationId"
+          value="#{instrumentReservation.id}" />
+      </p:button>
+      <h:form rendered="#{instrumentReservation.approveButtonRendered}">
+        <p:commandButton
+          action="#{instrumentReservationManager.approve}"
+          value="#{messages.approve}"
+          title="#{messages.approve}" />
+      </h:form>
+      <h:form rendered="#{instrumentReservation.rejectButtonRendered}">
+        <p:commandButton
+          action="#{instrumentReservationManager.reject}"
+          value="#{messages.reject}"
+          title="#{messages.reject}" />
+      </h:form>
+      <ui:include src="/fragments/button/export-and-download-ics.xhtml" />
+      <p:button
+        outcome="#{instrumentReservationManager.scheduleURL}"
+        value="#{messages.schedule}">
+      </p:button>
+      <p:button
+        styleClass="nowrap"
+        outcome="/instrumentschedule/list.xhtml"
+        value="#{messages.show}"
+        title="#{messages.showInstrumentReservationInOverviewHint}">
+        <f:param
+          name="interval"
+          value="#{agendaInstrumentReservationManager.getNewIntervalDate(instrumentReservation.startDate.toLocalDate())}" />
+      </p:button>
+      <h:form rendered="#{instrumentReservation.deletable and not instrumentReservation.repeaterEvent}">
+        <p:commandButton
+          action="#{instrumentReservationManager.remove}"
+          value="#{messages.delete}">
+          <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+        </p:commandButton>
+      </h:form>
+      <h:form rendered="#{instrumentReservation.deletable and instrumentReservation.repeaterEvent}">
+        <p:commandButton
+          action="#{instrumentReservationManager.removeThis}"
+          value="#{messages.deleteEventThis}"
+          title="#{messages.deleteEventThisHint}">
+          <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+        </p:commandButton>
+      </h:form>
+      <h:form rendered="#{instrumentReservation.deletable and instrumentReservation.repeaterEvent and instrumentReservation.deletableAllFollowing}">
+        <p:commandButton
+          action="#{instrumentReservationManager.removeFollowing}"
+          value="#{messages.deleteEventFollowing}"
+          title="#{messages.deleteEventFollowingHint}">
+          <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+        </p:commandButton>
+      </h:form>
+      <h:form rendered="#{instrumentReservation.deletable and instrumentReservation.repeaterEvent and instrumentReservation.deletableAll}">
+        <p:commandButton
+          action="#{instrumentReservationManager.removeAll}"
+          value="#{messages.deleteEventAll}"
+          title="#{messages.deleteEventAllHint}">
+          <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+        </p:commandButton>
+      </h:form>
+      <ui:include src="/fragments/button/list.xhtml">
+        <ui:param
+          name="rendered"
+          value="#{identityManager.hasCurrentUserRole('instrumentReader')}" />
+      </ui:include>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

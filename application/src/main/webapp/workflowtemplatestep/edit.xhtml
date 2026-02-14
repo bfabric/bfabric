@@ -1,0 +1,106 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{workflowTemplateStepManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.workflowTemplate}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="workflowTemplate" />
+            <ui:param
+              name="value"
+              value="#{workflowTemplateStep.workflowTemplate}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{workflowTemplateService.getFiltered}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{workflowTemplateStep.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+            <h:outputText value="#{messages.description}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputTextarea
+                id="description"
+                value="#{workflowTemplateStep.description}"
+                rows="3"
+                styleClass="editWidthExtraLarge">
+              </h:inputTextarea>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.expectedDuration}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="expectedDuration"
+              value="#{workflowTemplateStep.expectedDuration}"
+              styleClass="editWidthSmall">
+            </h:inputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.runsPerProcess}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="runsPerProcess"
+              value="#{workflowTemplateStep.runsPerProcess}"
+              styleClass="editWidthSmall">
+            </h:inputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.samplesPerProcess}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="samplesPerProcess"
+              value="#{workflowTemplateStep.samplesPerProcess}"
+              styleClass="editWidthSmall">
+            </h:inputText>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.samplePreparationProtocol}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="samplePreparationProtocol" />
+              <ui:param
+                name="value"
+                value="#{workflowTemplateStep.samplePreparationProtocol}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workflowTemplateStepManager.getFilteredEnabledSamplePreparationProtocolsIncluding}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

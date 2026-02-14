@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('applications')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="application" />
+      <ui:param name="tableContext" value="#{applicationCategory.tableContext}" />
+      <ui:param name="tableContent" value="#{applicationList.getLazyModelByApplicationCategoryId(applicationCategory.id)}" />
+      <ui:param name="hideColumns" value="applicationCategory" />
+    </ui:include>
+  </c:if>
+</ui:composition>

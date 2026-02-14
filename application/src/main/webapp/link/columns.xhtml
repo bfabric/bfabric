@@ -1,0 +1,17 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.link} #{messages.id}" />
+  </ui:include>
+  <ui:include src="/fragments/column/url.xhtml" />
+  <ui:include src="/fragments/column/name.xhtml" />
+  <ui:include src="/fragments/column/parentclass.xhtml">
+    <ui:param
+      name="parentClassNames"
+      value="#{linkList.parentClassNames}" />
+  </ui:include>
+  <ui:include src="/fragments/column/parentid.xhtml" />
+  <ui:include src="/fragments/column/valid.xhtml" />
+  <ui:include src="/fragments/column/validitycheck.xhtml" />
+</ui:composition>

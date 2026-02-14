@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:set var="icon" value="#{empty icon ? 'fas fa-up-right-from-square' : icon}" />
+  <c:if test="#{content.size() > 0 and (empty enabled or enabled) or showAlways}">
+    <p:link title="#{hint}">
+      <f:param name="id" value="#{instance.id}" />
+      <f:param name="tab" value="#{tab}" />
+      <div class="card cardBoxShadow">
+        <div>
+          <div class="numbers"><h:outputText value="#{content.size()}" /></div>
+          <div class="cardName"><h:outputText value="#{label}" /></div>
+        </div>
+        <div class="iconBox"><i class="#{icon}" /></div>
+      </div>
+    </p:link>
+  </c:if>
+</ui:composition>

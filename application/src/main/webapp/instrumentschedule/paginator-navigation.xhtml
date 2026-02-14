@@ -1,0 +1,90 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <table
+    class="overview topline"
+    cellpadding="0"
+    cellspacing="0">
+    <tr>
+      <td class="instrumentreservationfirstcolumn"><p:datePicker
+        value="#{agendaInstrumentReservationManager.jumpDate}"
+        valueChangeListener="#{agendaInstrumentReservationManager.jumpDateChanged}"
+        immediate="true"
+        styleClass="editWidthSmall">
+        <p:ajax
+          event="dateSelect"
+          listener="#{agendaInstrumentReservationManager.jumpToDate}"
+          update="overviewForm" />
+      </p:datePicker></td>
+      <td><h:panelGrid
+        columns="18"
+        cellpadding="0"
+        cellspacing="0"
+        columnClasses="agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink">
+        <c:if test="#{agendaInstrumentReservationManager.previousNextButton}">
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaInstrumentReservationManager.getRedirectURL(3)}"
+            value="#{messages.previousInterval}" />
+          <h:outputText value="|" />
+        </c:if>
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaInstrumentReservationManager.getRedirectURL(5)}"
+          value="#{messages.previousWeek}" />
+        <h:outputText value="|" />
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaInstrumentReservationManager.getRedirectURL(-1)}"
+          value="#{messages.today}" />
+        <h:outputText value="|" />
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaInstrumentReservationManager.getRedirectURL(6)}"
+          value="#{messages.nextWeek}" />
+        <c:if test="#{agendaInstrumentReservationManager.previousNextButton}">
+          <h:outputText value="|" />
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaInstrumentReservationManager.getRedirectURL(4)}"
+            value="#{messages.nextInterval}" />
+        </c:if>
+        <p:spacer width="20" />
+        <c:if test="#{agendaInstrumentReservationManager.expandButton}">
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaInstrumentReservationManager.getRedirectURL(1)}"
+            value="#{messages.expand}"
+            title="#{messages.expandViewHint}" />
+          <h:outputText value="|" />
+        </c:if>
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaInstrumentReservationManager.getRedirectURL(7)}"
+          value="#{messages.reset}"
+          title="#{messages.resetViewHint}" />
+        <c:if test="#{agendaInstrumentReservationManager.reduceButton}">
+          <h:outputText value="|" />
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaInstrumentReservationManager.getRedirectURL(2)}"
+            value="#{messages.reduce}"
+            title="#{messages.reduceViewHint}" />
+        </c:if>
+        <p:spacer width="20" />
+        <p:link
+          styleClass="nowrap"
+          outcome="/instrumentreservationshift/shift.xhtml"
+          value="#{messages.shift}"
+          rendered="#{identityManager.hasCurrentUserRole('instrumentManager')}">
+          <f:param
+            value="true"
+            name="shiftInit" />
+        </p:link>
+      </h:panelGrid></td>
+    </tr>
+  </table>
+</ui:composition>

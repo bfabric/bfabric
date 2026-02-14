@@ -1,0 +1,137 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('annotationManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeAnnotations} : #{annotationManager.annotation.displayName} - #{annotationManager.merged.displayName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{annotationManager.annotation}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{annotationManager.merged}" />
+        </ui:include>
+        <h:outputText value="#{messages.type}" />
+        <h:outputText value="#{annotationManager.annotation.type}" />
+        <h:selectOneRadio
+          id="type"
+          layout="lineDirection"
+          value="#{annotationManager.mergeSelection.type}">
+          <f:selectItem itemValue="#{annotationManager.annotation.type}" />
+          <f:selectItem itemValue="#{annotationManager.merged.type}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{annotationManager.merged.type}" />
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{annotationManager.annotation.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{annotationManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{annotationManager.annotation.name}" />
+          <f:selectItem itemValue="#{annotationManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{annotationManager.merged.name}" />
+
+        <h:outputText value="#{messages.na}" />
+        <h:outputText value="#{annotationManager.annotation.na}" />
+        <h:selectOneRadio
+          id="na"
+          layout="lineDirection"
+          value="#{annotationManager.mergeSelection.na}">
+          <f:selectItem itemValue="#{annotationManager.annotation.na}" />
+          <f:selectItem itemValue="#{annotationManager.merged.na}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{annotationManager.merged.na}" />
+
+        <h:outputText value="#{messages.top}" />
+        <h:outputText value="#{annotationManager.annotation.top}" />
+        <h:selectOneRadio
+          id="top"
+          layout="lineDirection"
+          value="#{annotationManager.mergeSelection.top}">
+          <f:selectItem itemValue="#{annotationManager.annotation.top}" />
+          <f:selectItem itemValue="#{annotationManager.merged.top}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{annotationManager.merged.top}" />
+
+        <h:outputText value="#{messages.common}" />
+        <h:outputText value="#{annotationManager.annotation.common}" />
+        <h:selectOneRadio
+          id="common"
+          layout="lineDirection"
+          value="#{annotationManager.mergeSelection.common}">
+          <f:selectItem itemValue="#{annotationManager.annotation.common}" />
+          <f:selectItem itemValue="#{annotationManager.merged.common}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{annotationManager.merged.common}" />
+
+        <h:outputText value="#{messages.released}" />
+        <h:outputText value="#{annotationManager.annotation.released}" />
+        <h:selectOneRadio
+          id="released"
+          layout="lineDirection"
+          value="#{annotationManager.mergeSelection.released}">
+          <f:selectItem itemValue="#{annotationManager.annotation.released}" />
+          <f:selectItem itemValue="#{annotationManager.merged.released}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{annotationManager.merged.released}" />
+
+        <c:if test="#{not empty annotationManager.annotation.description or not empty annotationManager.merged.description}">
+          <h:outputText value="#{messages.description}" />
+          <h:outputText value="#{annotationManager.annotation.getDescriptionTrunc(40)}" title="#{annotationManager.annotation.description}" />
+          <h:selectOneRadio
+            id="description"
+            layout="lineDirection"
+            value="#{annotationManager.mergeSelection.description}">
+            <f:selectItem itemValue="#{annotationManager.annotation.description}" />
+            <f:selectItem itemValue="#{annotationManager.merged.description}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{annotationManager.merged.getDescriptionTrunc(40)}" title="#{annotationManager.merged.description}" />
+        </c:if>
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.samples}" />
+        <h:outputText value="#{annotationManager.annotation.samples.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{annotationManager.merged.samples.size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{annotationManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{annotationManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

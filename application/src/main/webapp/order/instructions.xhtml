@@ -1,0 +1,43 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('instructions')}">
+    <h:outputText value="#{messages.submittedSuccessfully}" />
+    <p><h:outputText value="#{messages.reviewedContacted}" /></p>
+    <p><h:outputText value="#{messages.proceedSteps}" /></p>
+    <ol>
+      <li><p:link outcome="#{order.urlShowScreen}" value="#{messages.commentFeature}">
+        <f:param name="id" value="#{order.id}" />
+        <f:param name="tab" value="comments" />
+      </p:link></li>
+      <li>#{messages.orderAccepted}</li>
+      <li><h:form>
+        <p:link value="#{messages.printForm}" href="#{order.confirmationPDFLink}" />
+      </h:form></li>
+      <li>#{messages.signForm}</li>
+      <c:if test="#{order.serviceType.processesSamples}">
+        <li>#{messages.tubeIds}</li>
+        <li>#{messages.formSamples}</li>
+      </c:if>
+    </ol>
+    <c:if test="#{order.serviceType.processesSamples}">
+      <h:outputText value="#{messages.samplesArrived}" />
+      <c:if test="#{not order.hasBeenAccepted()}">
+        <p style="background-color: #FF0000; color: white; padding: 10px;"><h:outputText value="#{messages.samplesDoNotSentBeforeOrderIsAccepted}" /></p>
+      </c:if>
+      <c:if test="#{not empty order.serviceType.serviceArea.contactInfo}">
+        <p>#{messages.sampleDelivery}:</p>
+        <ul>
+          <li><h:outputText value="#{order.serviceType.serviceArea.contactInfo.fullAddress}" styleClass="preformat" /></li>
+          <li>#{order.serviceType.serviceArea.contactInfo.officeHours}</li>
+          <li>#{order.serviceType.serviceArea.contactInfo.phone}</li>
+          <li>#{order.serviceType.serviceArea.contactInfo.email}</li>
+          <li><a href="#{order.serviceType.serviceArea.contactInfo.mapUrl}">#{order.serviceType.serviceArea.contactInfo.mapUrl}</a></li>
+        </ul>
+      </c:if>
+    </c:if>
+  </c:if>
+</ui:composition>

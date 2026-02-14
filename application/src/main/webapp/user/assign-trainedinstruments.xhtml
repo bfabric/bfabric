@@ -1,0 +1,157 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('instrumentManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.assignTrainedUsers}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="assignInstrumentsForm">
+      <h:panelGrid
+        id="assign-instruments"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.instruments}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:panelGroup id="assign-trainedinstruments-instruments-options">
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="tableContext"
+                value="availableInstrument" />
+              <ui:param
+                name="tableContent"
+                value="#{instrumentList.lazyModel}" />
+              <ui:param
+                name="include"
+                value="/user/assign-trainedinstruments-instrument-columns.xhtml" />
+              <ui:param
+                name="showColumns"
+                value="addCheckbox" />
+              <ui:param
+                name="styleClass"
+                value="line-height-initial" />
+            </ui:include>
+          </h:panelGroup>
+        </ui:decorate>
+        <p:spacer height="10" />
+        <p:spacer height="10" />
+        <h:panelGroup id="assign-trainedinstruments-instruments-options-selected-text">
+          <h:outputText
+            rendered="#{not empty userManager.selectedInstruments}"
+            value="#{messages.selectedInstruments} (#{userManager.selectedInstruments.size()})"
+            styleClass="bold" />
+        </h:panelGroup>
+        <h:panelGroup id="assign-trainedinstruments-instruments-options-selected">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:panelGroup rendered="#{not empty userManager.selectedInstruments}">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="tableContext"
+                  value="selectedInstrument" />
+                <ui:param
+                  name="tableContent"
+                  value="#{userManager.selectedInstruments}" />
+                <ui:param
+                  name="include"
+                  value="/user/assign-trainedinstruments-instrument-columns.xhtml" />
+                <ui:param
+                  name="showColumns"
+                  value="removeCheckbox" />
+                <ui:param
+                  name="styleClass"
+                  value="line-height-initial" />
+                <ui:param
+                  name="customRowsPerPageTemplate"
+                  value="#{configuration.defaultRowsPerPageTemplate}" />
+              </ui:include>
+            </h:panelGroup>
+          </ui:decorate>
+        </h:panelGroup>
+        <p:spacer height="10" />
+        <p:spacer height="10" />
+        <h:outputText value="#{messages.users}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:panelGroup id="assign-trainedinstruments-users-options">
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="tableContext"
+                value="availableUser" />
+              <ui:param
+                name="tableContent"
+                value="#{userList.lazyModel}" />
+              <ui:param
+                name="include"
+                value="/user/assign-trainedinstruments-user-columns.xhtml" />
+              <ui:param
+                name="showColumns"
+                value="addCheckbox" />
+              <ui:param
+                name="styleClass"
+                value="line-height-initial" />
+            </ui:include>
+          </h:panelGroup>
+        </ui:decorate>
+        <p:spacer height="10" />
+        <p:spacer height="10" />
+        <h:panelGroup id="assign-trainedinstruments-users-options-selected-text">
+          <h:outputText
+            rendered="#{not empty userManager.selectedUsers}"
+            value="#{messages.selectedUsers} (#{userManager.selectedUsers.size()})"
+            styleClass="bold" />
+        </h:panelGroup>
+        <h:panelGroup id="assign-trainedinstruments-users-options-selected">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:panelGroup rendered="#{not empty userManager.selectedUsers}">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="tableContext"
+                  value="selectedUser" />
+                <ui:param
+                  name="tableContent"
+                  value="#{userManager.selectedUsers}" />
+                <ui:param
+                  name="include"
+                  value="/user/assign-trainedinstruments-user-columns.xhtml" />
+                <ui:param
+                  name="showColumns"
+                  value="removeCheckbox" />
+                <ui:param
+                  name="styleClass"
+                  value="line-height-initial" />
+                <ui:param
+                  name="customRowsPerPageTemplate"
+                  value="#{configuration.defaultRowsPerPageTemplate}" />
+              </ui:include>
+            </h:panelGroup>
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="buttons"
+        columns="3"
+        styleClass="action">
+        <p:commandButton
+          rendered="#{userManager.renderAssignTrainedInstruments}"
+          action="#{userManager.assignTrainedInstruments}"
+          value="#{messages.save}"
+          update="@form" />
+        <ui:include src="/fragments/button/cancelRedirectHome.xhtml" />
+        <p:commandButton
+          rendered="#{userManager.renderClearAssignTrainedInstruments}"
+          action="#{userManager.clearForm}"
+          value="#{messages.clear}"
+          immediate="true"
+          update="@form">
+        </p:commandButton>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

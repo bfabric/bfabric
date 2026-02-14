@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('similarannotations') and identityManager.hasCurrentUserRole('annotationManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/annotation/similarannotations-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="similar" />
+      <ui:param
+        name="tableContent"
+        value="#{annotationManager.similarAnnotations}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

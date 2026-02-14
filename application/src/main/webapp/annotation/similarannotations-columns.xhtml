@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/annotation/columns.xhtml" />
+  <p:column headerText="#{messages.action}">
+    <p:link
+      outcome="/annotation/merge.xhtml"
+      value="#{messages.merge}">
+      <f:param
+        name="id"
+        value="#{annotation.id}" />
+      <f:param
+        name="mergeId"
+        value="#{entity.id}" />
+    </p:link>
+  </p:column>
+</ui:composition>

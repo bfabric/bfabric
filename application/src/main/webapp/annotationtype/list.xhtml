@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('annotationReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.annotationTypes}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="annotationtyperecord" />
+      <ui:param
+        name="tableContent"
+        value="#{annotationList.getAllAnnotations()}" />
+      <ui:param
+        name="include"
+        value="/annotationtype/columns.xhtml" />
+      <ui:param
+        name="styleClass"
+        value="align-top" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

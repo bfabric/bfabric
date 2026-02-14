@@ -1,0 +1,14 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not hideColumns.contains('parent')}">
+    <ui:include src="/fragments/column/parentid.xhtml">
+      <ui:param
+        name="headerText"
+        value="#{messages.parent}" />
+      <ui:param
+        name="entityValue"
+        value="#{entity.parent}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

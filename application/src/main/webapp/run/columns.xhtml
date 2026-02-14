@@ -1,0 +1,25 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param name="statusEnumList" value="#{runList.runStatusEnums}" />
+  </ui:include>
+  <ui:include src="/fragments/column/sample-count.xhtml">
+    <ui:param name="sortable" value="false" />
+    <ui:param name="filterable" value="false" />
+  </ui:include>
+  <ui:include src="/fragments/column/supervisor.xhtml" />
+  <ui:include src="/fragments/column/demultiplexingrequired.xhtml" />
+  <ui:include src="/fragments/column/qc.xhtml" />
+  <ui:include src="/fragments/column/instrument.xhtml" />
+  <ui:include src="/fragments/column/instrumentreadconfiguration.xhtml" />
+  <ui:include src="/fragments/column/rununit.xhtml" />
+  <ui:include src="/fragments/column/physicalseparation.xhtml" />
+  <ui:include src="/fragments/column/datafolder.xhtml" />
+  <ui:include src="/fragments/column/serverlocation.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/datasets.xhtml" />
+  <ui:include src="/fragments/column/container-count.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/statemodified.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

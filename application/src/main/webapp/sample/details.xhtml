@@ -1,0 +1,89 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <ui:include src="details-content.xhtml" />
+    <h:panelGrid
+      id="buttons"
+      columns="11"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <p:button
+        rendered="#{sample.updatableMultiplex}"
+        outcome="/sample/multiplex.xhtml"
+        value="#{messages.editMultiplexedSample}"
+        title="#{messages.editMultiplexedSampleHint}">
+        <f:param
+          name="sampleId"
+          value="#{sample.id}" />
+      </p:button>
+      <p:button
+        rendered="#{sample.reMultiplexable}"
+        outcome="/sample/multiplex.xhtml"
+        value="#{messages.reMultiplex}"
+        title="#{messages.reMultiplexHint}">
+        <f:param
+          name="sampleId"
+          value="#{sample.id}" />
+        <f:param
+          name="clone"
+          value="true" />
+      </p:button>
+      <ui:include src="/fragments/button/clone.xhtml">
+        <ui:param
+          name="rendered"
+          value="#{sample.cloneable}" />
+      </ui:include>
+      <p:button
+        rendered="#{sample.movable}"
+        outcome="/sample/edit.xhtml"
+        value="#{messages.move}"
+        title="#{messages.moveSampleHint}">
+        <f:param
+          name="id"
+          value="#{sample.id}" />
+        <f:param
+          name="move"
+          value="true" />
+      </p:button>
+      <p:button
+        rendered="#{sample.childCreatable}"
+        outcome="/sample/edit.xhtml"
+        value="#{messages.addChildSample}"
+        title="#{messages.addChildSampleHint}">
+        <f:param
+          name="parentSampleId"
+          value="#{sample.id}" />
+      </p:button>
+      <p:commandButton
+        rendered="#{sample.fractionatable}"
+        actionListener="#{entityManager.resetFractionateModalDialog()}"
+        value="#{messages.fractionate}"
+        immediate="true"
+        oncomplete="PF('fractionateModalDialog').show();"
+        update="fractionateModalPanel" />
+      <p:commandButton rendered="#{sample.userDecisionRequiredRendered}" actionListener="#{sampleManager.userDecisionRequired(instance, null)}" value="#{messages.userDecisionRequired}"
+                       title="#{messages.userDecisionRequiredHint}" update="details, buttons" />
+      <p:button rendered="#{sample.replacementCreatable}" outcome="/sample/edit.xhtml" value="#{messages.createReplacement}" title="#{messages.createReplacementHint}">
+        <f:param name="replacementSampleId" value="#{sample.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml">
+        <ui:param
+          name="title"
+          value="#{sample.removeHint}" />
+      </ui:include>
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+      <ui:include src="/sample/fractionate-modal.xhtml">
+        <ui:param
+          name="bean"
+          value="#{entityManager}" />
+      </ui:include>
+    </h:panelGrid>
+    <ui:include src="/fragments/button/prevNextInContainer.xhtml" />
+    <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+  </c:if>
+</ui:composition>

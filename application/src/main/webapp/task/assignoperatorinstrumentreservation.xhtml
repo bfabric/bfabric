@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup
+    rendered="#{configuration.instrumentReservationEnabled and sidebarHelper.isTab('assignoperatorinstrumentreservation') and identityManager.hasCurrentUserRole('instrumentManager') and not empty instrumentReservationList.assignOperatorTasks}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrumentreservation" />
+      <ui:param
+        name="tableContext"
+        value="assignoperatorinstrumentreservation" />
+      <ui:param
+        name="tableContent"
+        value="#{instrumentReservationList.assignOperatorTasks}" />
+      <ui:param
+        name="hideColumns"
+        value="selectCheckbox,chargeCount, approved, approvalDate, approvedBy, approvalNote, createdBy, createdOn" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

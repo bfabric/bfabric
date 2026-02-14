@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <!--@elvariable id="instance" type="org.bfabric.entity.AbstractEntity"-->
+  <c:if test="#{not empty instance.commentsPinnedCurrentUser}">
+    <h:outputText value="#{messages.pinnedComments}" />
+    <ui:repeat
+      value="#{instance.commentsPinnedCurrentUser}"
+      var="item">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+        <ui:param
+          name="entityValue"
+          value="#{item.createdByFullDateFirst}" />
+        <ui:param
+          name="styleClass"
+          value="#{styleClass}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </c:if>
+</ui:composition>

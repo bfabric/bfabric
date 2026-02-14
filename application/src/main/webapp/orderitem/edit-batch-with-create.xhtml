@@ -1,0 +1,254 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(orderItemBatchManager.order.updatable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.editOrderItems} #{orderItemBatchManager.order.displayName} #{orderItemBatchManager.order.serviceType.name}" />
+  </ui:define>
+
+  <ui:param
+    name="bean"
+    value="#{orderItemBatchManager}" />
+
+  <ui:define name="body">
+    <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+
+    <h:panelGroup>
+      <p>
+        <h:outputText
+          value="#{messages.editOrderItemsHint}"
+          styleClass="warn" />
+        <h:outputLink
+          rendered="#{not empty orderItemBatchManager.order.serviceType.instructionLink}"
+          value="#{orderItemBatchManager.order.serviceType.instructionLink}"
+          target="_blank"
+          rel="noopener">
+          <h:outputText value="&#160;#{messages.orderInstructionLinkHint}" />
+        </h:outputLink>
+      </p>
+      <p>
+        <h:outputText rendered="#{orderItemBatchManager.numberOfNonEditableItems > 0}"
+                      value="#{messages.orderHasNonEditableItems} #{orderItemBatchManager.numberOfNonEditableItems}"
+                      styleClass="warn" />
+      </p>
+    </h:panelGroup>
+
+    <script>
+        //<![CDATA[
+        function isValidSubmit(args) {
+            return (args && !args.validationFailed);
+        }
+        //]]>
+    </script>
+    <h:form
+      id="#{constants.EDIT}"
+      styleClass="navigate-away-class">
+      <h:panelGroup id="edit-batch-orderitem-batchtable">
+
+        <style>
+            #{orderItemBatchManager.order.generatedRowStyleClassCoupledStyleSheet}
+        </style>
+
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="batch" />
+          <ui:param
+            name="tableContent"
+            value="#{orderItemBatchManager.editList}" />
+          <ui:param
+            name="include"
+            value="/orderitem/edit-batch-columns.xhtml" />
+          <ui:param
+            name="editable"
+            value="true" />
+          <o:methodParam
+            name="pageListener"
+            value="#{orderItemBatchManager.pageListener}" />
+          <ui:param
+            name="pageListenerGlobal"
+            value="true" />
+          <ui:param
+            name="customListingRows"
+            value="#{orderItemBatchManager.customListingRows}" />
+          <ui:param
+            name="customRowsPerPageTemplate"
+            value="5,10,20,50" />
+          <ui:param
+            name="maximumRowsPerPage"
+            value="50" />
+          <ui:param
+            name="styleClass"
+            value="batchEditTable" />
+        </ui:include>
+      </h:panelGroup>
+
+      <c:set
+        var="addNewBatchItemsDisabled"
+        value="#{orderItemBatchManager.addNewBatchItemsDisabled}"
+        scope="request" />
+
+      <h:panelGrid
+        id="addNewItemsPanel"
+        columns="4"
+        styleClass="action">
+        <h:panelGrid
+          columns="3"
+          styleClass="nospace topline">
+          <p:spinner
+            id="addNewItemsSpinner"
+            disabled="#{addNewBatchItemsDisabled}"
+            value="#{orderItemBatchManager.numberOfNewBatchItems}"
+            min="1"
+            max="#{orderItemBatchManager.maxNumberOfNewBatchItems}"
+            size="5"
+            decimalPlaces="0"
+            thousandSeparator="">
+            <p:ajax
+              event="change"
+              global="false" />
+          </p:spinner>
+          <p:commandButton
+            id="addNewItemsButton"
+            disabled="#{addNewBatchItemsDisabled}"
+            action="#{orderItemBatchManager.addNewBatchItems}"
+            value="#{messages.addItems}"
+            title="#{addNewBatchItemsDisabled ? orderItemBatchManager.itemLimitExceededHint : messages.addNewItemsHint}"
+            immediate="true"
+            styleClass="noleftborderselect"
+            update="#{constants.EDIT}:edit-batch-orderitem-batchtable, addNewItemsPanel, buttons"
+            process="@this"
+            oncomplete="jumpToPage('batch', args.jumpToPage); fixOversize();" />
+        </h:panelGrid>
+        <p:commandButton
+          id="addNewItemsSampleButton"
+          rendered="#{orderItemBatchManager.availableSamples.size() > 0}"
+          disabled="#{addNewBatchItemsDisabled or orderItemBatchManager.availableSamples.size() == 0}"
+          value="#{messages.reuseExistingSamples}"
+          title="#{addNewBatchItemsDisabled ? orderItemBatchManager.itemLimitExceededHint : messages.reuseExistingSamplesHint}"
+          immediate="true"
+          oncomplete="PF('availablesample').clearFilters(); PF('selectSamplesModalDialog').show();"
+          styleClass="select"
+          update="selectSamplesModalPanel" />
+        <p:commandButton
+          id="assignSampleValuesButton"
+          disabled="#{orderItemBatchManager.sampleNamesGenerated}"
+          value="#{messages.excelEdit}"
+          title="#{messages.excelEditHint}"
+          actionListener="#{orderItemBatchManager.prepareSampleValuesModalPanel()}"
+          immediate="true"
+          style="width:70px;min-width:70px;"
+          oncomplete="PF('assignSampleValuesModalDialog').show();"
+          update="assignSampleValuesModalPanel">
+          <f:attribute
+            name="sampleAttributeEnums"
+            value="#{sampleAttributeHelper.getAttributeEnumsExcluding(orderItemBatchManager.order.sampleType.name, true, false, [SampleAttributeEnum.TUBE_ID])}" />
+        </p:commandButton>
+      </h:panelGrid>
+
+      <h:panelGroup id="invalidExcelEditWarning">
+        <h:outputText rendered="#{orderItemBatchManager.unsavedChanges}" value="#{messages.unsavedChangesHint}" styleClass="warning" />
+        <h:outputText
+          value="Invalid values could not be applied for some attributes of: #{collectionHelper.print(orderItemBatchManager.sampleAttributeEnumLabelsInvalidInput)}"
+          styleClass="warning"
+          rendered="#{not empty orderItemBatchManager.sampleAttributeEnumLabelsInvalidInput}" />
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="buttons"
+        columns="3"
+        styleClass="action">
+        <p:commandButton
+          rendered="#{orderItemBatchManager.sampleNamesGenerated}"
+          action="#{orderItemBatchManager.confirmGeneratedSampleNames()}"
+          value="#{messages.confirmGeneratedSampleNames}"
+          title="#{messages.confirmGeneratedSampleNamesHint}"
+          process="@this"
+          update="buttons, #{constants.EDIT}:assignSampleValuesButton, #{constants.EDIT}:batchtable:generate-button"
+          style="border:1px solid #f00" />
+        <p:commandButton
+          rendered="#{orderItemBatchManager.sampleNamesGenerated}"
+          action="#{orderItemBatchManager.clearGeneratedSampleNames()}"
+          value="#{messages.clearGeneratedSampleNames}"
+          title="#{messages.clearGeneratedSampleNamesHint}"
+          process="@this"
+          update="#{constants.EDIT}:buttons, #{constants.EDIT}:assignSampleValuesButton, #{constants.EDIT}:batchtable:generate-button" />
+        <p:commandButton
+          rendered="#{not orderItemBatchManager.sampleNamesGenerated and empty orderItemBatchManager.order.coupledMessage}"
+          action="#{orderItemBatchManager.save}"
+          disabled="#{empty orderItemBatchManager.editList and empty orderItemBatchManager.deleteList}"
+          value="#{messages.save}"
+          oncomplete="if(!isValidSubmit(args)){hasChanged=true;} fixOversize();"
+          onclick="hasChanged=false;"
+          update="@form">
+          <o:skipValidators />
+        </p:commandButton>
+        <p:commandButton
+          rendered="#{not orderItemBatchManager.sampleNamesGenerated and not empty orderItemBatchManager.order.coupledMessage}"
+          action="#{orderItemBatchManager.save}"
+          disabled="#{empty orderItemBatchManager.editList and empty orderItemBatchManager.deleteList}"
+          value="#{messages.save}"
+          oncomplete="if(!isValidSubmit(args)){hasChanged=true;} fixOversize();"
+          onclick="hasChanged=false;"
+          update="@form">
+          <o:skipValidators />
+          <p:confirm
+            header="#{messages.warning}"
+            message="#{messages.coupledMessageWarning.replace('{0}', orderItemBatchManager.order.orderItemsSize.toString()).replace('{1}', orderItemBatchManager.order.orderItemsSamplesSize.toString())}"
+            icon="ui-icon-alert" />
+          <ui:include src="/fragments/confirm-dialog.xhtml" />
+        </p:commandButton>
+        <p:commandButton
+          action="#{orderItemBatchManager.cancelEdit}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/annotation/add-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+      <ui:param
+        name="updateOnSave"
+        value="@([id$=batchtable]), @([id$=addAnnotation])" />
+    </ui:include>
+    <ui:include src="/fragments/batch/edit-multi-value-field.xhtml" />
+    <ui:include src="/fragments/batch/edit-multi-value-fields.xhtml" />
+    <ui:include src="/fragments/batch/clone-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+      <ui:param
+        name="cloneItemName"
+        value="#{bean.currentCloneItem.displayName}" />
+      <ui:param
+        name="applyButtonUpdate"
+        value="#{constants.EDIT}:batchtable, #{constants.EDIT}:addNewItemsSpinner, #{constants.EDIT}:addNewItemsButton, #{constants.EDIT}:addNewItemsSampleButton, #{constants.EDIT}:buttons" />
+    </ui:include>
+    <ui:include src="/sample/assign-multiplexids-user-submitted-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+      <ui:param
+        name="serviceTypeReadyMadeLibrariesSequencingAssignMultiplexIdsHintRendered"
+        value="#{bean.order.hasServiceTypeReadyMadeLibrariesSequencing()}" />
+    </ui:include>
+    <ui:include src="/sample/assignSample-values-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+    </ui:include>
+    <ui:include src="/sample/select-modal.xhtml" />
+  </ui:define>
+</ui:composition>

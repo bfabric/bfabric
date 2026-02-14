@@ -1,0 +1,51 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+
+  <ui:include src="/fragments/sidebar/samples.xhtml">
+    <ui:param
+      name="content"
+      value="#{sampleList.getLazyModelByAnnotation(annotation)}" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('annotationManager')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/samplepreparationprotocols.xhtml">
+    <ui:param
+      name="content"
+      value="#{samplePreparationProtocolList.getLazyModelByAnnotation(annotation)}" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('annotationManager')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/instruments.xhtml">
+    <ui:param
+      name="content"
+      value="#{instrumentList.getLazyModelByAnnotation(annotation)}" />
+    <ui:param
+      name="enabled"
+      value="#{identityManager.hasCurrentUserRole('annotationManager')}" />
+  </ui:include>
+
+
+  <c:if test="#{identityManager.hasCurrentUserRole('annotationManager')}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{annotationManager.similarAnnotations}" />
+      <ui:param
+        name="label"
+        value="#{messages.similarAnnotations}" />
+      <ui:param
+        name="tab"
+        value="similarannotations" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/mails.xhtml" />
+  </c:if>
+
+</ui:composition>

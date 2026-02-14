@@ -1,0 +1,238 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{orderEntity.processesPlates and showColumns.contains('userSubmittedEdit')}">
+    <p:column headerText="#{messages.samplesOnPlate}">
+      <p:button
+        rendered="#{orderEntity.updatable and entity.plate.updatableOrUserUpdatable}"
+        outcome="/plate/edit-batch-samples.xhtml"
+        value="#{messages.editSamples} (#{entity.plate.samples.size()})"
+        styleClass="inline">
+        <f:param
+          name="id"
+          value="#{entity.plate.id}" />
+        <f:param
+          name="plateSubmission"
+          value="true" />
+      </p:button>
+      <h:panelGroup rendered="#{not empty orderEntity.invalidPlates and orderEntity.invalidPlates.contains(entity.plate.id)}">
+        <br />
+        <h:outputText
+          value="#{messages.validationError}"
+          title="#{messages.orderPendingAndSubmittableHint}"
+          styleClass="errorMessageField" />
+      </h:panelGroup>
+    </p:column>
+  </c:if>
+  <p:column
+    rendered="#{orderEntity.orderItemIdRendered or showColumns.contains('entityId')}"
+    field="#{fieldPrefix}id"
+    headerText="#{messages.orderItem} #{messages.id}"
+    filterable="#{filterable == null ? true : filterable}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+    </ui:include>
+  </p:column>
+  <p:column
+    rendered="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.SERVICE)}"
+    field="#{fieldPrefix}service.name"
+    headerText="#{messages.service}"
+    filterable="#{filterable == null ? true : filterable}">
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity.service}" />
+    </ui:include>
+  </p:column>
+  <p:column
+    rendered="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ANALYSIS_REASONS) and not hideColumns.contains('analysisReasons')}"
+    headerText="#{messages.analysisReasons}">
+    <h:outputText value="#{stringHelper.truncate(entity.analysisReasonsAsString, 20)}" title="#{entity.analysisReasonsAsString}" />
+  </p:column>
+  <c:if test="#{orderEntity.orderItemTubeIdRendered}">
+    <ui:include src="/fragments/column/tubeid.xhtml">
+      <ui:param
+        name="orderItemEntity"
+        value="#{entity}" />
+      <ui:param
+        name="filterable"
+        value="false" />
+    </ui:include>
+  </c:if>
+  <c:if test="#{orderEntity.sampleTubeIdRendered}">
+    <ui:include src="/fragments/column/tubeid.xhtml">
+      <ui:param
+        name="orderItemEntity"
+        value="#{entity}" />
+      <ui:param
+        name="entity"
+        value="#{entity.sample}" />
+      <ui:param
+        name="filterable"
+        value="false" />
+      <ui:param
+        name="fieldPrefix"
+        value="sample." />
+    </ui:include>
+  </c:if>
+  <c:if test="#{not orderEntity.processesPlates}">
+    <p:column
+      field="#{fieldPrefix}sample.name"
+      headerText="#{messages.sampleName}"
+      filterable="#{filterable == null ? true : filterable}">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.sample}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+  <c:if test="#{orderEntity.processesPlates}">
+    <p:column
+      field="#{fieldPrefix}plate.name"
+      headerText="#{messages.plateName}"
+      filterable="#{filterable == null ? true : filterable}">
+      <c:if test="#{identityManager.hasCurrentUserRole('plateReader')}">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.plate}" />
+        </ui:include>
+      </c:if>
+      <c:if test="#{not identityManager.hasCurrentUserRole('plateReader')}">
+        <h:outputText value="#{entity.plate.name}" />
+      </c:if>
+    </p:column>
+    <p:column
+      field="#{fieldPrefix}plate.nameGiven"
+      headerText="#{messages.plateNameGiven}"
+      filterable="#{filterable == null ? true : filterable}">
+      <h:outputText value="#{entity.plate.nameGiven}" />
+    </p:column>
+    <p:column
+      field="#{fieldPrefix}plate.plateLayout.name"
+      headerText="#{messages.plateLayout}"
+      filterable="#{filterable == null ? true : filterable}">
+      <c:if test="#{identityManager.hasCurrentUserRole('plateReader')}">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.plate.plateLayout}" />
+        </ui:include>
+      </c:if>
+      <c:if test="#{not identityManager.hasCurrentUserRole('plateReader')}">
+        <h:outputText value="#{entity.plate.plateLayout.name}" />
+      </c:if>
+    </p:column>
+    <p:column
+      field="#{fieldPrefix}plate.sampleAssignmentPerRow"
+      headerText="#{messages.samplePlateAssignmentOrder}"
+      filterable="#{filterable == null ? true : filterable}">
+      <h:outputText value="#{entity.plate.sampleAssignmentDirection}" />
+    </p:column>
+  </c:if>
+
+  <c:if test="#{orderEntity.userDecisionRendered}">
+    <p:column field="#{fieldPrefix}entity.sample.userDecision" headerText="#{messages.userDecision}" filterable="#{filterable == null ? true : filterable}">
+      <h:outputText value="#{entity.sample.userDecision}" style="color:#{entity.sample.userDecision.color}" />
+    </p:column>
+  </c:if>
+
+  <c:if test="#{not orderEntity.processesPlates}">
+    <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleStatusEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleQCTypeEnum" />
+    <p:columns
+      value="#{not empty specificColumns ? specificColumns : (sampleAttributeHelper.getAttributeEnumsExcluding(orderEntity.sampleType.name, true, false, not orderEntity.hasSequencingApplicationReadyMadeLibraries() ? (orderEntity.isCreatedBeforeBfabric10ReleaseDate() ? [SampleAttributeEnum.TUBE_ID, SampleAttributeEnum.MULTIPLEXED, SampleAttributeEnum.MULTIPLEX_ID_2] : [SampleAttributeEnum.TUBE_ID, SampleAttributeEnum.MULTIPLEXED, SampleAttributeEnum.MULTIPLEX_ID, SampleAttributeEnum.MULTIPLEX_ID_2]) : [SampleAttributeEnum.TUBE_ID]))}"
+      var="sampleAttributeEnum"
+      visible="#{sampleAttributeEnum ne SampleAttributeEnum.TUBE_ID}"
+      exportable="#{sampleAttributeEnum ne SampleAttributeEnum.TUBE_ID}"
+      headerText="#{sampleAttributeEnum.labelWithUnit}"
+      sortable="#{not sampleAttributeEnum.annotationTypeMultiValued}"
+      sortBy="#{entity.sample[sampleAttributeEnum.name]}">
+      <h:outputText
+        rendered="#{sampleAttributeEnum.booleanType}"
+        value="#{entity.sample[sampleAttributeEnum.name]}" />
+      <h:outputText
+        rendered="#{sampleAttributeEnum.enumType and not empty entity.sample[sampleAttributeEnum.name]}"
+        value="#{entity.sample[sampleAttributeEnum.name].label}" />
+      <h:outputText
+        rendered="#{sampleAttributeEnum.annotationTypeMultiValued}"
+        value="#{collectionHelper.print(entity.sample[sampleAttributeEnum.name])}" />
+      <h:outputText
+        rendered="#{sampleAttributeEnum.annotationTypeSingleValued}"
+        value="#{entity.sample[sampleAttributeEnum.name].name}" />
+      <p:link
+        rendered="#{sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.enumType and not empty entity.sample[sampleAttributeEnum.name]}"
+        outcome="/#{(sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT_2) ? 'multiplexkit' : sampleAttributeEnum.name.toLowerCase()}/show.xhtml"
+        value="#{entity.sample[sampleAttributeEnum.name].name}">
+        <f:param
+          name="id"
+          value="#{entity.sample[sampleAttributeEnum.name].id}" />
+        <f:param
+          name="tab"
+          value="#{constants.DETAILS}" />
+      </p:link>
+      <h:outputText
+        rendered="#{not sampleAttributeEnum.booleanType and not sampleAttributeEnum.annotationType and not sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.localDateType and not sampleAttributeEnum.localDateTimeType}"
+        value="#{stringHelper.truncate(entity.sample[sampleAttributeEnum.name], 40)}"
+        title="#{entity.sample[sampleAttributeEnum.name]}" />
+      <h:outputText
+        rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateType}"
+        value="#{entity.sample[sampleAttributeEnum.name]}" />
+      <h:outputText
+        rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateTimeType}"
+        value="#{entity.sample[sampleAttributeEnum.name]}" />
+    </p:columns>
+  </c:if>
+
+  <c:if test="#{not hideColumns.contains('chargeCount')}">
+    <p:column
+      field="#{fieldPrefix}charges.size()"
+      headerText="#{messages.charges}"
+      filterable="#{filterable == null ? true : filterable}" />
+  </c:if>
+
+  <p:column
+    rendered="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_LIBRARY_TYPE) and not hideColumns.contains('libraryType')}"
+    field="#{fieldPrefix}libraryType"
+    headerText="#{messages.libraryType}"
+    filterable="#{filterable == null ? true : filterable}" />
+
+  <p:column
+    rendered="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_READ_TYPE) and not hideColumns.contains('readType')}"
+    field="#{fieldPrefix}readType"
+    headerText="#{messages.readType}"
+    filterable="#{filterable == null ? true : filterable}" />
+
+  <p:column
+    rendered="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_REGION) and not hideColumns.contains('region')}"
+    field="#{fieldPrefix}region"
+    headerText="#{messages.region}"
+    filterable="#{filterable == null ? true : filterable}" />
+
+  <p:column
+    rendered="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_INSERT_SIZE) and not hideColumns.contains('insertSize')}"
+    field="#{fieldPrefix}insertSize"
+    headerText="#{messages.insertSize}"
+    filterable="#{filterable == null ? true : filterable}" />
+
+  <p:column
+    rendered="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.ORDER_ITEM_MULTIPLEXING) and not hideColumns.contains('multiplexing')}"
+    field="#{fieldPrefix}multiplexing"
+    headerText="#{messages.multiplexing}"
+    filterable="#{filterable == null ? true : filterable}" />
+
+  <ui:include src="/fragments/column/created-modified.xhtml">
+    <ui:param
+      name="filterable"
+      value="#{not empty filterable ? filterable : true}" />
+  </ui:include>
+</ui:composition>

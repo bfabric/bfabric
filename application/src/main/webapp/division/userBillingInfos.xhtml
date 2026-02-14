@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('userBillingInfos') and identityManager.hasCurrentUserRole('admin')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="userBillingInfo" />
+      <ui:param name="tableContext" value="#{division.tableContext}" />
+      <ui:param name="tableContent" value="#{division.userBillingInfos}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

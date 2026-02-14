@@ -1,0 +1,7 @@
+------------------------------------------------------------------------------------------------
+-- This script comprises all updates that need to be applied on the current initial B-Fabric database.
+--
+-- Whenever there are changes to the database, collect them here until a new initial database dump is created.
+------------------------------------------------------------------------------------------------
+-- Run this script ONLY on the CURRENT INITIAL B-Fabric database!
+------------------------------------------------------------------------------------------------

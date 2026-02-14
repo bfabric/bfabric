@@ -1,0 +1,201 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/consumable.xhtml">
+    <ui:param
+      name="noLinks"
+      value="consumable" />
+  </ui:include>
+  <ui:include src="/fragments/column/articlnumber.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="consumable." />
+  </ui:include>
+  <ui:include src="/fragments/column/quantity.xhtml" />
+  <ui:include src="/fragments/column/basicnetprice.xhtml" />
+  <ui:include src="/fragments/column/totalnetprice.xhtml" />
+  <ui:include src="/fragments/column/totalnetpricedefaultcurrency.xhtml" />
+
+  <p:column
+    field="#{fieldPrefix}purchase.id"
+    headerText="#{messages.purchase}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="entity"
+        value="#{entity.purchase}" />
+    </ui:include>
+  </p:column>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('secretary')}">
+    <ui:include src="/fragments/column/internal.xhtml">
+      <ui:param
+        name="fieldPrefix"
+        value="purchase." />
+      <ui:param
+        name="entity"
+        value="#{entity.purchase}" />
+    </ui:include>
+  </c:if>
+  <ui:include src="/fragments/column/supplier.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/orderdate.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/orderedby.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/price.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/currency.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/description.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/technology.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/p4unumber.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/orderitemreceiveddate.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/orderitemreceivedby.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/invoicereceiveddate.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/invoicenumber.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/invoicedprice.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/invoicedcurrency.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/invoicedpricedefaultcurrency.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/payer.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/payersreferencenumber.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/paid.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/comment.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+  <ui:include src="/fragments/column/created.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+    <ui:param
+      name="entity"
+      value="#{entity.purchase}" />
+  </ui:include>
+</ui:composition>

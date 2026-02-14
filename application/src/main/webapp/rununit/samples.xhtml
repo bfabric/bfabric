@@ -1,0 +1,114 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('samples')}">
+    <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+    <c:set var="runUnitEntity" value="#{not empty runUnitEntity ? runUnitEntity : runUnit}" />
+    <c:set var="runEntity" value="#{not empty runEntity ? runEntity : runUnitEntity.run}" />
+
+    <h:panelGroup id="tableView">
+      <h:panelGroup rendered="#{not runUnitEntity.showSamplesLaneSeparated}">
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableType"
+            value="sample" />
+          <ui:param
+            name="tableContext"
+            value="#{runUnitEntity.tableContext}" />
+          <ui:param
+            name="tableContent"
+            value="#{runUnitEntity.samples}" />
+          <c:if test="#{runUnitEntity.samples.size() > 0}">
+            <ui:param
+              name="specificColumns"
+              value="#{sampleAttributeHelper.getAttributeEnumsExcluding(runUnitEntity.samples.iterator().next().sampleType.name, true, false, [SampleAttributeEnum.READ_COUNT])}" />
+          </c:if>
+          <ui:param
+            name="hideColumns"
+            value="run, replaces, userDecision" />
+          <ui:param
+            name="showColumns"
+            value="lanes, multiplexIdParentLibrary, multiplexId2ParentLibrary, readCount" />
+          <ui:param
+            name="rowStyleClass"
+            value="#{entity.rowStyleClass}" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{runUnitEntity.showSamplesLaneSeparated}">
+        <c:forEach
+          items="#{runUnitEntity.runUnitLanes}"
+          var="runUnitLaneEntity">
+          <h:panelGrid columns="1">
+            <ui:include src="/fragments/entity-link.xhtml">
+              <ui:param
+                name="instance"
+                value="#{runUnitLaneEntity}" />
+              <ui:param
+                name="entityValue"
+                value="#{messages.runUnitLane} #{runUnitLaneEntity.position}" />
+              <ui:param
+                name="tab"
+                value="samples" />
+            </ui:include>
+            <ui:include src="/fragments/show-datatable.xhtml">
+              <ui:param
+                name="showEmpty"
+                value="true" />
+              <ui:param
+                name="tableType"
+                value="sample" />
+              <ui:param
+                name="tableContext"
+                value="#{runUnitLaneEntity.tableContext}_#{runUnitLaneEntity.position}" />
+              <ui:param
+                name="tableContent"
+                value="#{runUnitLaneEntity.samples}" />
+              <c:if test="#{runUnitEntity.samples.size() > 0}">
+                <ui:param
+                  name="specificColumns"
+                  value="#{sampleAttributeHelper.getAttributeEnumsExcluding(runUnitEntity.samples.iterator().next().sampleType.name, true, false, [SampleAttributeEnum.READ_COUNT])}" />
+              </c:if>
+              <ui:param
+                name="hideColumns"
+                value="run, replaces, userDecision" />
+              <ui:param
+                name="showColumns"
+                value="multiplexIdParentLibrary, multiplexId2ParentLibrary, readCount" />
+              <ui:param
+                name="rowStyleClass"
+                value="#{entity.rowStyleClass}" />
+            </ui:include>
+            <p:spacer height="10" />
+          </h:panelGrid>
+        </c:forEach>
+      </h:panelGroup>
+    </h:panelGroup>
+
+    <h:form>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:button
+          rendered="#{runEntity.samplesAssignable}"
+          outcome="/run/assignSamples.xhtml"
+          value="#{empty runEntity.samples ? messages.assignSamples : messages.reassignSamples}">
+          <f:param
+            name="id"
+            value="#{runEntity.id}" />
+        </p:button>
+        <p:commandButton
+          rendered="#{runUnitEntity.laneSeparated}"
+          action="#{runUnitEntity.switchLaneRepresentation()}"
+          value="#{messages.show} #{runUnitEntity.showSamplesLaneSeparated ? messages.together : messages.separated}"
+          title="#{runUnitEntity.showSamplesLaneSeparated ? messages.singleRunUnitLanesHint : messages.separatedRunUnitLanesHint}"
+          oncomplete="fixOversize();"
+          update="@this, tableView" />
+      </h:panelGrid>
+    </h:form>
+  </c:if>
+</ui:composition>

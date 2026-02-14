@@ -1,0 +1,347 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{offerManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{offerManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.coach}"
+            rendered="#{offer.renderedOfferCoach}" />
+          <h:panelGroup rendered="#{offer.renderedOfferCoach}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <ui:param
+                name="componentId"
+                value="coachautocomplete" />
+              <h:panelGrid
+                id="coachGrid"
+                columns="2"
+                styleClass="noborder"
+                columnClasses="rightpadding,">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="clearButtonRendered"
+                    value="true" />
+                  <ui:param
+                    name="listContext"
+                    value="coach" />
+                  <ui:param
+                    name="value"
+                    value="#{offer.coach}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{offer.getEmployeesIncludingCoach}" />
+                  <o:methodParam
+                    name="valueChangeListener"
+                    value="#{offer.coachChangedListener}" />
+                  <ui:param
+                    name="ajaxChange"
+                    value="true" />
+                  <ui:param
+                    name="itemSelectUpdate"
+                    value="@this" />
+                  <ui:param
+                    name="includeColumns"
+                    value="/user/autocomplete-columns.xhtml" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.name}" />
+                  <ui:param
+                    name="inputStyle"
+                    value="min-width:450px" />
+                  <ui:param
+                    name="styleClass"
+                    value="editWidthExtraLarge" />
+                </ui:include>
+              </h:panelGrid>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.coachBackup}"
+            rendered="#{offer.renderedOfferCoachBackup}" />
+          <h:panelGroup rendered="#{offer.renderedOfferCoachBackup}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:param
+                name="componentId"
+                value="coachbackupautocomplete" />
+              <h:panelGrid
+                id="coachBackupGrid"
+                columns="2"
+                styleClass="noborder"
+                columnClasses="rightpadding,">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="clearButtonRendered"
+                    value="true" />
+                  <ui:param
+                    name="listContext"
+                    value="coachbackup" />
+                  <ui:param
+                    name="value"
+                    value="#{offer.coachBackup}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{offer.getEmployeesIncludingCoachBackup}" />
+                  <o:methodParam
+                    name="valueChangeListener"
+                    value="#{offer.coachBackupChangedListener}" />
+                  <ui:param
+                    name="ajaxChange"
+                    value="true" />
+                  <ui:param
+                    name="itemSelectUpdate"
+                    value="@this" />
+                  <ui:param
+                    name="includeColumns"
+                    value="/user/autocomplete-columns.xhtml" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.name}" />
+                  <ui:param
+                    name="inputStyle"
+                    value="min-width:450px" />
+                  <ui:param
+                    name="styleClass"
+                    value="editWidthExtraLarge" />
+                </ui:include>
+              </h:panelGrid>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.registeredUser}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneRadio
+              id="registeredUser"
+              value="#{offerManager.registeredUser}"
+              valueChangeListener="#{offerManager.registeredUserChanged}">
+              <f:selectItem
+                id="itemTrue"
+                itemLabel="#{messages.yes}"
+                itemValue="true" />
+              <f:selectItem
+                id="itemFalse"
+                itemLabel="#{messages.no}"
+                itemValue="false" />
+              <p:ajax
+                event="change"
+                update="#{constants.EDIT}:requesterDetails, #{constants.EDIT}:financeSource" />
+            </h:selectOneRadio>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="requesterDetails"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.requester}" />
+          <h:panelGroup rendered="#{offerManager.registeredUser}">
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="clearButtonRendered"
+                value="true" />
+              <ui:param
+                name="listContext"
+                value="requester" />
+              <ui:param
+                name="value"
+                value="#{offer.requester}" />
+              <o:methodParam
+                name="clearButtonListener"
+                value="#{offer.setRequester(null)}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{userService.getUsersFiltered}" />
+              <o:methodParam
+                name="valueChangeListener"
+                value="#{offer.requesterChanged}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="#{constants.EDIT}:requesterDetails, #{constants.EDIT}:financeSource" />
+              <ui:param
+                name="includeColumns"
+                value="/user/autocomplete-columns.xhtml" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="inputStyle"
+                value="min-width:250px" />
+              <ui:param
+                name="inputStyleClass"
+                value="editWidthExtraLarge" />
+              <ui:param
+                name="clearButtonSpecificUpdate"
+                value="#{constants.EDIT}:requesterDetails, #{constants.EDIT}:financeSource" />
+            </ui:include>
+          </h:panelGroup>
+
+          <h:panelGroup rendered="#{not offerManager.registeredUser}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText
+                id="requesterName"
+                value="#{offer.requesterName}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.email}" />
+          <h:panelGroup rendered="#{not offerManager.registeredUser or not empty offer.requesterEmail}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText id="requesterEmail" value="#{offer.requesterEmail}" styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{offerManager.registeredUser and empty offer.requesterEmail and offer.requester != null}">
+            <ui:decorate template="/fragments/display.xhtml" rendered="#{offerManager.registeredUser and offer.requester != null}">
+              <h:outputText value="#{offer.requester.email}" />
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{offerManager.registeredUser and empty offer.requesterEmail and offer.requester == null}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="-" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.address}" />
+          <h:panelGroup rendered="#{not offerManager.registeredUser or not empty offer.requesterAddress}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputTextarea id="requesterAddress" value="#{offer.requesterAddress}" rows="6" styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{offerManager.registeredUser and empty offer.requesterAddress and offer.requester != null}">
+            <ui:decorate template="/fragments/display.xhtml" rendered="#{offerManager.registeredUser and offer.requester != null}">
+              <h:outputText value="#{offer.requester.fullAddress}" />
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{offerManager.registeredUser and empty offer.requesterAddress and offer.requester == null}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="-" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText rendered="#{not empty offer.requester}" value="#{messages.affiliation}" />
+          <h:panelGroup rendered="#{not empty offer.requester}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{offer.requester.affiliation}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.billingOrganizationType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="organizationType"
+              value="#{offer.organizationType}"
+              valueChangeListener="#{offer.organizationTypeChanged}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{organizationTypeList.resultList}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                update="#{constants.EDIT}:financeSource"
+                global="false" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="offerDetails"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{offer.description}"
+              rows="10"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{offer.discount > 0}">
+            <h:outputText value="#{messages.discount}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:spinner
+                id="discount"
+                value="#{offer.discount}"
+                valueChangeListener="#{offerManager.discountChanged}"
+                min="0"
+                max="100"
+                stepFactor="1"
+                size="5"
+                decimalPlaces="0"
+                thousandSeparator="">
+              </p:spinner>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.containers}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param name="listContext" value="selectedcontainers" />
+              <ui:param name="value" value="#{offer.containersAsList}" />
+              <ui:param name="multiple" value="true" />
+              <o:methodParam name="completeMethod" value="#{offerManager.getAssignableContainers}" />
+              <o:methodParam name="itemUnselectListener" value="#{offerManager.containersUnselect}" />
+              <ui:param name="itemLabel" value="#{item.id}" />
+              <ui:param name="includeColumns" value="/container/autocomplete-columns.xhtml" />
+              <ui:param name="styleClass" value="editWidthExtraLarge disableItems" />
+              <o:methodParam name="initializeAutocompleteListener"
+                             value="#{autoCompleteHelper.initializeAutocompleteMultipleForNonRemovableItems(classHelper.getClassByName('Container'), 'isRemovableFromOffer', null)}" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGroup id="financeSource">
+          <h:panelGrid
+            rendered="#{offer.renderedFinancedByEuGrant}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText
+              value="#{messages.euGrant}"
+              title="#{messages.editFinancedByEuGrantHint}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneRadio
+                id="euGrant"
+                value="#{offer.euGrant}"
+                title="#{messages.editFinancedByEuGrantHint}">
+                <f:selectItem
+                  itemLabel="#{messages.no}"
+                  itemValue="#{false}" />
+                <f:selectItem
+                  itemLabel="#{messages.yes}"
+                  itemValue="#{true}" />
+              </h:selectOneRadio>
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

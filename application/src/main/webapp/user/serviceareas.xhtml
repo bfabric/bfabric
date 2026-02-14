@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('serviceareas') and identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="servicearea" />
+      <ui:param
+        name="tableContext"
+        value="#{user.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{user.serviceAreas}" />
+      <ui:param
+        name="hideColumns"
+        value="parent" />
+      <ui:param
+        name="showColumns"
+        value="internal" />
+    </ui:include>
+  </c:if>
+</ui:composition>

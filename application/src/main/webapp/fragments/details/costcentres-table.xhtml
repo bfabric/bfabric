@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.costCentres}">
+    <h:outputText value="#{not empty label ? label : messages.costCentres}" />
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="costcentre" />
+      <ui:param
+        name="tableContext"
+        value="#{instance.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{instance.costCentres}" />
+      <ui:param
+        name="styleClass"
+        value="inner-table" />
+    </ui:include>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,125 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    id="#{columnId}#{constants.COLUMN}"
+    rendered="#{rendered}"
+    exportable="false"
+    styleClass="tri-state-chkbox"
+    style="text-align:center">
+    <f:facet name="header">
+      <h:panelGrid
+        columns="1"
+        styleClass="nospace noborder">
+        <h:panelGrid
+          columns="3"
+          styleClass="select-icon">
+          <p:commandLink
+            actionListener="#{bean.setBooleanAttribute(true, columnId)}"
+            disabled="#{columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled}"
+            title="#{messages.sampleAttributePassedHint}"
+            immediate="true"
+            global="false"
+            update="@this"
+            process="@this">
+            <i class="far fa-check-square" />
+          </p:commandLink>
+          <p:commandLink
+            actionListener="#{bean.setBooleanAttribute(false, columnId)}"
+            disabled="#{columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled}"
+            title="#{messages.sampleAttributeNotPassedHint}"
+            immediate="true"
+            global="false"
+            update="@this"
+            process="@this">
+            <span class="far fa-window-close" />
+          </p:commandLink>
+          <p:commandLink
+            actionListener="#{bean.setBooleanAttribute(null, columnId)}"
+            disabled="#{columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled}"
+            title="#{messages.sampleAttributeEmptyHint}"
+            immediate="true"
+            global="false"
+            update="@this"
+            process="@this">
+            <i class="far fa-square" />
+          </p:commandLink>
+        </h:panelGrid>
+      </h:panelGrid>
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{headerText}" />
+        <ui:param
+          name="required"
+          value="#{displayRequired}" />
+      </ui:include>
+    </f:facet>
+    <h:panelGroup id="#{columnId}#{constants.REQUIRED_FIELD}">
+      <h:outputText
+        rendered="#{not empty displayRequiredCell and displayRequiredCell}"
+        value="&#160;*"
+        title="#{messages.requiredHint}"
+        styleClass="required" />
+    </h:panelGroup>
+
+    <h:panelGroup id="#{columnId}#{constants.TRI_STATE_CHECKBOX_GROUP}">
+      <p:triStateCheckbox
+        id="#{columnId}#{constants.INPUT}"
+        disabled="#{columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled}"
+        value="#{value}"
+        valueChangeListener="#{bean.valueChanged}"
+        styleClass="tri-state-chkbox"
+        converter="triStateCheckboxConverter">
+        <c:if test="#{attributeCouplingEnabled == null or not attributeCouplingEnabled}">
+          <p:ajax
+            event="change"
+            global="false"
+            ignoreAutoUpdate="true"
+            partialSubmit="true"
+            update="#{columnId}#{constants.TRI_STATE_CHECKBOX_GROUP}" />
+        </c:if>
+        <c:if test="#{attributeCouplingEnabled != null and attributeCouplingEnabled}">
+          <p:ajax
+            event="change"
+            global="false"
+            ignoreAutoUpdate="true"
+            partialSubmit="true"
+            update="#{columnId}#{constants.TRI_STATE_CHECKBOX_GROUP}"
+            listener="#{bean.updateCoupling(entity, columnId)}" />
+        </c:if>
+      </p:triStateCheckbox>
+
+      <p:commandButton
+        id="assignMultiplexIdButton"
+        rendered="#{sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEXED and not empty value and value}"
+        value="#{messages.assignMultiplexIds} (#{not empty bean.sampleIdentifiersNumberMap[not empty sampleEntity ? sampleEntity.hashCode() : entity.hashCode()] ? bean.sampleIdentifiersNumberMap[not empty sampleEntity ? sampleEntity.hashCode() : entity.hashCode()] : 0})"
+        title="#{messages.assignMultiplexIdsHint}"
+        actionListener="#{bean.prepareMultiplexIdsModalPanel(entity)}"
+        immediate="true"
+        styleClass="inline"
+        oncomplete="PF('assignMultiplexIdsModalDialog').show();"
+        update="assignMultiplexIdsModalPanel" />
+      <div>
+        <h:message
+          id="#{columnId}#{constants.MESSAGE}"
+          for="#{columnId}#{constants.INPUT}"
+          styleClass="errorMessageField" />
+      </div>
+    </h:panelGroup>
+  </p:column>
+  <ui:include src="/fragments/column/export-column.xhtml">
+    <ui:param
+      name="rendered"
+      value="#{rendered}" />
+    <ui:param
+      name="headerText"
+      value="#{headerText}" />
+    <ui:param
+      name="value"
+      value="#{value}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,45 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('affiliationReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/organizations.xhtml" />
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{organizationType.billingOrganizations}" />
+    <ui:param
+      name="label"
+      value="#{messages.billingOrganizations}" />
+    <ui:param
+      name="tab"
+      value="billingorganizations" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/companies.xhtml" />
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{organizationType.billingCompanies}" />
+    <ui:param
+      name="label"
+      value="#{messages.billingCompanies}" />
+    <ui:param
+      name="tab"
+      value="billingcompanies" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/sidebar/bookedcharges.xhtml">
+      <ui:param
+        name="content"
+        value="#{statisticsList.getBookedChargeOrganizationType(organizationType.id)}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

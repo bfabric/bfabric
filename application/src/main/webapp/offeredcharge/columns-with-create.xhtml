@@ -1,0 +1,40 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="columns.xhtml">
+    <ui:param
+      name="showColumns"
+      value="basicPrice" />
+    <ui:param
+      name="hideColumns"
+      value="offer, accounted, notAccounted, discountedPrice, discount, offerDiscount, additionalPrice" />
+  </ui:include>
+
+  <p:column
+    exportable="false"
+    headerText="#{messages.edit}">
+    <p:button
+      outcome="/offeredcharge/edit.xhtml"
+      value="#{messages.edit}"
+      styleClass="inline"
+      rendered="#{entity.updatable}">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+    </p:button>
+  </p:column>
+  <p:column
+    exportable="false"
+    headerText="#{messages.delete}">
+    <p:commandButton
+      action="#{offeredChargeManager.removeOfferedCharge(entity)}"
+      value="#{messages.remove}"
+      update="@([id=offeredChargesPanel]), @([id=showOfferedChargesCount]), @([id=offerDetailsPanel])"
+      oncomplete="fixOversize();"
+      styleClass="inline"
+      rendered="#{entity.deletable}">
+      <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+    </p:commandButton>
+  </p:column>
+</ui:composition>

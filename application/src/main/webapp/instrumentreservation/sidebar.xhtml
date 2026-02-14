@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param name="logRendered" value="#{identityManager.hasCurrentUserRole('instrumentReader')}" />
+  </ui:include>
+
+  <c:if test="#{instance.repeaterEvent}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{instance.repeater.repeaterEvents}" />
+      <ui:param
+        name="label"
+        value="#{messages.repeaterEvents}" />
+      <ui:param
+        name="tab"
+        value="repeaterevents" />
+    </ui:include>
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/notes.xhtml">
+    <ui:param name="showAlways" value="#{identityManager.hasCurrentUserRole('instrumentReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/mails.xhtml" />
+  <ui:include src="/fragments/sidebar/charges.xhtml">
+    <ui:param name="showAlways" value="true" />
+  </ui:include>
+</ui:composition>

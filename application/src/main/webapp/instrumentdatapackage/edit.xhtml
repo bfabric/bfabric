@@ -1,0 +1,115 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{instrumentDataPackageManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{instrumentDataPackageManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{instrumentDataPackage.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.instrument}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="instrument" />
+            <ui:param
+              name="value"
+              value="#{instrumentDataPackage.instrument}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{instrumentDataPackageManager.getInstruments}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="@this, #{constants.EDIT}:rununittypegroup" />
+            <ui:param
+              name="ajaxClear"
+              value="true" />
+            <ui:param
+              name="clearUpdate"
+              value="@this, #{constants.EDIT}:rununittypegroup" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+          </ui:include>
+        </h:panelGrid>
+
+        <h:panelGroup id="rununittypegroup">
+          <h:panelGrid
+            rendered="#{not empty instrumentDataPackage.instrument and not empty instrumentDataPackage.instrument.runUnitTypes}"
+            columns="2"
+            columnClasses="rtdm, ltd">
+            <h:outputText value="#{messages.runUnitType}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="rununittype"
+                value="#{instrumentDataPackage.runUnitType}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem itemLabel="" />
+                <f:selectItems
+                  var="item"
+                  value="#{instrumentDataPackageManager.getRunUnitTypesEnabledIncluding(instrumentDataPackage.runUnitType)}"
+                  itemLabel="#{item.displayName}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.numberOfLanes}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputNumber
+                value="#{instrumentDataPackage.numberOfLanes}"
+                thousandSeparator=""
+                decimalPlaces="0"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.serviceTypesDisabled}" />
+            <h:panelGroup id="serviceTypePanelGroup" rendered="#{not empty instrumentDataPackage.instrument}">
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:selectManyButton id="serviceType" value="#{instrumentDataPackage.serviceTypesDisabled}" collectionType="java.util.HashSet" styleClass="editWidthExtraHuge"
+                                    converter="omnifaces.SelectItemsConverter">
+                  <f:selectItems var="item" value="#{instrumentDataPackage.instrument.serviceTypes}" itemLabel="#{item.displayName}" />
+                </p:selectManyButton>
+              </ui:decorate>
+            </h:panelGroup>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{instrumentDataPackage.enabled}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

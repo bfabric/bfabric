@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:outputText value="#{messages.multiple}" />
+  <ui:decorate template="/fragments/edit.xhtml">
+    <h:selectBooleanCheckbox id="multiple" value="#{instance.multiple}" />
+  </ui:decorate>
+</ui:composition>

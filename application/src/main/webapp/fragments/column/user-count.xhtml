@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('userCount')}">
+    <p:column field="#{fieldPrefix}users.size()" headerText="#{messages.users}" />
+  </c:if>
+</ui:composition>

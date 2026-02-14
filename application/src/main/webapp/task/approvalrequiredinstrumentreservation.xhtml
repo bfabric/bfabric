@@ -1,0 +1,40 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup
+    rendered="#{configuration.instrumentReservationEnabled and sidebarHelper.isTab('approvalrequiredinstrumentreservation') and identityManager.hasCurrentUserRole('instrumentManager') and not empty instrumentReservationList.approvalRequiredTasks and instrumentReservationList.approvalRequiredTasks.size() > 0}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrumentreservation" />
+      <ui:param
+        name="tableContext"
+        value="approvalrequiredinstrumentreservation" />
+      <ui:param
+        name="tableContent"
+        value="#{instrumentReservationList.approvalRequiredTasks}" />
+      <ui:param
+        name="hideColumns"
+        value="chargeCount, approved, approvalDate, approvedBy, approvalNote, createdBy, createdOn" />
+    </ui:include>
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <h:form>
+        <p:commandButton
+          action="#{instrumentReservationManager.approveOrRejectInstrumentReservations(true, dataTableHelper.selectedEntities)}"
+          value="#{messages.approveSelectedInstrumentReservation}"
+          title="#{messages.approveSelectedInstrumentReservationHint}"
+          update="@form" />
+      </h:form>
+      <h:form>
+        <p:commandButton
+          action="#{instrumentReservationManager.approveOrRejectInstrumentReservations(false, dataTableHelper.selectedEntities)}"
+          value="#{messages.rejectSelectedInstrumentReservation}"
+          title="#{messages.rejectSelectedInstrumentReservationHint}"
+          update="@form" />
+      </h:form>
+    </h:panelGrid>
+  </h:panelGroup>
+</ui:composition>

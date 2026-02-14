@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.AbstractEntity"-->
+  <c:if test="#{not hideColumns.contains('entityId')}">
+    <p:column
+      sortable="#{empty sortable ? true : sortable}"
+      filterable="#{empty filterable ? true : filterable}"
+      field="#{fieldPrefix}id"
+      headerText="#{not empty headerText ? headerText : messages.id}"
+      exportValue="#{entity.id}">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity}" />
+        <ui:param
+          name="entityValue"
+          value="#{entity.id}" />
+        <ui:param
+          name="entityHint"
+          value="#{entity.entityInfo}" />
+      </ui:include>
+      <h:outputText
+        rendered="#{empty entity.urlShowScreen}"
+        value="#{entity.id}"
+        title="#{entity.entityInfo}" />
+      <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+        <h:panelGroup rendered="#{entity.deletable}">
+          <i
+            class="fas fa-exclamation-circle pending"
+            title="#{messages.deletable}" />
+        </h:panelGroup>
+      </c:if>
+      <h:message for="id" styleClass="errorMessageField" />
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,240 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{runManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{runManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{run.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <ui:include src="/fragments/supervisor-autocomplete-required.xhtml">
+            <ui:param
+              name="instance"
+              value="#{run}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.demultiplexingRequired}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="demultiplexingRequired"
+              value="#{run.demultiplexingRequired}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.qc}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="qc"
+              value="#{run.qc}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.instrument}" />
+          <h:panelGroup>
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="componentId"
+                value="instrument" />
+              <ui:param
+                name="value"
+                value="#{run.instrument}" />
+              <ui:param
+                name="disabled"
+                value="#{not empty run.container or (run.managed and not empty runManager.selectedSamples)}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{runManager.getResultListRunEnabledIncludingFiltered}" />
+              <o:methodParam
+                name="itemSelectListener"
+                value="#{runManager.instrumentSelectListener}" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="@this, #{constants.EDIT}:runUnitTypeGroup, #{constants.EDIT}:instrumentReadConfigurationGroup" />
+              <ui:param
+                name="clearUpdate"
+                value="@this, #{constants.EDIT}:runUnitTypeGroup, #{constants.EDIT}:instrumentReadConfigurationGroup" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="includeColumns"
+                value="/instrument/autocomplete-columns.xhtml" />
+              <ui:param
+                name="hideColumns"
+                value="label" />
+            </ui:include>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGroup id="runUnitTypeGroup">
+          <h:panelGroup>
+            <h:panelGrid
+              rendered="#{empty run.container and not empty run.runUnit and run.renderedRunUnitType}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.runUnitType}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  value="#{run.runUnit.runUnitType}"
+                  valueChangeListener="#{runManager.runUnitTypeChanged}"
+                  disabled="#{empty run.instrument or not empty runManager.selectedSamples}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem itemLabel="#{messages.selectAnItem}" />
+                  <f:selectItems
+                    value="#{run.instrument.runUnitTypes}"
+                    var="item"
+                    itemLabel="#{item.displayName}" />
+                  <p:ajax
+                    event="change"
+                    oncomplete="fixOversize();"
+                    update="@this, #{constants.EDIT}:physicalSeparationGroup, #{constants.EDIT}:instrumentReadConfigurationGroup" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup id="physicalSeparationGroup">
+            <h:panelGrid
+              rendered="#{empty run.container and run.renderedRunUnitType and not empty run.runUnit and not empty run.runUnit.runUnitType}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.physicalSeparation}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:selectBooleanCheckbox
+                  id="physicalSeparation"
+                  disabled="#{empty run.instrument or not empty runManager.selectedSamples}"
+                  title="#{messages.physicalSeparationHint}"
+                  value="#{run.runUnit.physicalSeparation}" />
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup id="instrumentReadConfigurationGroup">
+            <h:panelGrid
+              rendered="#{run.renderedReadConfigurations}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.instrumentReadConfiguration}" />
+              <ui:decorate template="/fragments/required.xhtml">
+                <h:selectOneMenu
+                  id="instrumentReadConfiguration"
+                  value="#{run.instrumentReadConfiguration}"
+                  valueChangeListener="#{runManager.instrumentReadConfigurationChanged}"
+                  disabled="#{not empty run.container or not empty runManager.selectedSamples}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem
+                    itemDisabled="true"
+                    itemLabel="#{messages.selectAnItem}" />
+                  <f:selectItems
+                    value="#{run.instrument.readConfigurations}"
+                    var="item"
+                    itemLabel="#{item.displayName}" />
+                  <p:ajax
+                    event="change"
+                    oncomplete="fixOversize();"
+                    update="@this" />
+                </h:selectOneMenu>
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+          <!--<h:outputText
+            rendered="#{run.renderedReadConfigurations}"
+            value="#{messages.instrumentReadConfiguration}" />
+          <h:panelGroup rendered="#{run.renderedReadConfigurations}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="instrumentReadConfiguration"
+                value="#{run.instrumentReadConfiguration}"
+                valueChangeListener="#{runManager.instrumentReadConfigurationChanged}"
+                disabled="#{not empty run.container or not empty runManager.selectedSamples}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem
+                  itemDisabled="true"
+                  itemLabel="#{messages.selectAnItem}" />
+                <f:selectItems
+                  value="#{run.instrument.readConfigurations}"
+                  var="item"
+                  itemLabel="#{item.displayName}" />
+                <p:ajax
+                  event="change"
+                  oncomplete="fixOversize();"
+                  update="@this" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>-->
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{identityManager.hasCurrentUserRole('runManager')}">
+            <h:outputText value="#{messages.dataFolder}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="dataFolder"
+                value="#{run.dataFolder}"
+                styleClass="editWidthExtraLarge">
+              </h:inputText>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.serverLocation}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="serverLocation"
+                value="#{run.serverLocation}"
+                styleClass="editWidthExtraLarge">
+              </h:inputText>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{run.description}"
+              title="#{messages.resourceDescriptionHint}"
+              rows="10"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{not empty run.samples}">
+            <h:outputText value="#{messages.samples}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{run.samples.size()}" />
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

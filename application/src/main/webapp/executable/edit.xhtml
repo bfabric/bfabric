@@ -1,0 +1,243 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{executableManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="edit-executable">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd"
+          rendered="#{not executable.managed}">
+          <h:outputText value="#{messages.configFile}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              id="configPanel"
+              columns="1">
+              <p:fileUpload
+                id="fileUpload"
+                rendered="#{empty fileUploadHelper.uploadedFiles}"
+                label="#{messages.add}"
+                mode="advanced"
+                required="true"
+                virusScan="#{not configuration.virusScannerDisabled}"
+                listener="#{executable.fileUploadListener}"
+                sizeLimit="#{fileUploadHelper.maxAttachmentSize}"
+                allowTypes="/(\.|\/)(xml)$/"
+                invalidFileMessage="#{messages.invalidFileMessageXML}"
+                invalidSizeMessage="#{messages.invalidSizeMessage}"
+                messageTemplate="{name} ({size}) (Max: #{fileUploadHelper.maxAttachmentSizeInMb} Mb)"
+                skinSimple="true"
+                auto="true"
+                update="@form"
+                multiple="false"
+                onstart="PF('mpWait').show()"
+                oncomplete="PF('mpWait').hide()" />
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="include"
+                  value="/fragments/column/uploadfile.xhtml" />
+                <ui:param
+                  name="tableContext"
+                  value="uploadfile" />
+                <ui:param
+                  name="tableContent"
+                  value="#{fileUploadHelper.uploadedFiles}" />
+                <ui:param
+                  name="styleClass"
+                  value="noborder hide-table-header" />
+                <ui:param
+                  name="paginator"
+                  value="false" />
+                <ui:param
+                  name="styleClass"
+                  value="inner" />
+              </ui:include>
+              <p:spacer height="6px" />
+            </h:panelGrid>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGroup id="configFileUploaded">
+          <h:panelGrid
+            columns="2"
+            columnClasses="rtdm, ltd"
+            rendered="#{not empty executable.name}">
+            <h:outputText
+              value="#{messages.decodedExecutable}"
+              rendered="#{executable.uploadedFile.defaultStreamedContent != null}" />
+            <h:panelGroup rendered="#{executable.uploadedFile.defaultStreamedContent != null}">
+              <ui:decorate template="/fragments/display.xhtml">
+                <p:commandLink
+                  ajax="false"
+                  value="#{messages.download}"
+                  immediate="true"
+                  title="#{messages.executableDownloadLinkHint}"
+                  styleClass="download-button">
+                  <i class="fas fa-file-download download-icon" />
+                  <p:fileDownload value="#{executable.uploadedFile.defaultStreamedContent}" />
+                </p:commandLink>
+              </ui:decorate>
+            </h:panelGroup>
+
+            <h:outputText value="#{messages.name}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:inputText
+                id="#{constants.NAME}"
+                value="#{executable.name}"
+                title="#{messages.executableNameHint}"
+                styleClass="editWidthExtraLarge">
+              </h:inputText>
+            </ui:decorate>
+
+            <c:if test="#{executable.supervisorEditable}">
+              <ui:include src="/fragments/supervisor-autocomplete-required.xhtml">
+                <ui:param
+                  name="instance"
+                  value="#{executable}" />
+              </ui:include>
+            </c:if>
+
+            <h:outputText value="#{messages.program}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="program"
+                value="#{executable.program}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText
+              rendered="#{executable.masterExecutableEditable}"
+              value="#{messages.masterExecutable}" />
+            <h:panelGrid rendered="#{executable.masterExecutableEditable}">
+              <ui:decorate template="/fragments/edit.xhtml">
+                <ui:include src="/fragments/autocomplete.xhtml">
+                  <ui:param
+                    name="listContext"
+                    value="masterExecutable" />
+                  <ui:param
+                    name="value"
+                    value="#{executable.masterExecutable}" />
+                  <o:methodParam
+                    name="completeMethod"
+                    value="#{executableManager.getEnabledValidMasterExecutablesFiltered}" />
+                  <ui:param
+                    name="itemLabel"
+                    value="#{item.displayName}" />
+                  <ui:param
+                    name="inputStyleClass"
+                    value="editWidthExtraLarge" />
+                  <ui:param
+                    name="styleClass"
+                    value="editWidthExtraLarge" />
+                </ui:include>
+              </ui:decorate>
+            </h:panelGrid>
+
+            <h:outputText value="#{messages.version}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputText
+                id="version"
+                value="#{executable.version}"
+                styleClass="editWidthExtraLarge">
+              </h:inputText>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.predecessor}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="predecessorExecutable" />
+                <ui:param
+                  name="value"
+                  value="#{executable.predecessor}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{executableManager.getPotentialPredecessorExecutablesFiltered}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.displayName}" />
+                <ui:param
+                  name="inputStyleClass"
+                  value="editWidthExtraLarge" />
+                <ui:param
+                  name="styleClass"
+                  value="editWidthExtraLarge" />
+              </ui:include>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.description}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputTextarea
+                id="description"
+                value="#{executable.description}"
+                rows="10"
+                styleClass="editWidthExtraLarge">
+              </h:inputTextarea>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.enabled}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="enabled"
+                value="#{executable.enabled}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.valid}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="valid"
+                value="#{executable.valid}"
+                title="#{messages.executableValidHint}" />
+            </ui:decorate>
+          </h:panelGrid>
+
+          <h:panelGrid
+            id="parameters"
+            columns="2"
+            columnClasses="rtdm, ltd"
+            rendered="#{not empty executable.parameters}">
+            <h:outputText value="#{messages.parameters}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/datatable.xhtml">
+                <ui:param
+                  name="tableType"
+                  value="parameter" />
+                <ui:param
+                  name="tableContext"
+                  value="executable" />
+                <ui:param
+                  name="tableContent"
+                  value="#{executable.parameters}" />
+                <ui:param
+                  name="include"
+                  value="/parameter/edit-columns.xhtml" />
+                <ui:param
+                  name="styleClass"
+                  value="inner" />
+              </ui:include>
+            </ui:decorate>
+          </h:panelGrid>
+
+          <h:panelGrid
+            columns="2"
+            styleClass="action">
+            <p:commandButton
+              rendered="#{executable.saveButtonVisible}"
+              action="#{executableManager.save}"
+              value="#{messages.save}"
+              update="@form" />
+            <ui:decorate template="/fragments/button/edit-cancel.xhtml" />
+          </h:panelGrid>
+        </h:panelGroup>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

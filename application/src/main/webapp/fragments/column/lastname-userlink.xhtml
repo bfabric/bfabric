@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('lastName')}">
+    <p:column
+      filterable="#{filterable != null ? filterable : true}"
+      field="#{fieldPrefix}lastName"
+      headerText="#{messages.lastName}"
+      styleClass="#{lastNameStyleClass != null ? lastNameStyleClass : styleClass}"
+      exportValue="#{empty entityValue ? entity.lastName : entityValue.lastName}">
+      <ui:include src="/fragments/user-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entityValue != null ? entityValue : entity}" />
+        <ui:param
+          name="entityValue"
+          value="#{entityValue != null ? entityValue.lastName : entity.lastName}" />
+        <ui:param
+          name="noHints"
+          value="#{noHints != null ? noHints : true}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

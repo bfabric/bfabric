@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('options') and identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="option" />
+      <ui:param name="tableContext" value="#{samplePreparationProtocol.tableContext}" />
+      <ui:param name="tableContent" value="#{samplePreparationProtocol.options}" />
+      <ui:param name="hideColumns" value="parent" />
+    </ui:include>
+  </c:if>
+</ui:composition>

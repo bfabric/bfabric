@@ -1,0 +1,60 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGrid
+    columns="2"
+    columnClasses="rtdm, ltd">
+    <h:outputText value="#{messages.image}" />
+    <ui:decorate template="/fragments/edit.xhtml">
+      <h:panelGrid id="imageGrid" columns="3">
+        <p:graphicImage rendered="#{not empty image.content}" value="#{image.streamedContent}" stream="false" />
+        <p:spacer width="10" rendered="#{not empty image.content}" />
+        <p:imageCropper
+          id="cropper"
+          rendered="#{not empty image.content}"
+          value="#{image.croppedImage}"
+          image="#{imageCropperHelper.streamedContent}"
+          cache="false"
+          aspectRatio="1"
+          initialCoords="0,0,100,100"
+          minSize="100,100"
+          maxSize="200,200" />
+        <h:panelGrid columns="2" styleClass="action">
+          <p:fileUpload
+            id="imageUpload"
+            label="#{empty image.content ? messages.add : messages.replace}"
+            mode="advanced"
+            virusScan="#{not configuration.virusScannerDisabled}"
+            listener="#{parent.imageUploadListener}"
+            skinSimple="true"
+            auto="true"
+            sizeLimit="10000000"
+            update="imageGrid"
+            dragDropSupport="false"
+            allowTypes="/(\.|\/)(jpg|jpeg|png)$/"
+            onstart="PF('mpWait').show()"
+            oncomplete="PF('mpWait').hide()" />
+          <p:commandButton
+            rendered="#{not empty image.content}"
+            actionListener="#{parent.setImage(null)}"
+            value="#{messages.remove}"
+            immediate="true"
+            update="imageGrid" />
+        </h:panelGrid>
+        <p:spacer width="10" />
+        <h:panelGrid columns="2" styleClass="action" rendered="#{not empty image.content}">
+          <p:commandButton
+            value="#{messages.crop}"
+            action="#{image.crop()}"
+            update="imageGrid" />
+          <p:commandButton
+            rendered="#{not empty image.cropped.content}"
+            value="#{messages.takeOver}"
+            action="#{image.takeOverCropped()}"
+            update="imageGrid" />
+        </h:panelGrid>
+      </h:panelGrid>
+    </ui:decorate>
+  </h:panelGrid>
+</ui:composition>

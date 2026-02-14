@@ -1,0 +1,67 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/title.xhtml" />
+  <ui:include src="/fragments/column/salutation.xhtml" />
+  <ui:include src="/fragments/column/lastname-userlink.xhtml" />
+  <ui:include src="/fragments/column/firstname-userlink.xhtml" />
+  <ui:include src="/fragments/column/login.xhtml" />
+  <ui:include src="/fragments/column/email.xhtml" />
+  <ui:include src="/fragments/column/affiliation.xhtml" />
+  <c:if test="#{identityManager.hasCurrentUserRole('employeeManager')}">
+    <ui:include src="/fragments/column/empdegree.xhtml" />
+    <ui:include src="/fragments/column/creditstotal.xhtml" />
+    <ui:include src="/fragments/column/accounteddays.xhtml" />
+    <ui:include src="/fragments/column/remainingdays.xhtml" />
+    <ui:include src="/fragments/column/yearlycredits.xhtml" />
+    <ui:include src="/fragments/column/birthday.xhtml" />
+    <ui:include src="/fragments/column/age.xhtml" />
+  </c:if>
+  <ui:include src="/fragments/column/address-street.xhtml" />
+  <ui:include src="/fragments/column/address-zip.xhtml" />
+  <ui:include src="/fragments/column/address-city.xhtml" />
+  <ui:include src="/fragments/column/address-country.xhtml" />
+  <ui:include src="/fragments/column/address-supplement.xhtml" />
+  <ui:include src="/fragments/column/address-room.xhtml" />
+  <ui:include src="/fragments/column/phone.xhtml" />
+  <ui:include src="/fragments/column/privateemail.xhtml" />
+  <ui:include src="/fragments/column/homeaddress-street.xhtml" />
+  <ui:include src="/fragments/column/homeaddress-zip.xhtml" />
+  <ui:include src="/fragments/column/homeaddress-city.xhtml" />
+  <ui:include src="/fragments/column/homeaddress-country.xhtml" />
+  <ui:include src="/fragments/column/homeaddress-supplement.xhtml" />
+  <ui:include src="/fragments/column/homephone.xhtml" />
+  <ui:include src="/fragments/column/emailactive.xhtml" />
+  <ui:include src="/fragments/column/emailverified.xhtml" />
+  <ui:include src="/fragments/column/massmailenabled.xhtml" />
+  <ui:include src="/fragments/column/computerloginactivated.xhtml" />
+  <ui:include src="/fragments/column/computerloginenabled.xhtml" />
+  <ui:include src="/fragments/column/dataaccessenabled.xhtml" />
+  <ui:include src="/fragments/column/invalidloginattempts.xhtml" />
+  <ui:include src="/fragments/column/lastlogindate.xhtml" />
+  <ui:include src="/fragments/column/lastactiontime.xhtml" />
+  <c:if test="#{showColumns.contains('projectCount')}">
+    <p:column headerText="#{messages.projects}">
+      <h:outputText value="#{entity.projects.size()}" />
+    </p:column>
+  </c:if>
+  <c:if test="#{showColumns.contains('orderCount')}">
+    <p:column headerText="#{messages.orders}">
+      <h:outputText value="#{entity.orders.size()}" />
+    </p:column>
+  </c:if>
+  <c:if test="#{showColumns.contains('roleCount')}">
+    <ui:include src="/fragments/column/role-count.xhtml" />
+  </c:if>
+  <ui:include src="/fragments/column/avatar.xhtml" />
+  <c:if test="#{identityManager.hasCurrentUserRole('userReader')}">
+    <ui:include src="/fragments/column/technology.xhtml" />
+    <ui:include src="/fragments/column/backup.xhtml" />
+    <ui:include src="/fragments/column/backupOf.xhtml" />
+  </c:if>
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+  <ui:include src="/fragments/column/deletable.xhtml" />
+</ui:composition>

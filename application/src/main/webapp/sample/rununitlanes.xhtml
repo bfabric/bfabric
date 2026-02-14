@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.labEnabled and identityManager.hasCurrentUserRole('labManager') and sidebarHelper.isTab('rununitlanes')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="rununitlane" />
+      <ui:param
+        name="tableContext"
+        value="#{sample.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{sample.runUnitLanes}" />
+      <ui:param
+        name="hideColumns"
+        value="samples, containers" />
+    </ui:include>
+  </c:if>
+</ui:composition>

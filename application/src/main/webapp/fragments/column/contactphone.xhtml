@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('contactPhone')}">
+    <p:column
+      field="#{fieldPrefix}contactPhoneNumber.contactPhone"
+      headerText="#{messages.contactPhone}">
+      <h:outputText value="#{entity.contactPhone}" />
+    </p:column>
+  </c:if>
+</ui:composition>

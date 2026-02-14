@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <ui:param
+    name="entityManager"
+    value="#{userManager}" />
+
+  <ui:decorate template="/fragments/sidebar/show.xhtml">
+    <ui:define name="pageTitle">
+      <h:outputText value="#{messages.user} #{user.id} - #{user.fullName}" />
+    </ui:define>
+
+    <ui:define name="pageTitleExtension">
+      <h:outputText rendered="#{not user.accountEnabled}" value=" (#{messages.disabled})" styleClass="warning" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

@@ -1,0 +1,400 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{purchaseManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{identityManager.hasCurrentUserRole('bookingManager')}">
+            <h:outputText value="#{messages.internal}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneRadio
+                id="internal"
+                value="#{purchase.internal}">
+                <f:selectItem
+                  itemLabel="#{messages.no}"
+                  itemValue="#{false}" />
+                <f:selectItem
+                  itemLabel="#{messages.yes}"
+                  itemValue="#{true}" />
+              </h:selectOneRadio>
+            </ui:decorate>
+          </c:if>
+
+          <c:if test="#{not empty purchase.contracts}">
+            <h:outputText value="#{messages.contracts}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:panelGroup styleClass="inner-repeat">
+                <ui:repeat value="#{purchase.contracts}" var="item">
+                  <h:outputText value="#{item.name} #{item.contractType.name} #{item.createdByFull}" />
+                  <br />
+                </ui:repeat>
+              </h:panelGroup>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.supplier}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <ui:param
+              name="componentId"
+              value="supplierautocomplete" />
+            <h:panelGrid
+              id="supplierGrid"
+              columns="2"
+              styleClass="noborder"
+              columnClasses="rightpadding,"
+              title="#{messages.editSupplierHint}">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="supplier" />
+                <ui:param
+                  name="value"
+                  value="#{purchase.supplier}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{supplierManager.getSupplierFiltered}" />
+                <ui:param
+                  name="ajaxChange"
+                  value="true" />
+                <ui:param
+                  name="includeColumns"
+                  value="/supplier/autocomplete-columns.xhtml" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.name}" />
+                <ui:param
+                  name="inputStyle"
+                  value="min-width:450px" />
+                <ui:param
+                  name="styleClass"
+                  value="editWidthExtraLarge" />
+              </ui:include>
+              <p:commandLink
+                action="#{purchaseManager.createNewSupplier}"
+                title="#{messages.addNewSupplierHint}"
+                immediate="true"
+                oncomplete="PF('addSupplierDialog').show()"
+                update="addSupplier, addSupplierHeader">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+              </p:commandLink>
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.orderDate}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:datePicker
+              id="orderDate"
+              value="#{purchase.orderDate}" />
+          </ui:decorate>
+          <h:outputText value="#{messages.orderedBy}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="orderedBy" />
+            <ui:param
+              name="value"
+              value="#{purchase.orderedBy}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{purchase.getEmployeesIncludingOrderedBy}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.fullLastFirstName}" />
+          </ui:include>
+          <c:if test="#{technologyList.getTechnologiesEnabledIncludingTechnologies(purchase.technologies).size() > 1}">
+            <h:outputText value="#{messages.technologies}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectManyCheckbox
+                id="technologies"
+                value="#{purchase.technologies}"
+                collectionType="java.util.HashSet"
+                styleClass="rightpadding"
+                layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(purchase.technologies))}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(purchase.technologies)}"
+                  var="item"
+                  itemLabel="#{item.nameWithEnabledMessage}"
+                  itemDescription="#{item.description}" />
+              </h:selectManyCheckbox>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+        <h:panelGrid
+          id="priceGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.price}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              thousandSeparator=""
+              id="price"
+              value="#{purchase.price}"
+              valueChangeListener="#{purchase.priceChanged}"
+              styleClass="editWidthExtraLarge">
+              <p:ajax
+                event="change"
+                immediate="true"
+                update="priceGrid, currencyGrid" />
+            </p:inputNumber>
+          </ui:decorate>
+        </h:panelGrid>
+        <h:panelGrid
+          id="currencyGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.currency}"
+            rendered="#{not empty purchase.price}" />
+          <h:panelGroup rendered="#{not empty purchase.price}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="currency"
+                value="#{purchase.currency}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{currencyList.resultListOrderByCode}"
+                  var="item"
+                  itemLabel="#{item.code}" />
+                <p:ajax
+                  event="change"
+                  immediate="true"
+                  update="currencyGrid" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{purchase.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+          <h:outputText value="#{messages.p4uNumber}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="p4uNumber"
+              value="#{purchase.p4uNumber}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+          <h:outputText value="#{messages.orderItemReceivedDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="orderItemReceivedDate"
+              value="#{purchase.orderItemReceivedDate}"
+              valueChangeListener="#{purchase.orderItemReceivedDateChanged}">
+              <p:ajax
+                event="change"
+                immediate="true"
+                update="edit:orderItemReceivedByautocomplete" />
+            </p:datePicker>
+          </ui:decorate>
+          <h:outputText value="#{messages.orderItemReceivedBy}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="orderItemReceivedBy" />
+              <ui:param
+                name="value"
+                value="#{purchase.orderItemReceivedBy}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{purchase.getEmployeesIncludingOrderItemReceivedBy}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.fullLastFirstName}" />
+            </ui:include>
+          </ui:decorate>
+          <h:outputText value="#{messages.invoiceReceivedDate}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker
+              id="invoiceReceivedDate"
+              value="#{purchase.invoiceReceivedDate}" />
+          </ui:decorate>
+          <h:outputText value="#{messages.invoiceNumber}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="invoiceNumber"
+              value="#{purchase.invoiceNumber}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+        <h:panelGrid
+          id="invoicedPriceGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.invoicedPrice}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              thousandSeparator=""
+              id="invoicedPrice"
+              value="#{purchase.invoicedPrice}"
+              valueChangeListener="#{purchase.invoicedPriceChanged}"
+              styleClass="editWidthExtraLarge">
+              <p:ajax
+                event="change"
+                immediate="true"
+                update="invoicedPriceGrid, invoicedCurrencyGrid" />
+            </p:inputNumber>
+          </ui:decorate>
+        </h:panelGrid>
+        <h:panelGrid
+          id="invoicedCurrencyGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.invoicedCurrency}"
+            rendered="#{not empty purchase.invoicedPrice}" />
+          <h:panelGroup rendered="#{not empty purchase.invoicedPrice}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:selectOneMenu
+                id="invoicedCurrency"
+                value="#{purchase.invoicedCurrency}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{currencyList.resultListOrderByCode}"
+                  var="item"
+                  itemLabel="#{item.code}" />
+                <p:ajax
+                  event="change"
+                  immediate="true"
+                  update="invoicedCurrencyGrid" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            rendered="#{not purchase.invoicedDefaultCurrency}"
+            value="#{messages.invoicedPrice} #{configuration.getDefaultCurrencyCode()}" />
+          <h:panelGroup rendered="#{not purchase.invoicedDefaultCurrency}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputNumber
+                thousandSeparator=""
+                id="invoicedPriceDefaultCurrency"
+                value="#{purchase.invoicedPriceDefaultCurrency}"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.payer}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneRadio
+              id="payer"
+              value="#{purchase.payer}">
+              <f:selectItem
+                itemLabel="ETHZ"
+                itemValue="ETHZ" />
+              <f:selectItem
+                itemLabel="UZH"
+                itemValue="UZH" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('bookingManager')}">
+            <h:outputText value="#{messages.sapNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:inputNumber
+                id="sapNumber"
+                value="#{purchase.sapNumber}"
+                thousandSeparator=""
+                decimalPlaces="0"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.payersReferenceNumber}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:inputTextarea
+                id="payersReferenceNumber"
+                value="#{purchase.payersReferenceNumber}"
+                rows="3"
+                styleClass="editWidthExtraLarge" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.paid}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneRadio
+                id="paid"
+                value="#{purchase.paid}">
+                <f:selectItem
+                  itemLabel="#{messages.no}"
+                  itemValue="false" />
+                <f:selectItem
+                  itemLabel="#{messages.yes}"
+                  itemValue="true" />
+              </h:selectOneRadio>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.users}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="purchase" />
+              <ui:param
+                name="value"
+                value="#{purchase.usersAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{purchase.getEmployeesExcludingUsers}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.comment}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="comment"
+              value="#{purchase.comment}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/supplier/add-modal.xhtml">
+        <ui:param
+          name="manager"
+          value="#{purchaseManager}" />
+      </ui:include>
+
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

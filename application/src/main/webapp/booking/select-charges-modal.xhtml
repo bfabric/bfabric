@@ -1,0 +1,56 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="selectChargesModalPanel"
+    widgetVar="selectChargesModalDialog"
+    dynamic="true"
+    closable="true"
+    maximizable="true"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.selectCharges}" />
+    </f:facet>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="select-charges" />
+      <ui:param
+        name="tableContent"
+        value="#{bookingManager.candidateCharges}" />
+      <ui:param
+        name="include"
+        value="/booking/select-charges-modal-columns.xhtml" />
+      <ui:param
+        name="rowsPerPageDropdown"
+        value="none" />
+      <ui:param
+        name="listingRows"
+        value="20" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <p:commandButton
+        actionListener="#{bookingManager.addSelectedCharges}"
+        immediate="true"
+        global="false"
+        oncomplete="PF('selectChargesModalDialog').hide()"
+        value="#{messages.select}"
+        update="@([id$=charges]), @([id$=totalCharges]), @([id$=tax]), @([id$=subTotal]), @([id$=roundingValue]), @([id$=total]), @([id$=executionPeriodDatesGrid]), @([id$=costCentre]), @([id$=bookingNr])">
+        <p:resetInput target="#{constants.EDIT}:bookingNr" />
+      </p:commandButton>
+      <p:commandButton
+        actionListener="#{bookingManager.checkAllCandidateCharges(false)}"
+        immediate="true"
+        global="false"
+        oncomplete="PF('selectChargesModalDialog').hide()"
+        value="#{messages.cancel}"
+        update="@([id$=charges]), @([id$=totalCharges]), @([id$=tax]), @([id$=subTotal]), @([id$=roundingValue]), @([id$=total]), @([id$=costCentre]), @([id$=bookingNr])" />
+    </h:panelGrid>
+  </p:dialog>
+</ui:composition>

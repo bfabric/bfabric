@@ -1,0 +1,14 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('archiving')}">
+    <p:column field="#{fieldPrefix}archiving" headerText="#{messages.archiving}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param name="idPrefix" value="archiving" />
+      </ui:include>
+      <h:outputText value="#{stringHelper.toYesNo(entity.archiving)}"
+                    styleClass="#{stringHelper.toGreenRed(entity.archiving)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

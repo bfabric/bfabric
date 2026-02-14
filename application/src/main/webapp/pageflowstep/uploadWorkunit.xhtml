@@ -1,0 +1,101 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(workunit.creatable)}" />
+  </f:metadata>
+
+  <h:form id="uploadWorkunit" enctype="multipart/form-data">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtdm, ltd">
+      <h:outputText value="#{messages.container}" />
+      <ui:decorate template="/fragments/display.xhtml">
+        <h:outputText
+          id="container"
+          value="#{workunit.container.id}" />
+      </ui:decorate>
+
+      <h:outputText value="#{messages.uploads}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <ui:param
+          name="componentId"
+          value="fileupload" />
+        <p:remoteCommand
+          name="sendClientError"
+          action="#{fileUploadHelper.addClientError}"
+          process="@this" />
+        <h:panelGrid
+          id="uploadsGrid"
+          columns="1">
+          <ui:include src="/fragments/edit/fileupload.xhtml">
+            <o:methodParam name="listener" value="#{fileUploadHelper.listener}" />
+            <ui:param name="update" value="uploadsGrid" />
+            <ui:param name="multiple" value="true" />
+            <ui:param name="required" value="true" />
+          </ui:include>
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="include"
+              value="/fragments/column/uploadfile.xhtml" />
+            <ui:param
+              name="tableContext"
+              value="uploadfile" />
+            <ui:param
+              name="tableContent"
+              value="#{fileUploadHelper.uploadedFiles}" />
+            <ui:param
+              name="showColumns"
+              value="buttons" />
+            <ui:param
+              name="styleClass"
+              value="noborder hide-table-header" />
+            <ui:param
+              name="paginator"
+              value="false" />
+            <ui:param
+              name="updateOnDelete"
+              value="@([id$=uploadsGrid])" />
+          </ui:include>
+          <p:spacer height="6" />
+        </h:panelGrid>
+      </ui:decorate>
+
+      <h:outputText value="#{messages.workunitName}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <h:inputText
+          id="#{constants.NAME}"
+          value="#{workunit.name}"
+          required="true"
+          styleClass="editWidthExtraLarge" />
+      </ui:decorate>
+
+      <h:outputText value="#{messages.description}" />
+      <ui:decorate template="/fragments/edit.xhtml">
+        <h:inputTextarea
+          id="description"
+          value="#{workunit.description}"
+          rows="10"
+          styleClass="editWidthExtraLarge" />
+      </ui:decorate>
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <p:commandButton
+        action="#{workunitManager.save}"
+        value="#{messages.save}"
+        update="@form" />
+      <p:commandButton
+        action="#{workunitManager.cancel}"
+        value="#{messages.cancel}"
+        immediate="true" />
+    </h:panelGrid>
+  </h:form>
+</ui:composition>

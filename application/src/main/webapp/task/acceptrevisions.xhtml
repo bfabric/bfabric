@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-order-items.xhtml">
+    <ui:param
+      name="tasks"
+      value="#{messages.taskOrderAcceptRevision}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskOrderAcceptRevisionHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{orderList.acceptOrderRevisionTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{configuration.orderEnabled and sidebarHelper.isTab('acceptrevisions')}" />
+  </ui:include>
+</ui:composition>

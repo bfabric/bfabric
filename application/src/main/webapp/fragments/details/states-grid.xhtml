@@ -1,0 +1,56 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGrid styleClass="content-subheader">
+    <h:outputText value="#{messages.status}" />
+  </h:panelGrid>
+
+  <ui:include src="/fragments/show-datatable.xhtml">
+    <ui:param
+      name="include"
+      value="/status/columns.xhtml" />
+    <ui:param
+      name="tableContext"
+      value="#{instance.tableContext}" />
+    <ui:param
+      name="tableContent"
+      value="#{instance.states}" />
+    <ui:param
+      name="paginator"
+      value="false" />
+  </ui:include>
+
+  <h:form>
+    <h:panelGrid
+      columns="10"
+      styleClass="action">
+      <c:forEach
+        items="#{instance.nextStates}"
+        var="nextStatus">
+        <p:commandButton
+          action="#{entityManager.changeStatus(nextStatus)}"
+          value="#{messages[nextStatus.action]}" />
+      </c:forEach>
+      <p:commandButton
+        action="#{entityManager.rollbackStatus}"
+        value="#{messages.rollbackStatus}"
+        title="#{messages.rollbackStatusHint}"
+        rendered="#{instance.rollbackable}" />
+      <c:if test="#{instance.renderedSendEmailCheckbox}">
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectBooleanCheckbox
+            id="sendMail"
+            value="#{instance.sendMail}">
+            <p:ajax
+              event="change"
+              listener="#{instance.sendMailChanged}"
+              immediate="true" />
+          </h:selectBooleanCheckbox>
+          <h:outputText value="#{messages.sendEmailNotification}" />
+        </ui:decorate>
+      </c:if>
+    </h:panelGrid>
+  </h:form>
+</ui:composition>

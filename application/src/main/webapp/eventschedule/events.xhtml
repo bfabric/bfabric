@@ -1,0 +1,50 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <!--@elvariable id="slot" type="org.bfabric.util.AgendaEventHelperSlot"-->
+  <ui:repeat
+    value="#{usersFiltered}"
+    var="userEntity">
+    <tr>
+      <td class="agendafirstcolumn"><h:outputText
+        value="#{userEntity.lastName}"
+        title="#{userEntity.firstName}" /></td>
+      <ui:repeat
+        value="#{agendaEventHelper.getSlotsForUser(userEntity)}"
+        var="slot">
+        <c:set
+          value="#{slot.user.equals(identityManager.currentUser)}"
+          var="isCurrentUser" />
+        <ui:fragment rendered="#{slot.weekend}">
+          <td class="emptySlot">&#160;</td>
+        </ui:fragment>
+        <ui:fragment rendered="#{not slot.weekend}">
+          <ui:fragment rendered="#{slot.hasEvent()}">
+            <td
+              class="slot slotLink #{slot.backgroundClass}"
+              title="#{slot.description}"
+              onclick="window.location.href='../event/show.html?id=#{slot.event.id}';"
+              bgcolor="#{slot.color}">&#160;
+            </td>
+          </ui:fragment>
+          <ui:fragment rendered="#{not slot.hasEvent() and isCurrentUser}">
+            <td
+              class="slot slotFree #{slot.backgroundClass}"
+              title="#{slot.description}"
+              onclick="window.location.href='../event/edit.html?slot=#{slot.dateAsText}';"
+              bgcolor="#{slot.color}">&#160;
+            </td>
+          </ui:fragment>
+          <ui:fragment rendered="#{not slot.hasEvent() and not isCurrentUser}">
+            <td
+              class="slot slotEmpty #{slot.backgroundClass}"
+              title="#{slot.description}"
+              bgcolor="#{slot.color}">&#160;
+            </td>
+          </ui:fragment>
+        </ui:fragment>
+      </ui:repeat>
+    </tr>
+  </ui:repeat>
+</ui:composition>

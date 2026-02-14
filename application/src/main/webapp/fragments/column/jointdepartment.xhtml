@@ -1,0 +1,30 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('jointDepartment')}">
+    <p:column
+      exportable="false"
+      field="#{fieldPrefix}jointDepartment.size()"
+      headerText="#{messages.jointDepartment}">
+      <ui:repeat
+        var="item"
+        value="#{entity.jointDepartment}">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+        </ui:include>
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item.organization}" />
+          <ui:param
+            name="entityValue"
+            value=" - #{item.organization.name}" />
+        </ui:include>
+        <br />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

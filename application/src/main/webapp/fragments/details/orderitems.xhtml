@@ -1,0 +1,60 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{empty style}">
+    <ui:include src="/fragments/details/repeat-fragment.xhtml">
+      <ui:param
+        name="content"
+        value="#{instance.orderItems}" />
+      <ui:param
+        name="label"
+        value="#{messages.orderItems}" />
+    </ui:include>
+  </c:if>
+  <c:if test="#{not empty style and not empty instance.orderItems}">
+    <h:outputText value="#{messages.orderItems}" />
+    <h:panelGroup>
+      <c:if test="#{not empty hint}">
+        <h:outputText value="#{hint}" styleClass="warn" />
+      </c:if>
+      <h:panelGroup styleClass="innerTree">
+        <c:if test="#{not (instance.orderItems.size() gt 20)}">
+          <ui:repeat
+            value="#{instance.orderItems}"
+            var="item">
+            <ui:include src="/fragments/entity-link-displayname.xhtml">
+              <ui:param
+                name="instance"
+                value="#{item}" />
+            </ui:include>
+            <br />
+          </ui:repeat>
+        </c:if>
+        <c:if test="#{instance.orderItems.size() gt 20}">
+          <p:tree
+            id="orderItemsTree"
+            value="#{treeHelper.getTree(instance.orderItems, messages.orderItems)}"
+            var="item"
+            style="border:0; padding:0!important;">
+            <p:treeNode>
+              <h:outputText
+                rendered="#{item.class.simpleName eq 'String'}"
+                value="#{treeHelper.getTree(instance.orderItems, messages.orderItems)}" />
+              <p:link
+                rendered="#{item.class.simpleName ne 'String'}"
+                outcome="/orderitem/show.xhtml"
+                value="#{item.displayName}">
+                <f:param
+                  name="id"
+                  value="#{item.id}" />
+              </p:link>
+            </p:treeNode>
+          </p:tree>
+        </c:if>
+      </h:panelGroup>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,406 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+
+  <h:panelGrid id="assignSamples">
+    <h:panelGrid
+      id="dataTableFilters"
+      columns="4">
+      <h:panelGrid
+        id="libraryTypeGrid"
+        columns="3">
+        <p:selectOneButton
+          disabled="#{not empty runManager.selectedSamples}"
+          value="#{runManager.selectedSampleType}"
+          unselectable="false">
+          <f:selectItem
+            itemDescription="#{SampleTypeEnum.ILLUMINA_LIBRARY.label} or #{SampleTypeEnum.ILLUMINA_MULTIPLEXED.label}"
+            itemLabel="#{constants.ILLUMINA}"
+            itemValue="#{constants.ILLUMINA}" />
+          <f:selectItem
+            itemDescription="#{SampleTypeEnum.PACBIO_LIBRARY.label} or #{SampleTypeEnum.PACBIO_MULTIPLEXED.label}"
+            itemLabel="#{constants.PACBIO}"
+            itemValue="#{constants.PACBIO}" />
+          <f:selectItem
+            itemDescription="#{SampleTypeEnum.NANOPORE_LIBRARY.label} or #{SampleTypeEnum.NANOPORE_MULTIPLEXED.label}"
+            itemLabel="#{constants.NANOPORE}"
+            itemValue="#{constants.NANOPORE}" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, #{constants.EDIT}:sourceTableGroup, #{constants.EDIT}:sampleOrderItemGrid"
+            oncomplete="fixOversize(); if(PF('#{constants.SOURCE}#{constants.SAMPLE}')){PF('#{constants.SOURCE}#{constants.SAMPLE}').filter();}" />
+        </p:selectOneButton>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="sampleAssociationGrid"
+        columns="2">
+        <p:selectOneButton
+          value="#{runManager.showAllSamples}"
+          unselectable="false">
+          <f:selectItem
+            itemLabel="#{messages.allSamples}"
+            itemValue="true" />
+          <f:selectItem
+            itemLabel="#{messages.associatedOnly}"
+            itemValue="false" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, #{constants.EDIT}:sourceTableGroup"
+            oncomplete="fixOversize(); if(PF('#{constants.SOURCE}#{constants.SAMPLE}')){PF('#{constants.SOURCE}#{constants.SAMPLE}').filter();}" />
+        </p:selectOneButton>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="sampleOrderItemGrid"
+        columns="2">
+        <p:selectOneButton
+          value="#{runManager.excludeOrderItemSamples}"
+          unselectable="false">
+          <f:selectItem
+            itemDescription="#{messages.orderItemSamplesExcludeHint}"
+            itemLabel="#{messages.orderItemSamplesExclude}"
+            itemValue="true" />
+          <f:selectItem
+            itemDescription="#{messages.orderItemSamplesIncludeHint}"
+            itemLabel="#{messages.orderItemSamplesInclude}"
+            itemValue="false" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, #{constants.EDIT}:sourceTableGroup"
+            oncomplete="fixOversize(); if(PF('#{constants.SOURCE}#{constants.SAMPLE}')){PF('#{constants.SOURCE}#{constants.SAMPLE}').filter();}" />
+        </p:selectOneButton>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="sampleColumnGrid"
+        columns="2">
+        <h:outputText
+          value="#{messages.columns}"
+          title="#{messages.allColumnsHint}"
+          styleClass="bold" />
+        <p:selectOneButton value="#{runManager.showAllColumns}">
+          <f:selectItem
+            itemLabel="#{messages.min}"
+            itemValue="#{false}" />
+          <f:selectItem
+            itemLabel="#{messages.all}"
+            itemValue="#{true}" />
+          <p:ajax
+            event="change"
+            global="true"
+            process="@this"
+            update="@this, assignSamples"
+            oncomplete="fixOversize();" />
+        </p:selectOneButton>
+      </h:panelGrid>
+    </h:panelGrid>
+
+    <p:spacer height="16" />
+
+    <h:panelGroup id="sourceTableGroup">
+      <c:if test="#{empty run.container}">
+        <h:panelGrid id="sampleGrid">
+          <h:outputText
+            value="#{messages.selectedSamples} (#{runManager.showAllSamples ? sampleList.getLabeledAndMultiplexedByTypeLazyModel(runManager.selectedSampleType, runManager.excludeOrderItemSamples).size() : sampleList.getLazyModelByInstrumentReadConfigurationIdAndTypes(run.instrumentReadConfiguration.id, runManager.potentialSelectedSampleTypes, runManager.excludeOrderItemSamples).size()})"
+            styleClass="bold" />
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="include"
+              value="/run/assignSamples-source-columns.xhtml" />
+            <ui:param
+              name="tableContext"
+              value="#{constants.SOURCE}#{constants.SAMPLE}" />
+            <ui:param
+              name="tableContent"
+              value="#{runManager.showAllSamples ? sampleList.getLabeledAndMultiplexedByTypeLazyModel(runManager.selectedSampleType, runManager.excludeOrderItemSamples) : sampleList.getLazyModelByInstrumentReadConfigurationIdAndTypes(run.instrumentReadConfiguration.id, runManager.potentialSelectedSampleTypes, runManager.excludeOrderItemSamples)}" />
+            <ui:param
+              name="specificColumns"
+              value="#{not empty runManager.showAllColumns and not runManager.showAllColumns ? sampleAttributeHelper.getAttributeEnumsAssignSamplesToRunSourceTargetColumns() : null}" />
+            <ui:param
+              name="lazy"
+              value="true" />
+          </ui:include>
+        </h:panelGrid>
+      </c:if>
+
+      <c:if test="#{not empty run.container}">
+        <h:panelGrid id="containerSampleGrid">
+          <h:outputText
+            value="#{messages.selectedSamples} (#{runManager.showAllSamples ? sampleList.resultList.size() : run.container.orderItemSamples.size()})"
+            styleClass="bold" />
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="include"
+              value="/run/assignSamples-source-columns.xhtml" />
+            <ui:param
+              name="tableContext"
+              value="#{constants.SOURCE}#{constants.SAMPLE}" />
+            <ui:param
+              name="tableContent"
+              value="#{runManager.showAllSamples ? sampleList.resultList : run.container.orderItemSamples}" />
+            <ui:param
+              name="specificColumns"
+              value="#{not empty runManager.showAllColumns and not runManager.showAllColumns ? sampleAttributeHelper.getAttributeEnumsAssignSamplesToRunSourceTargetColumns() : null}" />
+          </ui:include>
+        </h:panelGrid>
+      </c:if>
+
+      <h:panelGrid
+        id="#{constants.SOURCE}#{constants.SAMPLE}#{constants.BUTTONS}"
+        columns="5"
+        styleClass="action">
+        <p:commandButton
+          action="#{runManager.switchLaneRepresentation()}"
+          value="#{messages.show} #{runManager.showSamplesLaneSeparated ? messages.together : messages.separated}"
+          title="#{runManager.showSamplesLaneSeparated ? messages.singleRunUnitLanesHint : messages.separatedRunUnitLanesHint}"
+          update="@this, #{constants.EDIT}:sourceTableGroup, #{constants.EDIT}:targetTableGroup"
+          oncomplete="fixOversize(); if(PF('#{constants.SOURCE}#{constants.SAMPLE}')){PF('#{constants.SOURCE}#{constants.SAMPLE}').filter();}" />
+        <p:commandButton
+          rendered="#{not empty runManager.markedSourceSamples and (run.lanePositions.size() le 1 or not currentUser.showSamplesLaneButton or currentUser.showSamplesLaneButtonAndCheckbox)}"
+          action="#{runManager.addMarkedSamples}"
+          value="#{messages.addMarkedSamples}"
+          title="#{messages.addMarkedSamplesToRunHint}"
+          process="#{constants.EDIT}:assignSamples"
+          update="#{constants.EDIT}:assignSamples"
+          oncomplete="fixOversize();" />
+        <p:spacer width="10" />
+        <p:selectManyCheckbox
+          rendered="#{not empty runManager.markedSourceSamples and run.lanePositions.size() gt 1 and (not currentUser.showSamplesLaneButton or currentUser.showSamplesLaneButtonAndCheckbox)}"
+          value="#{runManager.selectedLanePositions}"
+          title="#{messages.selectedLanePositionHint}"
+          layout="grid"
+          columns="#{run.lanePositions.size()}"
+          style="margin: 0 !important;">
+          <f:selectItems
+            value="#{run.lanePositions}"
+            var="item"
+            itemLabel="#{messages.lane} #{item}" />
+          <p:ajax
+            event="change"
+            global="false" />
+        </p:selectManyCheckbox>
+        <h:panelGroup rendered="#{not empty runManager.markedSourceSamples and run.lanePositions.size() gt 1 and (currentUser.showSamplesLaneButton or currentUser.showSamplesLaneButtonAndCheckbox)}">
+          <h:panelGrid columns="#{runManager.run.lanePositions.size() + 1}">
+            <h:panelGroup>
+              <div style="padding-top: 4px;">
+                <h:outputText value="#{messages.addMarkedSamples} #{messages.to}" />
+              </div>
+            </h:panelGroup>
+            <c:forEach
+              items="#{runManager.run.lanePositions}"
+              var="lanePosition">
+              <p:commandButton
+                action="#{runManager.addMarkedSamplesToLane(lanePosition)}"
+                value="#{messages.lane} #{lanePosition}"
+                process="#{constants.EDIT}:assignSamples"
+                update="#{constants.EDIT}:assignSamples"
+                oncomplete="fixOversize();" />
+            </c:forEach>
+          </h:panelGrid>
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:panelGroup>
+
+    <p:spacer height="10" />
+
+    <h:panelGroup id="targetTableGroup">
+      <h:panelGroup rendered="#{not runManager.showSamplesLaneSeparated}">
+        <h:outputText
+          rendered="#{(runManager.showAllSamples ? sampleList.getLabeledAndMultiplexedByTypeLazyModel(runManager.selectedSampleType, runManager.excludeOrderItemSamples) : sampleList.getLazyModelByInstrumentReadConfigurationIdAndTypes(run.instrumentReadConfiguration.id, runManager.potentialSelectedSampleTypes, runManager.excludeOrderItemSamples)).size() > 0 or not empty runManager.selectedSamples}"
+          value="#{messages.selectedSamples} (#{runManager.selectedSamples.size()})"
+          styleClass="bold" />
+        <ui:include src="/fragments/datatable.xhtml">
+          <ui:param
+            name="include"
+            value="/run/assignSamples-target-columns.xhtml" />
+          <ui:param
+            name="tableContext"
+            value="#{constants.TARGET}#{constants.SAMPLE}" />
+          <ui:param
+            name="tableContent"
+            value="#{runManager.selectedSamplesAsList}" />
+          <ui:param
+            name="specificColumns"
+            value="#{not empty runManager.showAllColumns and not runManager.showAllColumns ? sampleAttributeHelper.getAttributeEnumsAssignSamplesToRunSourceTargetColumns() : null}" />
+          <o:methodParam
+            name="pageListener"
+            value="#{runManager.pageListener}" />
+          <ui:param
+            name="pageListenerGlobal"
+            value="true" />
+          <ui:param
+            name="customListingRows"
+            value="#{runManager.customListingRows}" />
+          <ui:param
+            name="customRowsPerPageTemplate"
+            value="5,10,20,50" />
+          <ui:param
+            name="maximumRowsPerPage"
+            value="50" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="#{constants.TARGET}#{constants.SAMPLE}#{constants.BUTTONS}"
+        rendered="#{not runManager.showSamplesLaneSeparated}"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          rendered="#{not empty runManager.selectedSamples and not empty runManager.markedTargetSamples}"
+          value="#{messages.removeMarkedSamples}"
+          action="#{runManager.removeMarkedSamples}"
+          title="#{messages.removeMarkedSamplesFromHint.replace('{0}', messages.run.toLowerCase())}"
+          process="#{constants.EDIT}:assignSamples"
+          update="#{constants.EDIT}:assignSamples"
+          oncomplete="fixOversize();" />
+        <p:commandButton
+          rendered="#{not empty runManager.selectedSamples}"
+          value="#{messages.removeAllSamples}"
+          action="#{runManager.removeAllSamples}"
+          title="#{messages.removeAllSamplesFromHint.replace('{0}', messages.run.toLowerCase())}"
+          process="#{constants.EDIT}:assignSamples"
+          update="#{constants.EDIT}:assignSamples"
+          oncomplete="fixOversize();" />
+      </h:panelGrid>
+
+      <h:panelGroup rendered="#{runManager.showSamplesLaneSeparated}">
+        <h:outputText
+          rendered="#{(runManager.showAllSamples ? sampleList.getLabeledAndMultiplexedByTypeLazyModel(runManager.selectedSampleType, runManager.excludeOrderItemSamples) : sampleList.getLazyModelByInstrumentReadConfigurationIdAndTypes(run.instrumentReadConfiguration.id, runManager.potentialSelectedSampleTypes, runManager.excludeOrderItemSamples)).size() > 0 or not empty runManager.selectedSamples}"
+          value="#{messages.selectedSamples} (#{runManager.selectedSamples.size()})"
+          styleClass="bold" />
+        <c:forEach
+          items="#{runManager.run.lanePositions}"
+          var="lanePosition">
+          <h:panelGrid columns="1">
+            <p:spacer height="10" />
+            <h:outputText
+              value="#{messages.runUnitLanePosition} #{lanePosition}"
+              styleClass="bold" />
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="include"
+                value="/run/assignSamples-target-columns.xhtml" />
+              <ui:param
+                name="showEmpty"
+                value="true" />
+              <ui:param
+                name="tableContext"
+                value="#{constants.TARGET}#{constants.SAMPLE}#{constants.LANE}#{lanePosition}" />
+              <ui:param
+                name="tableContent"
+                value="#{run.runUnitLanesPositionsSamples[lanePosition]}" />
+              <ui:param
+                name="specificColumns"
+                value="#{not empty runManager.showAllColumns and not runManager.showAllColumns ? sampleAttributeHelper.getAttributeEnumsAssignSamplesToRunSourceTargetColumns() : null}" />
+              <ui:param
+                name="hideColumns"
+                value="run" />
+              <ui:param
+                name="showColumns"
+                value="multiplexIdParentLibrary, multiplexId2ParentLibrary" />
+            </ui:include>
+
+            <h:panelGrid
+              title="wtf=#{runManager.markedTargetSamplesPerLaneMap[lanePosition]}"
+              id="#{constants.TARGET}#{constants.SAMPLE}#{constants.LANE}#{lanePosition}#{constants.BUTTONS}"
+              columns="2"
+              styleClass="action">
+              <p:commandButton
+                rendered="#{not empty runManager.selectedSamples and runManager.hasLaneMarkedSample(lanePosition)}"
+                value="#{messages.removeMarkedSamples}"
+                action="#{runManager.removeMarkedSamplesFromLane(lanePosition)}"
+                title="#{messages.removeMarkedSamplesFromLaneHint.replace('{0}', lanePosition.toString().toLowerCase())}"
+                process="#{constants.EDIT}:assignSamples"
+                update="#{constants.EDIT}:assignSamples"
+                oncomplete="fixOversize();" />
+              <p:commandButton
+                rendered="#{not empty run.runUnitLanesPositionsSamples[lanePosition]}"
+                value="#{messages.removeAllSamples}"
+                action="#{runManager.removeAllSamplesFromLane(lanePosition)}"
+                title="#{messages.removeAllSamplesFromLaneHint.replace('{0}', lanePosition.toString().toLowerCase())}"
+                process="#{constants.EDIT}:assignSamples"
+                update="#{constants.EDIT}:assignSamples"
+                oncomplete="fixOversize();" />
+            </h:panelGrid>
+          </h:panelGrid>
+        </c:forEach>
+      </h:panelGroup>
+
+      <h:panelGroup>
+        <p:spacer height="10" />
+
+        <h:panelGrid
+          columns="1"
+          rendered="#{not empty runManager.samplesWithIncompleteMultiplexIds or not empty runManager.multiplexIdConflictRecords}">
+          <h:panelGrid
+            columns="2"
+            columnClasses="ttd, ttd"
+            cellspacing="0"
+            cellpadding="0">
+            <h:outputText id="multiplexIdsValidErrorMessage" />
+            <p:message
+              for="multiplexIdsValidErrorMessage"
+              style="white-space: pre-wrap;line-height: 10px; font-size: larger; font-weight: bold"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="rendered"
+              value="#{not empty runManager.samplesWithIncompleteMultiplexIds}" />
+            <ui:param
+              name="exporters"
+              value="false" />
+            <ui:param
+              name="tableType"
+              value="sample" />
+            <ui:param
+              name="tableContext"
+              value="incompleteMultiplexIds" />
+            <ui:param
+              name="tableContent"
+              value="#{runManager.samplesWithIncompleteMultiplexIdsAsList}" />
+            <ui:param
+              name="include"
+              value="/sample/incomplete-multiplexids-columns.xhtml" />
+          </ui:include>
+
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="rendered"
+              value="#{not empty runManager.multiplexIdConflictRecords}" />
+            <ui:param
+              name="exporters"
+              value="false" />
+            <ui:param
+              name="tableType"
+              value="multiplexidconflictrecord" />
+            <ui:param
+              name="tableContext"
+              value="conflictingMultiplexIds" />
+            <ui:param
+              name="tableContent"
+              value="#{runManager.multiplexIdConflictRecords}" />
+            <c:if test="#{not run.physicalSeparation}">
+              <ui:param
+                name="hideColumns"
+                value="lanePosition" />
+            </c:if>
+          </ui:include>
+        </h:panelGrid>
+      </h:panelGroup>
+    </h:panelGroup>
+  </h:panelGrid>
+</ui:composition>

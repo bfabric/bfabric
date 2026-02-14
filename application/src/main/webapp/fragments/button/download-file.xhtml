@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+  <h:form rendered="#{instance.streamedContent}">
+    <p:commandButton value="#{messages.download}" ajax="false">
+      <p:fileDownload value="#{instance.defaultStreamedContent}" />
+    </p:commandButton>
+  </h:form>
+</ui:composition>

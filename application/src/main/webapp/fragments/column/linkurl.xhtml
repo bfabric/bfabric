@@ -1,0 +1,37 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('url')}">
+    <p:column>
+      <h:panelGroup id="urlVerified" rendered="#{not empty entity.valid and entity.valid}">
+        <p:link href="#{entity.url}" target="_blank" rel="noopener">
+          <h:outputText value="#{not empty entity.name ? entity.name : entity.url}" />
+          <i class="fas fa-square-check running" />
+        </p:link>
+      </h:panelGroup>
+      <h:panelGroup id="urlNotVerified" rendered="#{empty entity.valid}">
+        <p:link href="#{entity.url}" target="_blank" rel="noopener">
+          <h:outputText value="#{not empty entity.name ? entity.name : entity.url}" />
+          <i class="fas fa-square-arrow-up-right warn" />
+        </p:link>
+        <p:tooltip for="urlNotVerified" value="#{messages.urlNotVerifiedHint}" />
+      </h:panelGroup>
+      <h:panelGroup rendered="#{not empty entity.valid and not entity.valid}" styleClass="warning">
+        <h:panelGroup id="urlInvalid" rendered="#{not entity.validUrl}">
+          <h:outputText value="#{entity.name}" />
+          <h:outputText value="&#160;#{entity.url}" styleClass="warning" />
+          <i class="fas fa-exclamation-circle " />
+          <p:tooltip for="urlInvalid" value="#{messages.urlInvalidHint}" />
+        </h:panelGroup>
+        <h:panelGroup id="urlNotFound" rendered="#{entity.validUrl}">
+          <p:link value="#{entity.name}" href="#{entity.url}" target="_blank" rel="noopener" />
+          <p:link value="&#160;#{entity.url}" href="#{entity.url}" target="_blank" rel="noopener" />
+          <i class="fas fa-triangle-exclamation" />
+          <p:tooltip for="urlNotFound" value="#{messages.urlNotFoundHint}" />
+        </h:panelGroup>
+      </h:panelGroup>
+    </p:column>
+  </c:if>
+</ui:composition>

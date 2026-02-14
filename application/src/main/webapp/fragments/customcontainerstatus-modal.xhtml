@@ -1,0 +1,159 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entityManager" type="org.bfabric.manager.ContainerManager"-->
+  <p:dialog
+    id="customStatusModalPanel"
+    widgetVar="customStatusModalDialog"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.addCustomStatus}" />
+    </f:facet>
+    <h:form id="customStatusForm">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText
+          value="#{messages.current} #{messages.status}"
+          title="#{messages.customStatusHint}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:selectOneMenu
+            id="type"
+            value="#{entityManager.instance.selectedStatus}"
+            valueChangeListener="#{entityManager.instance.selectedStatusChanged}"
+            styleClass="editWidthLarge">
+            <f:selectItem itemLabel="#{messages.noFilter}" />
+            <f:selectItems
+              value="#{statusEnumList}"
+              var="item"
+              itemLabel="#{item.label}" />
+            <p:ajax
+              event="change"
+              update="@form"
+              global="false" />
+          </h:selectOneMenu>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="customStatusGrid"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.customStatusCurrent}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{not empty entityManager.instance.customStatus ? entityManager.instance.customStatus : messages.none}" />
+        </ui:decorate>
+        <c:if test="#{configuration.customOrderStatusAutocompleteMinimumSize gt entityManager.getCustomOrderStates().size() and not entityManager.getCustomOrderStates().isEmpty()}">
+          <h:outputText value="#{messages.new} #{messages.customStatus}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneRadio
+              id="newStatus"
+              value="#{entityManager.instance.selectedCustomStatus}"
+              layout="pageDirection">
+              <f:selectItems
+                value="#{entityManager.getCustomOrderStates()}"
+                var="item"
+                itemLabel="#{stringHelper.truncate(item, 64)}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="@form" />
+            </h:selectOneRadio>
+          </ui:decorate>
+        </c:if>
+        <c:if test="#{configuration.customOrderStatusAutocompleteMinimumSize le entityManager.getCustomOrderStates().size()}">
+          <h:outputText value="#{messages.customStatusNew}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:autoComplete
+              title="#{messages.autocompleteHint}"
+              placeholder="#{messages.customStatusAutocompletePlaceholder}"
+              value="#{entityManager.instance.selectedCustomStatus}"
+              completeMethod="#{entityManager.getCustomStatesFiltered}"
+              dropdown="true"
+              emptyMessage="#{messages.noResultFound}"
+              var="item"
+              required="true"
+              itemValue="#{item}"
+              itemLabel="#{stringHelper.truncate(item, 64)}"
+              forceSelection="false"
+              queryDelay="200"
+              scrollHeight="388"
+              autoHighlight="false"
+              styleClass="editWidthLarge"
+              inputStyleClass="editWidthLarge">
+              <p:ajax
+                event="query"
+                global="false" />
+              <p:ajax
+                event="itemSelect"
+                global="false"
+                update="@form" />
+            </p:autoComplete>
+          </ui:decorate>
+        </c:if>
+        <c:if test="#{configuration.customOrderStatusAutocompleteMinimumSize gt entityManager.getCustomOrderStates().size()}">
+          <h:outputText value="#{entityManager.getCustomOrderStates().size() eq 0 ? messages.customStatusNew : ''}" />
+          <ui:decorate template="#{entityManager.getCustomOrderStates().size() eq 0 ? '/fragments/required.xhtml' : '/fragments/edit.xhtml'}">
+            <h:inputText
+              id="newCustomStatus"
+              value="#{entityManager.instance.selectedCustomStatus}"
+              title="#{entityManager.getCustomOrderStates().size() eq 0 ? '' : messages.customStatusNewHint}"
+              required="#{entityManager.getCustomOrderStates().size() eq 0}"
+              styleClass="editWidthLarge">
+              <p:ajax
+                event="change"
+                global="false"
+                update="@form" />
+            </h:inputText>
+          </ui:decorate>
+        </c:if>
+        <c:if test="#{instance.renderedSendEmailCheckboxForCustomStatusChange}">
+          <h:outputText value="#{messages.sendEmailNotification}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="sendMail"
+              value="#{instance.sendMail}">
+              <p:ajax
+                event="change"
+                listener="#{instance.sendMailChanged}"
+                immediate="true" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+        </c:if>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          rendered="#{not entityManager.customContainerStatusConfirmDialogRendered}"
+          action="#{entityManager.changeCustomStatus()}"
+          value="#{messages.save}"
+          update="@form" />
+        <p:commandButton
+          rendered="#{not empty entityManager.instance.selectedCustomStatus and entityManager.customContainerStatusConfirmDialogRendered}"
+          action="#{entityManager.changeCustomStatus()}"
+          value="#{messages.save}"
+          update="@form">
+          <ui:include src="/fragments/confirm-customcontainerstatus-modal.xhtml">
+            <ui:param
+              name="customStatus"
+              value="#{entityManager.instance.selectedCustomStatus}" />
+          </ui:include>
+        </p:commandButton>
+        <p:commandButton
+          actionListener="#{entityManager.resetCustomStatusModalDialog()}"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('customStatusModalDialog').hide(); fixOversize();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

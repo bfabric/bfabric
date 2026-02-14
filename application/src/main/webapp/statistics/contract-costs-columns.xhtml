@@ -1,0 +1,69 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:columnGroup type="header">
+    <p:row>
+      <p:column colspan="1" headerText="#{messages.year}" />
+      <p:column colspan="1" headerText="#{messages.month}" />
+      <p:column colspan="2" headerText="#{messages.contractType}" />
+      <p:column colspan="1" headerText="#{messages.contracts}" />
+      <p:column colspan="2" headerText="#{messages.price}" />
+    </p:row>
+    <p:row>
+      <p:column headerText="&#160;" sortBy="#{entity[0]}" filterBy="#{entity[0]}" />
+      <p:column headerText="&#160;" sortBy="#{entity[1]}" filterBy="#{entity[1]}" />
+      <p:column headerText="#{messages.id}" sortBy="#{entity[2]}" filterBy="#{entity[2]}" />
+      <p:column headerText="#{messages.name}" sortBy="#{entity[3]}" filterBy="#{entity[3]}" />
+      <p:column headerText="#{messages.quantity}" sortBy="#{entity[4]}" filterBy="#{entity[4]}" />
+      <p:column headerText="#{messages.amount}" sortBy="#{entity[5]}" filterBy="#{entity[5]}" />
+      <p:column headerText="#{messages.currency}" sortBy="#{entity[6]}" filterBy="#{entity[6]}" />
+    </p:row>
+  </p:columnGroup>
+
+  <ui:include src="/statistics/fragments/column/year-month.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.contract} #{messages.id}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.name}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[3]}" />
+    <ui:param
+      name="valueClass"
+      value="contracttype" />
+    <ui:param
+      name="grouped"
+      value="true" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.contracts}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.price}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.currency}" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+  </ui:include>
+</ui:composition>

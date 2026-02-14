@@ -1,0 +1,38 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{not hideColumns.contains('applicationCategory')}"
+    field="#{fieldPrefix}applicationCategory.name"
+    headerText="#{messages.applicationCategory}"
+    filterValue="#{applicationCategoryName}"
+    filterMatchMode="exact"
+    exportValue="#{entity.applicationCategory.name}">
+    <f:facet name="filter">
+      <h:selectOneMenu
+        id="applicationCategory"
+        value="#{applicationCategoryName}"
+        onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{applicationCategoryList.resultListOrderByName}"
+          var="item"
+          itemValue="#{item.name}"
+          itemLabel="#{item.name}" />
+      </h:selectOneMenu>
+    </f:facet>
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.applicationCategory}" />
+      </ui:include>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <h:outputText value="#{entity.applicationCategory.name}" />
+    </c:if>
+  </p:column>
+</ui:composition>

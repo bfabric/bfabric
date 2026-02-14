@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if
+    test="#{configuration.orderEnabled and sidebarHelper.isTab('rununittypes') and configuration.labEnabled and identityManager.hasCurrentUserRole('labManager') and identityManager.hasCurrentUserRole('instrumentManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="rununittype" />
+      <ui:param
+        name="tableContext"
+        value="#{instrument.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{instrument.runUnitTypes}" />
+      <ui:param
+        name="hideColumns"
+        value="instrument_" />
+    </ui:include>
+  </c:if>
+</ui:composition>

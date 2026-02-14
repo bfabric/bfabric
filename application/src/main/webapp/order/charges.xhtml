@@ -1,0 +1,63 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('charges')}">
+    <c:if test="#{order.project != null and chargeList.getLazyModelByContainers(order.associatedContainers).size() > 0}">
+      <ui:include src="/fragments/switch.xhtml">
+        <ui:param
+          name="widgetVarName"
+          value="'ordercharge'" />
+        <ui:param
+          name="type"
+          value="charge" />
+        <ui:param
+          name="count"
+          value="#{chargeList.getLazyModelByContainers(order.associatedContainers).size()}" />
+        <ui:param
+          name="update"
+          value="#{order.tableContext}chargetableform" />
+      </ui:include>
+    </c:if>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="charge" />
+      <ui:param
+        name="tableContext"
+        value="#{order.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{chargeList.getLazyModelByContainerId(order.id, order.associatedContainers, orderManager.containerAll)}" />
+      <ui:param
+        name="hideColumns"
+        value="container" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+    <h:panelGrid
+      id="charges-tab-buttons"
+      columns="2"
+      styleClass="action">
+      <p:button
+        rendered="#{order.renderedChargeButton}"
+        outcome="/charge/edit.xhtml"
+        value="#{messages.create}">
+        <f:param
+          name="containerId"
+          value="#{order.id}" />
+      </p:button>
+      <p:commandButton
+        rendered="#{order.requestBookingButtonRendered}"
+        action="#{orderManager.requestBooking}"
+        value="#{messages.requestBooking}"
+        title="#{messages.requestBookingHint}"
+        update="charges-tab-buttons">
+        <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+      </p:commandButton>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

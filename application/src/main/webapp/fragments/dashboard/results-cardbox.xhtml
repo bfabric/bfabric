@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/dashboard-cardbox.xhtml">
+    <ui:param name="showAlways" value="true" />
+    <ui:param name="content" value="#{content != null ? content : instance.resultsCurrentUser}" />
+    <ui:param name="tab" value="results" />
+    <ui:param name="label" value="#{not empty label ? label : messages.results}" />
+  </ui:include>
+</ui:composition>

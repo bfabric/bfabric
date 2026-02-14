@@ -1,0 +1,64 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('bookings')}">
+    <h:form id="bookinglistform">
+      <ui:include src="/fragments/datatable.xhtml">
+        <ui:param
+          name="tableType"
+          value="booking" />
+        <ui:param
+          name="tableContext"
+          value="all" />
+        <ui:param
+          name="showColumns"
+          value="oldServiceOrderBookingId, bookingDate, paid, export" />
+        <ui:param
+          name="rowStyleClass"
+          value="#{entity.rowStyleClass}" />
+      </ui:include>
+
+      <h:panelGrid
+        id="buttons"
+        columns="2"
+        styleClass="action">
+        <p:button
+          outcome="edit.xhtml"
+          value="#{messages.create}"
+          rendered="#{identityManager.hasCurrentUserRole('bookingManager')}" />
+        <p:commandButton
+          ajax="false"
+          rendered="#{identityManager.hasCurrentUserRole('bookingManager') and not empty bookingExportManager.selectedBookings}"
+          actionListener="#{bookingExportManager.exportBookings}"
+          value="#{messages.exportETHIS}"
+          title="#{messages.exportETHISHint}"
+          onclick="openTabs(String(#{bookingExportManager.getTabs()})); if(PF('allbooking')){PF('allbooking').filter(); updateButtons();}">
+          <f:attribute
+            name="#{constants.TABLE_CLIENT_ID}"
+            value="bookinglistform:allbookingtable" />
+        </p:commandButton>
+        <p:remoteCommand
+          name="updateButtons"
+          process="@this"
+          update="bookinglistform:buttons"
+          global="false" />
+        <script>
+            //<![CDATA[
+            /* Open all the given tabs. Important: Pop-ups need to allowed in the browser settings for the target site. */
+            function openTabs(tabString) {
+                const TAB_DELIMITER = "########";
+                let tabs = tabString.split(TAB_DELIMITER);
+                for (let tab of tabs) {
+                    if (tab && tab !== "") {
+                        window.open(tab.replaceAll(TAB_DELIMITER, ''), '_blank');
+                    }
+                }
+            }//]]>
+        </script>
+      </h:panelGrid>
+    </h:form>
+  </c:if>
+</ui:composition>

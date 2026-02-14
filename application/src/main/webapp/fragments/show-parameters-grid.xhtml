@@ -1,0 +1,65 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGrid
+    columns="2"
+    columnClasses="rtdm, ltd">
+    <h:outputText value="#{parameter.label}" title="#{parameter.description}" />
+    <h:panelGroup rendered="#{parameter.string and parameter.modifiable and not empty parameter.enumeration}">
+      <ui:decorate template="/fragments/edit.xhtml">
+        <ui:param
+          name="required"
+          value="#{parameter.required}" />
+        <p:selectOneMenu
+          id="valueMenu"
+          value="#{parameter.value}"
+          title="#{parameter.description}"
+          required="#{parameter.required}"
+          filter="true"
+          filterMatchMode="contains"
+          styleClass="editWidthExtraHuge">
+          <f:selectItem
+            itemLabel=""
+            itemDisabled="#{parameter.required}" />
+          <f:selectItems
+            value="#{parameter.enumerationSorted}"
+            var="item"
+            itemLabel="#{item}" />
+        </p:selectOneMenu>
+      </ui:decorate>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{parameter.string and parameter.modifiable and empty parameter.enumeration}">
+      <ui:decorate template="/fragments/edit.xhtml">
+        <ui:param
+          name="required"
+          value="#{parameter.required}" />
+        <h:inputText
+          id="valueText"
+          value="#{parameter.value}"
+          title="#{parameter.description}"
+          required="#{parameter.required}"
+          styleClass="editWidthExtraLarge" />
+      </ui:decorate>
+    </h:panelGroup>
+
+    <ui:decorate template="/fragments/edit.xhtml">
+      <h:selectBooleanCheckbox
+        id="valueCheckbox"
+        value="#{parameter.valueBoolean}"
+        title="#{parameter.description}"
+        rendered="#{parameter.boolean and parameter.modifiable}">
+        <p:ajax
+          event="change"
+          global="false" />
+      </h:selectBooleanCheckbox>
+
+      <h:outputText
+        value="#{parameter.value}"
+        title="#{parameter.description}"
+        rendered="#{not parameter.modifiable}" />
+    </ui:decorate>
+  </h:panelGrid>
+</ui:composition>

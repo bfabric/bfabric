@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:set
+    value="#{not empty workflows ? workflows : entity.workflows}"
+    var="workflows" />
+  <c:if test="#{not hideColumns.contains('workflows')}">
+    <p:column
+      headerText="#{messages.workflows}"
+      exportValue="#{collectionHelper.printDisplayNames(workflows)}">
+      <ui:repeat
+        var="item"
+        value="#{workflows}">
+        <ui:include src="/fragments/entity-link-displayname.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+        </ui:include>
+        <br />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

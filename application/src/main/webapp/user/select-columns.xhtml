@@ -1,0 +1,33 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.User"-->
+  <!--@elvariable id="manager" type="org.bfabric.manager.ContainerManager"-->
+  <p:column exportable="false">
+    <p:commandButton
+      actionListener="#{manager.setNewUser(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      global="true"
+      oncomplete="hideDialogOnSuccess(args, 'addUserDialog')"
+      update="addUser, @([id$=budgetofficerautocomplete]), @([id$=leaderautocomplete]), @([id$=contactautocomplete]), @([id$=requesterautocomplete])" />
+  </p:column>
+  <p:column
+    sortable="false"
+    filterable="false"
+    field="#{fieldPrefix}name"
+    headerText="#{messages.name}" />
+  <p:column
+    sortable="false"
+    filterable="false"
+    field="#{fieldPrefix}login"
+    headerText="#{messages.login}">
+  </p:column>
+  <p:column
+    sortable="false"
+    filterable="false"
+    field="#{fieldPrefix}affiliation"
+    headerText="#{messages.affiliation}">
+  </p:column>
+</ui:composition>

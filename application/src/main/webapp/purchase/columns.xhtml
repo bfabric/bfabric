@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <c:if test="#{identityManager.hasCurrentUserRole('secretary')}">
+    <ui:include src="/fragments/column/internal.xhtml" />
+  </c:if>
+  <ui:include src="/fragments/column/supplier.xhtml" />
+  <ui:include src="/fragments/column/orderdate.xhtml" />
+  <ui:include src="/fragments/column/orderedby.xhtml" />
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <ui:include src="/fragments/column/price.xhtml" />
+  <ui:include src="/fragments/column/currency.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/items.xhtml" />
+  <ui:include src="/fragments/column/p4unumber.xhtml" />
+  <ui:include src="/fragments/column/orderitemreceiveddate.xhtml" />
+  <ui:include src="/fragments/column/orderitemreceivedby.xhtml" />
+  <ui:include src="/fragments/column/invoicereceiveddate.xhtml" />
+  <ui:include src="/fragments/column/invoicenumber.xhtml" />
+  <ui:include src="/fragments/column/invoicedprice.xhtml" />
+  <ui:include src="/fragments/column/invoicedcurrency.xhtml" />
+  <ui:include src="/fragments/column/invoicedpricedefaultcurrency.xhtml" />
+  <ui:include src="/fragments/column/payer.xhtml" />
+  <ui:include src="/fragments/column/sapNumber.xhtml" />
+  <ui:include src="/fragments/column/payersreferencenumber.xhtml" />
+  <ui:include src="/fragments/column/paid.xhtml" />
+  <ui:include src="/fragments/column/user-count.xhtml" />
+  <ui:include src="/fragments/column/note-count.xhtml" />
+  <ui:include src="/fragments/column/comment.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

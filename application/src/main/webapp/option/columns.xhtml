@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/parentclass.xhtml">
+    <ui:param name="parentClassNames" value="#{optionList.parentClassNames}" />
+  </ui:include>
+  <ui:include src="/fragments/column/parentid.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/required.xhtml" />
+  <ui:include src="/fragments/column/multiple.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/optionValues-count.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

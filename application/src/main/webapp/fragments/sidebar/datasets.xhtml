@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{content != null ? content : instance.datasets}" />
+    <ui:param
+      name="label"
+      value="#{not empty label ? label : messages.datasets}" />
+    <ui:param
+      name="tab"
+      value="#{not empty tab ? tab : 'datasets'}" />
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+</ui:composition>

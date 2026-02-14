@@ -1,0 +1,51 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    exportable="false"
+    selectionMode="#{selectionMode}" />
+  <p:column
+    field="#{fieldPrefix}name"
+    headerText="#{messages.serviceName}" />
+  <p:column
+    field="#{fieldPrefix}serviceType.name"
+    headerText="#{messages.serviceType}">
+    <f:facet name="filter">
+      <h:selectOneMenu
+        id="type"
+        onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{serviceHelper.getServiceTypesOfEnabledServicesIncluding(selectedService)}"
+          var="item"
+          itemValue="#{item.name}"
+          itemLabel="#{item.name}#{empty serviceHelper.serviceAreaFilter ? ' ('.concat(item.serviceArea.name).concat(')') : ''}" />
+      </h:selectOneMenu>
+    </f:facet>
+  </p:column>
+  <p:column
+    field="#{fieldPrefix}serviceType.serviceArea.name"
+    headerText="#{messages.serviceArea}"
+    filterMatchMode="exact">
+    <f:facet name="filter">
+      <h:selectOneMenu value="#{serviceHelper.serviceAreaFilter}">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{serviceAreaList.getServiceAreasOfEnabledServicesIncluding(selectedService)}"
+          var="serviceAreaEntity"
+          itemValue="#{serviceAreaEntity.name}"
+          itemLabel="#{serviceAreaEntity.name}" />
+        <f:attribute
+          name="#{constants.TABLE_CLIENT_ID}"
+          value="#{tableReference.clientId}" />
+        <p:ajax
+          event="change"
+          global="false"
+          listener="#{serviceHelper.serviceAreaFilterChanged()}"
+          oncomplete="PF('#{tableContext}#{tableType}').filter();" />
+      </h:selectOneMenu>
+    </f:facet>
+  </p:column>
+</ui:composition>

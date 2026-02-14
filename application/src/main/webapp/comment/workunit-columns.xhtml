@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param name="workunitDownloadButton" value="true" />
+  </ui:include>
+  <ui:include src="/fragments/column/size.xhtml" />
+  <ui:include src="/fragments/column/runSucceedingWebApp.xhtml">
+    <ui:param name="styleClass" value="app appInline" />
+  </ui:include>
+  <ui:include src="/fragments/column/workunitLink.xhtml" />
+</ui:composition>

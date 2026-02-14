@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.chargeable}">
+    <h:outputText value="#{messages.chargeable}" />
+    <h:outputText value="#{instance.chargeable}" styleClass="#{stringHelper.toGreenRed(instance.chargeable)}" />
+  </c:if>
+</ui:composition>

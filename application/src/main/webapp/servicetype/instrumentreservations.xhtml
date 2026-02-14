@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.instrumentReservationEnabled and sidebarHelper.isTab('instrumentreservations')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="instrumentreservation" />
+      <ui:param name="tableContext" value="#{serviceType.tableContext}" />
+      <ui:param name="tableContent" value="#{serviceType.instrumentReservations}" />
+      <ui:param name="hideColumns" value="serviceType" />
+    </ui:include>
+  </c:if>
+</ui:composition>

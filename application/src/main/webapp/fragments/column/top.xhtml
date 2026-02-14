@@ -1,0 +1,19 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('top')}">
+    <p:column
+      field="#{fieldPrefix}top"
+      headerText="#{messages.top}"
+      filterMatchMode="exact">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="top" />
+      </ui:include>
+      <h:outputText value="#{stringHelper.toYesNo(entity.top)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

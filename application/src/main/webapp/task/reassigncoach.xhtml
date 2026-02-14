@@ -1,0 +1,25 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-project-items.xhtml">
+    <ui:param
+      name="tasksId"
+      value="reassigncoach" />
+    <ui:param
+      name="tasks"
+      value="#{messages.taskReassignCoach}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskReassignCoachHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{projectList.coachReassignmentTasks}" />
+    <ui:param
+      name="showColumns"
+      value="#{showColumns}, coachBackup, bioinformatician" />
+    <ui:param
+      name="hideColumns"
+      value="#{hideColumns}, memberCount, resourcesTotalSize, importResourcesTotalSize, totalBookedCharges, totalBillableCharges, totalPriceNonBookedBillableCharges, failedWorkunitsCount" />
+    <ui:param
+      name="tasksRendered"
+      value="#{sidebarHelper.isTab('reassigncoach') and identityManager.hasCurrentUserRole('reviewManager')}" />
+  </ui:include>
+</ui:composition>

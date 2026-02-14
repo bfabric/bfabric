@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('operator')}">
+    <p:column
+      field="#{fieldPrefix}operator.name"
+      headerText="#{messages.operator}">
+      <ui:include src="/fragments/user-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.operator}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

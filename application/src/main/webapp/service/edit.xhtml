@@ -1,0 +1,250 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{serviceManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.serviceArea}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              columns="3"
+              styleClass="noborder-rightpadding">
+              <h:selectOneMenu
+                id="serviceArea"
+                value="#{service.serviceArea}"
+                valueChangeListener="#{service.serviceAreaChanged}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItems
+                  var="item"
+                  value="#{serviceAreaList.resultList}"
+                  itemLabel="#{item.name}#{item.enabled ? '': ' - disabled!'}" />
+                <p:ajax
+                  event="change"
+                  update="#{constants.EDIT}:serviceType" />
+              </h:selectOneMenu>
+              <p:commandLink
+                id="addServiceAreaButton"
+                action="#{serviceHelper.createNew(service, 'service', null)}"
+                immediate="true"
+                oncomplete="PF('addServiceAreaDialog').show()"
+                update="addServiceArea,addServiceAreaHeader,addServiceAreaPanel">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+              </p:commandLink>
+              <p:message
+                for="serviceArea"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.serviceType}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid
+              columns="3"
+              styleClass="noborder-rightpadding">
+              <h:selectOneMenu
+                id="serviceType"
+                value="#{service.serviceType}"
+                styleClass="editWidthExtraLarge"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItems
+                  var="item"
+                  value="#{serviceManager.serviceTypes}"
+                  itemLabel="#{item.name}" />
+                <p:ajax
+                  event="change"
+                  update="#{constants.EDIT}:enabledDecorate"
+                  global="false" />
+              </h:selectOneMenu>
+              <p:commandLink
+                id="addServiceTypeButton"
+                action="#{serviceHelper.createNew(service, 'service', service.serviceArea)}"
+                immediate="true"
+                oncomplete="PF('addServiceTypeDialog').show()"
+                update="addServiceType,addServiceTypeHeader,addServiceTypePanel">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+              </p:commandLink>
+              <p:message
+                for="serviceType"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{service.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.code}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="serviceCode" />
+              <ui:param
+                name="value"
+                value="#{service.serviceCode}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{service.getEnabledServiceCodesIncluding}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{service.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.children}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="childservice" />
+              <ui:param
+                name="value"
+                value="#{serviceManager.service.childrenAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{serviceManager.getPossibleChildren}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.users}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="service" />
+              <ui:param
+                name="value"
+                value="#{service.usersAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{serviceManager.getUsers}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <h:panelGroup id="enabledDecorate">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox
+                id="enabled"
+                value="#{service.enabled}"
+                disabled="#{not service.serviceType.enabled}" />
+              <h:outputText
+                value="&#160;#{messages.enableServiceHint}"
+                styleClass="pending"
+                rendered="#{not service.serviceType.enabled}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.fullCost}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              id="fullCost"
+              value="#{service.fullCost}"
+              thousandSeparator=""
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="servicePrices"
+          columns="2"
+          columnClasses="rtdm,">
+          <h:outputText value="#{messages.prices}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <pe:sheet
+              id="sheet"
+              widgetVar="sheetWidget"
+              value="#{service.serviceOrganizationTypePricesAsList}"
+              var="item"
+              resizableCols="false"
+              resizableRows="false"
+              rowKey="#{item.organizationType.id}"
+              showRowHeaders="true"
+              width="700"
+              fixedRows="#{service.serviceOrganizationTypePricesAsList.size()}">
+              <pe:sheetcolumn
+                headerText="#{messages.organizationType}"
+                readOnly="true"
+                value="#{item.organizationType.name}" />
+              <pe:sheetcolumn
+                headerText="#{messages.price}"
+                value="#{item.basicPrice}"
+                colWidth="100"
+                colType="numeric"
+                numericPattern="0.00" />
+              <pe:sheetcolumn
+                headerText="#{messages.euGrantPrice}"
+                value="#{item.euGrantPrice}"
+                colWidth="100"
+                colType="numeric"
+                numericPattern="0.00" />
+              <!-- Cell value changed listener
+              <p:ajax
+                event="change"
+                listener="#{serviceManager.cellChangeEvent}" />
+              -->
+            </pe:sheet>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-edit-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+
+      <ui:include src="/servicearea/add-modal.xhtml" />
+      <ui:include src="/servicetype/add-modal.xhtml" />
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

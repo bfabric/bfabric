@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup>
+    <ui:include src="/fragments/user-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{instance.supervisor}" />
+    </ui:include>
+    <h:panelGroup rendered="#{not empty entityBadge ? entityBadge : instance.supervisor != null and not instance.supervisorValid}">
+      <i
+        class="fas fa-exclamation-circle warning"
+        title="#{messages.supervisorInvalidHint}" />
+    </h:panelGroup>
+  </h:panelGroup>
+</ui:composition>

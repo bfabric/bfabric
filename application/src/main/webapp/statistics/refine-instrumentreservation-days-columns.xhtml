@@ -1,0 +1,237 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:columnGroup type="header">
+    <p:row>
+      <p:column colspan="1" headerText="#{messages.year}" />
+      <p:column colspan="2" headerText="#{messages.instrument}" />
+      <p:column colspan="5" headerText="#{messages.reservation} #{messages.count}" />
+      <p:column colspan="16" headerText="#{messages.reservation} #{messages.days}" />
+    </p:row>
+    <p:row>
+      <p:column colspan="1" headerText="&#160;" />
+      <p:column colspan="2" headerText="&#160;" />
+      <p:column colspan="5" headerText="&#160;" />
+      <p:column colspan="4" headerText="#{messages.nonCharged}" />
+      <p:column colspan="4" headerText="#{messages.charged}" />
+      <p:column colspan="4" headerText="#{messages.nonChargeable}" />
+      <p:column colspan="4" headerText="#{messages.chargeable}" />
+    </p:row>
+    <p:row>
+      <p:column headerText="&#160;" sortBy="#{entity[0]}" filterBy="#{entity[0]}" />
+      <p:column headerText="#{messages.id}" sortBy="#{entity[1]}" filterBy="#{entity[1]}" />
+      <p:column headerText="#{messages.label}" sortBy="#{entity[2]}" filterBy="#{entity[2]}" />
+      <p:column headerText="#{messages.total}" />
+      <p:column headerText="#{messages.nonCharged}" />
+      <p:column headerText="#{messages.charged}" />
+      <p:column headerText="#{messages.nonChargeable}" />
+      <p:column headerText="#{messages.chargeable}" />
+      <p:column headerText="#{messages.total}" />
+      <p:column headerText="#{messages.usage}" />
+      <p:column headerText="#{messages.maintenance}" />
+      <p:column headerText="#{messages.nonBookable}" />
+      <p:column headerText="#{messages.total}" />
+      <p:column headerText="#{messages.usage}" />
+      <p:column headerText="#{messages.maintenance}" />
+      <p:column headerText="#{messages.nonBookable}" />
+      <p:column headerText="#{messages.total}" />
+      <p:column headerText="#{messages.usage}" />
+      <p:column headerText="#{messages.maintenance}" />
+      <p:column headerText="#{messages.nonBookable}" />
+      <p:column headerText="#{messages.total}" />
+      <p:column headerText="#{messages.usage}" />
+      <p:column headerText="#{messages.maintenance}" />
+      <p:column headerText="#{messages.nonBookable}" />
+    </p:row>
+  </p:columnGroup>
+
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.instrumentId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.instrumentName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[1]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueClass"
+      value="instrument" />
+    <ui:param
+      name="grouped"
+      value="true" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.total}" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.nonCharged}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.charged}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.nonChargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[14]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.chargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[15]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.total} #{messages.nonCharged}" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.usage} #{messages.nonCharged}" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.maintenance} #{messages.nonCharged}" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.nonBookable} #{messages.nonCharged}" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.total} #{messages.charged}" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.usage} #{messages.charged}" />
+    <ui:param
+      name="value"
+      value="#{entity[11]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.maintenance} #{messages.charged}" />
+    <ui:param
+      name="value"
+      value="#{entity[12]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.nonBookable} #{messages.charged}" />
+    <ui:param
+      name="value"
+      value="#{entity[13]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.total} #{messages.nonChargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[16]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.usage} #{messages.nonChargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[17]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.maintenance} #{messages.nonChargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[18]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.nonBookable} #{messages.nonChargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[19]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.total} #{messages.chargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[20]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.usage} #{messages.chargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[21]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.maintenance} #{messages.chargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[22]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.nonBookable} #{messages.chargeable}" />
+    <ui:param
+      name="value"
+      value="#{entity[23]}" />
+  </ui:include>
+</ui:composition>

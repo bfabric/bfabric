@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instrumentReadConfiguration')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}instrumentReadConfiguration.name"
+        headerText="#{messages.instrumentReadConfiguration}">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.instrumentReadConfiguration}" />
+        </ui:include>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}instrumentReadConfiguration.name"
+        headerText="#{messages.instrumentReadConfiguration}" />
+    </c:if>
+  </c:if>
+</ui:composition>

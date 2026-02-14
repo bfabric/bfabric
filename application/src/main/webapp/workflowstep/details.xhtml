@@ -1,0 +1,89 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+
+      <h:outputText value="#{messages.workflowTemplateStep}" />
+      <h:panelGroup>
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{workflowStep.workflowTemplateStep}" />
+        </ui:include>
+        <h:outputText value=" of #{messages.workflowTemplate} " />
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{workflowStep.workflowTemplateStep.workflowTemplate}" />
+        </ui:include>
+      </h:panelGroup>
+
+      <ui:include src="/fragments/details/workflow.xhtml" />
+
+      <h:outputText value="#{messages.status}" />
+      <h:outputText
+        value="#{workflowStep.status.label}"
+        styleClass="#{workflowStep.status.label}" />
+
+      <ui:include src="/fragments/details/supervisor.xhtml" />
+      <ui:include src="/fragments/details/startdatetime.xhtml" />
+      <ui:include src="/fragments/details/enddatetime.xhtml" />
+
+      <c:if test="#{not empty workflowStep.expectedDuration}">
+        <h:outputText value="#{messages.expectedDuration}" />
+        <h:outputText value="#{workflowStep.expectedDuration}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/samplepreparationprotocol.xhtml" />
+
+      <ui:include src="/fragments/details/comment.xhtml">
+        <ui:param
+          name="instance"
+          value="#{workflowStep.comment}" />
+      </ui:include>
+
+      <c:if test="#{not empty workflowStep.comment and not empty workflowStep.comment.attachments}">
+        <h:outputText value="#{messages.attachments}" />
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="include"
+            value="/comment/attachment-columns.xhtml" />
+          <ui:param
+            name="tableContext"
+            value="workflowstep" />
+          <ui:param
+            name="tableContent"
+            value="#{workflowStep.comment.attachments}" />
+          <ui:param
+            name="styleClass"
+            value="noborder hide-table-header inner" />
+          <ui:param
+            name="style"
+            value="margin-left: -4px;" />
+          <ui:param
+            name="paginator"
+            value="false" />
+        </ui:include>
+      </c:if>
+
+      <ui:include src="/fragments/details/datasets.xhtml" />
+      <ui:include src="/fragments/details/samples.xhtml" />
+      <ui:include src="/fragments/details/workunits.xhtml" />
+      <ui:include src="/fragments/details/plates.xhtml" />
+
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="3"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/delete.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

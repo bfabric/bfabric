@@ -1,0 +1,187 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <!--@elvariable id="callerEntity" type="org.bfabric.entity.Container"-->
+  <h:panelGrid
+    columns="1"
+    styleClass="title"
+    rendered="#{callerEntity.billingAddressUpdatable}">
+    <h:panelGroup styleClass="frame">
+      <p style="font-weight: normal; padding: 0 10px;">
+        <h:outputText value="#{messages.billingInfoHint}" />
+      </p>
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.title}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="billingCustomerTitle"
+            value="#{callerEntity.billingInfo.billingCustomerTitle}"
+            styleClass="editWidthSmall">
+            <f:selectItem itemLabel="" />
+            <f:selectItem itemValue="Prof. Dr." />
+            <f:selectItem itemValue="Dr." />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.firstName}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="billingCustomerFirstName"
+            value="#{callerEntity.billingInfo.billingCustomerFirstName}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.lastName}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="billingCustomerLastName"
+            value="#{callerEntity.billingInfo.billingCustomerLastName}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <ui:include src="/fragments/select-affiliations.xhtml">
+        <ui:param
+          name="clearButtonSpecificTarget"
+          value="#{clearButtonSpecificTarget}" />
+      </ui:include>
+
+      <p style="font-weight: normal; padding: 0 10px;">
+        <h:outputText value="#{messages.billingAddressHint}" />
+      </p>
+
+      <h:panelGroup id="billingAddressUzh">
+        <h:panelGrid columns="2" columnClasses="rtdm, ltd" rendered="#{callerEntity.organization.uzh}">
+          <h:outputText value="#{messages.proposedBillingAddress}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="Zentraler Rechnungseingang, Hirschengraben 60, 8001 Zürich&#160;" />
+            <p:commandButton actionListener="#{callerEntity.billingInfo.setUzh()}" value="#{messages.takeOver}" process="@this" update="edit:billingAddress" />
+          </ui:decorate>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="billingAddress"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.billingAddress} #{messages.street}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="billingAddressStreet"
+            value="#{callerEntity.billingInfo.billingAddressStreet}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.billingAddress} #{messages.city}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="billingAddressCity"
+            value="#{callerEntity.billingInfo.billingAddressCity}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.billingAddress} #{messages.zip}" title="#{messages.zipHint}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="billingAddressZip"
+            value="#{callerEntity.billingInfo.billingAddressZip}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.billingAddress} #{messages.country}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="country" />
+          <ui:param
+            name="value"
+            value="#{callerEntity.billingInfo.billingAddressCountry}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{countryService.getCountriesByIdOrNameFiltered}" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.displayName}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.billingAddress} #{messages.supplement}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="billingAddressSupplement"
+            value="#{callerEntity.billingInfo.billingAddressSupplement}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.billingEmail}" title="#{messages.billingEmailHint}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <ui:param
+            name="componentId"
+            value="billingEmail" />
+          <h:panelGroup>
+            <h:inputText
+              id="billingEmail"
+              value="#{callerEntity.billingInfo.billingEmail}"
+              title="#{messages.billingEmailHint}"
+              styleClass="editWidthExtraLarge"
+              pt:placeholder="#{messages.billingEmailHint}" />
+          </h:panelGroup>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <ui:include src="/fragments/edit-financesource.xhtml">
+        <ui:param
+          name="callerEntity"
+          value="#{callerEntity}" />
+      </ui:include>
+
+      <ui:include src="/fragments/edit-vatnumber.xhtml">
+        <ui:param
+          name="rendered"
+          value="#{callerEntity.organizationType.external}" />
+        <ui:param
+          name="required"
+          value="#{(not callerEntity.managed or not empty callerEntity.billingInfo.oldVatNumber or not empty callerEntity.billingInfo.oldReferenceNumber) and callerEntity.organizationType.external}" />
+        <ui:param
+          name="callerEntity"
+          value="#{callerEntity.billingInfo}" />
+      </ui:include>
+
+      <p style="font-weight: normal; padding: 0 10px;"><h:outputText value="#{messages.billingInfoAcknowledgeHint}" /></p>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="&#160;" rendered="#{callerEntity.addressConfirmedRendered}" />
+        <h:panelGroup rendered="#{callerEntity.addressConfirmedRendered}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:panelGrid columns="5">
+              <h:selectBooleanCheckbox
+                id="addressConfirmed"
+                validator="#{callerEntity.validateAddressConfirmed}" />
+              <h:outputText
+                value="I agree to the&#160;"
+                styleClass="pending" />
+              <h:outputLink
+                value="#{configuration.urlTermsAndConditions}"
+                target="_blank"
+                rel="noopener">Terms and Conditions
+              </h:outputLink>
+              <h:outputText
+                value="&#160;#{messages.addressConfirm}"
+                styleClass="pending" />
+              <p:message
+                for="addressConfirmed"
+                styleClass="errorMessage" />
+            </h:panelGrid>
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+    </h:panelGroup>
+  </h:panelGrid>
+</ui:composition>

@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.orderDataOnly}">
+    <h:outputText value="#{messages.orderDataOnly}" />
+    <h:outputText value="#{instance.orderDataOnly}" styleClass="#{stringHelper.toGreenRed(!instance.orderDataOnly)}" />
+  </c:if>
+</ui:composition>

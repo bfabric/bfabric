@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{sessionManager.printFacesMessages}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <ui:include src="/fragments/show-page-title.xhtml" />
+  </ui:define>
+
+  <ui:param name="sidebar" value="#{not sidebarHelper.isTab('dashboard')}" />
+
+  <ui:define name="sidebarContent">
+    <c:if test="#{not sidebarHelper.isTab('dashboard')}">
+      <h:panelGrid
+        columns="2"
+        columnClasses="sidebar-col-left, sidebar-col-right"
+        styleClass="max-width">
+        <ui:include src="/#{instance.classNameLowerCase}/sidebar.xhtml" />
+      </h:panelGrid>
+    </c:if>
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/#{instance.classNameLowerCase}/#{sidebarHelper.body}" />
+  </ui:define>
+</ui:composition>

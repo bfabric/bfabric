@@ -1,0 +1,284 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <!--@elvariable id="plateEntity" type="org.bfabric.entity.Plate"-->
+  <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+
+  <c:set
+    var="orderEntity"
+    value="#{orderItemPlateBatchManager.order}"
+    scope="request" />
+  <c:set
+    var="serviceTypeEntity"
+    value="#{orderItemPlateBatchManager.order.serviceType}"
+    scope="request" />
+  <c:set
+    var="type"
+    value="#{orderItemPlateBatchManager.order.sampleType.name}"
+    scope="request" />
+  <c:set
+    var="plateEntity"
+    value="#{entity.plate}" />
+
+  <p:column
+    exportable="false"
+    style="text-align:center">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.delete}" />
+      </div>
+    </f:facet>
+    <p:commandButton
+      rendered="#{entity.deletable}"
+      actionListener="#{orderItemPlateBatchManager.deleteChanged(entity)}"
+      value="#{messages.delete}"
+      global="true"
+      process="@this"
+      update="#{constants.EDIT}:edit-batch-orderitem-batchtable, #{constants.EDIT}:addNewItemsPanel, #{constants.EDIT}:buttons"
+      oncomplete="fixOversize();"
+      styleClass="inline"
+      style="width:50px;min-width:50px" />
+  </p:column>
+
+  <ui:include src="/fragments/batch/select-one-menu-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.SERVICE}" />
+    <ui:param
+      name="rendered"
+      value="#{sampleAttributeHelper.isRenderedColumn(orderEntity, constants.SERVICE)}" />
+    <ui:param
+      name="headerText"
+      value="#{messages.service}" />
+    <ui:param
+      name="displayRequired"
+      value="true" />
+    <ui:param
+      name="value"
+      value="#{entity.service}" />
+    <ui:param
+      name="title"
+      value="#{entity.service.name}. #{entity.service.description}" />
+    <ui:param
+      name="items"
+      value="#{serviceTypeEntity.servicesEnabled}" />
+  </ui:include>
+
+  <!-- Plate name -->
+  <p:column
+    id="#{constants.PLATE_NAME}#{constants.COLUMN}"
+    exportHeaderValue="#{messages.plateName}"
+    exportValue="#{plateEntity.name}">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText value="#{messages.plateName}" />
+      </div>
+    </f:facet>
+    <div class="display">
+      <h:outputText value="#{plateEntity.name}" />
+    </div>
+  </p:column>
+
+  <!-- Plate name given -->
+  <p:column
+    id="#{constants.PLATE_NAME_GIVEN}#{constants.COLUMN}"
+    styleClass="#{constants.PLATE_NAME}#{rowIndex}"
+    exportHeaderValue="#{messages.plateNameGiven}"
+    exportValue="#{plateEntity.nameGiven}">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.plateNameGiven}" />
+        <ui:param
+          name="required"
+          value="false" />
+      </ui:include>
+    </f:facet>
+    <p:inputText
+      id="#{constants.PLATE_NAME_GIVEN}#{constants.INPUT}"
+      value="#{plateEntity.nameGiven}"
+      valueChangeListener="#{orderItemPlateBatchManager.givenNameChanged}"
+      title="#{messages.orderPlateNameHint}"
+      maxlength="#{constants.MAX_LENGTH_NAME}"
+      styleClass="inline-input #{constants.PLATE_NAME_GIVEN}#{constants.INPUT}#{rowIndex}"
+      style="width:140px;min-width:140px;">
+      <f:validateRegex pattern="#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}" />
+      <p:keyFilter regEx="/#{constants.SAMPLE_NAME_CHARACTERS_REGEXP}/i" preventPaste="false" />
+      <p:ajax
+        event="change"
+        global="false"
+        process="@this"
+        update="#{constants.PLATE_NAME_GIVEN}#{constants.MESSAGE}" />
+    </p:inputText>
+    <div>
+      <h:message
+        id="#{constants.PLATE_NAME_GIVEN}#{constants.MESSAGE}"
+        for="#{constants.PLATE_NAME_GIVEN}#{constants.INPUT}"
+        styleClass="errorMessageField" />
+    </div>
+  </p:column>
+
+  <!-- Plate layout -->
+  <ui:include src="/fragments/batch/select-one-menu-column.xhtml">
+    <ui:param
+      name="columnId"
+      value="#{constants.PLATE_LAYOUT}" />
+    <ui:param
+      name="rendered"
+      value="true" />
+    <ui:param
+      name="headerText"
+      value="#{messages.plateLayout}" />
+    <ui:param
+      name="displayRequired"
+      value="true" />
+    <ui:param
+      name="value"
+      value="#{plateEntity.plateLayout}" />
+    <ui:param
+      name="items"
+      value="#{plateLayoutList.resultList}" />
+    <ui:param
+      name="cellInputEnabled"
+      value="#{plateEntity.isEmptyUserSubmitted()}" />
+  </ui:include>
+
+  <!-- Plate sample assignment order -->
+  <p:column
+    id="#{constants.SAMPLE_PLATE_ASSIGNMENT_ORDER}#{constants.COLUMN}"
+    exportHeaderValue="#{messages.samplePlateAssignmentOrder}"
+    exportValue="#{plateEntity.sampleAssignmentPerRow}"
+    styleClass="nopadding">
+    <f:facet name="header">
+      <h:selectOneMenu
+        id="#{constants.SAMPLE_PLATE_ASSIGNMENT_ORDER}#{constants.HEADER_INPUT}"
+        valueChangeListener="#{orderItemPlateBatchManager.valueChangedAll}"
+        title="#{messages.setValueForColumnHint}"
+        styleClass="table-header-margin"
+        style="width:150px !important;"
+        dir="LTR"
+        converter="javax.faces.Boolean">
+        <f:selectItem
+          itemLabel="#{messages.setValueForColumn}"
+          itemDisabled="true"
+          noSelectionOption="true" />
+        <f:selectItem
+          itemLabel="#{constants.COLUMN}"
+          itemValue="#{false}" />
+        <f:selectItem
+          itemDisabled="#{not identityManager.hasCurrentUserRole('containerManager')}"
+          itemLabel="#{constants.ROW}"
+          itemValue="#{true}" />
+        <p:ajax
+          partialSubmit="true"
+          resetValues="true"
+          update="@this" />
+      </h:selectOneMenu>
+      <div>
+        <h:outputText
+          value="#{messages.samplePlateAssignmentOrder}"
+          title="#{messages.samplePlateAssignmentOrderWarning}" />
+        <h:outputText
+          value="&#160;*"
+          title="#{messages.requiredHint}"
+          styleClass="required" />
+      </div>
+    </f:facet>
+
+    <h:panelGroup id="#{constants.SAMPLE_PLATE_ASSIGNMENT_ORDER}#{constants.GROUP}">
+      <h:selectOneMenu
+        id="#{constants.SAMPLE_PLATE_ASSIGNMENT_ORDER}#{constants.INPUT}"
+        disabled="#{not plateEntity.isEmptyUserSubmitted() or plateEntity.hasFixedSamplePlateAssignmentOrder()}"
+        valueChangeListener="#{orderItemPlateBatchManager.valueChanged}"
+        value="#{plateEntity.sampleAssignmentPerRow}"
+        title="#{messages.samplePlateAssignmentOrderWarning}"
+        styleClass="noborder width-150"
+        style="width:150px !important;"
+        dir="LTR">
+        <f:selectItem
+          itemLabel="#{messages.selectAnItem}"
+          itemDisabled="true"
+          noSelectionOption="true" />
+        <f:selectItem
+          itemLabel="#{constants.COLUMN}"
+          itemValue="#{false}" />
+        <f:selectItem
+          itemDisabled="#{not identityManager.hasCurrentUserRole('containerManager')}"
+          itemLabel="#{constants.ROW}"
+          itemValue="#{true}" />
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true" />
+      </h:selectOneMenu>
+      <div>
+        <h:message
+          id="#{constants.SAMPLE_PLATE_ASSIGNMENT_ORDER}#{constants.MESSAGE}"
+          for="#{constants.SAMPLE_PLATE_ASSIGNMENT_ORDER}#{constants.INPUT}"
+          styleClass="errorMessageField" />
+      </div>
+    </h:panelGroup>
+  </p:column>
+
+  <p:column
+    id="#{constants.SAMPLE_PLATE_ASSIGNMENT}#{constants.COLUMN}"
+    exportable="false"
+    styleClass="nopadding">
+    <f:facet name="header">
+      <h:outputText
+        value="&#160;"
+        styleClass="tdr" />
+      <div>
+        <h:outputText
+          value="#{messages.samples}"
+          title="#{messages.samplePlateAssignmentHint}" />
+        <h:outputText
+          value="&#160;*"
+          title="#{messages.requiredHint}"
+          styleClass="required" />
+      </div>
+    </f:facet>
+
+    <h:panelGroup id="#{constants.SAMPLE_PLATE_ASSIGNMENT}#{constants.GROUP}">
+      <h:outputText
+        id="#{constants.SAMPLE_PLATE_ASSIGNMENT}#{constants.INPUT}"
+        style="max-width:0;padding:0" />
+      <p:commandButton
+        id="assignSamplesToPlateButton"
+        disabled="#{empty plateEntity.plateLayout}"
+        value="#{messages.assignSamples} (#{plateEntity.nonEmptySampleNamesCount})"
+        title="#{messages.samplePlateAssignmentHint}"
+        actionListener="#{orderItemPlateBatchManager.prepareSampleNamesModalPanel(entity)}"
+        immediate="true"
+        styleClass="#{orderItemPlateBatchManager.samplePlateHasEmptyPositionsInBetweenWarningRendered ? 'errorMessageButton' : 'inline'}"
+        style="min-width:70px;"
+        oncomplete="PF('assignSamplesToPlateModalDialog').show();"
+        update="assignSamplesToPlateModalPanel" />
+      <div>
+        <h:message
+          id="#{constants.SAMPLE_PLATE_ASSIGNMENT}#{constants.MESSAGE}"
+          for="#{constants.SAMPLE_PLATE_ASSIGNMENT}#{constants.INPUT}"
+          styleClass="errorMessageField" />
+      </div>
+    </h:panelGroup>
+  </p:column>
+
+  <ui:include src="edit-batch-columns-item-specific.xhtml" />
+</ui:composition>

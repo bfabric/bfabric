@@ -1,0 +1,40 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:o="http://omnifaces.org/ui"
+                template="/layout/template.xhtml">
+  <ui:param name="entityManager" value="#{pageflowManager}" />
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('admin')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.assign} #{messages.steps}: #{pageflow.displayName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:outputText value="#{messages.noStepsYet}" styleClass="pending" rendered="#{empty pageflow.pageflowStepPositions}" />
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="include" value="/pageflow/step-position-columns.xhtml" />
+      <ui:param name="tableContext" value="pageflow" />
+      <ui:param name="tableContent" value="#{pageflow.pageflowStepPositions}" />
+    </ui:include>
+    <h:form id="#{constants.EDIT}">
+      <h:panelGrid columns="2" columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.select}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param name="listContext" value="pageflowStep" />
+          <ui:param name="value" value="#{pageflow.selectedPageflowStep}" />
+          <o:methodParam name="completeMethod" value="#{pageflowManager.getPageflowStepsFiltered}" />
+          <ui:param name="itemSelectUpdate" value="@this" />
+          <ui:param name="ajaxClear" value="true" />
+          <ui:param name="clearUpdate" value="@this" />
+          <ui:param name="itemLabel" value="#{item.nameWithEnabledMessage}" />
+        </ui:include>
+      </h:panelGrid>
+      <h:panelGrid columns="2" styleClass="action">
+        <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

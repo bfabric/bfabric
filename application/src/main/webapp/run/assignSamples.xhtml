@@ -1,0 +1,42 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(run.editable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.assignSamples} : #{messages.run} #{run.displayName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form
+      id="#{constants.EDIT}"
+      onsubmit="#{runManager.resetRefererURL()}">
+      <h:panelGroup id="assignSamplesGroup">
+        <h:panelGroup rendered="#{not empty run.instrument and not empty run.runUnit.runUnitType}">
+          <ui:include src="select-samples.xhtml" />
+        </h:panelGroup>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{runManager.assignSamples}"
+          value="#{messages.save}"
+          oncomplete="fixOversize();"
+          update="@form" />
+        <p:commandButton
+          action="#{runManager.cancel}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

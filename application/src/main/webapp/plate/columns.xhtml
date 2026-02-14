@@ -1,0 +1,28 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:include src="/fragments/column/assign-with-button.xhtml">
+    <ui:param name="tableType" value="#{constants.PLATE}" />
+  </ui:include>
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/supervisor.xhtml">
+    <ui:param
+      name="entityBadge"
+      value="#{not (entity.plateTypeUserSubmitted and empty entity.supervisor or entity.supervisorValid)}" />
+  </ui:include>
+  <o:importConstants type="org.bfabric.enums.StatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{plateList.plateStatusEnums}" />
+  </ui:include>
+  <ui:include src="/fragments/column/platelayout.xhtml" />
+  <ui:include src="/fragments/column/platetype.xhtml" />
+  <ui:include src="/fragments/column/samplePlatePositions.xhtml" />
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/location.xhtml" />
+  <ui:include src="/fragments/column/nameGiven.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

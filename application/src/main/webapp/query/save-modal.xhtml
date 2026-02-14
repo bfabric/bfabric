@@ -1,0 +1,51 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:dialog
+    id="saveQueryPanel"
+    widgetVar="saveQueryDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.saveQuery}" />
+    </f:facet>
+    <h:form id="saveQueryForm">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.queryDetails}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{queryManager.query.queryDetails}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.name}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="#{constants.NAME}"
+            value="#{queryManager.query.name}"
+            required="true"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          value="#{messages.save}"
+          action="#{queryManager.save}"
+          global="false"
+          update="saveQueryForm"
+          oncomplete="hideDialogOnSuccess(args, 'saveQueryDialog')" />
+        <p:commandButton
+          value="#{messages.cancel}"
+          global="false"
+          oncomplete="PF('saveQueryDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

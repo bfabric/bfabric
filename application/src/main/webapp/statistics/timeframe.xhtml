@@ -1,0 +1,223 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.timeframe}" />
+  </ui:define>
+
+  <ui:define name="pageTitle">
+    <ui:include src="/fragments/show-page-title.xhtml" />
+  </ui:define>
+
+  <ui:param name="sidebar" value="true" />
+
+  <ui:define name="sidebarContent">
+    <h:panelGrid
+      columns="1"
+      columnClasses="sidebar-col-left"
+      styleClass="max-width">
+      <ui:include src="/fragments/sidebar/links.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.timeframeProjectsApproved}" />
+        <ui:param
+          name="tab"
+          value="lastapprovedprojects" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/links.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.timeframeProjectsCreated}" />
+        <ui:param
+          name="tab"
+          value="lastcreatedprojects" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/links.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.timeframeUsersCreated}" />
+        <ui:param
+          name="tab"
+          value="lastcreatedusers" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/links.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.timeframeInstitutesCreated}" />
+        <ui:param
+          name="tab"
+          value="lastcreatedinstitutes" />
+      </ui:include>
+
+      <ui:include src="/fragments/sidebar/links.xhtml">
+        <ui:param
+          name="label"
+          value="#{messages.timeframeEntitiesModified}" />
+        <ui:param
+          name="tab"
+          value="lastmodifiedobjects" />
+      </ui:include>
+    </h:panelGrid>
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form>
+      <h:panelGrid
+        columns="3"
+        styleClass="nospace topline">
+        <p:spinner
+          id="timeframeMultiplicator"
+          value="#{statisticsManager.timeframeMultiplicator}"
+          min="1"
+          max="999"
+          stepFactor="1"
+          size="4"
+          decimalPlaces="0"
+          thousandSeparator="">
+          <p:ajax
+            event="change"
+            process="timeframeMultiplicator"
+            update="button"
+            global="false" />
+        </p:spinner>
+        <h:selectOneMenu
+          id="timeframe"
+          value="#{statisticsManager.timeframe}"
+          styleClass="noleftbordernomarginbottomtop">
+          <f:selectItems
+            value="#{statisticsManager.timeframes}"
+            var="item"
+            itemLabel="#{item}" />
+          <p:ajax
+            event="change"
+            process="timeframe"
+            update="button"
+            global="false" />
+        </h:selectOneMenu>
+        <p:button
+          id="button"
+          outcome="timeframe.xhtml"
+          immediate="true"
+          value="#{messages.show}"
+          styleClass="noleftborderselect">
+          <f:param
+            name="tab"
+            value="#{sidebarHelper.tab}" />
+          <f:param
+            name="unit"
+            value="#{statisticsManager.timeframe}" />
+          <f:param
+            name="count"
+            value="#{statisticsManager.timeframeMultiplicator}" />
+        </p:button>
+      </h:panelGrid>
+    </h:form>
+
+    <br />
+
+    <h:panelGrid
+      id="timeframeGrid"
+      columns="1"
+      styleClass="topline">
+      <h:panelGroup rendered="#{sidebarHelper.isTab('lastapprovedprojects')}">
+        <h:outputText
+          value="No project!"
+          rendered="#{empty statisticsManager.lastApprovedProjects}" />
+
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="lastapprovedprojects" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsManager.lastApprovedProjects}" />
+          <ui:param
+            name="include"
+            value="/statistics/last-approved-projects-columns.xhtml" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{sidebarHelper.isTab('lastcreatedprojects')}">
+        <h:outputText
+          value="No project!"
+          rendered="#{empty statisticsManager.lastCreatedProjects}" />
+
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="lastcreatedprojects" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsManager.lastCreatedProjects}" />
+          <ui:param
+            name="include"
+            value="/statistics/last-created-projects-columns.xhtml" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{sidebarHelper.isTab('lastcreatedusers')}">
+        <h:outputText
+          value="No user!"
+          rendered="#{empty statisticsManager.lastCreatedUsers}" />
+
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="lastcreatedusers" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsManager.lastCreatedUsers}" />
+          <ui:param
+            name="include"
+            value="/statistics/last-created-users-columns.xhtml" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{sidebarHelper.isTab('lastcreatedinstitutes')}">
+        <h:outputText
+          value="No institute!"
+          rendered="#{empty statisticsManager.lastCreatedInstitutes}" />
+
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="lastcreatedinstitutes" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsManager.lastCreatedInstitutes}" />
+          <ui:param
+            name="include"
+            value="/statistics/last-created-institutes-columns.xhtml" />
+        </ui:include>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{sidebarHelper.isTab('lastmodifiedobjects')}">
+        <h:outputText
+          value="No objects."
+          rendered="#{empty statisticsManager.timeframeEntities}" />
+
+        <ui:include src="/fragments/show-datatable.xhtml">
+          <ui:param
+            name="tableContext"
+            value="lastmodifiedobjects" />
+          <ui:param
+            name="tableContent"
+            value="#{statisticsManager.timeframeEntities}" />
+          <ui:param
+            name="include"
+            value="/statistics/last-modified-objects-columns.xhtml" />
+        </ui:include>
+      </h:panelGroup>
+    </h:panelGrid>
+  </ui:define>
+</ui:composition>

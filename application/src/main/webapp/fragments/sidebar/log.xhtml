@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="instance" type="org.bfabric.entity.AbstractEntity"-->
+  <c:if test="#{instance.loggable and (empty logRendered or logRendered)}">
+    <p:link value="#{messages.log}" styleClass="#{sidebarHelper.tabStyleClass('log')}">
+      <f:param name="id" value="#{instance.id}" />
+      <f:param name="tab" value="log" />
+    </p:link>
+    <span />
+  </c:if>
+</ui:composition>

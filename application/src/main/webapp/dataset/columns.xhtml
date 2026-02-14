@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/assign-with-button.xhtml">
+    <ui:param
+      name="tableType"
+      value="#{constants.DATASET}" />
+  </ui:include>
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/run.xhtml" />
+  <ui:include src="/fragments/column/attribute-count.xhtml" />
+  <ui:include src="/fragments/column/item-count.xhtml" />
+  <ui:include src="/fragments/column/workflows.xhtml" />
+  <ui:include src="/fragments/column/workflowsteps.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

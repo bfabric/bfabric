@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('emailActive')}">
+    <p:column
+      field="emailActive"
+      headerText="#{messages.emailActive}"
+      filterMatchMode="exact">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="emailActive" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.emailActive)}"
+        styleClass="#{not entity.emailActive}" />
+    </p:column>
+  </c:if>
+</ui:composition>

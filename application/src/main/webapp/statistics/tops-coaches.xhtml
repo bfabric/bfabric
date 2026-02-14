@@ -1,0 +1,39 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.top} #{messages.coaches}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p:dataTable value="#{statisticsList.view('statisticscoach')}"
+                 var="item" paginator="false" size="10">
+      <p:column styleClass="textright" headerText="#{messages.total}"
+                sortBy="#{item[4]}">
+        <h:outputText value="#{item[4]}" />
+      </p:column>
+      <p:column styleClass="textright" headerText="#{messages.orders}"
+                sortBy="#{item[5]}">
+        <h:outputText value="#{item[5]}" />
+      </p:column>
+      <p:column styleClass="textright" headerText="#{messages.projects}" sortBy="#{item[6]}">
+        <h:outputText value="#{item[6]}" />
+      </p:column>
+      <p:column styleClass="textright" headerText="#{messages.running} #{messages.projects}" sortBy="#{item[7]}">
+        <h:outputText value="#{item[7]}" />
+      </p:column>
+      <p:column headerText="#{messages.coach}">
+        <p:link rendered="#{not empty item[0]}" outcome="/user/show.xhtml" value="#{item[2]} #{item[3]}">
+          <f:param name="id" value="#{item[0]}" />
+        </p:link>
+      </p:column>
+    </p:dataTable>
+  </ui:define>
+</ui:composition>

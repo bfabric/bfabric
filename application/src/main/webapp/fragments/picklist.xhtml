@@ -1,0 +1,42 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup
+    styleClass="oversize"
+    rendered="#{not empty dualListModel.source or not empty dualListModel.target}">
+    <p:pickList
+      id="#{listContext}picklist"
+      value="#{dualListModel}"
+      var="entity"
+      itemValue="#{entity}"
+      itemLabel="#{itemLabel}"
+      labelDisplay="true"
+      required="#{required == null ? false : required}"
+      immediate="#{immediate == null ? false : immediate}"
+      disabled="#{disabled == null ? false : disabled}"
+      styleClass="#{styleClass}"
+      showSourceFilter="#{showFilter == null ? false : showFilter}"
+      showTargetFilter="#{showFilter == null ? false : showFilter}"
+      filterMatchMode="contains"
+      converter="customListConverter">
+      <c:if test="#{transferRequired != null and transferRequired}">
+        <p:ajax
+          event="transfer"
+          immediate="true"
+          update="#{updateOnTransfer}"
+          global="false"
+          oncomplete="fixOversize();" />
+      </c:if>
+      <f:facet name="sourceCaption">
+        <h:outputLabel value="Available" />
+      </f:facet>
+      <f:facet name="targetCaption">
+        <h:outputLabel value="Selected" />
+      </f:facet>
+      <ui:include src="#{include}" />
+    </p:pickList>
+  </h:panelGroup>
+</ui:composition>

@@ -1,0 +1,211 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <p:column
+    id="#{constants.CHECK_BOX}#{constants.TARGET}#{constants.SAMPLE}#{constants.COLUMN}"
+    exportable="false">
+    <f:facet name="header">
+      <h:panelGrid
+        columns="1"
+        styleClass="nospace noborder">
+        <h:outputText value="#{messages.select}" />
+        <h:panelGrid
+          columns="2"
+          styleClass="select-icon">
+          <p:commandLink
+            actionListener="#{runManager.markSamplesForSelection(true, false)}"
+            title="#{messages.markAllNotReadySampleForRemovalHint}"
+            immediate="true"
+            global="false"
+            update="@this, #{constants.EDIT}:targetTableGroup"
+            process="@this, #{constants.EDIT}:targetTableGroup"
+            oncomplete="fixOversize();">
+            <i class="far fa-check-square" />
+          </p:commandLink>
+          <p:commandLink
+            actionListener="#{runManager.markSamplesForSelection(false, false)}"
+            title="#{messages.markAllReadySamplesForRemoval}"
+            immediate="true"
+            global="false"
+            update="@this, #{constants.EDIT}:targetTableGroup"
+            process="@this, #{constants.EDIT}:targetTableGroup"
+            oncomplete="fixOversize();">
+            <i class="far fa-square" />
+          </p:commandLink>
+        </h:panelGrid>
+      </h:panelGrid>
+    </f:facet>
+    <h:selectBooleanCheckbox
+      id="#{constants.CHECK_BOX}#{constants.TARGET}#{constants.SAMPLE}#{constants.INPUT}"
+      value="#{not runManager.showSamplesLaneSeparated ? runManager.markedTargetSamplesMap[entity] : runManager.markedTargetSamplesPerLaneMap[lanePosition][entity]}"
+      style="width: 100%">
+      <p:ajax
+        event="change"
+        global="false"
+        ignoreAutoUpdate="true"
+        partialSubmit="true"
+        listener="#{runManager.markSample(entity, not runManager.showSamplesLaneSeparated ? runManager.markedTargetSamplesMap[entity] : runManager.markedTargetSamplesPerLaneMap[lanePosition][entity], false, not runManager.showSamplesLaneSeparated ? null : lanePosition)}"
+        update="#{runManager.getAssignSamplesTargetColumnsProcessAndUpdate(lanePosition)}"
+        process="#{runManager.getAssignSamplesTargetColumnsProcessAndUpdate(lanePosition)}"
+        oncomplete="fixOversize();" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+
+  <c:if test="#{not runManager.showSamplesLaneSeparated}">
+    <c:forEach
+      items="#{run.lanePositions}"
+      var="lanePosition"
+      varStatus="lanePositionStatus">
+      <p:column
+        id="#{constants.POSITION_COLUMN}#{lanePosition}"
+        exportable="false">
+        <f:facet name="header">
+          <h:panelGrid
+            columns="1"
+            styleClass="nospace noborder">
+            <h:outputText
+              value="#{messages.lane} #{lanePosition}"
+              styleClass="ui-column-title" />
+            <h:panelGrid
+              columns="2"
+              styleClass="select-icon">
+              <p:commandLink
+                actionListener="#{runManager.lanePositionChangedAll(true, lanePosition)}"
+                title="#{messages.checkAll}"
+                immediate="true"
+                update="@this, #{constants.EDIT}:assignSamples"
+                process="@this, #{constants.EDIT}:assignSamples"
+                oncomplete="fixOversize();">
+                <f:attribute
+                  name="#{constants.TABLE_CLIENT_ID}"
+                  value="#{tableReference.clientId}" />
+                <i class="far fa-check-square" />
+              </p:commandLink>
+              <p:commandLink
+                actionListener="#{runManager.lanePositionChangedAll(false, lanePosition)}"
+                title="#{messages.uncheckAll}"
+                immediate="true"
+                update="@this, #{constants.EDIT}:assignSamples"
+                process="@this, #{constants.EDIT}:assignSamples"
+                oncomplete="fixOversize();">
+                <f:attribute
+                  name="#{constants.TABLE_CLIENT_ID}"
+                  value="#{tableReference.clientId}" />
+                <i class="far fa-square" />
+              </p:commandLink>
+            </h:panelGrid>
+          </h:panelGrid>
+        </f:facet>
+        <h:selectBooleanCheckbox
+          id="#{constants.CHECK_BOX_POSITION_COLUMN}#{lanePosition}#{constants.INPUT}"
+          value="#{run.samplesRunUnitLanesPositions.containsKey(entity) ? run.samplesRunUnitLanesPositions[entity][lanePosition] : false}"
+          valueChangeListener="#{runManager.lanePositionChanged}"
+          style="width: 100%">
+          <f:attribute
+            name="lanePosition"
+            value="#{lanePosition}" />
+          <f:attribute
+            name="rowKeyId"
+            value="#{entity.rowKeyId}" />
+          <f:attribute
+            name="#{constants.TABLE_CLIENT_ID}"
+            value="#{tableReference.clientId}" />
+          <p:ajax
+            event="change"
+            global="false"
+            ignoreAutoUpdate="true"
+            partialSubmit="true" />
+        </h:selectBooleanCheckbox>
+        <div>
+          <h:message
+            id="#{constants.CHECK_BOX_POSITION_COLUMN}#{lanePosition}#{constants.MESSAGE}"
+            for="#{constants.CHECK_BOX_POSITION_COLUMN}#{lanePosition}#{constants.INPUT}"
+            styleClass="errorMessageField" />
+        </div>
+      </p:column>
+    </c:forEach>
+
+    <p:column
+      id="#{constants.POSITION_COLUMN_ALL}"
+      exportable="false">
+      <f:facet name="header">
+        <h:panelGrid
+          columns="1"
+          styleClass="nospace noborder">
+          <h:outputText
+            value="#{messages.laneAll}"
+            styleClass="ui-column-title" />
+          <h:panelGrid
+            columns="2"
+            styleClass="select-icon">
+            <p:commandLink
+              actionListener="#{runManager.lanePositionAllChangedAll(true)}"
+              title="#{messages.checkAll}"
+              immediate="true"
+              update="@this, #{constants.EDIT}:assignSamples"
+              process="@this, #{constants.EDIT}:assignSamples"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <i class="far fa-check-square" />
+            </p:commandLink>
+            <p:commandLink
+              actionListener="#{runManager.lanePositionAllChangedAll(false)}"
+              title="#{messages.uncheckAll}"
+              immediate="true"
+              update="@this, #{constants.EDIT}:assignSamples"
+              process="@this, #{constants.EDIT}:assignSamples"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <i class="far fa-square" />
+            </p:commandLink>
+          </h:panelGrid>
+        </h:panelGrid>
+      </f:facet>
+      <h:selectBooleanCheckbox
+        id="#{constants.CHECK_BOX_POSITION_COLUMN_ALL}#{constants.INPUT}"
+        value="#{run.samplesRunUnitLanesAll.containsKey(entity) ? run.samplesRunUnitLanesAll[entity] : false}"
+        valueChangeListener="#{runManager.lanePositionAllChanged}"
+        style="width: 100%">
+        <f:attribute
+          name="rowKeyId"
+          value="#{entity.rowKeyId}" />
+        <f:attribute
+          name="#{constants.TABLE_CLIENT_ID}"
+          value="#{tableReference.clientId}" />
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true" />
+      </h:selectBooleanCheckbox>
+    </p:column>
+  </c:if>
+
+  <ui:include src="/sample/columns.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="#{not runManager.showAllColumns ? 'specific, customAttributes, qualityControlValues, createdBy, createdOn, modifiedBy, modifiedOn, ' : ''}listOrders, parentsSize, childrenSize, resourceCount, workflows, workflowSteps" />
+  </ui:include>
+
+  <c:if test="#{not runManager.showAllColumns}">
+    <ui:include src="/fragments/column/customstatus.xhtml">
+      <o:methodParam
+        name="completeMethod"
+        value="#{containerService.getCurrentCustomContainerStatesFiltered}" />
+      <ui:param
+        name="fieldPrefix"
+        value="container." />
+      <ui:param
+        name="entity"
+        value="#{entity.container}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

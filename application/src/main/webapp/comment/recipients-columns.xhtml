@@ -1,0 +1,50 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.util.MailRecipient"-->
+  <p:column
+    exportable="false"
+    sortBy="#{entity.checked}"
+    styleClass="#{entity.checked ? constants.BACKGROUND_COLOR_GREEN : ''}">
+    <f:facet name="header">
+      <h:panelGroup rendered="#{comment.mailRecipientsEditingEnabled}">
+        <p:commandLink
+          actionListener="#{comment.mailRecipientHelper.checkAll()}"
+          update="#{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget">
+          <i class="far fa-check-square" />
+        </p:commandLink>
+        <p:commandLink
+          actionListener="#{comment.mailRecipientHelper.uncheckAll()}"
+          update="#{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget">
+          <i class="far fa-square" />
+        </p:commandLink>
+      </h:panelGroup>
+    </f:facet>
+    <p:selectBooleanCheckbox
+      id="check#{entity.userId}"
+      value="#{entity.checked}"
+      valueChangeListener="#{comment.mailRecipientHelper.userFunctionCheckedChanged}"
+      disabled="#{not comment.mailRecipientsEditingEnabled and entity.isDisableNotificationExclusion(!identityManager.hasCurrentUserRole('containerReader'))}"
+      title="#{entity.getDisableNotificationExclusionHint(!identityManager.hasCurrentUserRole('containerReader'))}">
+      <p:ajax
+        event="change"
+        update="#{constants.EDIT}:recipients, #{constants.EDIT}:mailTarget" />
+      <f:attribute
+        name="userFunction"
+        value="#{entity}" />
+    </p:selectBooleanCheckbox>
+  </p:column>
+  <p:column headerText="#{messages.firstName}" styleClass="#{entity.checked ? constants.BACKGROUND_COLOR_GREEN : ''}">
+    <h:outputText value="#{entity.userFirstName}" />
+  </p:column>
+  <p:column headerText="#{messages.lastName}" styleClass="#{entity.checked ? constants.BACKGROUND_COLOR_GREEN : ''}">
+    <h:outputText value="#{entity.userLastName}" />
+  </p:column>
+  <p:column sortBy="#{entity.functions.toString()}" headerText="#{messages.function}" styleClass="#{entity.checked ? constants.BACKGROUND_COLOR_GREEN : ''}">
+    <ui:repeat value="#{entity.functions}" var="item">
+      <h:outputText value="#{item} " styleClass="#{comment.mailRecipientHelper.functions.contains(item) ? comment.mailRecipientHelper.getFunctionStyleClass(item) : 'item-disabled'}" />
+    </ui:repeat>
+  </p:column>
+</ui:composition>

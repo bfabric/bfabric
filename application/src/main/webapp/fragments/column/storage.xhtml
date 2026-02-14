@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('storage')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('storageReader')}">
+      <p:column
+        field="#{fieldPrefix}storage.displayName"
+        headerText="#{messages.storage}">
+        <ui:include src="/fragments/entity-link-displayname.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.storage}" />
+        </ui:include>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('storageReader')}">
+      <p:column
+        field="#{fieldPrefix}storage.displayName"
+        headerText="#{messages.storage}" />
+    </c:if>
+  </c:if>
+</ui:composition>

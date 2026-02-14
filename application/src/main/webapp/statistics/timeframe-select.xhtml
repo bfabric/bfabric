@@ -1,0 +1,56 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core">
+  <h:form>
+    <h:panelGrid
+      columns="3"
+      styleClass="nospace topline">
+      <p:spinner
+        id="timeframeMultiplicator"
+        value="#{statisticsManager.timeframeMultiplicator}"
+        min="1"
+        max="999"
+        stepFactor="1"
+        size="4"
+        decimalPlaces="0"
+        thousandSeparator="">
+        <p:ajax
+          event="change"
+          process="timeframeMultiplicator"
+          update="button"
+          global="false" />
+      </p:spinner>
+      <h:selectOneMenu
+        id="timeframe"
+        value="#{statisticsManager.timeframe}"
+        styleClass="noleftbordernomarginbottomtop">
+        <f:selectItems
+          value="#{statisticsManager.timeframes}"
+          var="timeframe"
+          itemLabel="#{timeframe}" />
+        <p:ajax
+          event="change"
+          process="timeframe"
+          update="button"
+          global="false" />
+      </h:selectOneMenu>
+      <p:button
+        id="button"
+        value="#{messages.show}"
+        styleClass="noleftborderselect">
+        <f:param
+          name="tab"
+          value="#{sidebarHelper.tab}" />
+        <f:param
+          name="unit"
+          value="#{statisticsManager.timeframe}" />
+        <f:param
+          name="count"
+          value="#{statisticsManager.timeframeMultiplicator}" />
+      </p:button>
+    </h:panelGrid>
+  </h:form>
+  <br />
+</ui:composition>

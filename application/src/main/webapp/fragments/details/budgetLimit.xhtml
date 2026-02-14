@@ -1,0 +1,14 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{configuration.budgetLimitEnabled and not empty instance.budgetLimit}">
+    <h:outputText value="#{messages.budgetLimit}" />
+    <h:panelGrid columns="5" styleClass="noborder rightpadding">
+      <h:outputText value="#{instance.budgetLimit} #{configuration.getDefaultCurrencyCode()}" />
+      <h:outputText value="#{messages.remaining} #{instance.budgetRemaining} #{configuration.getDefaultCurrencyCode()}" styleClass="#{instance.budgetWarning}"
+                    rendered="#{not instance.budgetLimitExceeded}" />
+      <h:outputText value="#{messages.remaining} #{instance.budgetRemaining} #{configuration.getDefaultCurrencyCode()} #{messages.budgetLimitExceededHint}" styleClass="#{instance.budgetWarning}"
+                    rendered="#{instance.budgetLimitExceeded}" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

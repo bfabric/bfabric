@@ -1,0 +1,232 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeSuppliers}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{supplierManager.supplier}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{supplierManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{supplierManager.supplier.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{supplierManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{supplierManager.supplier.name}" />
+          <f:selectItem itemValue="#{supplierManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{supplierManager.merged.name}" />
+
+        <c:if test="#{not empty supplierManager.supplier.companyId or not empty supplierManager.merged.companyId}">
+          <h:outputText value="#{messages.companyId}" />
+          <h:outputText value="#{supplierManager.supplier.companyId}" />
+          <h:selectOneRadio
+            id="companyId"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.companyId}">
+            <f:selectItem itemValue="#{supplierManager.supplier.companyId}" />
+            <f:selectItem itemValue="#{supplierManager.merged.companyId}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.companyId}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.fullAddress or not empty supplierManager.merged.fullAddress}">
+          <h:outputText value="#{messages.address}" />
+          <h:outputText value="#{supplierManager.supplier.fullAddress}" />
+          <h:selectOneRadio
+            id="address"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.address}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{supplierManager.supplier.address}" />
+            <f:selectItem itemValue="#{supplierManager.merged.address}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.fullAddress}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.phone or not empty supplierManager.merged.phone}">
+          <h:outputText value="#{messages.phone}" />
+          <h:outputText value="#{supplierManager.supplier.phone}" />
+          <h:selectOneRadio
+            id="phone"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.phoneNumber}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{supplierManager.supplier.phoneNumber}" />
+            <f:selectItem itemValue="#{supplierManager.merged.phoneNumber}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.phone}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.email or not empty supplierManager.merged.email}">
+          <h:outputText value="#{messages.email}" />
+          <h:outputText value="#{supplierManager.supplier.email}" />
+          <h:selectOneRadio
+            id="email"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.email}">
+            <f:selectItem itemValue="#{supplierManager.supplier.email}" />
+            <f:selectItem itemValue="#{supplierManager.merged.email}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.email}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.url or not empty supplierManager.merged.url}">
+          <h:outputText value="#{messages.url}" />
+          <h:outputText value="#{supplierManager.supplier.url}" />
+          <h:selectOneRadio
+            id="url"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.url}">
+            <f:selectItem itemValue="#{supplierManager.supplier.url}" />
+            <f:selectItem itemValue="#{supplierManager.merged.url}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.url}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.contactTitle or not empty supplierManager.merged.contactTitle}">
+          <h:outputText value="#{messages.contactTitle}" />
+          <h:outputText value="#{supplierManager.supplier.contactTitle}" />
+          <h:selectOneRadio
+            id="contactTitle"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.contactTitle}">
+            <f:selectItem itemValue="#{supplierManager.supplier.contactTitle}" />
+            <f:selectItem itemValue="#{supplierManager.merged.contactTitle}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.contactTitle}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.contactSalutation or not empty supplierManager.merged.contactSalutation}">
+          <h:outputText value="#{messages.contactSalutation}" />
+          <h:outputText value="#{supplierManager.supplier.contactSalutation}" />
+          <h:selectOneRadio
+            id="contactSalutation"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.contactSalutation}">
+            <f:selectItem itemValue="#{supplierManager.supplier.contactSalutation}" />
+            <f:selectItem itemValue="#{supplierManager.merged.contactSalutation}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.contactSalutation}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.contactFirstName or not empty supplierManager.merged.contactFirstName}">
+          <h:outputText value="#{messages.contactFirstName}" />
+          <h:outputText value="#{supplierManager.supplier.contactFirstName}" />
+          <h:selectOneRadio
+            id="contactFirstName"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.contactFirstName}">
+            <f:selectItem itemValue="#{supplierManager.supplier.contactFirstName}" />
+            <f:selectItem itemValue="#{supplierManager.merged.contactFirstName}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.contactFirstName}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.contactLastName or not empty supplierManager.merged.contactLastName}">
+          <h:outputText value="#{messages.contactLastName}" />
+          <h:outputText value="#{supplierManager.supplier.contactLastName}" />
+          <h:selectOneRadio
+            id="contactLastName"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.contactLastName}">
+            <f:selectItem itemValue="#{supplierManager.supplier.contactLastName}" />
+            <f:selectItem itemValue="#{supplierManager.merged.contactLastName}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.contactLastName}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.contactEmail or not empty supplierManager.merged.contactEmail}">
+          <h:outputText value="#{messages.contactEmail}" />
+          <h:outputText value="#{supplierManager.supplier.contactEmail}" />
+          <h:selectOneRadio
+            id="contactEmail"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.contactEmail}">
+            <f:selectItem itemValue="#{supplierManager.supplier.contactEmail}" />
+            <f:selectItem itemValue="#{supplierManager.merged.contactEmail}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.contactEmail}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.contactPhone or not empty supplierManager.merged.contactPhone}">
+          <h:outputText value="#{messages.contactPhone}" />
+          <h:outputText value="#{supplierManager.supplier.contactPhone}" />
+          <h:selectOneRadio
+            id="contactPhone"
+            layout="lineDirection"
+            value="#{supplierManager.mergeSelection.contactPhoneNumber}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItem itemValue="#{supplierManager.supplier.contactPhoneNumber}" />
+            <f:selectItem itemValue="#{supplierManager.merged.contactPhoneNumber}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.contactPhone}" />
+        </c:if>
+
+        <c:if test="#{not empty supplierManager.supplier.description or not empty supplierManager.merged.description}">
+          <h:outputText value="#{messages.description}" />
+          <h:outputText value="#{supplierManager.supplier.getDescriptionTrunc(40)}" title="#{supplierManager.supplier.description}" />
+          <h:selectOneRadio
+            id="description"
+            layout="lineDirection"
+            required="true"
+            value="#{supplierManager.mergeSelection.description}">
+            <f:selectItem itemValue="#{supplierManager.supplier.description}" />
+            <f:selectItem itemValue="#{supplierManager.merged.description}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{supplierManager.merged.getDescriptionTrunc(40)}" title="#{supplierManager.merged.description}" />
+        </c:if>
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.consumables}" />
+        <h:outputText value="#{supplierManager.supplier.consumables.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{supplierManager.merged.consumables.size()}" />
+
+        <h:outputText value="#{messages.purchases}" />
+        <h:outputText value="#{supplierManager.supplier.purchases.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{supplierManager.merged.purchases.size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{supplierManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{supplierManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

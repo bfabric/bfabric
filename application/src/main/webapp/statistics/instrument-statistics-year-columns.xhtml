@@ -1,0 +1,135 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+  <p:columnGroup type="header">
+    <p:row>
+      <p:column colspan="1" headerText="#{messages.year}" />
+      <p:column colspan="3" headerText="#{messages.instrument}" />
+      <p:column colspan="4" headerText="#{messages.days}" />
+      <p:column colspan="1" headerText="#{messages.totalBookedCharges} #{messages.chf}" />
+      <p:column colspan="1" headerText="#{messages.workunits}" />
+      <p:column colspan="1" headerText="#{messages.resources}" />
+      <p:column colspan="1" headerText="#{messages.size}" />
+      <p:column colspan="1" headerText="#{messages.runs}" />
+    </p:row>
+    <p:row>
+      <p:column headerText="&#160;" sortBy="#{entity[0]}" filterBy="#{entity[0]}" />
+      <p:column headerText="#{messages.id}" sortBy="#{entity[1]}" filterBy="#{entity[1]}" />
+      <p:column headerText="#{messages.name}" sortBy="#{entity[2]}" filterBy="#{entity[2]}" />
+      <p:column headerText="#{messages.technology}" sortBy="#{entity[3]}" filterBy="#{entity[3]}" />
+      <p:column headerText="#{messages.reservation}" sortBy="#{entity[4]}" filterBy="#{entity[4]}" />
+      <p:column headerText="#{messages.maintenance}" sortBy="#{entity[5]}" filterBy="#{entity[5]}" />
+      <p:column headerText="#{messages.up}" sortBy="#{entity[6]}" filterBy="#{entity[6]}" />
+      <p:column headerText="#{messages.bookable}" sortBy="#{entity[7]}" filterBy="#{entity[7]}" />
+      <p:column headerText="&#160;" sortBy="#{entity[8]}" filterBy="#{entity[8]}" />
+      <p:column headerText="&#160;" sortBy="#{entity[9]}" filterBy="#{entity[9]}" />
+      <p:column headerText="&#160;" sortBy="#{entity[10]}" filterBy="#{entity[10]}" />
+      <p:column headerText="&#160;" sortBy="#{entity[11]}" filterBy="#{entity[11]}" />
+      <p:column headerText="&#160;" sortBy="#{entity[12]}" filterBy="#{entity[12]}" />
+    </p:row>
+  </p:columnGroup>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.year}" />
+    <ui:param
+      name="value"
+      value="#{entity[0]}" />
+  </ui:include>
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.instrumentId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.instrumentName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[1]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueClass"
+      value="instrument" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/text.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.technology}" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.reservationDays}" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.maintenanceDays}" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.up} #{messages.days}" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.bookable} #{messages.days}" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.totalBookedCharges} CHF" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.workunits}" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.resources}" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/string.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.size}" />
+    <ui:param
+      name="value"
+      value="#{numberUtils.getPrintSize(entity[11])}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.runs}" />
+    <ui:param
+      name="value"
+      value="#{entity[12]}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,40 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/purchase.xhtml" />
+  <ui:include src="/fragments/column/consumable.xhtml">
+    <ui:param
+      name="noLinks"
+      value="consumable" />
+  </ui:include>
+  <ui:include src="/fragments/column/articlnumber.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="consumable." />
+  </ui:include>
+  <ui:include src="/fragments/column/quantity.xhtml" />
+  <ui:include src="/fragments/column/basicnetprice.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.basicNetPrice}" />
+  </ui:include>
+  <ui:include src="/fragments/column/totalnetprice.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.basicNetPrice}" />
+  </ui:include>
+  <ui:include src="/fragments/column/totalnetpricedefaultcurrency.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.basicNetPrice}" />
+  </ui:include>
+  <ui:include src="/fragments/column/invoicereceiveddate.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+  </ui:include>
+  <ui:include src="/fragments/column/invoicenumber.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="purchase." />
+  </ui:include>
+</ui:composition>

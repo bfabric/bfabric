@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('sampleattributes')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/sampleattribute/columns.xhtml" />
+      <ui:param
+        name="tableType"
+        value="sampleattribute" />
+      <ui:param
+        name="tableContext"
+        value="#{sampleType.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{sampleType.sampleAttributes}" />
+      <ui:param
+        name="showColumns"
+        value="required" />
+    </ui:include>
+  </c:if>
+</ui:composition>

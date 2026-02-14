@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{empty rendered or rendered}"
+    visible="false"
+    headerText="#{headerText}">
+    <h:outputLabel value="#{value}" />
+  </p:column>
+</ui:composition>

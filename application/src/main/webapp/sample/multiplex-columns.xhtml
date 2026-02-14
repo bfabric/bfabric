@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:include src="/sample/columns.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="#{not multiplexedSampleManager.showAllColumns ? 'specific, customAttributes, qualityControlValues, createdBy, createdOn, modifiedBy, modifiedOn, ' : ''}listOrders, parentsSize, childrenSize, resourceCount, workflows, workflowSteps" />
+  </ui:include>
+
+  <c:if test="#{not multiplexedSampleManager.showAllColumns}">
+    <ui:include src="/fragments/column/customstatus.xhtml">
+      <o:methodParam
+        name="completeMethod"
+        value="#{containerService.getCurrentCustomContainerStatesFiltered}" />
+      <ui:param
+        name="fieldPrefix"
+        value="container." />
+      <ui:param
+        name="entity"
+        value="#{entity.container}" />
+    </ui:include>
+    <ui:include src="/fragments/column/plates.xhtml" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup rendered="#{configuration.instrumentReservationEnabled and sidebarHelper.isTab('reassigninstrumentsupervisor') and identityManager.hasCurrentUserRole('employeeManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrument" />
+      <ui:param
+        name="tableContext"
+        value="reassigninstrumentsupervisor" />
+      <ui:param
+        name="tableContent"
+        value="#{instrumentList.reassignInstrumentSupervisorTasks}" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

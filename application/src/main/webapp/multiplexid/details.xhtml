@@ -1,0 +1,57 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/multiplexkit.xhtml" />
+
+      <h:outputText value="#{messages.sequence}" />
+      <h:outputText value="#{multiplexId.sequence}" />
+
+      <h:outputText value="#{messages.sequenceLength}" />
+      <h:outputText value="#{multiplexId.sequence.length()}" />
+
+      <c:if test="#{not empty multiplexId.reverseSequence}">
+        <h:outputText value="#{messages.reverseSequence}" />
+        <h:outputText value="#{multiplexId.reverseSequence}" />
+      </c:if>
+
+      <c:if test="#{not empty multiplexId.reverseComplementSequence}">
+        <h:outputText value="#{messages.reverseComplementSequence}" />
+        <h:outputText value="#{multiplexId.reverseComplementSequence}" />
+      </c:if>
+
+      <c:if test="#{not empty multiplexId.type}">
+        <h:outputText value="#{messages.type}" />
+        <h:outputText value="#{multiplexId.type}" />
+      </c:if>
+
+      <c:if test="#{not empty multiplexId.plateNumber}">
+        <h:outputText value="#{messages.plateNumber}" />
+        <h:outputText value="#{multiplexId.plateNumber}" />
+      </c:if>
+
+      <c:if test="#{not empty multiplexId.platePosition}">
+        <h:outputText value="#{messages.platePosition}" />
+        <h:outputText value="#{multiplexId.platePosition}" />
+      </c:if>
+
+      <c:if test="#{multiplexId.multiplexKit.combinedMultiplexId}">
+        <h:outputText value="#{messages.combinedXAxis}" title="#{messages.combinedXAxisHint}" />
+        <h:outputText value="#{multiplexId.combinedXAxis}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/description-enabled-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="3"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

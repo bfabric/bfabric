@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('orders') and identityManager.hasCurrentUserRole('instrumentManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="order" />
+      <ui:param
+        name="tableContext"
+        value="#{sequencingApplicationIndexLength.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{sequencingApplicationIndexLength.orders}" />
+      <ui:param
+        name="hideColumns"
+        value="sequencingApplicationIndexLength" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

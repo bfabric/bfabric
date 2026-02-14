@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('feedbacktemplates')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="tableType" value="feedbacktemplate" />
+      <ui:param name="tableContext" value="#{feedbackTemplateType.tableContext}" />
+      <ui:param name="tableContent" value="#{feedbackTemplateList.getLazyModelByFeedbackTemplateTypeId(feedbackTemplateType.id)}" />
+      <ui:param name="hideColumns" value="feedbackTemplateType" />
+    </ui:include>
+  </c:if>
+</ui:composition>

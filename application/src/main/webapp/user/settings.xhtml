@@ -1,0 +1,341 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('settings') and (identityManager.hasCurrentUserRole('admin') or user.identityUser)}">
+    <o:importConstants type="org.bfabric.enums.DownloadDirectoryStructureEnum" />
+
+    <h:form id="settings">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <c:if test="#{user.employee}">
+          <h:outputText value="#{messages.technology}" title="#{messages.technologyEmployeeHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu id="technology" value="#{user.technology}" disabled="#{not identityManager.hasCurrentUserRole('employeeManager')}"
+                             converter="omnifaces.SelectItemsConverter" styleClass="editWidthExtraLarge">
+              <f:selectItem itemLabel="#{messages.noFilter}" />
+              <f:selectItems value="#{technologyList.resultList}" var="item" itemLabel="#{item.name}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.technologyHead}" title="#{messages.technologyHeadHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu id="technologyHead" value="#{user.technologyHead}" disabled="#{not identityManager.hasCurrentUserRole('employeeManager')}"
+                             converter="omnifaces.SelectItemsConverter" styleClass="editWidthExtraLarge">
+              <f:selectItem itemLabel="#{messages.noFilter}" />
+              <f:selectItems value="#{technologyList.resultList}" var="item" itemLabel="#{item.name}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </c:if>
+
+        <h:outputText
+          value="#{messages.defaultListingRows}"
+          title="#{messages.defaultListingRowsHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="defaultListingRows"
+            value="#{user.defaultListingRows}">
+            <f:selectItem
+              itemLabel=""
+              noSelectionOption="true" />
+            <f:selectItems value="#{configuration.defaultRowsPerPageTemplateList}" />
+            <p:ajax
+              event="change"
+              global="false" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText
+          value="#{messages.defaultDataScrollerChunkSize}"
+          title="#{messages.defaultDataScrollerChunkSizeHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="defaultDataScrollerChunkSize"
+            value="#{user.defaultDataScrollerChunkSize}">
+            <f:selectItem
+              itemLabel=""
+              noSelectionOption="true" />
+            <f:selectItems value="#{configuration.defaultDataScrollerChunkSizeTemplateList}" />
+            <p:ajax
+              event="change"
+              global="false" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText
+          value="#{messages.defaultTechnology}"
+          title="#{messages.defaultTechnologyHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="defaultTechnology"
+            value="#{user.defaultTechnology}"
+            converter="omnifaces.SelectItemsConverter"
+            styleClass="editWidthExtraLarge">
+            <f:selectItem itemLabel="#{messages.noFilter}" />
+            <f:selectItems
+              value="#{instrumentList.technologiesByBookableInstruments}"
+              var="item"
+              itemLabel="#{item.name}" />
+            <p:ajax
+              event="change"
+              global="false" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <c:if test="#{identityManager.hasCurrentUserRole('userGroupReader')}">
+          <h:outputText
+            value="#{messages.defaultUserGroup}"
+            title="#{messages.defaultUserGroupHint}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu
+              id="defaultUserGroup"
+              value="#{user.defaultUserGroup}"
+              converter="omnifaces.SelectItemsConverter"
+              styleClass="editWidthExtraLarge">
+              <f:selectItem itemLabel="#{messages.noFilter}" />
+              <f:selectItems
+                value="#{userGroupList.allEnabledInternalOrderByName}"
+                var="item"
+                itemLabel="#{item.getNameWithUserNames()}" />
+              <p:ajax
+                event="change"
+                global="false" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </c:if>
+
+        <h:outputText
+          value="#{messages.defaultParentSamplesMaximumDisplayAmount}"
+          title="#{messages.defaultParentSamplesMaximumDisplayAmountHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <p:inputNumber
+            value="#{user.defaultParentSamplesMaximumDisplayAmount}"
+            title="#{messages.defaultParentSamplesMaximumDisplayAmountHint}"
+            thousandSeparator=""
+            decimalPlaces="0"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <c:if test="#{identityManager.hasCurrentUserRole('bookingManager')}">
+          <h:outputText value="#{messages.exportBookingPath}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="exportBookingPath"
+              value="#{user.exportBookingPath}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </c:if>
+
+        <h:outputText value="#{messages.downloadManagerEnabled}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:panelGroup id="downloadManagerEnabledGroup">
+            <h:selectOneRadio
+              id="downloadManagerEnabled"
+              value="#{user.downloadManagerEnabled}"
+              valueChangeListener="#{user.downloadManagerEnabledChanged}">
+              <f:selectItem
+                itemLabel="#{messages.yes}"
+                itemValue="#{true}" />
+              <f:selectItem
+                itemLabel="#{messages.no}"
+                itemValue="#{false}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="settings:downloadManagerEnabledGroup, settings:downloadManagerEnabledGrid" />
+            </h:selectOneRadio>
+            <h:outputText rendered="#{user.downloadManagerEnabled}" value="#{messages.downloadManagerEnabledHint}" styleClass="warn" />
+          </h:panelGroup>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGroup id="downloadManagerEnabledGrid">
+        <h:panelGrid
+          rendered="#{user.downloadManagerEnabled}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.downloadDirectoryStructure}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneRadio
+              id="downloadDirectoryStructure"
+              value="#{user.downloadDirectoryStructure}">
+              <f:selectItem
+                itemLabel="#{DownloadDirectoryStructureEnum.PLAIN.name}"
+                itemValue="p" />
+              <f:selectItem
+                itemLabel="#{DownloadDirectoryStructureEnum.BFABRIC.name}"
+                itemValue="b" />
+              <f:selectItem
+                itemLabel="#{DownloadDirectoryStructureEnum.STORAGE.name}"
+                itemValue="s" />
+              <p:ajax
+                event="change"
+                global="false" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.downloadDirectoryPath}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="downloadDirectoryPath"
+              value="#{user.downloadDirectoryPath}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.downloadDirectoryEditable}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneRadio
+              id="downloadDirectoryEditable"
+              value="#{user.downloadDirectoryEditable}">
+              <f:selectItem
+                itemLabel="#{messages.yes}"
+                itemValue="#{true}" />
+              <f:selectItem
+                itemLabel="#{messages.no}"
+                itemValue="#{false}" />
+            </h:selectOneRadio>
+          </ui:decorate>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.disableNotificationExclusion}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneRadio
+            id="disableNotificationExclusion"
+            value="#{user.disableNotificationExclusion}">
+            <f:selectItem
+              itemLabel="#{messages.no}"
+              itemValue="#{false}" />
+            <f:selectItem
+              itemLabel="#{messages.yes}"
+              itemValue="#{true}" />
+            <p:ajax
+              event="change"
+              global="false"
+              update="settings:trackedContainers" />
+          </h:selectOneRadio>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        rendered="#{identityManager.hasCurrentUserRole('runManager')}"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText
+          value="#{messages.showSamplesLaneSeparated}"
+          title="#{messages.showSamplesLaneSeparatedHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneRadio
+            id="showSamplesLaneSeparated"
+            value="#{user.showSamplesLaneSeparated}"
+            title="#{messages.showSamplesLaneSeparatedHint}">
+            <f:selectItem
+              itemLabel="#{messages.no}"
+              itemValue="#{false}" />
+            <f:selectItem
+              itemLabel="#{messages.yes}"
+              itemValue="#{true}" />
+          </h:selectOneRadio>
+        </ui:decorate>
+
+        <h:outputText
+          value="#{messages.showSamplesLaneButton}"
+          title="#{messages.showSamplesLaneButtonHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneRadio
+            id="showSamplesLaneButton"
+            value="#{user.showSamplesLaneButton}"
+            title="#{messages.showSamplesLaneButtonHint}">
+            <f:selectItem
+              itemLabel="#{messages.no}"
+              itemValue="#{false}" />
+            <f:selectItem
+              itemLabel="#{messages.yes}"
+              itemValue="#{true}" />
+          </h:selectOneRadio>
+        </ui:decorate>
+
+        <h:outputText
+          value="#{messages.showSamplesLaneButtonAndCheckbox}"
+          title="#{messages.showSamplesLaneButtonAndCheckboxHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneRadio
+            id="showSamplesLaneButtonAndCheckbox"
+            value="#{user.showSamplesLaneButtonAndCheckbox}"
+            title="#{messages.showSamplesLaneButtonAndCheckboxHint}">
+            <f:selectItem
+              itemLabel="#{messages.no}"
+              itemValue="#{false}" />
+            <f:selectItem
+              itemLabel="#{messages.yes}"
+              itemValue="#{true}" />
+          </h:selectOneRadio>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGroup id="trackedContainers">
+        <h:panelGroup rendered="#{identityManager.hasCurrentUserRole('containerReader') or not user.disableNotificationExclusion}">
+          <ui:include src="/fragments/select-containers.xhtml">
+            <ui:param
+              name="label"
+              value="#{messages.trackedContainers}" />
+            <ui:param
+              name="value"
+              value="#{user.trackedContainersAsList}" />
+            <ui:param
+              name="completeMethod"
+              value="#{userManager.getTrackableContainers}" />
+            <ui:param
+              name="hint"
+              value="#{messages.disableNotificationExclusionTrackedContainerHint}" />
+          </ui:include>
+        </h:panelGroup>
+      </h:panelGroup>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <c:if test="#{identityManager.hasCurrentUserRole('serviceReader')}">
+          <h:outputText value="#{messages.trackedServices}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="trackedServices" />
+              <ui:param
+                name="value"
+                value="#{user.trackedServicesAsList}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{userManager.getAvailableTrackableServices}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="includeColumns"
+                value="/user/settings-service-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+        </c:if>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="1"
+        styleClass="action">
+        <p:commandButton
+          action="#{userManager.save}"
+          value="#{messages.save}"
+          update="@form" />
+      </h:panelGrid>
+    </h:form>
+  </c:if>
+</ui:composition>

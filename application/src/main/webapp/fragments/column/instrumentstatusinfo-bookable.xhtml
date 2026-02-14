@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instrumentStatusInfoBookable')}">
+    <p:column
+      field="#{fieldPrefix}instrumentStatusInfo.bookable"
+      headerText="#{messages.bookable}"
+      filterMatchMode="exact"
+      title="#{messages.instrumentStatusBookable}"
+      styleClass="#{entity.instrumentStatusInfo.bookable ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="bookable" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.bookable)}"
+        styleClass="#{stringHelper.toGreenRed(entity.bookable)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

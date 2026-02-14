@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('feedbackTemplate')}">
+    <p:column
+      field="#{fieldPrefix}template.displayName"
+      headerText="#{not empty headerText ? headerText : messages.feedbackTemplate}">
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.template}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

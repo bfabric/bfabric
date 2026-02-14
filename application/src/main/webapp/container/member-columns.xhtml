@@ -1,0 +1,34 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/user/columns.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="#{hideColumns}, entityId, emailAddress, company, division, institute, emailActive, emailVerified, computerLoginActivated, computerLoginEnabled, dataAccessEnabled, massMailEnabled, invalidLoginAttempts, LastLoginDate, LastActionTime, createdBy, createdOn" />
+    <ui:param
+      name="styleClass"
+      value="column-width-auto" />
+  </ui:include>
+  <p:column
+    rendered="#{not hideColumns.contains('addFormerMember')}"
+    exportable="false"
+    headerText="#{messages.addFormerMember}">
+    <p:commandButton
+      action="#{parentContainerManager.addUserAsMember(entity)}"
+      value="#{messages.member}"
+      title="#{messages.addUserAsMemberHint}"
+      immediate="true"
+      styleClass="inline" />
+  </p:column>
+  <p:column
+    rendered="#{not hideColumns.contains('addFormerMember')}"
+    exportable="false"
+    headerText="#{messages.addFormerMember}">
+    <p:commandButton
+      action="#{parentContainerManager.addUserAsManager(entity)}"
+      value="#{messages.manager}"
+      title="#{messages.addUserAsManagerHint}"
+      immediate="true"
+      styleClass="inline" />
+  </p:column>
+</ui:composition>

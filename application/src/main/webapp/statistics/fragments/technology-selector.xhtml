@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+  <h:form>
+    <span style="display:flex; align-items:center; gap:5px;">
+      <h:outputText value="#{messages.technologySelectorTitle}" styleClass="bold" />
+      <p:selectOneMenu value="#{statisticsManager.selectedTechnology}" valueChangeListener="#{statisticsManager.selectedTechnologyChanged}" filter="true"
+                       filterMatchMode="contains" style="width:180px;" styleClass="technology-selector">
+        <f:selectItem itemValue="" />
+        <f:selectItems value="#{statisticsManager.technologiesHavingOrders}" var="item" itemLabel="#{item.name}" itemValue="#{item.name}" />
+        <p:ajax update="@(.technology-selector) pieChartPanel lineChartPanel" event="valueChange" process="@this" />
+      </p:selectOneMenu>
+    </span>
+  </h:form>
+</ui:composition>

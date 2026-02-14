@@ -1,0 +1,15 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.ERROR}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <div>
+      <p>#{messages.NOT_FOUND}</p>
+      <p>#{messages.HINT_TRY_RECOVER}</p>
+    </div>
+  </ui:define>
+</ui:composition>

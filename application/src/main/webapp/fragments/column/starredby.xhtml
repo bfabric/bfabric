@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('starredBy')}">
+    <p:column
+      field="#{fieldPrefix}starredBy.size()"
+      headerText="#{messages.starredBy}">
+      <h:outputText
+        value="#{entity.starredBy.size()}"
+        title="#{entity.getStarredByHint(currentUser)}"
+        styleClass="#{styleClass}" />
+    </p:column>
+  </c:if>
+</ui:composition>

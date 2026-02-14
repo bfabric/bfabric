@@ -1,0 +1,25 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.applicationOutput}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param name="include" value="/application/application-statistics-columns.xhtml" />
+      <ui:param name="tableContext" value="application_statistics" />
+      <ui:param name="tableContent" value="#{statisticsList.getApplicationStatisticsPerYear()}" />
+    </ui:include>
+    <p:spacer height="20" />
+    <h:form>
+      <p:commandButton action="#{statisticsService.refreshMaterializedView('statistics_applicationid_year')}" value="#{messages.refresh}" />
+    </h:form>
+  </ui:define>
+</ui:composition>

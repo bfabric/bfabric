@@ -1,0 +1,87 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+
+      <c:if test="#{not empty supplier.companyId}">
+        <h:outputText value="#{messages.companyId}" />
+        <h:outputText value="#{supplier.companyId}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.email}">
+        <h:outputText value="#{messages.email}" />
+        <h:outputText value="#{supplier.email}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.phone}">
+        <h:outputText value="#{messages.phone}" />
+        <h:outputText value="#{supplier.phone}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.fullAddress}">
+        <h:outputText value="#{messages.address}" />
+        <h:outputLink
+          value="#{supplier.address.mapLink}"
+          target="_blank"
+          rel="noopener">
+          <h:outputText value="#{supplier.fullAddress}" />
+        </h:outputLink>
+      </c:if>
+
+      <c:if test="#{not empty supplier.address.supplement}">
+        <h:outputText value="#{messages.address} #{messages.supplement}" />
+        <h:outputText value="#{supplier.address.supplement}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.address.room}">
+        <h:outputText value="#{messages.address} #{messages.room}" />
+        <h:outputText value="#{supplier.address.room}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/url.xhtml" />
+
+      <c:if test="#{not empty supplier.contactTitle}">
+        <h:outputText value="#{messages.contactTitle}" />
+        <h:outputText value="#{supplier.contactTitle}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.contactSalutation}">
+        <h:outputText value="#{messages.contactSalutation}" />
+        <h:outputText value="#{supplier.contactSalutation}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.contactFirstName}">
+        <h:outputText value="#{messages.contactFirstName}" />
+        <h:outputText value="#{supplier.contactFirstName}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.contactLastName}">
+        <h:outputText value="#{messages.contactLastName}" />
+        <h:outputText value="#{supplier.contactLastName}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.contactPhone}">
+        <h:outputText value="#{messages.contactPhone}" />
+        <h:outputText value="#{supplier.contactPhone}" />
+      </c:if>
+
+      <c:if test="#{not empty supplier.contactEmail}">
+        <h:outputText value="#{messages.contactEmail}" />
+        <h:outputText value="#{supplier.contactEmail}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/description-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="5"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-clone-links-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

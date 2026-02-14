@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.institute}">
+    <c:if test="#{not empty instance.institute.department}">
+      <c:if test="#{not empty instance.institute.department.organization}">
+        <h:outputText value="#{messages.organization}" />
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{instance.institute.department.organization}" />
+        </ui:include>
+      </c:if>
+
+      <h:outputText value="#{messages.department}" />
+      <ui:include src="/fragments/entity-link-name.xhtml">
+        <ui:param
+          name="instance"
+          value="#{instance.institute.department}" />
+      </ui:include>
+    </c:if>
+
+    <h:outputText value="#{messages.institute}" />
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param
+        name="instance"
+        value="#{instance.institute}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

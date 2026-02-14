@@ -1,0 +1,90 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{reviewManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.project}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{review.project.displayName}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.requester}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{review.project.requester.name}" />
+          </ui:decorate>
+
+          <c:if test="#{review.managed}">
+            <h:outputText value="#{messages.vote}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText
+                value="#{messages[review.approvedMarker]}"
+                styleClass="#{review.approvedMarker}" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.comment}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="comment"
+              value="#{review.comment}"
+              rows="12"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <span />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:panelGrid
+              columns="2"
+              styleClass="action"
+              columnClasses="extraBottomMargin">
+              <p:commandButton
+                action="#{reviewManager.approve}"
+                value="#{messages.approve}"
+                title="#{messages.approveHint}"
+                styleClass="width-100"
+                rendered="#{review.project.approvable}" />
+              <p:commandButton
+                action="#{reviewManager.reject}"
+                value="#{messages.reject}"
+                title="#{messages.rejectHint}"
+                styleClass="width-100"
+                rendered="#{review.project.approvable}" />
+              <p:commandButton
+                action="#{reviewManager.finalApprove}"
+                value="#{messages.finalApprove}"
+                title="#{messages.finalApproveHint}"
+                styleClass="width-100"
+                rendered="#{not review.managed and review.project.finalApprovable}" />
+              <p:commandButton
+                action="#{reviewManager.finalReject}"
+                value="#{messages.finalReject}"
+                title="#{messages.finalRejectHint}"
+                styleClass="width-100"
+                rendered="#{not review.managed and review.project.finalRejectabtable}" />
+              <p:commandButton
+                action="#{reviewManager.save}"
+                value="#{messages.save}"
+                styleClass="width-100"
+                rendered="#{review.managed}" />
+              <p:commandButton
+                action="#{reviewManager.cancel}"
+                value="#{messages.cancel}"
+                styleClass="width-100"
+                immediate="true" />
+            </h:panelGrid>
+          </ui:decorate>
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

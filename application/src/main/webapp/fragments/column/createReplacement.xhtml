@@ -1,0 +1,15 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('createReplacement')}">
+    <p:column exportable="false">
+      <f:facet name="header">
+        <p:commandButton value="#{messages.replaceAll}" action="#{orderManager.replaceAll()}" update="@form,#{update}" styleClass="inline">
+          <ui:include src="/fragments/confirm-dialog-replace-all.xhtml" />
+        </p:commandButton>
+      </f:facet>
+      <p:commandButton value="#{messages.replace}" action="#{orderManager.createReplacement(entity)}" update="@form,#{update}" styleClass="inline" />
+    </p:column>
+  </c:if>
+</ui:composition>

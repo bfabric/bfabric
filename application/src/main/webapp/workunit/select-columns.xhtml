@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column exportable="false">
+    <h:selectBooleanCheckbox
+      value="#{entity.checked}"
+      disabled="#{datasetManager.selectedWorkunits.contains(entity)}">
+      <p:ajax
+        listener="#{datasetManager.markWorkunit(entity)}"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <ui:include src="/workunit/columns.xhtml">
+    <ui:param
+      name="hideColumns"
+      value="basket,inputDataset,report" />
+    <ui:param
+      name="lazy"
+      value="true" />
+  </ui:include>
+</ui:composition>

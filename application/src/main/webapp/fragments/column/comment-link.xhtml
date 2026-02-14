@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('comment')}">
+    <p:column
+      field="#{fieldPrefix}comment"
+      headerText="#{messages.comment}">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.comment}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

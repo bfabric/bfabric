@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instrumentStatusInfoUserBookabletime')}">
+    <p:column headerText="#{messages.userBookableTime}" sortBy="#{entity.instrumentStatusInfo.userBookableTime}">
+      <h:outputText value="#{stringHelper.getFormattedDuration(entity.instrumentStatusInfo.userBookableTime)}" style="float:right" />
+    </p:column>
+  </c:if>
+</ui:composition>

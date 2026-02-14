@@ -1,0 +1,146 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ResourceStatusEnum" />
+  <c:set value="#{currentUser.selectedResourceBasket}" var="selectedResourceBasket" />
+  <p:column
+    rendered="#{showColumns.contains('selection')}"
+    exportable="false">
+    <h:selectBooleanCheckbox
+      value="#{entity.checked}"
+      disabled="#{(selected == null or not selected) and resourceHelper.selectedInputResources.contains(entity)}">
+      <p:ajax
+        listener="#{resourceHelper.markInputResource(entity)}"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <p:column
+    rendered="#{not hideColumns.contains('addToBasket') and identityManager.hasCurrentUserRole('user')}"
+    exportable="false">
+    <f:facet name="header">
+      <div>
+        <h:outputText
+          value="#{messages.basket}"
+          title="#{messages.basketHint}" />
+      </div>
+      <p:commandButton
+        value="#{messages.addAll}"
+        actionListener="#{resourceBasketHelper.addResourcesToBasket(selectedResourceBasket, tableContent)}"
+        title="#{messages.addResourcesToBasketHint}"
+        update="@form"
+        style="margin-top:2px" />
+    </f:facet>
+    <p:commandButton
+      value="#{messages.add}"
+      actionListener="#{resourceBasketHelper.addResourceToBasket(selectedResourceBasket, entity)}"
+      title="#{messages.addResourceToBasketHint}"
+      disabled="#{resourceBasketHelper.isAddResourceToBasketDisabled(selectedResourceBasket, entity)}"
+      disableOnAjax="false"
+      styleClass="inline"
+      update="@this">
+    </p:commandButton>
+  </p:column>
+
+  <ui:include src="/fragments/column/id-name.xhtml" />
+
+  <o:importConstants type="org.bfabric.enums.ResourceStatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{ResourceStatusEnum.values()}" />
+    <ui:param
+      name="resourceDownloadButton"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/size.xhtml" />
+  <ui:include src="/fragments/column/checksum.xhtml" />
+  <ui:include src="/fragments/column/relativepath.xhtml" />
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/workunit.xhtml" />
+
+  <c:if test="#{not hideColumns.contains('sample')}">
+    <p:column
+      field="#{fieldPrefix}sample.displayName"
+      headerText="#{messages.sample}"
+      exportValue="#{entity.sampleTransitive.displayName}">
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity.sampleTransitive}" />
+        <ui:param
+          name="entityValue"
+          value="#{stringHelper.truncate(entity.name, 60)}" />
+        <ui:param
+          name="entityHint"
+          value="#{entity.name}" />
+      </ui:include>
+      <h:outputText
+        value="#{messages.derivedFromSeveralSamples}"
+        title="#{messages.derivedFromSeveralSamplesHint}"
+        styleClass="pending"
+        rendered="#{empty entity.sampleTransitive and entity.inputResourcesBased and not empty entity.samples}" />
+      <h:outputText
+        value="#{messages.noSampleAssignedToRoot}"
+        title="#{messages.noSampleAssignedToRootHint}"
+        styleClass="warning"
+        rendered="#{empty entity.sampleTransitive and entity.inputResourcesBased and empty entity.samples}" />
+    </p:column>
+  </c:if>
+
+  <c:if test="#{not hideColumns.contains('inputResource')}">
+    <p:column headerText="#{messages.inputResource}">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="rendered"
+          value="#{entity.singleInputResourceBased}" />
+        <ui:param
+          name="instance"
+          value="#{entity.singleInputResource}" />
+        <ui:param
+          name="entityValue"
+          value="#{stringHelper.truncate(instance.name, 60)}" />
+        <ui:param
+          name="entityHint"
+          value="#{instance.name}" />
+      </ui:include>
+      <ui:param
+        name="renderedMultipleInputResourcesBased"
+        value="#{entity.multipleInputResourcesBased}" />
+      <ui:param
+        name="entityInputResourcesName"
+        value="#{entity.inputResourcesName}" />
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="rendered"
+          value="#{renderedMultipleInputResourcesBased}" />
+        <ui:param
+          name="instance"
+          value="#{entity.workunit}" />
+        <ui:param
+          name="entityValue"
+          value="#{messages.inputResources}" />
+        <ui:param
+          name="entityHint"
+          value="#{entityInputResourcesName}" />
+        <ui:param
+          name="tab"
+          value="inputresources" />
+      </ui:include>
+    </p:column>
+  </c:if>
+
+  <ui:include src="/fragments/column/report.xhtml" />
+  <ui:include src="/fragments/column/junk.xhtml" />
+  <ui:include src="/fragments/column/storage.xhtml" />
+  <ui:include src="/fragments/column/expirationdate.xhtml" />
+  <ui:include src="/fragments/column/archiveexpirationdate.xhtml" />
+  <p:column field="#{fieldPrefix}workunit.application.displayName" headerText="#{messages.application}" />
+  <p:column field="#{fieldPrefix}workunit.application.instrument.displayName" headerText="#{messages.instrument}" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

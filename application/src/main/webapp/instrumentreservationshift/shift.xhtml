@@ -1,0 +1,231 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.shiftInstrumentReservations}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form
+      id="shiftInstrumentReservationsForm"
+      onsubmit="#{instrumentReservationShiftManager.resetRefererURL()}">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+
+        <c:if test="#{empty instrumentReservationShiftManager.shiftedInstrument}">
+          <h:outputText value="#{messages.technologyFilter}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:selectOneMenu
+              id="technologyFilter"
+              value="#{instrumentReservationShiftManager.technology}"
+              title="#{messages.technologyFilterHint}"
+              styleClass="editWidthExtraLarge"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem itemLabel="#{messages.clear}" />
+              <f:selectItems
+                value="#{instrumentList.technologiesByBookableInstruments}"
+                var="item"
+                itemLabel="#{item.name}" />
+              <p:ajax
+                event="change"
+                update="@form"
+                listener="#{instrumentReservationShiftManager.technologyChanged}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+        </c:if>
+
+        <h:outputText value="#{messages.instrument}" />
+        <c:if test="#{empty instrumentReservationShiftManager.shiftedInstrument}">
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="instrument" />
+            <ui:param
+              name="value"
+              value="#{instrumentReservationShiftManager.shiftedInstrument}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{instrumentReservationShiftManager.getInstruments}" />
+            <o:methodParam
+              name="itemSelectListener"
+              value="#{instrumentReservationShiftManager.shiftedInstrumentChanged}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="@form" />
+            <ui:param
+              name="ajaxClear"
+              value="true" />
+            <o:methodParam
+              name="clearListener"
+              value="#{instrumentReservationShiftManager.shiftedInstrumentChanged}" />
+            <ui:param
+              name="clearUpdate"
+              value="@form" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+          </ui:include>
+        </c:if>
+        <c:if test="#{not empty instrumentReservationShiftManager.shiftedInstrument}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{instrumentReservationShiftManager.shiftedInstrument.label}" />
+          </ui:decorate>
+        </c:if>
+
+        <h:outputText value="#{messages.instrumentReservationSetting}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:selectOneMenu
+            id="instrumentReservationSetting"
+            value="#{instrumentReservationShiftManager.instrumentReservationSetting}"
+            required="true"
+            styleClass="editWidthMedium"
+            disabled="#{instrumentReservationShiftManager.shiftedInstrument.reservationSettings.size() == 1}"
+            converter="omnifaces.SelectItemsConverter">
+            <f:selectItems
+              value="#{instrumentReservationShiftManager.shiftedInstrument.reservationSettings}"
+              var="item"
+              itemLabel="#{item.validIntervalAsString}" />
+            <p:ajax
+              event="change"
+              update="@form"
+              listener="#{instrumentReservationShiftManager.shiftInstrumentReservationSettingChanged}" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.interval} #{messages.startDate}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:panelGrid
+            id="shiftStartDateGrid"
+            columns="4"
+            styleClass="noborder-rightpadding"
+            title="#{messages.shiftStartDateHint}">
+            <p:datePicker
+              id="shiftStartDate"
+              value="#{instrumentReservationShiftManager.shiftStartDate}"
+              mindate="#{instrumentReservationShiftManager.instrumentReservationSetting.validFrom}"
+              maxdate="#{instrumentReservationShiftManager.instrumentReservationSetting.validUntil}">
+              <p:ajax
+                event="dateSelect"
+                update="@form"
+                process="shiftStartDateGrid, shiftEndDateGrid, shiftToDateGrid"
+                listener="#{instrumentReservationShiftManager.shiftStartDateChanged}" />
+            </p:datePicker>
+            <p:message
+              for="shiftStartDate"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.interval} #{messages.endDate}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:panelGrid
+            id="shiftEndDateGrid"
+            columns="4"
+            styleClass="noborder-rightpadding"
+            title="#{messages.shiftEndDateHint}">
+            <p:datePicker
+              id="shiftEndDate"
+              value="#{instrumentReservationShiftManager.shiftEndDate}"
+              mindate="#{instrumentReservationShiftManager.instrumentReservationSetting.validFrom}"
+              maxdate="#{instrumentReservationShiftManager.instrumentReservationSetting.validUntil}">
+              <p:ajax
+                event="dateSelect"
+                update="@form"
+                process="shiftStartDateGrid, shiftEndDateGrid, shiftToDateGrid"
+                listener="#{instrumentReservationShiftManager.shiftEndDateChanged}" />
+            </p:datePicker>
+            <p:message
+              for="shiftEndDate"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.shiftIntervalTo}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:panelGrid
+            id="shiftToDateGrid"
+            columns="4"
+            styleClass="noborder-rightpadding"
+            title="#{messages.shiftToDateHint}">
+            <p:datePicker
+              id="shiftToDate"
+              value="#{instrumentReservationShiftManager.shiftToDate}"
+              mindate="#{instrumentReservationShiftManager.instrumentReservationSetting.validFrom}"
+              maxdate="#{instrumentReservationShiftManager.maxShiftToDate}">
+              <p:ajax
+                event="dateSelect"
+                update="@form"
+                listener="#{instrumentReservationShiftManager.shiftToDateChanged}" />
+            </p:datePicker>
+            <p:message
+              for="shiftToDate"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <span />
+        <ui:decorate template="/fragments/display.xhtml">
+          <c:if test="#{instrumentReservationShiftManager.shiftedInstrument != null and empty instrumentReservationShiftManager.potentialInstrumentReservationsToShift}">
+            <h:outputText
+              value="No reservations available for this instrument during the interval"
+              styleClass="errorMessage" />
+          </c:if>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="shiftInstrumentReservationTable"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <span />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="tableType"
+              value="instrumentreservation" />
+            <ui:param
+              name="tableContext"
+              value="shift" />
+            <ui:param
+              name="tableContent"
+              value="#{instrumentReservationShiftManager.potentialInstrumentReservationsToShift}" />
+            <ui:param
+              name="hideColumns"
+              value="instrument, chargeCount, description, createdBy, createdOn, selectCheckbox" />
+            <ui:param
+              name="showColumns"
+              value="shiftedStartDate, shiftedEndDate" />
+          </ui:include>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="buttonGrid"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{instrumentReservationShiftManager.shiftInstrumentReservations}"
+          value="#{messages.shift}"
+          update="@form"
+          rendered="#{not empty instrumentReservationShiftManager.instrumentReservationsToShift}">
+          <p:confirm
+            id="confirmDialog"
+            header="#{messages.shiftInstrumentReservations}"
+            message="#{messages.confirmActionMessage}"
+            icon="ui-icon-alert" />
+          <ui:include src="/fragments/confirm-dialog.xhtml" />
+        </p:commandButton>
+        <p:commandButton
+          action="#{instrumentReservationShiftManager.cancelShiftInstrumentReservations}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

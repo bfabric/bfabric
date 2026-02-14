@@ -1,0 +1,58 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('roles') and user.extensibleByCurrentUser and user.identityUserOrUserManager}">
+    <h:panelGroup id="show-user-roles">
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="tableType"
+          value="role" />
+        <ui:param
+          name="tableContext"
+          value="#{user.tableContext}" />
+        <ui:param
+          name="tableContent"
+          value="#{user.roles}" />
+        <ui:param
+          name="hideColumns"
+          value="entityId, groups, groupsCount, descendants, parents, parentsCount, createdBy, createdOn, modifiedBy, modifiedOn" />
+      </ui:include>
+      <h:panelGrid
+        rendered="#{identityManager.hasCurrentUserRole('admin')}"
+        columns="1"
+        styleClass="action">
+        <p:button
+          outcome="/user/roles-edit.xhtml"
+          value="#{messages.edit}">
+          <f:param
+            name="id"
+            value="#{user.id}" />
+        </p:button>
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+
+  <c:if test="#{user.rolesImplicitRendered}">
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.rolesImplicit}" />
+    </h:panelGrid>
+
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="role" />
+      <ui:param
+        name="tableContext"
+        value="#{user.tableContext}implicit" />
+      <ui:param
+        name="tableContent"
+        value="#{user.rolesImplicit}" />
+      <ui:param
+        name="hideColumns"
+        value="entityId, groups, groupsCount, descendants, parents, parentsCount, createdBy, createdOn, modifiedBy, modifiedOn" />
+    </ui:include>
+  </c:if>
+</ui:composition>

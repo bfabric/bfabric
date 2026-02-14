@@ -1,0 +1,95 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGroup id="show-feedback">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id.xhtml" />
+
+        <h:outputText value="#{messages.user}" />
+        <ui:include src="/fragments/user-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{feedback.user}" />
+        </ui:include>
+
+        <ui:include src="/fragments/details/container.xhtml" />
+        <ui:include src="/fragments/details/servicetype.xhtml">
+          <ui:param
+            name="instance"
+            value="#{feedback.container}" />
+        </ui:include>
+        <ui:include src="/fragments/details/servicearea.xhtml">
+          <ui:param
+            name="instance"
+            value="#{feedback.container.serviceType}" />
+        </ui:include>
+
+        <c:if test="#{feedbackManager.templateRendered}">
+          <h:outputText value="#{messages.feedbackTemplate}" />
+          <ui:include src="/fragments/entity-link-displayname.xhtml">
+            <ui:param
+              name="instance"
+              value="#{feedback.template}" />
+          </ui:include>
+        </c:if>
+
+        <c:if test="#{not empty feedback.template}">
+          <h:outputText value="#{messages.answers}" />
+          <ui:include src="/fragments/show-datatable.xhtml">
+            <ui:param
+              name="tableContext"
+              value="all" />
+            <ui:param
+              name="tableType"
+              value="feedbackanswer" />
+            <ui:param
+              name="showColumns"
+              value="showOutput" />
+            <ui:param
+              name="tableContent"
+              value="#{feedback.answers}" />
+            <ui:param
+              name="paginator"
+              value="false" />
+          </ui:include>
+        </c:if>
+
+        <c:if test="#{not empty feedback.acknowledgedBy}">
+          <h:outputText value="#{messages.acknowledgedBy}" />
+          <h:outputText value="#{feedback.acknowledgedBy.displayName}" />
+        </c:if>
+
+        <c:if test="#{not empty feedback.acknowledgedDate}">
+          <h:outputText value="#{messages.acknowledgedDate}" />
+          <h:outputText value="#{feedback.acknowledgedDate}" />
+        </c:if>
+
+        <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="5"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit.xhtml" />
+        <p:commandButton
+          rendered="#{feedback.acknowledgable}"
+          action="#{feedbackManager.acknowledgeFeedback}"
+          value="#{messages.acknowledge}"
+          update="show-feedback">
+          <p:confirm
+            header="#{messages.acknowledgeFeedback}"
+            message="#{messages.confirmActionMessage}"
+            icon="ui-icon-alert" />
+          <ui:include src="/fragments/confirm-dialog.xhtml" />
+        </p:commandButton>
+        <ui:include src="/fragments/button/delete.xhtml" />
+        <ui:include src="/fragments/button/list.xhtml" />
+      </h:panelGrid>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

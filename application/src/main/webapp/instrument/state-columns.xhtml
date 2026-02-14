@@ -1,0 +1,118 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:columnGroup type="header">
+    <p:row>
+      <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+        <p:column headerText="#{messages.id}" />
+      </c:if>
+      <p:column colspan="3" headerText="#{messages.up} #{messages.durationTotalParentheses}" />
+      <p:column colspan="3" headerText="#{messages.bookable} #{messages.durationTotalParentheses}" />
+      <p:column colspan="3" headerText="#{messages.userVisible} #{messages.durationTotalParentheses}" />
+      <p:column colspan="3" headerText="#{messages.userBookable} #{messages.durationTotalParentheses}" />
+      <p:column colspan="3" headerText="#{messages.runEnabled} #{messages.durationTotalParentheses}" />
+      <p:column colspan="3" headerText="#{messages.available} #{messages.durationTotalParentheses}" />
+      <p:column headerText="#{messages.createdBy}" />
+      <p:column headerText="#{messages.created}" sortBy="#{entity.created}" />
+      <p:column headerText="#{messages.comment}" />
+    </p:row>
+  </p:columnGroup>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+    <p:column field="id" headerText="#{messages.id}" />
+  </c:if>
+
+  <p:column headerText="#{messages.up}" styleClass="#{entity.instrumentStatusInfo.up ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+    <h:outputText
+      value="#{stringHelper.toYesNo(entity.instrumentStatusInfo.up)}"
+      styleClass="#{stringHelper.toGreenRed(entity.instrumentStatusInfo.up)}" />
+  </p:column>
+
+  <p:column headerText="#{messages.upTimeTotal}">
+    <h:outputText value="#{stringHelper.getFormattedDuration(entity.instrumentStatusInfo.upTimeTotal)}" style="float:right" />
+  </p:column>
+
+  <p:column headerText="#{messages.upTime}">
+    <h:outputText value="#{entity.instrumentStatusInfo.upTimeAsText}" style="float:right; min-width:50px" />
+  </p:column>
+
+  <p:column headerText="#{messages.bookable}" styleClass="#{entity.instrumentStatusInfo.bookable ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+    <h:outputText
+      value="#{stringHelper.toYesNo(entity.instrumentStatusInfo.bookable)}"
+      styleClass="#{stringHelper.toGreenRed(entity.instrumentStatusInfo.bookable)}" />
+  </p:column>
+
+  <p:column headerText="#{messages.bookableTimeTotal}">
+    <h:outputText value="#{stringHelper.getFormattedDuration(entity.instrumentStatusInfo.bookableTimeTotal)}" style="float:right" />
+  </p:column>
+
+  <p:column headerText="#{messages.bookableTime}">
+    <h:outputText value="#{entity.instrumentStatusInfo.bookableTimeAsText}" style="float:right; min-width:50px" />
+  </p:column>
+
+  <p:column headerText="#{messages.userVisible}" styleClass="#{entity.instrumentStatusInfo.userVisible ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+    <h:outputText
+      value="#{stringHelper.toYesNo(entity.instrumentStatusInfo.userVisible)}"
+      styleClass="#{stringHelper.toGreenRed(entity.instrumentStatusInfo.userVisible)}" />
+  </p:column>
+
+  <p:column headerText="#{messages.userVisibleTimeTotal}">
+    <h:outputText value="#{stringHelper.getFormattedDuration(entity.instrumentStatusInfo.userVisibleTimeTotal)}" style="float:right" />
+  </p:column>
+
+  <p:column headerText="#{messages.userVisibleTime}">
+    <h:outputText value="#{entity.instrumentStatusInfo.userVisibleTimeAsText}" style="float:right; min-width:50px" />
+  </p:column>
+
+  <p:column headerText="#{messages.userBookable}" styleClass="#{entity.instrumentStatusInfo.userBookable ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+    <h:outputText
+      value="#{stringHelper.toYesNo(entity.instrumentStatusInfo.userBookable)}"
+      styleClass="#{stringHelper.toGreenRed(entity.instrumentStatusInfo.userBookable)}" />
+  </p:column>
+
+  <p:column headerText="#{messages.userBookableTimeTotal}">
+    <h:outputText value="#{stringHelper.getFormattedDuration(entity.instrumentStatusInfo.userBookableTimeTotal)}" style="float:right" />
+  </p:column>
+
+  <p:column headerText="#{messages.userBookableTime}">
+    <h:outputText value="#{entity.instrumentStatusInfo.userBookableTimeAsText}" style="float:right; min-width:50px" />
+  </p:column>
+
+  <p:column headerText="#{messages.runEnabled}" styleClass="#{entity.instrumentStatusInfo.runEnabled ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+    <h:outputText
+      value="#{stringHelper.toYesNo(entity.instrumentStatusInfo.runEnabled)}"
+      styleClass="#{stringHelper.toGreenRed(entity.instrumentStatusInfo.runEnabled)}" />
+  </p:column>
+
+  <p:column headerText="#{messages.runEnabledTimeTotal}">
+    <h:outputText value="#{stringHelper.getFormattedDuration(entity.instrumentStatusInfo.runEnabledTimeTotal)}" style="float:right" />
+  </p:column>
+
+  <p:column headerText="#{messages.runEnabledTime}">
+    <h:outputText value="#{entity.instrumentStatusInfo.runEnabledTimeAsText}" style="float:right; min-width:50px" />
+  </p:column>
+
+  <p:column headerText="#{messages.available}" styleClass="#{entity.instrumentStatusInfo.available ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+    <h:outputText
+      value="#{stringHelper.toYesNo(entity.instrumentStatusInfo.available)}"
+      styleClass="#{stringHelper.toGreenRed(entity.instrumentStatusInfo.available)}" />
+  </p:column>
+
+  <p:column headerText="#{messages.availableTimeTotal}">
+    <h:outputText value="#{stringHelper.getFormattedDuration(entity.instrumentStatusInfo.availableTimeTotal)}" style="float:right" />
+  </p:column>
+
+  <p:column headerText="#{messages.availableTime}">
+    <h:outputText value="#{entity.instrumentStatusInfo.availableTimeAsText}" style="float:right; min-width:50px" />
+  </p:column>
+
+  <ui:include src="/fragments/column/created.xhtml" />
+
+  <p:column headerText="#{messages.comment}">
+    <h:outputText
+      value="#{stringHelper.truncate(entity.instrumentStatusInfo.statusComment)}"
+      title="#{entity.instrumentStatusInfo.statusComment}" />
+  </p:column>
+</ui:composition>

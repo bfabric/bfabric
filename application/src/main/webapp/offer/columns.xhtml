@@ -1,0 +1,31 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/coach.xhtml" />
+
+  <p:column field="#{fieldPrefix}requesterName" headerText="#{messages.requester}" />
+  <p:column field="#{fieldPrefix}requesterEmail" headerText="#{messages.email}" />
+  <p:column field="#{fieldPrefix}requesterAddress" headerText="#{messages.address}">
+    <h:outputText value="#{stringHelper.truncate(entity.requesterAddress, 15)}" title="#{entity.requesterAddress}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/charge-count.xhtml" />
+  <ui:include src="/fragments/column/container-count.xhtml" />
+  <ui:include src="/fragments/column/referencing-order-count.xhtml" />
+  <ui:include src="/fragments/column/comment-count.xhtml" />
+
+  <p:column headerText="#{messages.offeredTotal}">
+    <h:outputText value="#{entity.totalDiscountedPrice}" />
+  </p:column>
+
+  <p:column headerText="#{messages.bookedTotal}">
+    <h:outputText value="#{entity.totalBookedPrice}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/eugrant.xhtml" />
+  <ui:include src="/fragments/column/discount.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

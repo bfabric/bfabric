@@ -1,0 +1,378 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:panelGrid
+    rendered="#{caller ne 'institute'}"
+    columns="2"
+    columnClasses="rtdm, ltd">
+    <h:outputText value="#{messages.organizationType}" />
+    <ui:decorate template="/fragments/required.xhtml">
+      <h:selectOneMenu
+        id="organizationType"
+        value="#{callerEntity.organizationType}"
+        valueChangeListener="#{callerEntity.organizationTypeChanged}"
+        required="#{not empty required ? required : true}"
+        styleClass="editWidthExtraLarge"
+        converter="omnifaces.SelectItemsConverter">
+        <f:selectItem
+          itemLabel="#{messages.selectAnItem}"
+          itemDisabled="#{not empty required ? required : true}" />
+        <f:selectItems
+          value="#{organizationTypeList.resultList}"
+          var="item"
+          itemLabel="#{item.name}" />
+        <p:ajax
+          event="change"
+          update="affiliationGrid, @([id$=financeSource]), @([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+      </h:selectOneMenu>
+    </ui:decorate>
+  </h:panelGrid>
+
+  <h:panelGroup id="affiliationGrid">
+    <h:panelGrid
+      id="organizationGrid"
+      columns="2"
+      columnClasses="rtdm, ltd"
+      rendered="#{callerEntity.organizationType.academic or caller eq 'institute'}">
+      <h:outputText
+        value="#{messages.organization}"
+        title="#{messages.editProjectOrganizationHint}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <ui:param
+          name="componentId"
+          value="organization" />
+        <h:panelGrid
+          columns="2"
+          columnClasses="rightpadding"
+          styleClass="noborder">
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="clearButtonRendered"
+              value="true" />
+            <ui:param
+              name="listContext"
+              value="organizationrequired" />
+            <ui:param
+              name="value"
+              value="#{callerEntity.organization}" />
+            <o:methodParam
+              name="valueChangeListener"
+              value="#{callerEntity.organizationChanged}" />
+            <ui:param
+              name="ajaxChange"
+              value="true" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{affiliationHelper.getOrganizations}" />
+            <o:methodParam
+              name="clearButtonListener"
+              value="#{callerEntity.clearButtonOrganization}" />
+            <ui:param
+              name="clearButtonSpecificUpdate"
+              value="@([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+            <ui:param
+              name="clearButtonSpecificTarget"
+              value="#{not empty clearButtonSpecificTarget ? clearButtonSpecificTarget : constants.EMPTY_STRING}, department, institute" />
+            <ui:param
+              name="required"
+              value="#{not empty required ? required : true}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.name}" />
+            <ui:param
+              name="styleClass"
+              value="editWidthExtraLarge" />
+            <ui:param
+              name="inputStyleClass"
+              value="editWidthExtraLarge" />
+            <ui:param
+              name="attributes"
+              value="organizationType:#{callerEntity.organizationType.id}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="affiliationGrid, @([id$=financeSource]), @([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+            <ui:param
+              name="ajaxClear"
+              value="true" />
+            <ui:param
+              name="clearUpdate"
+              value="@([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+          </ui:include>
+          <p:commandLink
+            rendered="#{callerEntity.organizationType.extensible and (not empty caller and (identityManager.hasCurrentUserRole('affiliationManager') or configuration.addAffiliationByUserEnabled))}"
+            action="#{affiliationHelper.createNewInstitute(callerEntity, caller, callerEntity.organizationType, null, null)}"
+            title="#{messages.addNewOrganizationHint}"
+            immediate="true"
+            oncomplete="PF('addInstituteDialog').show()"
+            update="addInstitute">
+            <ui:include src="/fragments/add-button-icon.xhtml" />
+          </p:commandLink>
+        </h:panelGrid>
+      </ui:decorate>
+    </h:panelGrid>
+
+    <h:panelGrid
+      id="departmentGrid"
+      columns="2"
+      columnClasses="rtdm, ltd"
+      rendered="#{callerEntity.organizationType.academic or caller eq 'institute'}">
+      <h:outputText
+        value="#{messages.department}"
+        title="#{messages.editProjectDepartmentHint}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <ui:param
+          name="componentId"
+          value="department" />
+        <h:panelGrid
+          columns="2"
+          columnClasses="rightpadding"
+          styleClass="noborder">
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="clearButtonRendered"
+              value="true" />
+            <ui:param
+              name="listContext"
+              value="departmentrequired" />
+            <ui:param
+              name="value"
+              value="#{callerEntity.department}" />
+            <o:methodParam
+              name="valueChangeListener"
+              value="#{callerEntity.departmentChanged}" />
+            <ui:param
+              name="ajaxChange"
+              value="true" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{affiliationHelper.getDepartments}" />
+            <o:methodParam
+              name="clearButtonListener"
+              value="#{callerEntity.clearButtonDepartment}" />
+            <ui:param
+              name="required"
+              value="#{not empty required ? required : true}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.name}" />
+            <ui:param
+              name="includeColumns"
+              value="/department/autocomplete-columns.xhtml" />
+            <ui:param
+              name="styleClass"
+              value="editWidthExtraLarge" />
+            <ui:param
+              name="inputStyleClass"
+              value="editWidthExtraLarge" />
+            <ui:param
+              name="attributes"
+              value="organizationType:#{callerEntity.organizationType.id},organization:#{callerEntity.organization.id}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="affiliationGrid, @([id$=financeSource]), @([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+          </ui:include>
+          <p:commandLink
+            rendered="#{not empty caller and (identityManager.hasCurrentUserRole('affiliationManager') or configuration.addAffiliationByUserEnabled) and (callerEntity.organizationType.extensible or not empty callerEntity.organization)}"
+            actionListener="#{affiliationHelper.createNewInstitute(callerEntity, caller, callerEntity.organizationType, callerEntity.organization, null)}"
+            title="#{messages.addNewDepartmentHint}"
+            immediate="true"
+            oncomplete="PF('addInstituteDialog').show()"
+            update="addInstitute">
+            <ui:include src="/fragments/add-button-icon.xhtml" />
+          </p:commandLink>
+        </h:panelGrid>
+      </ui:decorate>
+    </h:panelGrid>
+
+    <h:panelGrid
+      id="instituteGrid"
+      columns="2"
+      columnClasses="rtdm, ltd"
+      rendered="#{callerEntity.organizationType.academic and caller ne 'institute'}">
+      <h:outputText
+        value="#{messages.institute}"
+        title="#{messages.editProjectInstituteHint}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <ui:param
+          name="componentId"
+          value="institute" />
+        <h:panelGrid
+          columns="2"
+          columnClasses="rightpadding"
+          styleClass="noborder">
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="clearButtonRendered"
+              value="true" />
+            <ui:param
+              name="listContext"
+              value="instituterequired" />
+            <ui:param
+              name="value"
+              value="#{callerEntity.institute}" />
+            <o:methodParam
+              name="valueChangeListener"
+              value="#{callerEntity.instituteChanged}" />
+            <ui:param
+              name="ajaxChange"
+              value="true" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{affiliationHelper.getInstitutes}" />
+            <ui:param
+              name="required"
+              value="#{not empty required ? required : true}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.name}" />
+            <ui:param
+              name="includeColumns"
+              value="/institute/autocomplete-columns.xhtml" />
+            <ui:param
+              name="styleClass"
+              value="editWidthExtraLarge" />
+            <ui:param
+              name="inputStyleClass"
+              value="editWidthExtraLarge" />
+            <ui:param
+              name="attributes"
+              value="organizationType:#{callerEntity.organizationType.id},organization:#{callerEntity.organization.id},department:#{callerEntity.department.id}" />
+            <ui:param
+              name="itemSelectUpdate"
+              value="affiliationGrid, @([id$=financeSource]), @([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+          </ui:include>
+          <p:commandLink
+            rendered="#{not empty caller and (identityManager.hasCurrentUserRole('affiliationManager') or configuration.addAffiliationByUserEnabled) and (callerEntity.organizationType.extensible or not empty callerEntity.organization)}"
+            action="#{affiliationHelper.createNewInstitute(callerEntity, caller, callerEntity.organizationType, callerEntity.organization, callerEntity.department)}"
+            title="#{messages.addNewInstituteHint}"
+            immediate="true"
+            oncomplete="PF('addInstituteDialog').show()"
+            update="addInstitute">
+            <ui:include src="/fragments/add-button-icon.xhtml" />
+          </p:commandLink>
+        </h:panelGrid>
+      </ui:decorate>
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtdm, ltd"
+      rendered="#{callerEntity.organizationType.company}">
+      <h:outputText value="#{messages.company}" />
+      <h:panelGroup rendered="#{configuration.companyAutocompleteEnabled}">
+        <ui:decorate template="/fragments/required.xhtml">
+          <ui:param
+            name="componentId"
+            value="companyAutocomplete" />
+          <h:panelGrid
+            columns="2"
+            columnClasses="rightpadding"
+            styleClass="noborder">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="clearButtonRendered"
+                value="true" />
+              <ui:param
+                name="listContext"
+                value="companyrequired" />
+              <ui:param
+                name="value"
+                value="#{callerEntity.company}" />
+              <o:methodParam
+                name="valueChangeListener"
+                value="#{callerEntity.companyChanged}" />
+              <ui:param
+                name="ajaxChange"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{affiliationHelper.getCompanies}" />
+              <o:methodParam
+                name="clearButtonListener"
+                value="#{callerEntity.clearButtonCompany}" />
+              <ui:param
+                name="clearButtonSpecificUpdate"
+                value="@([id$=division]), @([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+              <ui:param
+                name="clearButtonSpecificTarget"
+                value="#{not empty clearButtonSpecificTarget ? clearButtonSpecificTarget : constants.EMPTY_STRING}, division" />
+              <ui:param
+                name="required"
+                value="#{not empty required ? required : true}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+              <ui:param
+                name="inputStyleClass"
+                value="editWidthExtraLarge" />
+              <ui:param
+                name="attributes"
+                value="organizationType:#{callerEntity.organizationType.id}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="affiliationGrid, @([id$=financeSource]), @([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <o:methodParam
+                name="clearListener"
+                value="#{callerEntity.clearButtonCompany}" />
+              <ui:param
+                name="clearUpdate"
+                value="@([id$=division]), @([id$=financeSourceVatNumber]), @([id$=billingAddressUzh])" />
+            </ui:include>
+            <p:commandLink
+              rendered="#{callerEntity.organizationType.extensible and (not empty caller and (identityManager.hasCurrentUserRole('affiliationManager') or configuration.addAffiliationByUserEnabled))}"
+              action="#{affiliationHelper.createNewCompany(callerEntity, caller, callerEntity.organizationType)}"
+              title="#{messages.addNewCompanyHint}"
+              immediate="true"
+              oncomplete="PF('addCompanyDialog').show()"
+              update="addCompany">
+              <ui:include src="/fragments/add-button-icon.xhtml" />
+            </p:commandLink>
+          </h:panelGrid>
+        </ui:decorate>
+      </h:panelGroup>
+
+      <h:panelGroup rendered="#{not configuration.companyAutocompleteEnabled}">
+        <ui:decorate template="/fragments/required.xhtml">
+          <ui:param
+            name="componentId"
+            value="company" />
+          <h:panelGrid
+            columns="2"
+            columnClasses="rightpadding"
+            styleClass="noborder">
+            <h:inputText
+              id="company"
+              value="#{callerEntity.companyName}"
+              required="true"
+              styleClass="editWidthExtraLarge" />
+          </h:panelGrid>
+        </ui:decorate>
+      </h:panelGroup>
+
+      <h:outputText value="#{messages.division}" />
+      <ui:decorate template="/fragments/edit.xhtml">
+        <ui:param
+          name="componentId"
+          value="division" />
+        <h:panelGrid
+          columns="2"
+          columnClasses="rightpadding"
+          styleClass="noborder">
+          <h:inputText
+            id="division"
+            value="#{callerEntity.divisionName}"
+            styleClass="editWidthExtraLarge" />
+        </h:panelGrid>
+      </ui:decorate>
+    </h:panelGrid>
+  </h:panelGroup>
+</ui:composition>

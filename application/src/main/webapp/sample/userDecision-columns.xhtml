@@ -1,0 +1,68 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{not empty showButtons}">
+    <ui:include src="/fragments/column/proceed.xhtml" />
+    <ui:include src="/fragments/column/exclude.xhtml" />
+    <ui:include src="/fragments/column/createReplacement.xhtml" />
+  </c:if>
+  <c:if test="#{not empty showEditButton}">
+    <ui:include src="/fragments/column/edit.xhtml">
+      <ui:param name="outcome" value="/sample/edit.xhtml" />
+    </ui:include>
+  </c:if>
+  <ui:include src="/fragments/column/tubeid.xhtml" />
+  <ui:include src="/fragments/column/name-trunc.xhtml" />
+  <ui:include src="/fragments/column/userDecision.xhtml" />
+  <ui:include src="/fragments/column/replaces.xhtml" />
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleStatusEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleQCTypeEnum" />
+  <p:columns
+    value="#{sampleAttributeEnums}"
+    var="sampleAttributeEnum"
+    visible="#{sampleAttributeEnum ne SampleAttributeEnum.TUBE_ID}"
+    exportable="#{sampleAttributeEnum ne SampleAttributeEnum.TUBE_ID}"
+    headerText="#{sampleAttributeEnum.labelWithUnit}"
+    sortable="#{not sampleAttributeEnum.annotationTypeMultiValued}"
+    sortBy="#{entity[sampleAttributeEnum.name]}">
+    <h:outputText
+      rendered="#{sampleAttributeEnum.booleanType}"
+      value="#{entity[sampleAttributeEnum.name]}" />
+    <h:outputText
+      rendered="#{sampleAttributeEnum.enumType and not empty entity[sampleAttributeEnum.name]}"
+      value="#{entity[sampleAttributeEnum.name].label}" />
+    <h:outputText
+      rendered="#{sampleAttributeEnum.annotationTypeMultiValued}"
+      value="#{collectionHelper.print(entity[sampleAttributeEnum.name])}" />
+    <h:outputText
+      rendered="#{sampleAttributeEnum.annotationTypeSingleValued}"
+      value="#{entity[sampleAttributeEnum.name].name}" />
+    <p:link
+      rendered="#{sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.enumType and not empty entity[sampleAttributeEnum.name]}"
+      outcome="/#{(sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT or sampleAttributeEnum eq SampleAttributeEnum.MULTIPLEX_KIT_2) ? 'multiplexkit' : sampleAttributeEnum.name.toLowerCase()}/show.xhtml"
+      value="#{entity[sampleAttributeEnum.name].name}">
+      <f:param
+        name="id"
+        value="#{entity[sampleAttributeEnum.name].id}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+    <h:outputText
+      rendered="#{not sampleAttributeEnum.booleanType and not sampleAttributeEnum.annotationType and not sampleAttributeEnum.selectionAndNotAnnotationType and not sampleAttributeEnum.localDateType and not sampleAttributeEnum.localDateTimeType}"
+      value="#{stringHelper.truncate(entity[sampleAttributeEnum.name], 40)}"
+      title="#{entity[sampleAttributeEnum.name]}" />
+    <h:outputText
+      rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateType}"
+      value="#{entity[sampleAttributeEnum.name]}" />
+    <h:outputText
+      rendered="#{not sampleAttributeEnum.annotationType and sampleAttributeEnum.localDateTimeType}"
+      value="#{entity[sampleAttributeEnum.name]}" />
+  </p:columns>
+  <ui:include src="/fragments/column/created.xhtml" />
+</ui:composition>

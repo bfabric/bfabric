@@ -1,0 +1,14 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <div>
+    <h:outputText
+      value="#{label}"
+      title="#{title}" />
+    <h:outputText
+      rendered="#{required}"
+      value="&#160;*"
+      title="#{messages.requiredHint}"
+      styleClass="required" />
+  </div>
+</ui:composition>

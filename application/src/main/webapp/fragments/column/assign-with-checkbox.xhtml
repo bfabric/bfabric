@@ -1,0 +1,106 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <c:if test="#{empty checkAllListener}">
+    <o:methodParam
+      name="checkAllListener"
+      value="#{dataTableHelper.markEntities}" />
+  </c:if>
+  <c:if test="#{empty checkListener}">
+    <o:methodParam
+      name="checkListener"
+      value="#{dataTableHelper.markEntity(entity, dataTableHelper.tableIdMarkedEntitiesMap[tableReference.clientId][entity], tableReference.clientId)}" />
+  </c:if>
+  <c:if test="#{empty uncheckAllListener}">
+    <o:methodParam
+      name="uncheckAllListener"
+      value="#{dataTableHelper.markEntities}" />
+  </c:if>
+
+  <c:if test="#{not empty checkUpdate}">
+    <c:if test="#{empty checkAllUpdate}">
+      <ui:param
+        name="checkAllUpdate"
+        value="#{checkUpdate}" />
+    </c:if>
+    <c:if test="#{empty uncheckAllUpdate}">
+      <ui:param
+        name="uncheckAllUpdate"
+        value="#{checkUpdate}" />
+    </c:if>
+  </c:if>
+
+  <c:if test="#{showColumns.contains('selectcheckBoxColumn')}">
+    <p:column
+      id="#{constants.SELECT_CHECK_BOX_COLUMN}"
+      exportable="false">
+      <f:facet name="header">
+        <h:panelGrid
+          columns="1"
+          styleClass="nospace noborder">
+          <h:outputText value="#{messages.select}" />
+          <h:panelGrid
+            columns="2"
+            styleClass="select-icon">
+            <p:commandLink
+              actionListener="#{checkAllListener}"
+              title="#{not empty checkAllHint ? checkAllHint : tableReference.lazy ? messages.checkAllPageHint : messages.checkAllHint}"
+              immediate="true"
+              process="@this, #{checkAllProcess}"
+              update="@this, @([id$=#{tableContext}#{tableType}#{constants.TABLE}]), #{checkAllUpdate}"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <f:attribute
+                name="#{constants.TABLE_IS_SELECT}"
+                value="true" />
+              <i class="far fa-check-square" />
+            </p:commandLink>
+            <p:commandLink
+              actionListener="#{uncheckAllListener}"
+              title="#{not empty uncheckAllHint ? uncheckAllHint : tableReference.lazy ? messages.uncheckAllPageHint : messages.uncheckAllHint}"
+              immediate="true"
+              process="@this, #{uncheckAllProcess}"
+              update="@this, #{uncheckAllUpdate}"
+              oncomplete="fixOversize();">
+              <f:attribute
+                name="#{constants.TABLE_CLIENT_ID}"
+                value="#{tableReference.clientId}" />
+              <f:attribute
+                name="#{constants.TABLE_IS_SELECT}"
+                value="false" />
+              <i class="far fa-square" />
+            </p:commandLink>
+          </h:panelGrid>
+        </h:panelGrid>
+      </f:facet>
+      <h:selectBooleanCheckbox
+        id="#{constants.SELECT_CHECK_BOX}#{constants.INPUT}"
+        value="#{not empty checkboxValue ? checkboxValue : dataTableHelper.tableIdMarkedEntitiesMap[tableReference.clientId][entity]}"
+        disabled="#{not empty checkboxDisabled ? checkboxDisabled : dataTableHelper.tableIdSelectedEntities[tableReference.clientId].contains(entity)}"
+        style="width: 100%">
+        <!-- TODO: Evaluate if the default listener is sufficient -->
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          listener="#{checkListener}"
+          process="@this, #{checkProcess}"
+          update="@this, #{checkUpdate}"
+          oncomplete="fixOversize();" />
+        <!--
+        listener="#{not empty checkListener ? checkListener : dataTableHelper.markEntity(entity, dataTableHelper.tableIdMarkedEntitiesMap[tableReference.clientId][entity], tableReference.clientId)}"
+        -->
+        <f:attribute
+          name="#{constants.TABLE_CLIENT_ID}"
+          value="#{tableReference.clientId}" />
+      </h:selectBooleanCheckbox>
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.service}">
+    <h:outputText value="#{messages.service}" />
+    <h:panelGrid
+      columns="2"
+      styleClass="noborder rightpadding">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="entityValue"
+          value="#{instance.serviceName}" />
+        <ui:param
+          name="instance"
+          value="#{instance.service}" />
+      </ui:include>
+      <h:panelGroup rendered="#{instance.serviceNameChanged or instance.serviceCodeChanged}">
+        <i
+          class="fas fa-info-circle warn"
+          title="#{messages.serviceNameOrCodeChangedHint}" />
+      </h:panelGroup>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

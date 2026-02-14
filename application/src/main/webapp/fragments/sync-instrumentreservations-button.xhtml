@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:form>
+    <p:commandButton
+      ajax="false"
+      actionListener="#{callerEntity.exportAndDownloadIcs(dataTableHelper.selectedEntities)}"
+      value="#{messages.exportICSExport}"
+      title="#{messages.exportICSHint}" />
+  </h:form>
+</ui:composition>

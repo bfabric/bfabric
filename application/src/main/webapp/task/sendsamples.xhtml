@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-order-items.xhtml">
+    <ui:param
+      name="tasks"
+      value="#{messages.taskOrderSendSample}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskOrderSendSampleHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{orderList.sendOrderSampleTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{configuration.orderEnabled and sidebarHelper.isTab('sendsamples')}" />
+  </ui:include>
+</ui:composition>

@@ -1,0 +1,13 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <h:panelGroup>
+    <c:if test="#{not entity.managed}">
+      <h:outputText value="#{messages.create} #{entity.classLabel}" />
+    </c:if>
+    <c:if test="#{entity.managed}">
+      <h:outputText value="#{messages.edit}  #{entity.classLabel} : #{entity.displayName}" />
+    </c:if>
+  </h:panelGroup>
+</ui:composition>

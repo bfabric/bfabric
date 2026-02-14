@@ -1,0 +1,8 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="instance" type="org.bfabric.entity.Offer"-->
+  <p:link rendered="#{instance.exportable}" href="#{instance.getReportPDFLink('offer-fop')}" title="#{messages.pdfExport}">
+    <i class="fas fa-file-download download-icon #{buttonStyleClass}" />
+  </p:link>
+</ui:composition>

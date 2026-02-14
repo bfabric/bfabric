@@ -1,0 +1,15 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.price}">
+    <h:outputText value="#{messages.price}" />
+    <h:panelGroup>
+      <h:outputText value="#{instance.price}">
+        <f:convertNumber pattern="0.00" />
+      </h:outputText>
+      <h:outputText rendered="#{not empty instance.currency and not empty instance.currency.code}" value="&#160;#{instance.currency.code}" />
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

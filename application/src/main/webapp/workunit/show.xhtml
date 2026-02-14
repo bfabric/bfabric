@@ -1,0 +1,50 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{workunitManager}" />
+
+  <ui:decorate template="/fragments/sidebar/show.xhtml">
+    <ui:define name="pageTitleExtension">
+      <ui:include src="/fragments/status-label.xhtml" />
+      <h:panelGroup rendered="#{workunit.hasJunkResources()}">
+        <i class="fas fa-exclamation-circle warning" title="#{messages.workunitHasJunkResourcesHint}" />
+      </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="pageTitleSuffix">
+      <c:if test="#{workunit.downloadManagerDownloadButtonRendered}">
+        <p:link
+          outcome="/fragments/download-jnlp.xhtml"
+          title="#{messages.downloadWorkunitDownloadManagerHint} #{messages.downloadableResourceHint}">
+          <i class="fas fa-download download-icon icon-button-padding" />
+          <f:param
+            name="workunitId"
+            value="#{workunit.id}" />
+        </p:link>
+      </c:if>
+      <c:if test="#{workunit.downloadButtonRendered}">
+        <p:commandLink
+          title="#{messages.downloadWorkunitHint}  #{messages.downloadableResourceHint}"
+          onclick="remoteGetJson([{name: 'entity', value: '#{instance}'}])">
+          <i class="fas fa-cloud-download-alt download-icon icon-button-padding" />
+        </p:commandLink>
+        <p:remoteCommand
+          name="remoteGetJson"
+          action="#{jsonService.getJson}"
+          oncomplete="download_files(args.json)" />
+      </c:if>
+      <c:if test="#{workunit.downloadManagerDownloadButtonRendered or workunit.downloadButtonRendered}">
+        <a
+          href="#{configuration.urlUserManual}?page=WorkunitDownload"
+          title="#{messages.downloadHelpLink}"
+          target="_blank"
+          rel="noopener"><i class="far fa-question-circle download-icon icon-button-padding" /></a>
+      </c:if>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

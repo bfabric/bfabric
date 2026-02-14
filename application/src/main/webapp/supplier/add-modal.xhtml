@@ -1,0 +1,278 @@
+<!--
+    This modal panel is used to create a new supplier.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <!--@elvariable id="containerModalSupplier" type="org.bfabric.entity.Supplier"-->
+  <c:set
+    value="#{manager.modalSupplier}"
+    var="containerModalSupplier"
+    scope="session" />
+  <p:dialog
+    id="addSupplierPanel"
+    widgetVar="addSupplierDialog"
+    dynamic="true"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText
+        id="addSupplierHeader"
+        value="#{messages.createSupplier}" />
+    </f:facet>
+    <h:form id="addSupplier">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.name}" />
+        <ui:decorate template="/fragments/required.xhtml">
+          <h:inputText
+            id="#{constants.NAME}"
+            value="#{containerModalSupplier.name}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.companyId}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <p:inputMask
+            id="companyId"
+            value="#{containerModalSupplier.companyId}"
+            title="#{messages.companyIdHint}"
+            mask="aaa-999.999.999"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.phone}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:panelGrid
+            id="phone"
+            columns="8"
+            styleClass="noborder-rightpadding">
+            <h:outputText value="#{messages.countryCode}" />
+            <h:selectOneMenu
+              id="phoneCountryCode"
+              value="#{containerModalSupplier.phoneNumber.countryCode}"
+              styleClass="width-auto">
+              <f:selectItems
+                var="item"
+                value="#{countryList.countryDialingCodes}"
+                itemLabel="#{item}" />
+            </h:selectOneMenu>
+            <h:outputText value="#{messages.areaCode}" />
+            <p:inputMask
+              id="phoneAreaCode"
+              value="#{containerModalSupplier.phoneNumber.areaCode}"
+              mask="9[999]"
+              size="4" />
+            <p:message
+              for="phoneAreaCode"
+              styleClass="errorMessage" />
+            <h:outputText value="#{messages.localNumber}" />
+            <p:inputMask
+              id="phoneLocalNumber"
+              value="#{containerModalSupplier.phoneNumber.localNumber}"
+              mask="9[9999999]"
+              size="8" />
+            <p:message
+              for="phoneLocalNumber"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.email}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="email"
+            value="#{containerModalSupplier.email}"
+            validator="#{containerModalSupplier.validateEmail}"
+            styleClass="editWidthExtraLarge">
+            <f:attribute
+              name="supplierEmail"
+              value="supplierEmail" />
+          </h:inputText>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.street}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="address"
+            value="#{containerModalSupplier.address.street}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.zip}" title="#{messages.zipHint}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="zip"
+            value="#{containerModalSupplier.address.zip}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.city}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="city"
+            value="#{containerModalSupplier.address.city}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.country}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="listContext"
+              value="country" />
+            <ui:param
+              name="value"
+              value="#{containerModalSupplier.address.country}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{countryService.getCountriesByIdOrNameFiltered}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.displayName}" />
+          </ui:include>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.address} #{messages.room}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="room"
+            value="#{containerModalSupplier.address.room}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.url}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="url"
+            value="#{containerModalSupplier.url}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.contactTitle}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="contactTitle"
+            value="#{containerModalSupplier.contactTitle}"
+            styleClass="editWidthExtraLarge">
+            <f:selectItem itemLabel="" />
+            <f:selectItem itemValue="Dr." />
+            <f:selectItem itemValue="Prof. Dr." />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.contactSalutation}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneMenu
+            id="contactSalutation"
+            value="#{containerModalSupplier.contactSalutation}"
+            styleClass="editWidthExtraLarge">
+            <f:selectItem itemLabel="" />
+            <f:selectItem itemValue="Mr" />
+            <f:selectItem itemValue="Ms" />
+          </h:selectOneMenu>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.contactFirstName}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="contactFirstName"
+            value="#{containerModalSupplier.contactFirstName}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.contactLastName}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="contactLastName"
+            value="#{containerModalSupplier.contactLastName}"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.contactPhone}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:panelGrid
+            id="contactPhone"
+            columns="8"
+            styleClass="noborder-rightpadding">
+            <h:outputText value="#{messages.countryCode}" />
+            <h:selectOneMenu
+              id="contactPhoneCountryCode"
+              value="#{containerModalSupplier.contactPhoneNumber.countryCode}"
+              styleClass="width-auto">
+              <f:selectItems
+                var="item"
+                value="#{countryList.countryDialingCodes}"
+                itemLabel="#{item}" />
+            </h:selectOneMenu>
+            <h:outputText value="#{messages.areaCode}" />
+            <p:inputMask
+              id="contactPhoneAreaCode"
+              value="#{containerModalSupplier.contactPhoneNumber.areaCode}"
+              mask="9[999]"
+              size="4" />
+            <p:message
+              for="phoneAreaCode"
+              styleClass="errorMessage" />
+            <h:outputText value="#{messages.localNumber}" />
+            <p:inputMask
+              id="contactPhoneLocalNumber"
+              value="#{containerModalSupplier.contactPhoneNumber.localNumber}"
+              mask="9[9999999]"
+              size="8" />
+            <p:message
+              for="phoneLocalNumber"
+              styleClass="errorMessage" />
+          </h:panelGrid>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.contactEmail}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputText
+            id="contactEmail"
+            value="#{containerModalSupplier.contactEmail}"
+            validator="#{containerModalSupplier.validateEmail}"
+            styleClass="editWidthExtraLarge">
+            <f:attribute
+              name="contactEmail"
+              value="contactEmail" />
+          </h:inputText>
+        </ui:decorate>
+
+        <h:outputText value="#{messages.description}" />
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:inputTextarea
+            id="description"
+            value="#{containerModalSupplier.description}"
+            rows="3"
+            styleClass="editWidthExtraLarge" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          id="saveSupplierButton"
+          action="#{manager.saveNewSupplier}"
+          value="#{messages.save}"
+          global="true"
+          update="addSupplier, @([id$=supplierautocomplete])"
+          oncomplete="hideDialogOnSuccess(args, 'addSupplierDialog')" />
+        <p:commandButton
+          id="cancelSupplierButton"
+          action="cancel"
+          value="#{messages.cancel}"
+          immediate="true"
+          global="false"
+          oncomplete="PF('addSupplierDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

@@ -1,0 +1,97 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.serviceAreaId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.serviceAreaName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[0]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[1]}" />
+    <ui:param
+      name="valueClass"
+      value="servicearea" />
+  </ui:include>
+  <p:column
+    sortBy="#{entity[2]}"
+    filterBy="#{entity[2]}"
+    headerText="#{messages.serviceArea} #{messages.enabled}">
+    <ui:include src="/fragments/boolean-filter.xhtml">
+      <ui:param
+        name="idPrefix"
+        value="serviceareaEnabled" />
+    </ui:include>
+    <h:outputText value="&#160;#{stringHelper.toYesNo(entity[2])}" />
+  </p:column>
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.serviceTypeId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.serviceTypeName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[3]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[4]}" />
+    <ui:param
+      name="valueClass"
+      value="servicetype" />
+  </ui:include>
+  <p:column
+    sortBy="#{entity[5]}"
+    filterBy="#{entity[5]}"
+    headerText="#{messages.serviceType} #{messages.enabled}">
+    <ui:include src="/fragments/boolean-filter.xhtml">
+      <ui:param
+        name="idPrefix"
+        value="servicetypeEnabled" />
+    </ui:include>
+    <h:outputText value="&#160;#{stringHelper.toYesNo(entity[5])}" />
+  </p:column>
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.serviceId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.serviceName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[6]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[7]}" />
+    <ui:param
+      name="valueClass"
+      value="service" />
+  </ui:include>
+  <p:column
+    sortBy="#{entity[8]}"
+    filterBy="#{entity[8]}"
+    headerText="#{messages.service} #{messages.enabled}">
+    <ui:include src="/fragments/boolean-filter.xhtml">
+      <ui:param
+        name="idPrefix"
+        value="serviceEnabled" />
+    </ui:include>
+    <h:outputText value="&#160;#{stringHelper.toYesNo(entity[8])}" />
+  </p:column>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.services}" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+  </ui:include>
+</ui:composition>

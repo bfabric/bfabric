@@ -1,0 +1,45 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+
+      <h:outputText value="#{messages.vote}" />
+      <h:outputText
+        value="#{messages[review.approvedMarker]}"
+        styleClass="#{review.approvedMarker}" />
+
+      <ui:include src="/fragments/details/project.xhtml">
+        <f:param
+          name="tab"
+          value="reviews" />
+      </ui:include>
+
+      <ui:include src="/fragments/details/comment.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <p:button
+        outcome="/review/edit.xhtml"
+        value="#{messages.edit}"
+        rendered="#{review.updatable}">
+        <f:param
+          name="id"
+          value="#{review.id}" />
+        <f:param
+          name="projectId"
+          value="#{review.project.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/delete.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

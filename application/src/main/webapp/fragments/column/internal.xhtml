@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('internal')}">
+    <p:column
+      field="#{fieldPrefix}internal"
+      headerText="#{messages.internal}"
+      filterMatchMode="exact">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="internal" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.internal)}"
+        styleClass="#{stringHelper.toGreenRed(!entity.internal)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,15 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('proceed')}">
+    <p:column exportable="false">
+      <f:facet name="header">
+        <p:commandButton value="#{messages.proceedAll}" action="#{orderManager.proceedAll()}" update="@form,#{update}" styleClass="inline">
+          <ui:include src="/fragments/confirm-dialog-proceed-all.xhtml" />
+        </p:commandButton>
+      </f:facet>
+      <p:commandButton value="#{messages.proceed}" action="#{orderManager.proceed(entity)}" update="@form,#{update}" styleClass="inline" />
+    </p:column>
+  </c:if>
+</ui:composition>

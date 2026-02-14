@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column headerText="#{messages.id}">
+    <h:outputText value="#{item.id}" />
+  </p:column>
+  <p:column headerText="#{messages.name}">
+    <h:outputText value="#{item.name}" />
+  </p:column>
+  <p:column headerText="#{messages.serviceType}">
+    <h:outputText value="#{item.serviceType.name}" />
+  </p:column>
+  <p:column headerText="#{messages.serviceArea}">
+    <h:outputText value="#{item.serviceType.serviceArea.name}" />
+  </p:column>
+</ui:composition>

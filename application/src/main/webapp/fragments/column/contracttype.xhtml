@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('contractType')}">
+    <p:column
+      field="#{fieldPrefix}contractType.name"
+      headerText="#{messages.contractType}"
+      filterMatchMode="exact">
+      <f:facet name="filter">
+        <h:selectOneMenu
+          id="contractType"
+          onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems
+            value="#{contractTypeList.resultListOrderByName}"
+            var="item"
+            itemValue="#{item.name}"
+            itemLabel="#{item.name}" />
+        </h:selectOneMenu>
+      </f:facet>
+    </p:column>
+  </c:if>
+</ui:composition>

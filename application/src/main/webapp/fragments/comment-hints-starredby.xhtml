@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="commentEntity" type="org.bfabric.entity.Comment"-->
+  <p:commandLink
+    id="starred"
+    actionListener="#{commentHelper.switchStarredBy(commentEntity, currentUser)}"
+    title="#{commentEntity.starredBy.contains(currentUser) ? messages.removeFromFavorites : messages.addToFavorites}"
+    immediate="true"
+    process="starred"
+    update="starred">
+    <h:panelGroup rendered="#{commentEntity.starredBy.contains(currentUser)}">
+      <i class="fas fa-star pink" />
+    </h:panelGroup>
+    <h:panelGroup rendered="#{not commentEntity.starredBy.contains(currentUser)}">
+      <i class="far fa-star" />
+    </h:panelGroup>
+  </p:commandLink>
+</ui:composition>

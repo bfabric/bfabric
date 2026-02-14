@@ -1,0 +1,17 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.welcomeBack}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <div>
+      <p>Dear #{currentUser.name},</p>
+      <p>welcome back. Your email is currently inactive because emails sent to your registered address were not accepted.</p>
+      <p>Please update your email address to restore full access: <p:link outcome="/user/edit.xhtml" value="edit user details"><f:param name="id" value="#{currentUser.id}" /></p:link>.</p>
+    </div>
+  </ui:define>
+</ui:composition>

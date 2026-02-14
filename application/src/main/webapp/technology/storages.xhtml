@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('storages') and not empty technology.storages}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="storage" />
+      <ui:param
+        name="tableContext"
+        value="#{technology.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{technology.storages}" />
+      <ui:param
+        name="hideColumns"
+        value="technology" />
+    </ui:include>
+  </c:if>
+</ui:composition>

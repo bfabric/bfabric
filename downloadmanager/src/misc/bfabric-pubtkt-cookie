@@ -1,0 +1,75 @@
+#!/bin/bash
+
+if [[ -r "/etc/bfabric/bfabric-storage-server.conf" ]]; then
+   . "/etc/bfabric/bfabric-storage-server.conf"
+fi
+
+function bfab_log() {
+    logger -e -t bfabric -p user.info -- "$*"
+}
+
+function bfab_die() {
+    logger -e -t bfabric -p user.info -- "$*"
+    printf "%s\n" "$@" >&2
+    exit 1
+}
+
+function bfab_isnumber() {
+    BFABRET=""
+    IFS="," read -r -a tokens <<<"$1"
+    for t in "${tokens[@]}"
+    do
+        if [[ ${t} =~ ^([[:digit:]]+)$ ]]; then
+            BFABRET="${BFABRET}${BFABRET:+,}${BASH_REMATCH[1]}"
+        fi
+    done
+    [[ -n "${BFABRET}" ]]
+}
+
+# first argument is the username
+if [[ -n "$1" ]]; then
+    _UID="${1}"
+else
+    bfab_die "Username is missing"
+fi
+
+# second argument are the comma separated tokens
+if bfab_isnumber "$2"; then
+    _TOKENS="${BFABRET}"
+else
+    bfab_die "Tokens (csv list) are missing: $2"
+fi
+
+# check for openssl
+if ! command -v openssl > /dev/null ; then
+    bfab_die "openssl - command not found"
+fi
+: ${BFABRIC_DIGEST:=sha1}
+# by default a cookie is valid for 1 day
+: ${BFABRIC_VALIDUNTIL:=tomorrow}
+
+# check for the private key
+: ${BFABRIC_PRIVKEY:=privkey.pem}
+if ! [[ -r "${BFABRIC_PRIVKEY}" ]]; then
+    bfab_die "private key file not found: ${BFABRIC_PRIVKEY}"
+fi
+
+# same as  in apache pubtkt config TKTAuthCookieName
+: ${BFABRIC_TKTNAME:=auth_cookie}
+# generate the time in seconds the cookie is valid
+_VALIDUNTIL="$( date --date="${BFABRIC_VALIDUNTIL}" +%s )"
+_GRACEPERIOD=${_VALIDUNTIL}
+_UDATA=""
+
+# generate the cookie data
+_COOKIE="uid=${_UID};validuntil=${_VALIDUNTIL};graceperiod=${_GRACEPERIOD};tokens=${_TOKENS};udata=${_UDATA}"
+bfab_log "${_COOKIE}"
+# sign it
+_SIG="$( echo -n "${_COOKIE}" | openssl  dgst -${BFABRIC_DIGEST} -sign "${BFABRIC_PRIVKEY}" | openssl enc -base64 -A )"
+
+if [[ -n "${_SIG}" ]]; then
+# echo to stdout
+    printf "%s=%s;sig=%s\n" "${BFABRIC_TKTNAME}" "${_COOKIE}" "${_SIG}"
+else
+    bfab_die "Failed to generate cookie."
+fi

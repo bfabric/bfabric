@@ -1,0 +1,25 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+  <p:column>
+    <f:facet name="header">
+      <h:panelGrid styleClass="nowrap textleft">
+        <h:outputText value="#{messages.position}" />
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{messages.type}" />
+        <h:outputText value="#{messages.required}" />
+      </h:panelGrid>
+    </f:facet>
+  </p:column>
+  <p:columns value="#{datasetTemplate.datasetTemplateAttributes}" var="datasetTemplateAttributeVar">
+    <f:facet name="header">
+      <h:panelGrid>
+        <h:outputText value="#{datasetTemplateAttributeVar.position}" />
+        <h:outputText value="#{datasetTemplateAttributeVar.name}" />
+        <h:outputText value="#{datasetTemplateAttributeVar.type}" />
+        <h:outputText value="#{datasetTemplateAttributeVar.required}" />
+      </h:panelGrid>
+    </f:facet>
+  </p:columns>
+</ui:composition>

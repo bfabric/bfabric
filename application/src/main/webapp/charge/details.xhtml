@@ -1,0 +1,59 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml">
+        <ui:param
+          name="showOldId"
+          value="#{not empty charge.oldId and identityManager.hasCurrentUserRole('bookingManager')}" />
+      </ui:include>
+      <ui:include src="/fragments/details/instrumentreservations.xhtml" />
+      <ui:include src="/fragments/details/container.xhtml" />
+      <ui:include src="/fragments/details/orderitems.xhtml">
+        <ui:param
+          name="style"
+          value="true" />
+      </ui:include>
+      <ui:include src="/fragments/details/samples.xhtml" />
+      <ui:include src="/fragments/details/servicename.xhtml" />
+      <ui:include src="/fragments/details/servicecode.xhtml" />
+      <ui:include src="/fragments/details/date.xhtml" />
+      <ui:include src="/fragments/details/charger.xhtml" />
+      <ui:include src="/fragments/details/billingorganizationtypename.xhtml" />
+      <ui:include src="/fragments/details/total.xhtml" />
+      <ui:include src="/fragments/details/accounted.xhtml" />
+      <ui:include src="/fragments/details/notaccounted.xhtml" />
+      <ui:include src="/fragments/details/basicprice.xhtml" />
+      <ui:include src="/fragments/details/additionalprice.xhtml" />
+      <ui:include src="/fragments/details/price.xhtml" />
+      <ui:include src="/fragments/details/discountedprice.xhtml" />
+      <ui:include src="/fragments/details/discount.xhtml" />
+      <ui:include src="/fragments/details/containerdiscount.xhtml" />
+      <ui:include src="/fragments/details/taxtypename.xhtml" />
+      <ui:include src="/fragments/details/billable.xhtml" />
+      <ui:include src="/fragments/details/prepayment.xhtml" />
+      <ui:include src="/fragments/details/booking.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/notes.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="5"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-clone-delete-list.xhtml" />
+    </h:panelGrid>
+    <h:panelGrid columns="1" styleClass="action" rendered="#{empty charge.booking and charge.bookable and charge.container.bookingAddable}">
+      <p:button outcome="/booking/edit.xhtml" value="#{messages.create} #{messages.booking}" rendered="#{charge.container.bookingAddable}">
+        <f:param name="containerId" value="#{charge.container.id}" />
+        <f:param name="chargeId" value="#{charge.id}" />
+      </p:button>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-order-items.xhtml">
+    <ui:param
+      name="tasks"
+      value="#{messages.taskOrderSubmit}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskOrderSubmitHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{orderList.submitOrderTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{configuration.orderEnabled and sidebarHelper.isTab('submitorders')}" />
+  </ui:include>
+</ui:composition>

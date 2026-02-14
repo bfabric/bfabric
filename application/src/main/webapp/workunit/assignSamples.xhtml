@@ -1,0 +1,108 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(workunit.editable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.assignSamples}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="assignSamples">
+      <p:dataTable
+        id="resources"
+        value="#{workunit.resourcesAsList}"
+        var="entity">
+        <p:column headerText="#{messages.resources}">
+          <h:outputText
+            value="#{stringHelper.truncate(entity.relativePath)}"
+            title="#{entity.uri}" />
+        </p:column>
+        <p:column id="sampleColumn">
+          <f:facet name="header">
+            <h:panelGrid
+              columns="2"
+              styleClass="nospace noborder">
+              <h:outputText value="#{messages.samples}" />
+              <span />
+              <h:selectOneMenu
+                id="sampleForAll"
+                value="#{resourceHelper.sampleForAllResources}"
+                title="#{messages.setSampleForAllResourcesHint}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItem
+                  itemLabel="#{messages.setValueForColumn}"
+                  itemDisabled="true"
+                  noSelectionOption="true" />
+                <f:selectItems
+                  value="#{workunit.container.samples}"
+                  var="item"
+                  itemLabel="#{item.displayName}" />
+                <p:ajax
+                  event="change"
+                  listener="#{resourceHelper.setValueForAllResources(workunit.resources)}"
+                  update="assignSamples:resources"
+                  oncomplete="document.getElementById('assignSamples:resources:sampleForAll').value=''" />
+              </h:selectOneMenu>
+              <p:commandButton
+                action="#{resourceHelper.clearSelectedResource(false)}"
+                value="#{empty resourceHelper.sampleForAllResources ? messages.assign : messages.replace}"
+                title="#{messages.assignSampleHint}"
+                immediate="true"
+                oncomplete="PF('assignSampleModalDialog').show()"
+                update="assignSampleModalPanel"
+                styleClass="noleftborderselect" />
+            </h:panelGrid>
+          </f:facet>
+          <h:panelGrid
+            columns="2"
+            styleClass="nospace noborder">
+            <h:selectOneMenu
+              id="sample"
+              value="#{entity.sample}"
+              required="true"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{workunit.container.samples}"
+                var="item"
+                itemLabel="#{item.displayName}" />
+            </h:selectOneMenu>
+            <p:commandButton
+              action="#{resourceHelper.setSelectedResource(entity)}"
+              value="#{empty entity.sample ? messages.assign : messages.replace}"
+              title="#{messages.assignSampleHint}"
+              immediate="true"
+              oncomplete="PF('assignSampleModalDialog').show()"
+              update="assignSampleModalPanel"
+              styleClass="noleftborderselect" />
+          </h:panelGrid>
+        </p:column>
+      </p:dataTable>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{workunitManager.assignSamples}"
+          value="#{messages.save}"
+          update="assignSamples" />
+        <p:commandButton
+          action="#{workunitManager.cancel}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+
+    <ui:include src="/sample/assign-modal.xhtml" />
+  </ui:define>
+</ui:composition>

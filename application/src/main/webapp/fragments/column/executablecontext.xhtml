@@ -1,0 +1,22 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ExecutableContextEnum" />
+  <c:if test="#{not hideColumns.contains('executable')}">
+    <p:column
+      field="#{fieldPrefix}executable.context"
+      headerText="#{messages.executable} #{messages.context}"
+      filterMatchMode="exact">
+      <f:facet name="filter">
+        <h:selectOneMenu onchange="PF('#{tableContext}#{tableType}').filter()">
+          <f:selectItem itemLabel="#{messages.noFilter}" />
+          <f:selectItems value="#{ExecutableContextEnum}" />
+        </h:selectOneMenu>
+      </f:facet>
+    </p:column>
+  </c:if>
+</ui:composition>

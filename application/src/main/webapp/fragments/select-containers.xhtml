@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:panelGrid
+    id="edit-container"
+    columns="2"
+    columnClasses="rtdm, ltd">
+    <h:outputText value="#{not empty label ? label : messages.containers}" title="#{hint}" />
+    <ui:decorate template="#{required or requiredTemplate ? '/fragments/required.xhtml' : '/fragments/edit.xhtml'}">
+      <ui:include src="/fragments/autocomplete.xhtml">
+        <ui:param
+          name="listContext"
+          value="containers" />
+        <ui:param
+          name="value"
+          value="#{value}" />
+        <ui:param
+          name="multiple"
+          value="true" />
+        <o:methodParam
+          name="completeMethod"
+          value="#{completeMethod}" />
+        <ui:param
+          name="itemLabel"
+          value="#{item.entityName} #{item.id}" />
+        <ui:param
+          name="includeColumns"
+          value="/container/autocomplete-columns.xhtml" />
+        <ui:param
+          name="scrollHeight"
+          value="588" />
+      </ui:include>
+    </ui:decorate>
+  </h:panelGrid>
+</ui:composition>

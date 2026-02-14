@@ -1,0 +1,123 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.order} #{messages.count}" />
+    <ui:param
+      name="value"
+      value="#{entity[1]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.submittedToAccepted} (AVG)" />
+    <ui:param
+      name="value"
+      value="#{entity[2]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.submittedToAccepted} (MAX)" />
+    <ui:param
+      name="value"
+      value="#{entity[3]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.acceptedToArrived} (AVG)" />
+    <ui:param
+      name="value"
+      value="#{entity[4]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.acceptedToArrived} (MAX)" />
+    <ui:param
+      name="value"
+      value="#{entity[5]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.arrivedToProcessed} (AVG)" />
+    <ui:param
+      name="value"
+      value="#{entity[6]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.arrivedToProcessed} (MAX)" />
+    <ui:param
+      name="value"
+      value="#{entity[7]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.processedToAnalyzed} (AVG)" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.processedToAnalyzed} (MAX)" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.analyzedToFinished} (AVG)" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.analyzedToFinished} (MAX)" />
+    <ui:param
+      name="value"
+      value="#{entity[11]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.finishedToClosed} (AVG)" />
+    <ui:param
+      name="value"
+      value="#{entity[12]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.finishedToClosed} (MAX)" />
+    <ui:param
+      name="value"
+      value="#{entity[13]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/numeric-1.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.submittedToClosed} (AVG)" />
+    <ui:param
+      name="value"
+      value="#{entity[14]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.submittedToClosed} (MAX)" />
+    <ui:param
+      name="value"
+      value="#{entity[15]}" />
+  </ui:include>
+</ui:composition>

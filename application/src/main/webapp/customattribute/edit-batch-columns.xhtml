@@ -1,0 +1,90 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:forEach
+    items="#{manager.customAttributeColumns}"
+    var="column">
+    <p:column
+      id="#{column.id}#{constants.COLUMN}"
+      style="text-align:left">
+      <f:facet name="header">
+        <h:inputText
+          id="#{column.id}#{constants.HEADER_INPUT}"
+          valueChangeListener="#{manager.headerInputChanged}"
+          title="#{messages.setValueForColumnHint}"
+          onblur="this.value=''"
+          pt:placeholder="#{messages.setValueForColumn}">
+          <p:ajax
+            event="change"
+            partialSubmit="true"
+            resetValues="true" />
+        </h:inputText>
+        <p:commandLink
+          action="#{manager.addAttributeColumn}"
+          title="#{messages.addCustomAttributeHint}"
+          oncomplete="fixOversize();"
+          process="@this"
+          update="@form"
+          styleClass="font-larger">
+          <i class="fas fa-plus-square" />
+        </p:commandLink>
+        <div>
+          <h:inputText
+            id="#{column.id}#{constants.NAME_INPUT}"
+            valueChangeListener="#{manager.columnNameChanged}"
+            value="#{column.name}"
+            title="#{messages.setCustomAttributeNameHint}"
+            maxlength="32"
+            pt:placeholder="#{messages.setAttributeName}">
+            <f:attribute
+              name="column"
+              value="#{column}" />
+            <p:ajax
+              event="change"
+              partialSubmit="true"
+              global="false" />
+          </h:inputText>
+          <h:message
+            id="#{column.id}#{constants.MESSAGE}"
+            for="#{column.id}#{constants.NAME_INPUT}"
+            styleClass="errorMessageField" />
+          <p:commandLink
+            action="#{manager.removeAttributeColumn(column)}"
+            title="#{messages.removeCustomAttributeHint}"
+            oncomplete="fixOversize();"
+            process="@this"
+            update="@form"
+            styleClass="font-larger">
+            <i class="fas fa-minus-square" />
+            <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+          </p:commandLink>
+          <p:commandLink
+            rendered="#{column.isMovable(manager.lastColumnPosition)}"
+            action="#{manager.moveColumn(column)}"
+            title="#{messages.moveAttributeHint}"
+            oncomplete="fixOversize();"
+            process="@this"
+            update="@form"
+            global="false"
+            styleClass="font-larger">
+            <i class="fas fa-caret-square-right" />
+          </p:commandLink>
+        </div>
+      </f:facet>
+      <h:inputText
+        id="#{column.id}#{constants.INPUT}"
+        valueChangeListener="#{manager.getCustomAttribute(entity, column).customAttributeValueChanged}"
+        value="#{manager.getCustomAttribute(entity, column).value}"
+        styleClass="inline-input">
+        <p:ajax
+          event="change"
+          partialSubmit="true"
+          global="false" />
+      </h:inputText>
+    </p:column>
+  </c:forEach>
+</ui:composition>

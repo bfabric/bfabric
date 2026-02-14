@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGroup rendered="#{sidebarHelper.isTab('reassignusergroupsupervisor') and identityManager.hasCurrentUserRole('employeeManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="usergroup" />
+      <ui:param
+        name="tableContext"
+        value="reassignusergroupsupervisor" />
+      <ui:param
+        name="tableContent"
+        value="#{userGroupList.reassignUserGroupSupervisorTasks}" />
+    </ui:include>
+  </h:panelGroup>
+</ui:composition>

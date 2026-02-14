@@ -1,0 +1,26 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="instance" type="org.bfabric.entity.ResourceDependent"-->
+  <h:outputText value="#{messages.storage} / #{messages.relativePath}" />
+  <h:panelGroup>
+    <ui:include src="/fragments/entity-link-name.xhtml">
+      <ui:param name="instance" value="#{instance.storage}" />
+    </ui:include>
+    <h:outputText value=" / " />
+    <h:outputLink rendered="#{not instance.streamedContent}" value="#{instance.uriDownloadHttp}" target="_blank" rel="noopener">
+      <h:outputText value="#{instance.relativePath}" title="#{instance.uriDownloadHttp}" />
+      <p:ajax event="click" global="false" listener="#{instance.createDownloadHttpEntityLog()}" />
+    </h:outputLink>
+    <h:form rendered="#{instance.streamedContent}">
+      <p:commandLink value="#{instance.relativePath}" ajax="false">
+        <i class="fas fa-eye download-icon" />
+        <p:fileDownload value="#{instance.defaultStreamedContent}" contentDisposition="inline" store="true" />
+      </p:commandLink>
+      <p:commandLink ajax="false">
+        <i class="fas fa-file-download download-icon" />
+        <p:fileDownload value="#{instance.defaultStreamedContent}" />
+      </p:commandLink>
+    </h:form>
+  </h:panelGroup>
+</ui:composition>

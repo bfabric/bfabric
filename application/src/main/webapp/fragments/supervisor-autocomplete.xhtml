@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <h:outputText
+    rendered="#{empty hideSupervisorLabel or not hideSupervisorLabel}"
+    value="#{messages.supervisor}" />
+  <!--@elvariable id="instance" type="org.bfabric.entity.api.HasSupervisor"-->
+  <!--@elvariable id="item" type="org.bfabric.entity.User"-->
+  <ui:decorate template="#{not empty includeRequired and includeRequired ? '/fragments/required.xhtml' : '/fragments/edit.xhtml'}">
+    <c:if test="#{not empty includeRequired and includeRequired}">
+      <ui:param
+        name="componentId"
+        value="#{(not empty componentId) ? componentId : (not empty listContext ? listContext : 'supervisor').concat('autocomplete')}" />
+    </c:if>
+    <ui:include src="/fragments/autocomplete.xhtml">
+      <ui:param
+        name="listContext"
+        value="#{not empty listContext ? listContext : 'supervisor'}" />
+      <ui:param
+        name="value"
+        value="#{instance.supervisor}" />
+      <o:methodParam
+        name="completeMethod"
+        value="#{instance.getEmployeesIncludingSupervisor}" />
+      <ui:param
+        name="itemLabel"
+        value="#{not empty itemLabel ? itemLabel : item.fullLastFirstName}" />
+    </ui:include>
+  </ui:decorate>
+</ui:composition>

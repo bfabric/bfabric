@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('relativePath')}">
+    <p:column field="#{fieldPrefix}relativePath" headerText="#{messages.relativePath}" exportValue="#{entity.relativePath}">
+      <h:outputText value="#{stringHelper.truncate(entity.relativePath)}" title="#{entity.uri}" />
+    </p:column>
+  </c:if>
+</ui:composition>

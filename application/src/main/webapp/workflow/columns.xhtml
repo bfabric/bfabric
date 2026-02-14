@@ -1,0 +1,35 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.workflow} #{messages.id}" />
+  </ui:include>
+  <ui:include src="/fragments/column/workflowtemplate.xhtml" />
+  <ui:include src="/fragments/column/workflowsteps.xhtml" />
+
+  <ui:include src="/fragments/column/dataset-count.xhtml" />
+  <ui:include src="/fragments/column/datasets.xhtml" />
+
+  <ui:include src="/fragments/column/sample-count.xhtml" />
+  <ui:include src="/fragments/column/samples.xhtml" />
+
+  <ui:include src="/fragments/column/workunit-count.xhtml">
+    <ui:param name="workunitsTransitiveSize" value="#{entity.workunitsTransitive.size()}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/workunits.xhtml">
+    <ui:param name="workunits" value="#{entity.workunitsTransitive}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/plate-count.xhtml">
+    <ui:param name="platesTransitiveSize" value="#{entity.platesTransitive.size()}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/plates.xhtml">
+    <ui:param name="plates" value="#{entity.platesTransitive}" />
+  </ui:include>
+
+  <ui:include src="/fragments/column/orderitem-count.xhtml" />
+  <ui:include src="/fragments/column/orderitems.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

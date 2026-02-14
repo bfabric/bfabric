@@ -1,0 +1,159 @@
+<ui:composition
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+  <h:panelGroup id="messageBar">
+    <h:panelGrid
+      rendered="#{loggedIn and currentUser.passwordResetNeeded}"
+      columns="1"
+      columnClasses="message-line"
+      styleClass="gradient-notice max-width">
+      <h:panelGrid
+        columns="2"
+        columnClasses="message-line-text, textright"
+        styleClass="max-width">
+        <h:outputText value="Note: Reset your password to fully activate your user account (needed for file download, computer/instrument access etc.)" />
+        <h:form style="float: right;">
+          <p:button
+            outcome="/user/change-password.xhtml"
+            value="#{messages.changePassword}">
+            <f:param
+              name="id"
+              value="#{currentUser.id}" />
+          </p:button>
+        </h:form>
+      </h:panelGrid>
+    </h:panelGrid>
+
+    <h:panelGrid
+      rendered="#{loggedIn and not currentUser.emailVerified}"
+      columns="1"
+      columnClasses="message-line"
+      styleClass="gradient-notice max-width">
+      <h:panelGrid
+        columns="2"
+        columnClasses="message-line-text, textright"
+        styleClass="max-width">
+        <h:outputText
+          value="You need to verify your email address&#160;#{currentUser.email}&#160;by clicking on the link in the verification mail you have received. If you have not received such an email, please click on the resend button." />
+        <h:form>
+          <p:commandButton
+            value="#{messages.resendVerificationMail}"
+            action="#{userManager.resendVerificationMail()}"
+            styleClass="nowrap" />
+        </h:form>
+      </h:panelGrid>
+    </h:panelGrid>
+
+    <h:panelGrid
+      id="restartAlert"
+      rendered="#{restartManager.restartScheduled}"
+      columns="1"
+      columnClasses="message-line"
+      styleClass="gradient-alert max-width">
+      <h:panelGrid
+        columns="2"
+        columnClasses="message-line-text, textright"
+        styleClass="max-width">
+      <span> <span id="restartCountDown" /> <script>//<![CDATA[
+      let timeLeftRestart = #{restartManager.timeUntilRestart};
+      const time = Math.floor(timeLeftRestart / 60) + ":" + (timeLeftRestart % 60 < 10 ? "0" : "") + timeLeftRestart % 60 + "#{restartManager.timeLeftMessage}";
+      jQuery("#restartCountDown").html(time);
+      const intervalRestart = setInterval(function () {
+          timeLeftRestart--;
+          if (timeLeftRestart < 0) {
+              clearInterval(intervalRestart);
+              jQuery("#restartCountDown").html("<b>Shut down for maintenance NOW. If you are logged in, please save your work and log out.</b>");
+          } else {
+              const time = Math.floor(timeLeftRestart / 60) + ":" + (timeLeftRestart % 60 < 10 ? "0" : "") + timeLeftRestart % 60 + "#{restartManager.timeLeftMessage}";
+              jQuery("#restartCountDown").html(time);
+          }
+      }, 1000);
+      //]]></script>
+      </span>
+        <h:form>
+          <p:commandButton
+            value="#{messages.abortRestart}"
+            rendered="#{identityManager.hasCurrentUserRole('admin')}"
+            action="#{restartManager.abortRestart}"
+            oncomplete="window.location.reload()"
+            update="restartAlert" />
+        </h:form>
+      </h:panelGrid>
+    </h:panelGrid>
+
+    <h:form id="timeoutAlertForm">
+      <h:panelGroup rendered="#{not identityService.loggedIn}">
+        <h:panelGrid columns="1" columnClasses="ui-messages-info" styleClass="gradient-notice max-width">
+          <h:panelGrid columns="1" columnClasses="message-line-text textEllipsis">
+            <h:outputText value="#{messages.sessionExpiredHint}" />
+          </h:panelGrid>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGroup
+        rendered="#{loggedIn}"
+        id="timeoutAlert">
+        <h:panelGrid
+          id="timeoutWarningMessage"
+          columns="1"
+          columnClasses="message-line"
+          styleClass="gradient-notice max-width"
+          style="#{not (sessionTimeoutManager.timeoutWarning or sessionTimeoutManager.timedout) ? 'display: none' : '' }">
+          <h:panelGrid
+            rendered="#{sessionTimeoutManager.timeoutWarning or sessionTimeoutManager.timedout}"
+            columns="3"
+            columnClasses="message-line-text textEllipsis,max-width,textright">
+            <h:outputText value="#{sessionTimeoutManager.warningMessage}" />
+            <pe:timer
+              id="timer"
+              rendered="#{not sessionTimeoutManager.timedout}"
+              timeout="#{sessionTimeoutManager.timeUntilSessionTimeout}"
+              singleRun="true" />
+            <p:commandButton
+              id="resetButton"
+              rendered="#{not sessionTimeoutManager.timedout}"
+              actionListener="#{sessionTimeoutManager.keepSessionAlive()}"
+              value="#{messages.reset}"
+              title="#{messages.resetTimeoutHint}"
+              update="timeoutAlertForm" />
+            <!--
+                      <p:idleMonitor
+                        id="idleMonitor"
+                        rendered="#{sessionTimeoutManager.warning and not sessionTimeoutManager.timedout}">
+                        <p:ajax
+                          event="active"
+                          listener="#{sessionTimeoutManager.keepSessionAlive}"
+                          update="timeoutAlert" />
+                      </p:idleMonitor>
+            -->
+          </h:panelGrid>
+        </h:panelGrid>
+
+        <pe:timer
+          id="timeoutTimer"
+          rendered="#{not sessionTimeoutManager.timedout}"
+          timeout="#{sessionTimeoutManager.timerTimeout}"
+          listener="#{sessionTimeoutManager.timeout()}"
+          singleRun="true"
+          visible="false"
+          update="timeoutAlertForm" />
+      </h:panelGroup>
+    </h:form>
+
+    <h:form id="timeoutAlertUpdateForm">
+      <p:remoteCommand
+        id="timeoutAlertUpdate"
+        name="timeoutAlertUpdate"
+        update="timeoutAlertForm" />
+    </h:form>
+
+    <p:messages
+      globalOnly="true"
+      showIcon="false">
+      <p:autoUpdate />
+    </p:messages>
+  </h:panelGroup>
+</ui:composition>

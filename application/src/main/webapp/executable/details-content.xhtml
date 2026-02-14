@@ -1,0 +1,83 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGrid
+    id="detailsGrid"
+    columns="2"
+    columnClasses="rtd,ltd">
+    <ui:include src="/fragments/details/id-name-status-supervisor.xhtml" />
+
+    <h:outputText value="#{messages.context}" />
+    <h:outputText value="#{executable.context}" />
+
+    <c:if test="#{not empty executable.masterExecutable}">
+      <h:outputText value="#{messages.masterExecutable}" />
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{executable.masterExecutable}" />
+      </ui:include>
+    </c:if>
+
+    <c:if test="#{not empty executable.relativePath}">
+      <h:outputText value="#{messages.relativePath}" />
+      <h:outputText rendered="#{not executable.streamedContent}" value="#{executable.relativePath}" />
+      <h:form rendered="#{executable.streamedContent}">
+        <p:commandLink value="#{executable.relativePath}" ajax="false">
+          <i class="fas fa-eye download-icon" />
+          <p:fileDownload value="#{executable.defaultStreamedContent}" contentDisposition="inline" store="true" />
+        </p:commandLink>
+        <p:commandLink ajax="false">
+          <i class="fas fa-file-download download-icon" />
+          <p:fileDownload value="#{executable.defaultStreamedContent}" />
+        </p:commandLink>
+      </h:form>
+    </c:if>
+
+    <ui:include src="/fragments/details/size.xhtml" />
+
+    <c:if test="#{not empty executable.program}">
+      <h:outputText value="#{messages.program}" />
+      <h:outputText value="#{executable.program}" />
+    </c:if>
+
+    <c:if test="#{not empty executable.version}">
+      <h:outputText value="#{messages.version}" />
+      <h:outputText value="#{executable.version}" />
+    </c:if>
+
+    <c:if test="#{not empty executable.predecessor}">
+      <h:outputText value="#{messages.predecessor}" />
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="instance"
+          value="#{executable.predecessor}" />
+      </ui:include>
+    </c:if>
+
+    <ui:include src="/fragments/details/workunit.xhtml" />
+    <ui:include src="/fragments/details/parameters.xhtml" />
+    <ui:include src="/fragments/details/description-enabled-valid-links-customattributes-created-modified.xhtml" />
+  </h:panelGrid>
+
+  <h:panelGrid
+    columns="6"
+    styleClass="action">
+    <ui:include src="/fragments/button/edit.xhtml" />
+    <p:button
+      outcome="/application/edit.xhtml"
+      value="#{messages.addApplication}"
+      rendered="#{executable.applicationExecutable}">
+      <f:param
+        name="executableId"
+        value="#{executable.id}" />
+    </p:button>
+    <ui:include src="/fragments/button/delete.xhtml" />
+    <ui:include src="/fragments/button/list.xhtml" />
+    <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+    <ui:include src="/fragments/button/download-file.xhtml" />
+  </h:panelGrid>
+</ui:composition>

@@ -1,0 +1,99 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+  <ui:define name="pageTitle">
+    <h:outputText value="#{'Analysis of Project State Durations'}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p>#{messages.projectDurationStatisticsIntro}</p>
+    <ui:fragment>
+      <p:spacer height="20" />
+      <h:panelGrid columns="2">
+        <h:panelGroup id="pieChartPanel">
+          <ui:include src="/statistics/fragments/technology-selector.xhtml" />
+          <c:choose>
+            <c:when test="#{not empty statisticsManager.projectDurationPieChart}">
+              <p:pieChart
+                model="#{pieChart.get(statisticsManager.projectDurationPieChart, messages.projectDurationPieTitle, 'right', ['FF9900', '996600', '009900', '0066FF', '000099'])}"
+                style="width:350px" />
+            </c:when>
+            <c:otherwise>
+              <h:outputText value="#{messages.noDataAvailableForChosenTechnology}" style="color: #666666; font-style: italic; font-size: 1.2em; padding: 16px; display: block; text-align: center;" />
+            </c:otherwise>
+          </c:choose>
+        </h:panelGroup>
+        <p:graphicImage
+          style="height:350px"
+          value="../images/projectstate_cropped.png"
+          stream="false" />
+      </h:panelGrid>
+
+      <h:panelGroup id="lineChartPanel">
+        <c:choose>
+          <c:when
+            test="#{not empty statisticsManager.projectPendingToReview or not empty statisticsManager.projectReviewToRunning or not empty statisticsManager.projectRunningToFinished or not empty statisticsManager.projectFinishedToClose or not empty statisticsManager.projectPendingToClose or not empty statisticsManager.numberOfProjectPerYear}">
+            <h:panelGrid columns="2" style="vertical-align:top;">
+              <h:panelGroup>
+                <p:lineChart
+                  model="#{lineChart.get([statisticsManager.projectPendingToReview, statisticsManager.projectReviewToRunning, statisticsManager.projectRunningToFinished, statisticsManager.projectFinishedToClose], messages.projectDurationLineTitle, null, null, ['FF9900', '996600', '009900', '0066FF', '000099'], [messages.pendingToReview, messages.reviewToRunning, messages.runningToFinished, messages.finishedToClosed])}"
+                  style="height:500px; width:800px" />
+              </h:panelGroup>
+              <h:panelGroup style="display:flex; flex-direction:column; align-items:center; height:500px;">
+                <div style="flex:1.5"></div>
+                <div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                  <p:button value="#{messages.average} #{messages.projectDurations} #{messages.inTabularForm}"
+                            href="../statistics/project-durations-average-per-task.html"
+                            target="_blank"
+                            style="width: 100%; min-width: 220px; font-size: 1.1em;" />
+                  <p:button value="#{messages.projectDurations} #{messages.inTabularForm}"
+                            href="../statistics/project-durations-data.html"
+                            target="_blank"
+                            style="width: 100%; min-width: 220px; font-size: 1.1em;" />
+                </div>
+                <div style="flex:2"></div>
+                <p:lineChart
+                  model="#{lineChart.get([statisticsManager.projectPendingToClose, statisticsManager.numberOfProjectPerYear], messages.pendingToClosed, null, null, ['333333', '999999'], [messages.avgPerProject, messages.numberOfProjects], false)}"
+                  style="height:300px; width:400px; margin-top:auto;" />
+              </h:panelGroup>
+            </h:panelGrid>
+            <p:spacer height="20" />
+            <div style="margin-bottom:8px;">
+              <ui:include src="/statistics/fragments/technology-selector.xhtml" />
+            </div>
+            <h:panelGrid columns="2">
+              <h:panelGroup>
+                <p:lineChart
+                  model="#{lineChart.get([statisticsManager.projectPendingToReview, statisticsManager.numberOfProjectPerYear], messages.pendingToReview, null, null, ['FF9900', '999999'], [messages.avgPerProject, messages.numberOfProjects], false)}"
+                  style="height:300px;" />
+              </h:panelGroup>
+              <h:panelGroup>
+                <p:lineChart
+                  model="#{lineChart.get([statisticsManager.projectReviewToRunning, statisticsManager.numberOfProjectPerYear], messages.reviewToRunning, null, null, ['996600', '999999'], [messages.avgPerProject, messages.numberOfProjects], false)}"
+                  style="height:300px;" />
+              </h:panelGroup>
+            </h:panelGrid>
+            <h:panelGrid columns="2">
+              <h:panelGroup>
+                <p:lineChart
+                  model="#{lineChart.get([statisticsManager.projectRunningToFinished, statisticsManager.numberOfProjectPerYear], messages.runningToFinished, null, null, ['009900', '999999'], [messages.avgPerProject, messages.numberOfProjects], false)}"
+                  style="height:300px;" />
+              </h:panelGroup>
+              <h:panelGroup>
+                <p:lineChart
+                  model="#{lineChart.get([statisticsManager.projectFinishedToClose, statisticsManager.numberOfProjectPerYear], messages.finishedToClosed, null, null, ['0066FF', '999999'], [messages.avgPerProject, messages.numberOfProjects], false)}"
+                  style="height:300px;" />
+              </h:panelGroup>
+            </h:panelGrid>
+          </c:when>
+        </c:choose>
+      </h:panelGroup>
+    </ui:fragment>
+  </ui:define>
+</ui:composition>

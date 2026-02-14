@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column exportable="false">
+    <p:commandButton
+      action="#{resourceHelper.setValueForSelectedResources(entity, resources)}"
+      value="#{messages.select}"
+      update="@([id$=assignSamples]), @([id$=import-resources])"
+      immediate="true"
+      rendered="#{empty resourceHelper.selectedResource}"
+      global="false"
+      oncomplete="PF('assignSampleModalDialog').hide()"
+      styleClass="inlinemiddle" />
+    <p:commandButton
+      action="#{resourceHelper.selectedResource.setSample(entity)}"
+      value="#{messages.select}"
+      update="@([id$=assignSamples]), @([id$=import-resources])"
+      immediate="true"
+      rendered="#{not empty resourceHelper.selectedResource}"
+      global="false"
+      oncomplete="PF('assignSampleModalDialog').hide()"
+      styleClass="inlinemiddle" />
+  </p:column>
+
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/name-trunc.xhtml" />
+  <ui:include src="/fragments/column/type.xhtml" />
+  <ui:include src="/fragments/column/orders.xhtml" />
+
+  <p:column
+    field="children.size()"
+    headerText="#{messages.childSamples}">
+  </p:column>
+
+  <ui:include src="/fragments/column/created.xhtml" />
+</ui:composition>

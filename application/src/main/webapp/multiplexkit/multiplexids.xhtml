@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('multiplexids')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="multiplexid" />
+      <ui:param
+        name="tableContext"
+        value="#{multiplexKit.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{multiplexKit.multiplexIds}" />
+      <ui:param
+        name="hideColumns"
+        value="multiplexKits" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action">
+      <p:button
+        rendered="#{multiplexKit.updatable}"
+        outcome="edit-multiplexids.xhtml"
+        value="#{messages.edit}">
+        <f:param
+          name="id"
+          value="#{multiplexKit.id}" />
+      </p:button>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

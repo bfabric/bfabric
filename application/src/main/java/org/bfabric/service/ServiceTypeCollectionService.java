@@ -1,0 +1,63 @@
+/*
+    MIT License
+
+    Copyright (c) 2005-2026 Functional Genomics Center Zurich, UZH/ETH Zurich
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+ */
+
+package org.bfabric.service;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Named;
+
+import org.bfabric.entity.AbstractEntity;
+import org.bfabric.entity.ServiceType;
+import org.bfabric.entity.ServiceTypeCollection;
+
+@Named
+@Stateless
+public class ServiceTypeCollectionService extends AbstractService {
+
+    private static final long serialVersionUID = 1;
+
+    public ServiceTypeCollectionService() {
+        super(ServiceTypeCollection.class);
+    }
+
+    public ServiceTypeCollection findByName(String name) {
+        return (ServiceTypeCollection) createNamedQuery("ServiceTypeCollection.findByName").setParameter("name", name).setMaxResults(1).getSingleResult();
+    }
+
+    public List<ServiceTypeCollection> getEnabledServiceTypeCollections() {
+        return createNamedQuery("ServiceTypeCollection.findEnabled").getResultList();
+    }
+
+    public List<ServiceTypeCollection> getServiceTypeCollectionsByServiceTypes(List<ServiceType> serviceTypes) {
+        return createNamedQuery("ServiceTypeCollection.findByServiceTypes").setParameter("serviceTypes", serviceTypes).getResultList();
+    }
+
+    @Override
+    public LinkedHashMap<String, String> isValid(AbstractEntity entity) {
+        return isValidName((ServiceTypeCollection) entity);
+    }
+}

@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid columns="2" columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/comment-link.xhtml" />
+      <ui:include src="/fragments/details/status.xhtml" />
+      <ui:include src="/fragments/details/size.xhtml" />
+      <ui:include src="/fragments/details/filechecksum.xhtml" />
+      <ui:include src="/fragments/details/storage.xhtml" />
+      <ui:include src="/fragments/details/relativepath.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid rendered="#{identityManager.hasCurrentUserRole('commentReader') and attachment.updatable}"
+                 columns="2"
+                 styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,189 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.about}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <h:outputText value="#{messages.application}" />
+      <h:outputText value="#{configuration.applicationName}" />
+      <h:outputText value="#{messages.version}" />
+      <h:outputText value="#{configuration.applicationVersion}" />
+      <h:outputText value="#{messages.branchName}" />
+      <h:outputText value="#{configuration.deploymentBranchName}" />
+      <h:outputText value="#{messages.gitRevisionId}" />
+      <h:outputText value="#{configuration.deploymentGitRevisionId}" />
+      <h:outputText value="#{messages.compiled}" />
+      <h:outputText value="#{configuration.deploymentCompilationDateTime}" />
+      <h:outputText value="#{messages.deployed}" />
+      <h:outputText value="#{configuration.deploymentDateTime}" />
+      <h:outputText value="#{messages.deployer}" />
+      <h:outputText value="#{configuration.deployerName}" />
+      <h:outputText value="#{messages.baseURL}" />
+      <h:outputText value="#{configuration.baseUrl}" />
+    </h:panelGrid>
+
+    <c:if test="#{identityManager.hasCurrentUserRole('admin')}">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <h:outputText value="#{messages.requestURL}" />
+        <h:outputText value="#{confManager.requestURL}" />
+        <h:outputText value="#{messages.baseURL}" />
+        <h:outputText value="#{confManager.baseURL}" />
+        <h:outputText value="#{messages.requestURI}" />
+        <h:outputText value="#{confManager.requestURI}" />
+        <h:outputText value="#{messages.contextPath}" />
+        <h:outputText value="#{confManager.contextPath}" />
+      </h:panelGrid>
+
+      <h:form>
+        <h:panelGrid
+          columns="4"
+          styleClass="action">
+          <p:commandButton
+            value="#{messages.scheduleRestart}"
+            title="#{messages.scheduleRestartHint}"
+            oncomplete="PF('restartModalDialog').show()" />
+          <!-- Note: Commented out on purpose: do NOT remove!
+                    <p:commandButton
+                      action="#{indexingManager.resetComputerLoginActivated}"
+                      value="#{messages.resetComputerLoginActivated}"
+                      title="#{messages.resetComputerLoginActivatedHint}">
+                      <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+                    </p:commandButton>
+                    <p:commandButton
+                      action="#{indexingManager.synchronizeAllUsersWithAD}"
+                      value="#{messages.synchronizeAllUsers}"
+                      title="#{messages.synchronizeAllUsersHint}">
+                      <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+                    </p:commandButton>
+          -->
+        </h:panelGrid>
+      </h:form>
+
+      <p:dialog
+        id="restartModalPanel"
+        widgetVar="restartModalDialog"
+        dynamic="true"
+        resizable="false"
+        modal="true"
+        onShow="repositionDialog()"
+        minHeight="200"
+        minWidth="450"
+        height="200"
+        width="500">
+        <f:facet name="header">
+          <h:outputText value="#{messages.scheduleRestart}" />
+        </f:facet>
+        <p>
+          <h:outputText value="#{messages.scheduleRestartHint}" />
+        </p>
+        <h:form>
+          <h:panelGrid
+            columns="2"
+            columnClasses="ttd">
+            <h:outputText value="Shut down in" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="shutDownDiff"
+                value="#{restartManager.scheduleDiff}">
+                <f:selectItem
+                  id="shutDown1"
+                  itemLabel="1 Minute"
+                  itemValue="1" />
+                <f:selectItem
+                  id="shutDown5"
+                  itemLabel="5 Minutes"
+                  itemValue="5" />
+                <f:selectItem
+                  id="shutDown10"
+                  itemLabel="10 Minutes"
+                  itemValue="10" />
+                <f:selectItem
+                  id="shutDown15"
+                  itemLabel="15 Minutes"
+                  itemValue="15" />
+                <f:selectItem
+                  id="shutDown20"
+                  itemLabel="20 Minutes"
+                  itemValue="20" />
+                <f:selectItem
+                  id="shutDown30"
+                  itemLabel="30 Minutes"
+                  itemValue="30" />
+                <f:selectItem
+                  id="shutDown60"
+                  itemLabel="60 Minutes"
+                  itemValue="60" />
+              </h:selectOneMenu>
+            </ui:decorate>
+            <h:outputText value="Expected downtime" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectOneMenu
+                id="downtime"
+                value="#{restartManager.downtime}">
+                <f:selectItem
+                  id="downtimeNull"
+                  itemLabel=""
+                  itemValue="0" />
+                <f:selectItem
+                  id="downtime1"
+                  itemLabel="1 Minute"
+                  itemValue="1" />
+                <f:selectItem
+                  id="downtime5"
+                  itemLabel="5 Minutes"
+                  itemValue="5" />
+                <f:selectItem
+                  id="downtime10"
+                  itemLabel="10 Minutes"
+                  itemValue="10" />
+                <f:selectItem
+                  id="downtime30"
+                  itemLabel="30 Minutes"
+                  itemValue="30" />
+                <f:selectItem
+                  id="downtime60"
+                  itemLabel="60 Minutes"
+                  itemValue="60" />
+                <f:selectItem
+                  id="downtime120"
+                  itemLabel="120 Minutes"
+                  itemValue="120" />
+                <f:selectItem
+                  id="downtime240"
+                  itemLabel="240 Minutes"
+                  itemValue="240" />
+                <f:selectItem
+                  id="downtime480"
+                  itemLabel="480 Minutes"
+                  itemValue="480" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGrid>
+          <h:panelGrid
+            columns="2"
+            styleClass="action">
+            <p:commandButton
+              value="#{messages.scheduleRestart}"
+              action="#{restartManager.scheduleRestart}"
+              oncomplete="window.location.reload()" />
+            <p:commandButton
+              value="#{messages.cancel}"
+              immediate="true"
+              oncomplete="PF('restartModalDialog').hide()" />
+          </h:panelGrid>
+        </h:form>
+      </p:dialog>
+    </c:if>
+  </ui:define>
+</ui:composition>

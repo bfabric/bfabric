@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('admin')}">
+    <p:column
+      field="#{fieldPrefix}admin.name"
+      headerText="#{messages.admin}">
+      <ui:include src="/fragments/admin-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{entity}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

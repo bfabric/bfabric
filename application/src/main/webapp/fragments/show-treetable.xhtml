@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:form id="#{tableContext}#{tableType}treetableform">
+    <ui:include src="/fragments/treetable.xhtml">
+      <ui:param
+        name="treetableFormId"
+        value="#{tableContext}#{tableType}treetableform" />
+    </ui:include>
+  </h:form>
+</ui:composition>

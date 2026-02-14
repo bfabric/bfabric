@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="commentEntity" type="org.bfabric.entity.Comment"-->
+  <p:commandLink
+    id="pinned"
+    actionListener="#{commentHelper.switchPinned(commentEntity)}"
+    title="#{commentEntity.pinned ? messages.unpinCommentHint : messages.pinCommentHint}"
+    immediate="true"
+    process="@this"
+    update="pinned, actionsGroup">
+    <f:attribute
+      name="dataScrollerId"
+      value="#{enclosingFormId}:#{category}s" />
+    <f:attribute
+      name="dataScrollerPinnedId"
+      value="#{enclosingFormId}:#{category}sPinned" />
+    <h:panelGroup rendered="#{commentEntity.pinned}">
+      <i class="fa-solid fa-thumbtack processed" />
+    </h:panelGroup>
+    <h:panelGroup rendered="#{not commentEntity.pinned}">
+      <i class="fa-solid fa-thumbtack false" />
+    </h:panelGroup>
+  </p:commandLink>
+</ui:composition>

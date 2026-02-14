@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+
+  <ui:include src="/fragments/sidebar/applications.xhtml">
+    <ui:param
+      name="content"
+      value="#{applicationList.getRunnableApplicationsByDatasetTemplate(dataset.datasetTemplate)}" />
+  </ui:include>
+
+  <c:if test="#{configuration.workflowEnabled and identityManager.hasCurrentUserRole('containerManager')}">
+    <ui:include src="/fragments/sidebar/workflows.xhtml" />
+    <ui:include src="/fragments/sidebar/workflowsteps.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/inputresources.xhtml" />
+  <ui:include src="/fragments/sidebar/succeedingworkunits.xhtml" />
+  <ui:include src="/fragments/sidebar/attributeEquivalentDatasetTemplates.xhtml">
+    <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+  <ui:include src="/fragments/sidebar/attributeEquivalentDatasets.xhtml">
+    <ui:param name="enabled" value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+  </ui:include>
+  <ui:include src="/fragments/sidebar/tree.xhtml" />
+</ui:composition>

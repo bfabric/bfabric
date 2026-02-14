@@ -1,0 +1,9 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="instance" type="org.bfabric.entity.AbstractContainerDependentEntity"-->
+  <p:link rendered="#{not empty instance.prevInContainer.id}" outcome="/#{instance.classNameLowerCase}/show.xhtml" title="#{instance.prevInContainerHint}">
+    <i class="fas fa-backward icon-button-padding" />
+    <f:param name="id" value="#{instance.prevInContainer.id}" />
+  </p:link>
+</ui:composition>

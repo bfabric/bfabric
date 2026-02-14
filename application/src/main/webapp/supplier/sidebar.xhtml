@@ -1,0 +1,24 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('purchaseReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/purchases.xhtml">
+    <ui:param
+      name="content"
+      value="#{supplier.purchasesByInternal}" />
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/consumables.xhtml">
+    <ui:param
+      name="showAlways"
+      value="true" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/statistics.xhtml" />
+</ui:composition>

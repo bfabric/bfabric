@@ -1,0 +1,60 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    sortBy="#{messages[entity.approvedMarker]}"
+    headerText="#{messages.vote}">
+    <h:outputText
+      value="#{messages[entity.approvedMarker]}"
+      title="#{entity.entityInfo}"
+      styleClass="#{entity.approvedMarker}" />
+  </p:column>
+  <p:column
+    sortBy="#{entity.comment}"
+    width="400"
+    headerText="#{messages.comment}">
+    <h:outputText
+      value="#{entity.comment}"
+      styleClass="preformat" />
+  </p:column>
+  <p:column
+    sortBy="#{entity.createdBy}"
+    headerText="#{messages.reviewer}">
+    <h:outputText value="#{entity.createdBy}" />
+  </p:column>
+  <p:column
+    sortBy="#{entity.created}"
+    headerText="#{messages.date}">
+    <h:outputText value="#{entity.created}" />
+  </p:column>
+  <p:column
+    exportable="false"
+    headerText="#{messages.edit}">
+    <p:button
+      outcome="/review/edit.xhtml"
+      value="#{messages.edit}"
+      rendered="#{entity.updatable}"
+      styleClass="inline">
+      <f:param
+        name="id"
+        value="#{entity.id}" />
+    </p:button>
+  </p:column>
+  <p:column
+    exportable="false"
+    headerText="#{messages.remove}">
+    <p:commandButton
+      action="#{reviewManager.remove(entity)}"
+      value="#{messages.remove}"
+      update="@([id$=showProjectReviewPanel]), @([id$=showProjectSidebarReviewsCount])"
+      rendered="#{entity.deletable}"
+      styleClass="inline">
+      <f:param
+        name="projectId"
+        value="#{entity.project.id}" />
+      <ui:include src="/fragments/confirm-dialog-delete.xhtml" />
+    </p:commandButton>
+  </p:column>
+</ui:composition>

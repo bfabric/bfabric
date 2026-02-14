@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('chart')}">
+    <p:barChart
+      model="#{feedbackQuestion.barChartModel}"
+      styleClass="margin-top-10"
+      style="height:200px; width:400px" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,33 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.Instrument"-->
+  <p:column rendered="#{showColumns.contains('addCheckbox')}" exportable="false">
+    <h:selectBooleanCheckbox disabled="#{userManager.selectedInstruments.contains(entity)}">
+      <p:ajax
+        listener="#{userManager.selectInstrument(entity)}"
+        update="@([id$=assign-trainedinstruments-instruments-options]), @([id$=assign-trainedinstruments-instruments-options-selected]), @([id$=assign-trainedinstruments-instruments-options-selected-text]) @([id$=buttons])"
+        process="@([id$=assign-trainedinstruments-instruments-options]), @([id$=assign-trainedinstruments-instruments-options-selected])"
+        immediate="true"
+        oncomplete="if(PF['selectedInstrument']){PF('selectedInstrument').filter();} fixOversize();"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <p:column rendered="#{showColumns.contains('removeCheckbox')}" exportable="false">
+    <h:selectBooleanCheckbox value="#{userManager.instrumentSelected}">
+      <p:ajax
+        listener="#{userManager.deselectInstrument(entity)}"
+        update="@([id$=assign-trainedinstruments-instruments-options]), @([id$=assign-trainedinstruments-instruments-options-selected]), @([id$=assign-trainedinstruments-instruments-options-selected-text]) @([id$=buttons])"
+        process="@([id$=assign-trainedinstruments-instruments-options]), @([id$=assign-trainedinstruments-instruments-options-selected])"
+        immediate="true"
+        oncomplete="if(PF['selectedInstrument']){PF('selectedInstrument').filter();} fixOversize();"
+        global="false" />
+    </h:selectBooleanCheckbox>
+  </p:column>
+  <ui:include src="/instrument/columns.xhtml">
+    <ui:param name="hideColumns" value="descendants, groups, parents" />
+    <ui:param name="nameStyleClass" value="min-width-200" />
+    <ui:param name="reduced" value="true" />
+  </ui:include>
+</ui:composition>

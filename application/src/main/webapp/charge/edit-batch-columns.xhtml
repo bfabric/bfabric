@@ -1,0 +1,100 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.Charge"-->
+  <p:column
+    sortBy="#{entity.id}"
+    styleClass="#{entity.isOrganizationType(entity.organizationType) ? '' : 'already'}"
+    headerText="#{messages.id}">
+    <ui:include src="/fragments/entity-link-newtab.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+    </ui:include>
+  </p:column>
+  <p:column
+    sortBy="#{entity.serviceName}"
+    headerText="#{messages.service}">
+    <h:outputText value="#{entity.serviceName}" />
+  </p:column>
+  <p:column
+    sortBy="#{entity.serviceCode}"
+    headerText="#{messages.code}">
+    <h:outputText value="#{entity.serviceCodeName}" />
+  </p:column>
+  <p:column
+    sortBy="#{entity.total}"
+    headerText="#{messages.total}">
+    <h:outputText value="#{entity.total}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity.accounted}"
+    headerText="#{messages.accounted}">
+    <h:outputText value="#{entity.accounted}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity.price}"
+    headerText="#{messages.price}">
+    <h:outputText value="#{entity.price}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity.discountedPrice}"
+    headerText="#{messages.discountedPrice}">
+    <h:outputText value="#{entity.discountedPrice}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity.taxType.name}"
+    headerText="#{messages.taxType}">
+    <h:selectOneMenu
+      id="taxTypeSelect"
+      value="#{entity.taxType}"
+      styleClass="editWidthMedium"
+      required="true"
+      converter="omnifaces.SelectItemsConverter">
+      <f:selectItem
+        itemLabel="#{messages.selectAnItem}"
+        itemDisabled="true" />
+      <f:selectItems
+        value="#{taxTypeList.resultList}"
+        var="item"
+        itemLabel="#{item.name}" />
+      <p:ajax
+        event="change"
+        listener="#{bookingManager.taxTypeChanged(entity)}"
+        update="#{constants.EDIT}:charges, #{constants.EDIT}:infos"
+        global="false" />
+    </h:selectOneMenu>
+  </p:column>
+  <p:column
+    sortBy="#{entity.taxedPrice}"
+    headerText="#{messages.taxedPrice}">
+    <h:outputText value="#{entity.taxedPrice}">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+  <p:column
+    sortBy="#{entity.description}"
+    headerText="#{messages.description}"
+    exportValue="#{entity.description}">
+    <h:outputText
+      value="#{stringHelper.truncate(entity.description, 20)}"
+      title="#{entity.description}"
+      styleClass="#{styleClass}" />
+  </p:column>
+
+  <ui:include src="/fragments/column/created.xhtml">
+    <ui:param
+      name="filterable"
+      value="false" />
+  </ui:include>
+</ui:composition>

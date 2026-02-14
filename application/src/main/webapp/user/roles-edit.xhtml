@@ -1,0 +1,73 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('employeeManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.editUserRoles}: #{user.displayName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="#{constants.EDIT}">
+      <h:panelGrid
+        id="userRolePanel"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.roles}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <ui:include src="/fragments/autocomplete.xhtml">
+            <ui:param
+              name="listContext"
+              value="userRole" />
+            <ui:param
+              name="value"
+              value="#{userManager.selectedRoles}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{userManager.getRolesFiltered}" />
+            <o:methodParam
+              name="itemUnselectListener"
+              value="#{userManager.handleUnselect}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.name}" />
+            <ui:param
+              name="multiple"
+              value="true" />
+            <ui:param
+              name="disabled"
+              value="#{!user.extensibleByCurrentUser}" />
+            <ui:param
+              name="styleClass"
+              value="editWidthExtraLarge" />
+          </ui:include>
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{userManager.saveRoles}"
+          value="#{messages.save}"
+          update="@form" />
+        <p:button
+          outcome="#{user.urlShowScreen}"
+          value="#{messages.cancel}">
+          <f:param
+            name="id"
+            value="#{user.id}" />
+          <f:param
+            name="tab"
+            value="roles" />
+        </p:button>
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

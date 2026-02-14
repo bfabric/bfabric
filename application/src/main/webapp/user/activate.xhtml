@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core">
+  <f:metadata>
+    <f:viewParam
+      id="codeId"
+      name="code"
+      value="#{userAccountManager.code}"
+      required="true" />
+    <f:viewParam
+      id="userId"
+      name="id"
+      value="#{userAccountManager.id}"
+      required="true" />
+    <f:viewAction action="#{userAccountManager.activate}" />
+  </f:metadata>
+</ui:composition>

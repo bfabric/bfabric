@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:block font-size="8">
+    <fo:block-container
+      position="absolute"
+      left="135mm"
+      width="60mm"
+      top="0mm">
+      <fo:block text-align="right">
+        <c:if test="#{not booking.renderedDetailedPrintOut}">
+          <fo:page-number />/<fo:page-number-citation-last ref-id="summary-details-page" />
+        </c:if>
+        <c:if test="#{booking.renderedDetailedPrintOut}">
+          <fo:page-number />/<fo:page-number-citation-last ref-id="full-details-page" />
+        </c:if>
+      </fo:block>
+    </fo:block-container>
+  </fo:block>
+</ui:composition>

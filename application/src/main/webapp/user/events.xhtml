@@ -1,0 +1,44 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('events') and (identityManager.hasCurrentUserRole('employeeManager') or user.equals(currentUser)) and user.hasRoleEmployee()}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="event" />
+      <ui:param
+        name="tableContext"
+        value="#{user.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{eventList.getLazyModelByUserId(user.id)}" />
+    </ui:include>
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <ui:include src="/fragments/sync-events-button.xhtml">
+        <ui:param
+          name="callerEntity"
+          value="#{user}" />
+        <ui:param
+          name="contextManager"
+          value="#{contextManager}" />
+      </ui:include>
+      <ui:include src="/fragments/sync-button.xhtml">
+        <ui:param
+          name="clipboardid"
+          value="#{user.id}_events" />
+        <ui:param
+          name="callerEntity"
+          value="#{user}" />
+        <ui:param
+          name="contextManager"
+          value="#{contextManager}" />
+        <ui:param
+          name="urlContainingToken"
+          value="#{user.urlCalendarForUserEvents}" />
+      </ui:include>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

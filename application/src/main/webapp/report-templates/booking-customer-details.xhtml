@@ -1,0 +1,38 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:block>
+    <h:outputText rendered="#{not empty booking.institute}" value="#{booking.institute.department.organization.name}" />
+    <h:outputText rendered="#{not empty booking.division}" value="#{booking.division.company.name}" />
+  </fo:block>
+  <fo:block>
+    <h:outputText rendered="#{not empty booking.institute}" value="#{booking.institute.department.name}" />
+    <h:outputText rendered="#{booking.division.set}" value="#{booking.division.name}" />
+  </fo:block>
+  <c:if test="#{not empty booking.institute}">
+    <fo:block>
+      <h:outputText value="#{booking.institute.name}" />
+    </fo:block>
+  </c:if>
+  <fo:block>
+    <h:outputText value="#{booking.billingInfo.billingCustomerName}" />
+  </fo:block>
+  <fo:block>
+    <h:outputText value="#{booking.billingInfo.billingAddressStreet}" />
+  </fo:block>
+  <c:if test="#{not empty booking.billingInfo.billingAddressSupplement}">
+    <fo:block>
+      <h:outputText value="#{booking.billingInfo.billingAddressSupplement}" />
+    </fo:block>
+  </c:if>
+  <fo:block>
+    <h:outputText value="#{booking.billingInfo.billingAddressZipCity}" />
+  </fo:block>
+  <c:if test="#{booking.billingInfo.foreignBillingAddress}">
+    <fo:block>
+      <h:outputText value="#{booking.billingInfo.billingAddressCountry.name}" />
+    </fo:block>
+  </c:if>
+</ui:composition>

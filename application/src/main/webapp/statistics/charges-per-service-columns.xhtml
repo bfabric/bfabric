@@ -1,0 +1,126 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/year-month.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.serviceAreaId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.serviceAreaName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[2]}" />
+    <ui:param
+      name="valueName"
+      value="#{stringHelper.truncate(entity[3], 20)}" />
+    <ui:param
+      name="valueClass"
+      value="servicearea" />
+  </ui:include>
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.serviceTypeId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.serviceTypeName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[4]}" />
+    <ui:param
+      name="valueName"
+      value="#{stringHelper.truncate(entity[5], 20)}" />
+    <ui:param
+      name="valueClass"
+      value="servicetype" />
+  </ui:include>
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.serviceId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.serviceName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[6]}" />
+    <ui:param
+      name="valueName"
+      value="#{stringHelper.truncate(entity[7], 20)}" />
+    <ui:param
+      name="valueClass"
+      value="service" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.charges}" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.priceSumCHF}" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.discountedPriceSumCHF}" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.charges} #{messages.booked}" />
+    <ui:param
+      name="value"
+      value="#{entity[11]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.priceSumCHF} #{messages.booked}" />
+    <ui:param
+      name="value"
+      value="#{entity[12]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.discountedPriceSumCHF} #{messages.booked}" />
+    <ui:param
+      name="value"
+      value="#{entity[13]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.charges} #{messages.billable}" />
+    <ui:param
+      name="value"
+      value="#{entity[14]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.priceSumCHF} #{messages.billable}" />
+    <ui:param
+      name="value"
+      value="#{entity[15]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.discountedPriceSumCHF} #{messages.billable}" />
+    <ui:param
+      name="value"
+      value="#{entity[16]}" />
+  </ui:include>
+</ui:composition>

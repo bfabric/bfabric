@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('items')}">
+    <p:column
+      sortable="#{empty sortable ? true : sortable}"
+      sortBy="#{entity.items.size()}"
+      headerText="#{messages.items}"
+      exportValue="#{collectionHelper.print(entity.items, 'getEntitySpecifics')}">
+      <ui:repeat
+        value="#{entity.items}"
+        var="item">
+        <h:outputText value="#{item.entitySpecifics}" />
+        <br />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

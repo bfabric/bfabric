@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.status}">
+    <h:outputText value="#{messages.status}" />
+    <h:outputText
+      value="#{instance.status.label}"
+      title="#{instance.status.hint}"
+      styleClass="#{instance.status.label}" />
+  </c:if>
+</ui:composition>

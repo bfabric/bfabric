@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:columns
+    value="#{tableColumns}"
+    var="columnName"
+    columnIndexVar="columnNumber"
+    sortBy="#{columnName}">
+    <f:facet name="header">
+      <h:outputText value="#{stringHelper.firstUpper(columnName)}" />
+    </f:facet>
+    <h:outputText
+      rendered="#{tableColumns.size() == 1}"
+      value="#{entity}" />
+    <h:outputText
+      rendered="#{tableColumns.size() > 1}"
+      value="#{entity[columnNumber]}" />
+  </p:columns>
+</ui:composition>

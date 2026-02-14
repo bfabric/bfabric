@@ -1,0 +1,199 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    id="#{columnId}#{constants.COLUMN}"
+    rendered="#{rendered}"
+    exportable="false"
+    styleClass="#{columnId}#{rowIndex}">
+    <f:facet name="header">
+      <p:inputNumber
+        id="#{columnId}#{constants.HEADER_INPUT}"
+        disabled="#{columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled}"
+        valueChangeListener="#{bean.valueChangedAll}"
+        title="#{messages.setValueForColumnHint}"
+        decimalPlaces="#{not empty decimalPlaces ? decimalPlaces : 32}"
+        thousandSeparator=""
+        padControl="#{not empty padControl ? padControl : false}"
+        onblur="this.value=''"
+        inputStyleClass="table-header-margin"
+        inputStyle="#{not empty style ? style : ''}"
+        pt:placeholder="#{(columnInputEnabled != null and not columnInputEnabled or headerInputEnabled != null and not headerInputEnabled) ? '' : messages.setValueForColumn}">
+        <p:ajax
+          event="change"
+          partialSubmit="true"
+          resetValues="true"
+          update="@this" />
+      </p:inputNumber>
+      <ui:include src="/fragments/display-required.xhtml">
+        <ui:param
+          name="label"
+          value="#{headerText}" />
+        <ui:param
+          name="required"
+          value="#{displayRequired}" />
+      </ui:include>
+
+      <!-- Calculations from the initial qc -->
+      <c:if test="#{not empty inputQcConcentrationDropdownRendered and inputQcConcentrationDropdownRendered}">
+        <h:panelGrid
+          rendered="#{not empty bean.inputQcSamplePlates}"
+          columns="1"
+          styleClass="noborder">
+          <h:selectOneMenu
+            id="#{constants.INPUT_QC_PLATE}"
+            title="#{messages.selectInputQcSampleHintPlate}"
+            valueChangeListener="#{bean.inputQcSamplePlateChanged}"
+            converter="omnifaces.SelectItemsConverter"
+            styleClass="noborder"
+            style="min-width: 200px;">
+            <f:selectItem itemLabel="#{messages.select} #{messages.plate}" />
+            <f:selectItems
+              value="#{bean.inputQcSamplePlates}"
+              var="item"
+              itemLabel="#{stringHelper.truncate(item.name, 50)}" />
+            <p:ajax
+              event="change"
+              partialSubmit="true"
+              resetValues="true"
+              update="@this" />
+          </h:selectOneMenu>
+        </h:panelGrid>
+      </c:if>
+
+      <!-- Calculations from the final qc -->
+      <c:if test="#{not empty molarityDropdownRendered and molarityDropdownRendered}">
+        <h:panelGrid
+          rendered="#{not empty bean.molaritySamplePlates}"
+          columns="1"
+          styleClass="noborder">
+          <h:selectOneMenu
+            id="#{constants.MOLARITY_PLATE}"
+            title="#{messages.selectMolaritySamplePlateHint}"
+            valueChangeListener="#{bean.molaritySamplePlateChanged}"
+            converter="omnifaces.SelectItemsConverter"
+            styleClass="noborder"
+            style="min-width: 200px;">
+            <f:selectItem itemLabel="#{messages.select} #{messages.plate}" />
+            <f:selectItems
+              value="#{bean.molaritySamplePlates}"
+              var="item"
+              itemLabel="#{stringHelper.truncate(item.name, 50)}" />
+            <p:ajax
+              event="change"
+              partialSubmit="true"
+              resetValues="true"
+              update="@this" />
+          </h:selectOneMenu>
+        </h:panelGrid>
+      </c:if>
+
+    </f:facet>
+    <h:panelGroup id="#{columnId}#{constants.REQUIRED_FIELD}">
+      <h:outputText
+        rendered="#{not empty displayRequiredCell and displayRequiredCell}"
+        value="&#160;*"
+        title="#{messages.requiredHint}"
+        styleClass="required" />
+    </h:panelGroup>
+    <p:inputNumber
+      id="#{columnId}#{constants.INPUT}"
+      disabled="#{columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled}"
+      value="#{not empty hideValueIfFieldDisabled and hideValueIfFieldDisabled and (columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled) ? null : value}"
+      valueChangeListener="#{bean.valueChanged}"
+      title="#{not empty watermarkValue and not empty watermarkValueHint ? watermarkValueHint : (not empty hideValueIfFieldDisabled and hideValueIfFieldDisabled and (columnInputEnabled != null and not columnInputEnabled or cellInputEnabled != null and not cellInputEnabled) ? null : value)}"
+      decimalPlaces="#{not empty decimalPlaces ? decimalPlaces : 32}"
+      thousandSeparator=""
+      padControl="#{not empty padControl ? padControl : false}"
+      inputStyleClass="inline-input #{columnId}#{constants.INPUT}#{rowIndex}"
+      inputStyle="text-align: right; #{not empty style ? style : ''} #{not empty calculatedAttributeStyle ? calculatedAttributeStyle : ''} #{not empty watermarkValue and not empty watermarkValueHint ? 'pointer-events: all !important;' : ''}"
+      pt:placeholder="#{watermarkValue}">
+      <c:if test="#{attributeCouplingEnabled == null or not attributeCouplingEnabled}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true" />
+      </c:if>
+      <c:if test="#{attributeCouplingEnabled != null and attributeCouplingEnabled}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          listener="#{bean.updateCoupling(entity, columnId)}" />
+      </c:if>
+    </p:inputNumber>
+    <!-- Calculations from the initial qc -->
+    <c:if test="#{not empty inputQcConcentrationDropdownRendered and inputQcConcentrationDropdownRendered}">
+      <h:panelGrid
+        rendered="#{not empty sampleEntity and sampleEntity.illuminaLibraryCalculationEnabledForInitialQc}"
+        columns="1"
+        styleClass="noborder">
+        <h:selectOneMenu
+          id="#{constants.INPUT_QC_SAMPLE}"
+          title="#{messages.selectInputQcSampleHint}"
+          value="#{sampleEntity.inputQcSample}"
+          valueChangeListener="#{bean.inputQcSampleChanged}"
+          converter="omnifaces.SelectItemsConverter"
+          styleClass="noborder"
+          style="width: 100%">
+          <f:selectItem itemLabel="#{messages.selectSampleForCalculation}" />
+          <f:selectItems
+            value="#{sampleEntity.getQcSiblingsWithNonEmptyConcentration()}"
+            var="item"
+            itemLabel="#{stringHelper.truncate(item.getSampleCalculationInfoForInitialQc(), 50)}" />
+          <p:ajax
+            event="change"
+            process="@this" />
+        </h:selectOneMenu>
+      </h:panelGrid>
+    </c:if>
+    <!-- Calculations from the final qc -->
+    <c:if test="#{not empty molarityDropdownRendered and molarityDropdownRendered}">
+      <h:panelGrid
+        rendered="#{not empty sampleEntity and sampleEntity.illuminaLibraryCalculationEnabledForFinalQc}"
+        columns="1"
+        styleClass="noborder">
+        <h:selectOneMenu
+          id="#{constants.MOLARITY_SAMPLE}"
+          title="#{messages.selectMolaritySampleHint}"
+          value="#{sampleEntity.molaritySample}"
+          valueChangeListener="#{bean.molaritySampleChanged}"
+          converter="omnifaces.SelectItemsConverter"
+          styleClass="noborder"
+          style="width: 100%">
+          <f:selectItem itemLabel="#{messages.selectSampleForCalculation}" />
+          <f:selectItems
+            value="#{sampleEntity.qcChildrenWithNonEmptyMolarConcentrationInRange}"
+            var="item"
+            itemLabel="#{stringHelper.truncate(item.getSampleCalculationInfoForFinalQc(), 50)}" />
+          <p:ajax
+            event="change"
+            process="@this" />
+        </h:selectOneMenu>
+      </h:panelGrid>
+    </c:if>
+    <div>
+      <h:message
+        id="#{columnId}#{constants.MESSAGE}"
+        for="#{columnId}#{constants.INPUT}"
+        styleClass="errorMessageField" />
+    </div>
+  </p:column>
+  <ui:include src="/fragments/column/export-column.xhtml">
+    <ui:param
+      name="rendered"
+      value="#{rendered}" />
+    <ui:param
+      name="headerText"
+      value="#{headerText}" />
+    <ui:param
+      name="value"
+      value="#{value}" />
+  </ui:include>
+</ui:composition>

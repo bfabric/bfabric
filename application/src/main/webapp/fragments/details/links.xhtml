@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:set
+    value="#{empty tableContent ? instance.links : tableContent}"
+    var="tableContent" />
+  <c:if test="#{not empty tableContent}">
+    <h:outputText value="#{messages.links}" />
+    <p:dataTable
+      value="#{tableContent}"
+      var="linkEntity"
+      styleClass="hide-table-header noborder inner"
+      style="margin-left: -4px !important">
+      <ui:include src="/fragments/column/linkurl.xhtml">
+        <ui:param
+          name="entity"
+          value="#{linkEntity}" />
+      </ui:include>
+    </p:dataTable>
+  </c:if>
+</ui:composition>

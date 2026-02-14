@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.all} #{messages.savedQueries}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist.xhtml">
+      <ui:param
+        name="tableType"
+        value="query" />
+      <ui:param
+        name="tableContent"
+        value="#{queryList.getSavedQueriesReadableByUser(currentUser)}" />
+      <ui:param
+        name="hideColumns"
+        value="discriminator" />
+      <ui:param
+        name="showColumns"
+        value="remove, publish" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

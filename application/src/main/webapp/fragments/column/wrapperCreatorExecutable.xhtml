@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('wrapperCreatorExecutable')}">
+    <p:column field="#{fieldPrefix}wrapperCreatorExecutable.id" headerText="#{messages.wrapperCreatorExecutable}">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param name="instance" value="#{entity.wrapperCreatorExecutable}" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('name')}">
+    <p:column
+      field="#{fieldPrefix}name"
+      headerText="#{messages.name}" />
+  </c:if>
+  <c:if test="#{not hideColumns.contains('value')}">
+    <p:column
+      field="#{fieldPrefix}value"
+      headerText="#{messages.value}">
+      <h:outputText value="#{stringHelper.truncate(entity.value)}" title="#{stringHelper.getTitle(entity.value)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

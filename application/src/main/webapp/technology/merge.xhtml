@@ -1,0 +1,153 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeTechnologies}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{technologyManager.technology}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{technologyManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{technologyManager.technology.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{technologyManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{technologyManager.technology.name}" />
+          <f:selectItem itemValue="#{technologyManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{technologyManager.merged.name}" />
+
+        <h:outputText value="#{messages.enabled}" />
+        <h:outputText value="#{technologyManager.technology.enabled}" />
+        <h:selectOneRadio
+          id="enabled"
+          layout="lineDirection"
+          value="#{technologyManager.mergeSelection.enabled}">
+          <f:selectItem itemValue="#{technologyManager.technology.enabled}" />
+          <f:selectItem itemValue="#{technologyManager.merged.enabled}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{technologyManager.merged.enabled}" />
+
+        <h:outputText value="#{messages.orderPosition}" />
+        <h:outputText value="#{technologyManager.technology.orderPosition}" />
+        <h:selectOneRadio
+          id="orderPosition"
+          layout="lineDirection"
+          value="#{technologyManager.mergeSelection.orderPosition}">
+          <f:selectItem itemValue="#{technologyManager.technology.orderPosition}" />
+          <f:selectItem itemValue="#{technologyManager.merged.orderPosition}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{technologyManager.merged.orderPosition}" />
+
+        <c:if test="#{not empty technologyManager.technology.description or not empty technologyManager.merged.description}">
+          <h:outputText value="#{messages.description}" />
+          <h:outputText value="#{technologyManager.technology.getDescriptionTrunc(40)}" title="#{technologyManager.technology.description}" />
+          <h:selectOneRadio
+            id="description"
+            layout="lineDirection"
+            required="true"
+            value="#{technologyManager.mergeSelection.description}">
+            <f:selectItem itemValue="#{technologyManager.technology.description}" />
+            <f:selectItem itemValue="#{technologyManager.merged.description}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{technologyManager.merged.getDescriptionTrunc(40)}" title="#{technologyManager.merged.description}" />
+        </c:if>
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.containers}" />
+        <h:outputText value="#{technologyManager.technology.containers.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.containers.size()}" />
+
+        <h:outputText value="#{messages.applications}" />
+        <h:outputText value="#{technologyManager.technology.applications.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.applications.size()}" />
+
+        <h:outputText value="#{messages.contracts}" />
+        <h:outputText value="#{technologyManager.technology.contracts.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.contracts.size()}" />
+
+        <h:outputText value="#{messages.purchases}" />
+        <h:outputText value="#{technologyManager.technology.purchases.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.purchases.size()}" />
+
+        <h:outputText value="#{messages.samplePreparationProtocols}" />
+        <h:outputText value="#{technologyManager.technology.samplePreparationProtocols.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.samplePreparationProtocols.size()}" />
+
+        <h:outputText value="#{messages.serviceTypes}" />
+        <h:outputText value="#{technologyManager.technology.serviceTypes.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.serviceTypes.size()}" />
+
+        <h:outputText value="#{messages.heads}" />
+        <h:outputText value="#{technologyManager.technology.heads.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.heads.size()}" />
+
+        <h:outputText value="#{messages.employees}" />
+        <h:outputText value="#{technologyManager.technology.employees.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.employees.size()}" />
+
+        <h:outputText value="#{messages.users}" />
+        <h:outputText value="#{technologyManager.technology.users.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.users.size()}" />
+
+        <h:outputText value="#{messages.instruments}" />
+        <h:outputText value="#{technologyManager.technology.instruments.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{technologyManager.merged.instruments.size()}" />
+
+        <h:outputText value="#{messages.instrumentReservation}" />
+        <h:outputText value="#{instrumentReservationList.getLazyModelByTechnology(technologyManager.technology).size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{instrumentReservationList.getLazyModelByTechnology(technologyManager.merged).size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{technologyManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{technologyManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

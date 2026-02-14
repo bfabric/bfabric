@@ -1,0 +1,25 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <!--@elvariable id="instance" type="org.bfabric.entity.AbstractEntity"-->
+  <c:if test="#{instance.runnableWebAppsRendered}">
+    <h:panelGrid styleClass="content-subheader">
+      <h:outputText value="#{messages.applications}" styleClass="bold" />
+    </h:panelGrid>
+    <h:panelGrid columns="2" columnClasses="align-middle">
+      <c:forEach items="#{instance.runnableWebAppsGroupedByCategory}" var="itemCategory">
+        <h:outputText value="#{itemCategory.key}" />
+        <h:panelGrid columns="6">
+          <c:forEach items="#{itemCategory.value}" var="item">
+            <ui:include src="/fragments/button/runWebUrl.xhtml">
+              <ui:param name="runOnEntity" value="#{instance}" />
+              <ui:param name="instance" value="#{item}" />
+              <ui:param name="label" value="#{item.name}" />
+              <ui:param name="styleClass" value="appName" />
+            </ui:include>
+          </c:forEach>
+        </h:panelGrid>
+      </c:forEach>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

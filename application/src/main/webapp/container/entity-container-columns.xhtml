@@ -1,0 +1,21 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{not hideColumns.contains('containers')}"
+    headerText="#{messages.containers}">
+    <ui:repeat
+      value="#{entity.containers}"
+      var="item">
+      <ui:include src="/fragments/entity-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{item}" />
+        <ui:param
+          name="entityValue"
+          value="#{item.entityName} #{item.id}" />
+      </ui:include>
+      <br />
+    </ui:repeat>
+  </p:column>
+</ui:composition>

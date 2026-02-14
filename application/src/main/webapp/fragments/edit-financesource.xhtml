@@ -1,0 +1,125 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup id="financeSource">
+    <h:panelGrid
+      rendered="#{callerEntity.renderedFinanceSource}"
+      columns="2"
+      columnClasses="rtdm, ltd">
+      <h:outputText value="#{messages.billingAccount}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <h:panelGroup id="financeSourceGrid">
+          <h:selectOneMenu
+            id="renderedFinanceSourceEth"
+            value="#{callerEntity.financeSourceEth}"
+            disabled="#{not callerEntity.renderedFinanceSourceEth}"
+            styleClass="editWidth">
+            <f:selectItem
+              itemLabel="#{messages.selectAnItem}"
+              itemDisabled="true" />
+            <f:selectItem
+              itemLabel="ETHZ"
+              itemValue="#{true}" />
+            <f:selectItem
+              itemLabel="UZH"
+              itemValue="#{false}" />
+            <p:ajax
+              event="change"
+              update="financeSourceGrid"
+              listener="#{callerEntity.resetFinanceSource}" />
+          </h:selectOneMenu>
+          <h:selectOneMenu
+            id="renderedCostCentre"
+            value="#{callerEntity.renderedCostCentre}"
+            styleClass="editWidth">
+            <f:selectItem
+              itemLabel="#{messages.selectAnItem}"
+              itemDisabled="true" />
+            <f:selectItem
+              itemLabel="#{messages.costCentre}"
+              itemValue="#{true}" />
+            <f:selectItem
+              itemLabel="#{messages.pspElement}"
+              itemValue="#{false}" />
+            <p:ajax
+              event="change"
+              update="financeSourceGrid"
+              listener="#{callerEntity.resetFinanceSource}" />
+          </h:selectOneMenu>
+          <p:inputMask
+            rendered="#{not empty callerEntity.financeSourceEth and not empty callerEntity.renderedCostCentre and callerEntity.renderedCostCentre and callerEntity.financeSourceEth}"
+            id="financeSourceEth"
+            value="#{callerEntity.costCentre}"
+            title="#{messages.editFinanceSourceEthHint}"
+            mask="99999"
+            styleClass="editWidth" />
+          <p:inputMask
+            rendered="#{not empty callerEntity.financeSourceEth and not empty callerEntity.renderedCostCentre and callerEntity.renderedCostCentre and not callerEntity.financeSourceEth}"
+            id="costCentreUzh"
+            value="#{callerEntity.costCentre}"
+            title="#{messages.editCostCentreUzhHint}"
+            mask="9999999"
+            styleClass="editWidth" />
+          <p:inputMask
+            rendered="#{not empty callerEntity.financeSourceEth and not empty callerEntity.renderedCostCentre and not callerEntity.renderedCostCentre and callerEntity.financeSourceEth}"
+            id="pspElementEth"
+            value="#{callerEntity.pspElement}"
+            title="#{messages.editPspElementEthHint}"
+            mask="9-999999-999"
+            styleClass="editWidth" />
+          <p:inputMask
+            rendered="#{not empty callerEntity.financeSourceEth and not empty callerEntity.renderedCostCentre and not callerEntity.renderedCostCentre and not callerEntity.financeSourceEth}"
+            id="pspElementUzh"
+            value="#{callerEntity.pspElement}"
+            title="#{messages.editPspElementUzhHint}"
+            mask="a-99999-99-99"
+            styleClass="editWidth" />
+        </h:panelGroup>
+        <h:panelGroup>
+          <p:message
+            for="renderedFinanceSourceEth"
+            styleClass="errorMessage" />
+          <p:message
+            for="renderedCostCentre"
+            styleClass="errorMessage" />
+          <p:message
+            for="financeSourceEth"
+            styleClass="errorMessage" />
+          <p:message
+            for="costCentreUzh"
+            styleClass="errorMessage" />
+          <p:message
+            for="pspElementEth"
+            styleClass="errorMessage" />
+          <p:message
+            for="pspElementUzh"
+            styleClass="errorMessage" />
+        </h:panelGroup>
+      </ui:decorate>
+    </h:panelGrid>
+
+    <h:panelGrid
+      rendered="#{callerEntity.renderedFinancedByEuGrant}"
+      columns="2"
+      columnClasses="rtdm, ltd">
+      <h:outputText
+        value="#{messages.euGrant}"
+        title="#{messages.editFinancedByEuGrantHint}" />
+      <ui:decorate template="/fragments/required.xhtml">
+        <h:selectOneRadio
+          id="euGrant"
+          value="#{callerEntity.euGrant}"
+          title="#{messages.editFinancedByEuGrantHint}">
+          <f:selectItem
+            itemLabel="#{messages.no}"
+            itemValue="#{false}" />
+          <f:selectItem
+            itemLabel="#{messages.yes}"
+            itemValue="#{true}" />
+        </h:selectOneRadio>
+      </ui:decorate>
+    </h:panelGrid>
+  </h:panelGroup>
+</ui:composition>

@@ -1,0 +1,57 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/servicecode.xhtml" />
+  <ui:include src="/fragments/column/fullcost.xhtml" />
+
+  <p:column exportHeaderValue="#{constants.ETHZ_UZH} #{messages.basicPrice}">
+    <f:facet name="header">
+      <h:outputText value="#{constants.ETHZ_UZH}" />
+      <br />
+      <h:outputText value="#{messages.basicPrice}" />
+    </f:facet>
+    <h:outputText value="#{entity.serviceOrganizationTypePricesAsList.get(0).basicPrice}" style="float:right">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+
+  <p:column exportHeaderValue="#{constants.ETHZ_UZH} #{messages.euGrantPrice}">
+    <f:facet name="header">
+      <h:outputText value="#{constants.ETHZ_UZH}" />
+      <br />
+      <h:outputText value="#{messages.euGrantPrice}" />
+    </f:facet>
+    <h:outputText value="#{entity.serviceOrganizationTypePricesAsList.get(0).euGrantPrice}" style="float:right">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+
+  <p:column exportHeaderValue="#{messages.academics} #{messages.basicPrice}">
+    <f:facet name="header">
+      <h:outputText value="#{messages.academics}" />
+      <br />
+      <h:outputText value="#{messages.basicPrice}" />
+    </f:facet>
+    <h:outputText value="#{entity.serviceOrganizationTypePricesAsList.get(1).basicPrice}" style="float:right">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+
+  <p:column exportHeaderValue="#{messages.companies} #{messages.basicPrice}">
+    <f:facet name="header">
+      <h:outputText value="#{messages.companies}" />
+      <br />
+      <h:outputText value="#{messages.basicPrice}" />
+    </f:facet>
+    <h:outputText value="#{entity.serviceOrganizationTypePricesAsList.get(3).basicPrice}" style="float:right">
+      <f:convertNumber pattern="0.00" />
+    </h:outputText>
+  </p:column>
+
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/created.xhtml" />
+</ui:composition>

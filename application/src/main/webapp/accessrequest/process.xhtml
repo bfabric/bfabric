@@ -1,0 +1,331 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('accessRequestManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.processAccessRequest}: #{accessRequest.accessRequestType.name}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form
+      id="processAccessRequestForm"
+      onsubmit="#{accessRequestManager.resetRefererURL()}"
+      accept-charset="ISO-8859-1">
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.status}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText
+            value="#{accessRequest.status.label}"
+            styleClass="#{accessRequest.status.label}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.login}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <ui:include src="/fragments/entity-link.xhtml">
+            <ui:param
+              name="instance"
+              value="#{accessRequest.user}" />
+            <ui:param
+              name="entityValue"
+              value="#{accessRequest.user.login}" />
+          </ui:include>
+          <h:outputText
+            rendered="#{accessRequest.user.employee}"
+            value="&#160;(#{messages.employee})"
+            styleClass="warning" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.name}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{accessRequest.user.name}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.birthDate}" />
+        <h:panelGroup rendered="#{empty accessRequest.user.birthDate}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:datePicker
+              id="birthdate"
+              value="#{accessRequest.user.birthDate}"
+              required="true" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not empty accessRequest.user.birthDate}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.user.birthDate}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.homePhone}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{accessRequest.user.homePhone}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.homeAddress}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{accessRequest.user.fullHomeAddress}" />
+        </ui:decorate>
+
+        <h:outputText
+          rendered="#{not empty accessRequest.user.institute.name}"
+          value="#{messages.institute}" />
+        <h:panelGroup rendered="#{not empty accessRequest.user.institute.name}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.user.institute.name}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText
+          rendered="#{not empty accessRequest.user.division.company.name}"
+          value="#{messages.company}" />
+        <h:panelGroup rendered="#{not empty accessRequest.user.division.company.name}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.user.division.company.name}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.phone}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{accessRequest.user.phone}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.email}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{accessRequest.user.email}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.runningProjects}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText
+            value="#{accessRequest.user.currentAndRunningProjectIds}"
+            rendered="#{not empty accessRequest.user.currentAndRunningProjectIds}" />
+          <h:outputText
+            value="#{messages.userHasNoRunningProjectsHint}"
+            styleClass="orange"
+            rendered="#{empty accessRequest.user.currentAndRunningProjectIds}" />
+        </ui:decorate>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        rendered="#{accessRequest.processCardFieldsRendered}">
+        <h:outputText
+          value="#{messages.accessCardNumber}"
+          title="#{messages.accessCardNumberHint}" />
+        <h:panelGroup rendered="#{accessRequest.pending}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="accessCardNumber"
+              value="#{accessRequest.user.accessCardNumber}"
+              title="#{messages.accessCardNumberHint}"
+              validator="#{accessRequest.user.validateAccessCardNumber}"
+              required="true"
+              styleClass="editWidthSmall" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not accessRequest.pending}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.user.accessCardNumber}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText
+          value="#{messages.accessCardCode}"
+          title="#{messages.accessCardCodeHint}" />
+        <h:panelGroup rendered="#{accessRequest.pending}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="accessCardCode"
+              value="#{accessRequest.user.accessCardCode}"
+              title="#{messages.accessCardCodeHint}"
+              validator="#{accessRequest.user.validateAccessCardCode}"
+              required="true"
+              styleClass="editWidthSmall" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not accessRequest.pending}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.user.accessCardCode}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.accessProfile}" />
+        <h:panelGroup rendered="#{accessRequest.pending}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneRadio
+              id="accessProfile"
+              value="#{accessRequest.accessRequestProfile}"
+              valueChangeListener="#{accessRequest.accessRequestProfileChanged}"
+              required="true"
+              converter="omnifaces.SelectItemsConverter">
+              <f:selectItems
+                value="#{accessRequestProfileList.enabledAccessRequestProfiles}"
+                var="item"
+                itemLabel="#{item.name}" />
+            </h:selectOneRadio>
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not accessRequest.pending}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.user.accessCardCode}" />
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        rendered="#{accessRequest.guestAccessCardApplication}">
+        <h:outputText value="#{messages.accessCardValidityStartDate}" />
+        <h:panelGroup rendered="#{accessRequest.pending}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:datePicker
+              id="accessCardValidityStartDate"
+              value="#{accessRequest.accessCardValidityStartDate}"
+              title="#{messages.accessCardValidityStartDateHint}"
+              required="true" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not accessRequest.pending}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.accessCardValidityStartDate}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.accessCardValidityEndDate}" />
+        <h:panelGroup rendered="#{accessRequest.pending}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:datePicker
+              id="accessCardValidityEndDate"
+              value="#{accessRequest.accessCardValidityEndDate}"
+              title="#{messages.accessCardValidityEndDateHint}"
+              validator="#{accessRequest.validateAccessCardValidityEndDate}"
+              required="true" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not accessRequest.pending}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.accessCardValidityEndDate}" />
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd"
+        rendered="#{accessRequest.guestAccessCardExtension}">
+        <h:outputText value="#{messages.accessCardNumber}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{accessRequest.user.accessCardNumber}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.accessCardCode}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{accessRequest.user.accessCardCode}" />
+        </ui:decorate>
+
+        <h:outputText value="#{messages.accessCardExpiryDate}" />
+        <h:panelGroup rendered="#{accessRequest.pending}">
+          <ui:decorate template="/fragments/required.xhtml">
+            <p:datePicker
+              id="accessCardExpiryDate"
+              value="#{accessRequest.user.accessCardExpiryDate}"
+              title="#{messages.accessCardExpiryDateHint}"
+              validator="#{accessRequest.validateAccessCardExpiryDate}"
+              required="true" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not accessRequest.pending}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.user.accessCardExpiryDate}" />
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.comment}" />
+        <h:panelGroup rendered="#{accessRequest.pending}">
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="description"
+              value="#{accessRequest.description}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{not accessRequest.pending}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{accessRequest.description}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.date}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <h:outputText value="#{now}">
+            <f:convertDateTime
+              type="date"
+              dateStyle="short" />
+          </h:outputText>
+        </ui:decorate>
+
+        <h:outputText
+          value="#{messages.requester} #{messages.email}"
+          rendered="#{accessRequest.processCardFieldsRendered}" />
+        <h:panelGroup rendered="#{accessRequest.processCardFieldsRendered}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{configuration.accessRequestManagerEmail}" />
+          </ui:decorate>
+        </h:panelGroup>
+
+        <h:outputText
+          value="#{messages.sendTo}"
+          rendered="#{accessRequest.processCardFieldsRendered}" />
+        <h:panelGroup rendered="#{accessRequest.processCardFieldsRendered}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{configuration.accessRequestUZHEmail}, #{configuration.accessRequestNotificationEmail}" />
+          </ui:decorate>
+        </h:panelGroup>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="buttons"
+        rendered="#{accessRequest.pending}"
+        columns="4"
+        styleClass="action">
+        <p:commandButton
+          action="#{accessRequestManager.approveGuestAccessCardApplication}"
+          value="#{messages.save}"
+          rendered="#{accessRequest.guestAccessCardApplication and not accessRequest.complete}"
+          update="processAccessRequestForm" />
+        <p:commandButton
+          action="#{accessRequestManager.approveAccessRequest}"
+          value="#{messages.sendRequestToUZH}"
+          title="#{messages.sendRequestToUZHHint}"
+          rendered="#{accessRequest.processCardFieldsRendered}"
+          update="processAccessRequestForm" />
+        <p:commandButton
+          action="#{accessRequestManager.approveAccessRequest}"
+          value="#{messages.approve}"
+          rendered="#{accessRequest.guestAccessCardExtension}"
+          update="processAccessRequestForm" />
+        <p:commandButton
+          action="#{accessRequestManager.rejectAccessRequest}"
+          value="#{messages.rejectRequestAccess}"
+          immediate="true" />
+        <p:commandButton
+          action="#{accessRequestManager.cancelEdit}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

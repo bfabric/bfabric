@@ -1,0 +1,14 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    sortBy="#{empty sortByValue ? value : sortByValue}"
+    filterBy="#{value}"
+    headerText="#{headerText} ">
+    <h:outputText
+      value="#{value}"
+      title="#{valueTitle}"
+      style="float:right" />
+  </p:column>
+</ui:composition>

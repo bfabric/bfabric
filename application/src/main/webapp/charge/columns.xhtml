@@ -1,0 +1,47 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/servicename.xhtml" />
+  <ui:include src="/fragments/column/servicecodename.xhtml" />
+  <ui:include src="/container/entity-container-column.xhtml" />
+  <ui:include src="/fragments/column/servicetype.xhtml">
+    <ui:param name="fieldPrefix" value="container." />
+    <ui:param name="entity" value="#{entity.container}" />
+  </ui:include>
+  <ui:include src="/fragments/column/services.xhtml">
+    <ui:param name="entity" value="#{entity.container}" />
+  </ui:include>
+  <ui:include src="/fragments/column/servicefullcost.xhtml" />
+  <ui:include src="/fragments/column/total.xhtml" />
+  <ui:include src="/fragments/column/accounted.xhtml" />
+  <ui:include src="/fragments/column/notaccounted.xhtml" />
+  <ui:include src="/fragments/column/basicprice.xhtml" />
+  <ui:include src="/fragments/column/additionalprice.xhtml" />
+  <ui:include src="/fragments/column/price.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.totalPrice}" />
+  </ui:include>
+  <ui:include src="/fragments/column/discountedprice.xhtml" />
+  <ui:include src="/fragments/column/discount.xhtml" />
+  <ui:include src="/fragments/column/orderdiscount.xhtml" />
+  <ui:include src="/fragments/column/date.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/notes.xhtml" />
+  <ui:include src="/fragments/column/instrumentreservation-count.xhtml" />
+  <ui:include src="/fragments/column/billable.xhtml" />
+  <ui:include src="/fragments/column/prepayment.xhtml" />
+  <ui:include src="/fragments/column/taxtype.xhtml" />
+  <ui:include src="/fragments/column/booking.xhtml" />
+  <ui:include src="/fragments/column/organizationtype.xhtml" />
+  <ui:include src="/fragments/column/containerorganization.xhtml" />
+  <ui:include src="/fragments/column/containerdepartment.xhtml" />
+  <ui:include src="/fragments/column/containerinstitute.xhtml" />
+  <ui:include src="/fragments/column/charger.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+  <p:column
+    rendered="#{showColumns.contains('oldServiceChargeId') and identityManager.hasCurrentUserRole('bookingManager') and configuration.legacyEnabled}"
+    field="#{fieldPrefix}oldServiceChargeId"
+    headerText="#{messages.oldServiceChargeId}" />
+</ui:composition>

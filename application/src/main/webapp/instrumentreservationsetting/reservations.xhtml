@@ -1,0 +1,44 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('reservations') and identityManager.hasCurrentUserRole('instrumentManager')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrumentreservation" />
+      <ui:param
+        name="tableContext"
+        value="#{instrumentReservationSetting.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{instrumentReservationSetting.instrumentReservations}" />
+      <ui:param
+        name="hideColumns"
+        value="instrumentReservationSetting" />
+    </ui:include>
+    <h:panelGrid
+      columns="2"
+      styleClass="action">
+      <p:button
+        outcome="/instrumentreservationshift/shift.xhtml"
+        value="#{messages.shift}">
+        <f:param
+          name="shiftInit"
+          value="true" />
+        <f:param
+          name="instrumentReservationSettingId"
+          value="#{instrumentReservationSetting.id}" />
+      </p:button>
+      <h:form rendered="#{not empty instrumentReservationSetting.instrumentReservations}">
+        <p:commandButton
+          ajax="false"
+          actionListener="#{instrumentReservationSetting.exportAndDownloadIcs(dataTableHelper.selectedEntities)}"
+          value="#{messages.exportICSExport}"
+          title="#{messages.exportICSHint}" />
+      </h:form>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

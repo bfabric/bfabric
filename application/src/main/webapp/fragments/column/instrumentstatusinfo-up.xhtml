@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instrumentStatusInfoUp')}">
+    <p:column
+      field="#{fieldPrefix}instrumentStatusInfo.up"
+      headerText="#{messages.up}"
+      filterMatchMode="exact"
+      title="#{messages.instrumentStatusUp}"
+      styleClass="#{entity.instrumentStatusInfo.up ? constants.BACKGROUND_COLOR_GREEN : constants.BACKGROUND_COLOR_RED}">
+      <ui:include src="/fragments/boolean-filter.xhtml">
+        <ui:param
+          name="idPrefix"
+          value="up" />
+      </ui:include>
+      <h:outputText
+        value="#{stringHelper.toYesNo(entity.up)}"
+        styleClass="#{stringHelper.toGreenRed(entity.up)}" />
+    </p:column>
+  </c:if>
+</ui:composition>

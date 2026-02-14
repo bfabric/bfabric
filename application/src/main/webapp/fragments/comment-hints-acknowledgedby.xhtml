@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="commentEntity" type="org.bfabric.entity.Comment"-->
+  <h:panelGroup id="acknowledged">
+    <p:commandLink
+      rendered="#{empty commentEntity.acknowledgedBy and commentEntity.lastComment and identityManager.hasCurrentUserRole('employee')}"
+      actionListener="#{commentHelper.switchAcknowledgedBy(commentEntity, currentUser)}"
+      disabled="#{not empty commentEntity.acknowledgedBy}"
+      title="#{commentEntity.acknowledgedBy.contains(currentUser) ? messages.unacknowledgeComment : messages.acknowledgeComment}"
+      immediate="true"
+      process="acknowledged"
+      update="acknowledged">
+      <h:panelGroup rendered="#{empty commentEntity.acknowledgedBy}">
+        <i class="far fa-thumbs-up" />
+      </h:panelGroup>
+    </p:commandLink>
+    <h:panelGroup rendered="#{not empty commentEntity.acknowledgedBy}">
+      <i class="fas fa-thumbs-up analyzed" />
+    </h:panelGroup>
+  </h:panelGroup>
+</ui:composition>

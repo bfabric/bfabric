@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.expirationDate}">
+    <h:outputText value="#{messages.expirationDate}" title="#{messages.expirationDateHint}" />
+    <h:outputText value="#{instance.expirationDate}" title="#{messages.expirationDateHint}" />
+  </c:if>
+</ui:composition>

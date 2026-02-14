@@ -1,0 +1,62 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/servicearea.xhtml" />
+      <ui:include src="/fragments/details/technologies.xhtml" />
+
+      <h:outputText value="#{messages.enabled}" />
+      <h:panelGroup>
+        <h:outputText value="#{serviceType.enabled}" />
+        <h:outputText rendered="#{serviceType.enabled and serviceType.services.size() ne serviceType.servicesEnabled.size()}"
+                      value="&#160;#{messages.hasDisabledServicesHint}"
+                      styleClass="warn" />
+        <h:outputText rendered="#{not serviceType.enabled and serviceType.servicesEnabled.size() > 0}"
+                      value="&#160;#{messages.hasEnabledServicesHint}"
+                      styleClass="warn" />
+      </h:panelGroup>
+
+      <ui:include src="/fragments/details/servicesenabled.xhtml" />
+      <ui:include src="/fragments/details/coach.xhtml" />
+      <ui:include src="/fragments/details/coachbackup.xhtml" />
+      <ui:include src="/fragments/details/users-table.xhtml" />
+      <ui:include src="/fragments/details/instructionlink.xhtml" />
+      <ui:include src="/fragments/details/description.xhtml" />
+      <ui:include src="/fragments/details/internal.xhtml" />
+      <ui:include src="/fragments/details/requiresproject.xhtml" />
+      <ui:include src="/fragments/details/processessamples.xhtml" />
+      <ui:include src="/fragments/details/sampletype.xhtml" />
+      <ui:include src="/fragments/details/requiressamedayprocessing.xhtml" />
+      <ui:include src="/fragments/details/servicecolumnenabled.xhtml" />
+      <ui:include src="/fragments/details/processesplates.xhtml" />
+      <ui:include src="/fragments/details/platesubmissionproposallimit.xhtml" />
+      <ui:include src="/fragments/details/initialcustomstatus.xhtml" />
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="6"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/clone.xhtml" />
+      <ui:include src="/fragments/button/delete-cascade.xhtml" />
+      <h:form rendered="#{serviceType.clearPricesRendered}">
+        <p:commandButton
+          action="#{serviceTypeManager.clearPrices()}"
+          value="#{messages.clearPrices}"
+          title="#{messages.clearPricesHint}"
+          update="@form">
+          <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+        </p:commandButton>
+      </h:form>
+      <ui:include src="/fragments/button/list.xhtml" />
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

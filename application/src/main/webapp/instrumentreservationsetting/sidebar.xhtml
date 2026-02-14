@@ -1,0 +1,15 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{instrumentReservationSetting.instrumentReservations}" />
+    <ui:param
+      name="label"
+      value="#{messages.reservations}" />
+    <ui:param
+      name="tab"
+      value="reservations" />
+  </ui:include>
+</ui:composition>

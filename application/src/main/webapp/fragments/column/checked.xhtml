@@ -1,0 +1,17 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{showColumns.contains('checked')}">
+    <p:column exportable="false">
+      <h:selectBooleanCheckbox
+        value="#{entity.checked}"
+        title="#{entityHint}">
+        <p:ajax
+          event="change"
+          global="false" />
+      </h:selectBooleanCheckbox>
+    </p:column>
+  </c:if>
+</ui:composition>

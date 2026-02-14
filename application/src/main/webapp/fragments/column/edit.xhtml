@@ -1,0 +1,12 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('edit')}">
+    <p:column exportable="false">
+      <ui:include src="/fragments/button/edit.xhtml">
+        <ui:param name="instance" value="#{entity}" />
+        <ui:param name="styleClass" value="inline" />
+      </ui:include>
+    </p:column>
+  </c:if>
+</ui:composition>

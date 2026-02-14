@@ -1,0 +1,65 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+  <h:form id="select-sample">
+    <h:selectOneMenu
+      id="sampleType"
+      value="#{sampleBatchManager.sampleType}"
+      valueChangeListener="#{sampleBatchManager.sampleTypeChangedListener}"
+      converter="omnifaces.SelectItemsConverter"
+      styleClass="margin-bottom-10">
+      <f:selectItem
+        itemLabel="#{messages.selectAnItem}"
+        itemDisabled="true" />
+      <f:selectItems
+        value="#{sampleTypeList.getResultListEnabledIncludingExcludingOnRunAndMultiplexed(null)}"
+        var="item"
+        itemLabel="#{item.name}" />
+      <p:ajax
+        event="change"
+        oncomplete="fixOversize();"
+        update="@([id$=selectSampleGrid]), pageTitle, page_envelope" />
+    </h:selectOneMenu>
+
+    <h:panelGroup id="selectSampleGrid">
+      <h:panelGroup rendered="#{sampleBatchManager.sampleType != null}">
+        <h:outputText
+          value="#{sampleBatchManager.container.containerProject ? messages.project : messages.order} #{sampleBatchManager.container.id} has no editable sample of the selected type."
+          rendered="#{empty sampleBatchManager.selectionList}" />
+
+        <!-- The dataTable is only rendered if the selectionList is not empty -->
+        <h:panelGroup rendered="#{not empty sampleBatchManager.selectionList}">
+          <ui:include src="/fragments/datatable.xhtml">
+            <ui:param
+              name="tableContext"
+              value="selection" />
+            <ui:param
+              name="tableContent"
+              value="#{sampleBatchManager.selectionList}" />
+            <ui:param
+              name="include"
+              value="/sample/select-batch-columns.xhtml" />
+          </ui:include>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <p:commandButton
+            action="#{sampleBatchManager.editSelectedItems}"
+            value="#{messages.next}"
+            oncomplete="fixOversizeAndNavigateAway();"
+            update="page_envelope" />
+          <p:commandButton
+            action="#{sampleBatchManager.cancel}"
+            value="#{messages.cancel}"
+            immediate="true" />
+        </h:panelGrid>
+      </h:panelGroup>
+    </h:panelGroup>
+  </h:form>
+</ui:composition>

@@ -1,0 +1,81 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param name="entityManager" value="#{instrumentEventManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <o:importConstants type="org.bfabric.enums.LogStatusEnum" />
+      <h:form id="#{constants.EDIT}" onsubmit="#{instrumentEventManager.resetRefererURL()}">
+        <h:panelGrid columns="2" columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.instrumentEventType}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param name="listContext" value="instrumentEventType" />
+            <ui:param name="value" value="#{instrumentEvent.instrumentEventType}" />
+            <o:methodParam name="completeMethod" value="#{instrumentEventManager.getInstrumentEventTypes}" />
+            <ui:param name="itemSelectUpdate" value="@this" />
+            <ui:param name="ajaxClear" value="true" />
+            <ui:param name="itemLabel" value="#{item.displayName}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.instrument}" />
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param name="listContext" value="instrument" />
+            <ui:param name="value" value="#{instrumentEvent.instrument}" />
+            <o:methodParam name="completeMethod" value="#{instrumentEventManager.getInstruments}" />
+            <ui:param name="itemSelectUpdate" value="@this" />
+            <ui:param name="ajaxClear" value="true" />
+            <ui:param name="itemLabel" value="#{item.displayName}" />
+          </ui:include>
+
+          <h:outputText value="#{messages.user}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param name="listContext" value="instrumentEventUser" />
+              <ui:param name="value" value="#{instrumentEvent.user}" />
+              <o:methodParam name="completeMethod" value="#{instrumentEvent.getEmployeesFilteredIncludingUser}" />
+              <ui:param name="itemLabel" value="#{item.fullLastFirstName}" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.dateTime}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:datePicker id="dateTime" value="#{instrumentEvent.dateTime}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.status}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectOneMenu id="type" value="#{instrumentEvent.status}" styleClass="editWidthExtraLarge">
+              <f:selectItem itemLabel="#{messages.selectAnItem}" itemDisabled="true" />
+              <f:selectItems value="#{LogStatusEnum.values()}" var="item" itemValue="#{item}" itemLabel="#{item.label}" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea id="description" value="#{instrumentEvent.description}" styleClass="editWidthExtraLarge" row="3" />
+          </ui:decorate>
+
+          <c:if test="#{instrumentEvent.renderedSendEmailCheckbox}">
+            <h:outputText value="#{messages.sendEmailNotification}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:selectBooleanCheckbox id="sendMail" value="#{instrumentEvent.sendMail}">
+                <p:ajax event="change" listener="#{instrumentEvent.sendMailChanged}" immediate="true" />
+              </h:selectBooleanCheckbox>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid columns="2" styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

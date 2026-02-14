@@ -1,0 +1,138 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:fo="http://www.w3.org/1999/XSL/Format"
+  template="agenda-overview-template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('agendaManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageHeader">
+    <fo:static-content flow-name="xsl-region-after">
+      <fo:block font-size="7pt">
+        <fo:block-container>
+          <fo:block text-align="center">
+            Page&#160;<fo:page-number />&#160;created&#160;by&#160;#{identityManager.currentUser.name}&#160;(#{identityManager.currentUser.login})&#160;
+            <h:outputText value="#{identityManager.now}" />
+          </fo:block>
+        </fo:block-container>
+      </fo:block>
+    </fo:static-content>
+  </ui:define>
+
+  <ui:define name="monthlyOverview">
+    <!--@elvariable id="agendaEventHelperMonth" type="org.bfabric.util.AgendaEventHelper"-->
+    <fo:flow flow-name="xsl-region-body">
+      <fo:table
+        border-collapse="collapse"
+        font-size="8pt"
+        table-layout="fixed"
+        width="100%">
+        <fo:table-column column-width="40mm" />
+        <ui:repeat
+          value="#{agendaEventHelperMonth.headSlots}"
+          var="headSlot">
+          <!-- Check weekends and make them smaller -->
+          <fo:table-column column-width="#{headSlot.weekend ? '3pt' : '9pt'}" />
+        </ui:repeat>
+        <fo:table-body>
+          <!--Day Numbers -->
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block font-weight="bold">
+                <h:outputText value="#{agendaEventHelperMonth.monthYearAsText}" />
+              </fo:block>
+            </fo:table-cell>
+            <ui:repeat
+              value="#{agendaEventHelperMonth.headSlots}"
+              var="headSlot">
+              <fo:table-cell>
+                <fo:block font-weight="bold">
+                  <h:outputText
+                    value="#{headSlot.dayOfMonth}"
+                    rendered="#{not headSlot.weekend}" />
+                </fo:block>
+              </fo:table-cell>
+            </ui:repeat>
+          </fo:table-row>
+          <!--Day Labels-->
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block />
+            </fo:table-cell>
+            <ui:repeat
+              value="#{agendaEventHelperMonth.headSlots}"
+              var="headSlot">
+              <fo:table-cell>
+                <fo:block>
+                  <h:outputText
+                    value="#{headSlot.weekday}"
+                    rendered="#{not headSlot.weekend}" />
+                </fo:block>
+              </fo:table-cell>
+            </ui:repeat>
+          </fo:table-row>
+          <!--Public Events-->
+          <fo:table-row>
+            <fo:table-cell>
+              <fo:block>Public Events</fo:block>
+            </fo:table-cell>
+            <ui:repeat
+              var="publicSlot"
+              value="#{agendaEventHelperMonth.publicSlots}">
+              <ui:fragment rendered="#{publicSlot.weekend}">
+                <fo:table-cell
+                  border-width="0"
+                  background-color="#FFFFFF">
+                  <fo:block />
+                </fo:table-cell>
+              </ui:fragment>
+              <ui:fragment rendered="#{not publicSlot.weekend}">
+                <fo:table-cell
+                  border-width="1pt"
+                  border-style="solid"
+                  border-color="#CCCCCC"
+                  background-color="#{publicSlot.color}">
+                  <fo:block />
+                </fo:table-cell>
+              </ui:fragment>
+            </ui:repeat>
+          </fo:table-row>
+          <!-- Insert user events -->
+          <ui:repeat
+            value="#{agendaEventHelperMonth.users}"
+            var="userEntity">
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block>
+                  <h:outputText value="#{userEntity.lastNameFirstName}" />
+                </fo:block>
+              </fo:table-cell>
+              <ui:repeat
+                value="#{agendaEventHelperMonth.getSlotsForUser(userEntity)}"
+                var="slot">
+                <ui:fragment rendered="#{slot.weekend}">
+                  <fo:table-cell
+                    border-width="0"
+                    background-color="#FFFFFF">
+                    <fo:block />
+                  </fo:table-cell>
+                </ui:fragment>
+                <ui:fragment rendered="#{not slot.weekend}">
+                  <fo:table-cell
+                    border-width="1pt"
+                    border-style="solid"
+                    border-color="#CCCCCC"
+                    background-color="#{slot.color}">
+                    <fo:block />
+                  </fo:table-cell>
+                </ui:fragment>
+              </ui:repeat>
+            </fo:table-row>
+          </ui:repeat>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </ui:define>
+</ui:composition>

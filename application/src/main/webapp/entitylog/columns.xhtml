@@ -1,0 +1,123 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.LogActionEnum" />
+  <p:column
+    field="id"
+    headerText="#{messages.entityLog} #{messages.id}"
+    filterMatchMode="exact" />
+  <p:column
+    rendered="#{not hideColumns.contains('entityClassName')}"
+    field="entityClassName"
+    headerText="#{messages.entityClass}"
+    filterMatchMode="exact" />
+  <p:column
+    rendered="#{not hideColumns.contains('entityId')}"
+    field="entityId"
+    headerText="#{messages.entityId}"
+    filterMatchMode="exact">
+    <p:link
+      outcome="#{entity.urlEntityShowScreen}"
+      value="#{entity.entityId}"
+      rendered="#{entity.renderedEntityShowLink}">
+      <f:param
+        name="id"
+        value="#{entity.entityId}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+    <h:outputText
+      value="#{entity.entityId}"
+      rendered="#{not entity.renderedEntityShowLink}" />
+  </p:column>
+  <p:column
+    field="action"
+    headerText="#{messages.action}"
+    filterMatchMode="exact">
+    <f:facet name="filter">
+      <h:selectOneMenu onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems value="#{LogActionEnum}" />
+      </h:selectOneMenu>
+    </f:facet>
+  </p:column>
+
+  <o:importConstants type="org.bfabric.enums.LogStatusEnum" />
+  <ui:include src="/fragments/column/status.xhtml">
+    <ui:param
+      name="statusEnumList"
+      value="#{LogStatusEnum.values()}" />
+  </ui:include>
+
+  <p:column
+    exportable="false"
+    field="log"
+    headerText="#{messages.log}">
+    <h:panelGroup
+      id="log"
+      rendered="#{not empty entity.log}">
+      <p:commandButton
+        rendered="#{not entity.checked}"
+        value="#{messages.show}"
+        title="#{entity.log}"
+        action="#{entity.check()}"
+        oncomplete="fixOversize();"
+        styleClass="inline"
+        update="log" />
+      <p:commandButton
+        rendered="#{entity.checked}"
+        value="#{messages.hide}"
+        title="#{entity.log}"
+        action="#{entity.uncheck()}"
+        oncomplete="fixOversize();"
+        styleClass="inline"
+        style="margin-bottom:4px"
+        update="log" />
+      <p:dataTable
+        rendered="#{entity.checked}"
+        value="#{entity.logAsTable}"
+        var="item"
+        styleClass="subtable nowrap">
+        <p:column headerText="#{messages.field}">
+          <h:outputText value="#{item.field}" />
+        </p:column>
+        <p:column headerText="#{messages.old}">
+          <h:outputText value="#{item.oldValue}" />
+        </p:column>
+        <p:column headerText="#{messages.new}">
+          <h:outputText value="#{item.newValue}" />
+        </p:column>
+      </p:dataTable>
+    </h:panelGroup>
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('parentEntityClassName')}"
+    field="parentEntityClassName"
+    headerText="#{messages.parentClass}"
+    filterMatchMode="exact" />
+  <p:column
+    rendered="#{showColumns.contains('parentEntityId')}"
+    field="parentEntityId"
+    headerText="#{messages.parentId}"
+    filterMatchMode="exact">
+    <p:link
+      outcome="#{entity.urlParentEntityShowScreen}"
+      value="#{entity.parentEntityId}"
+      rendered="#{entity.renderedParentEntityShowLink}">
+      <f:param
+        name="id"
+        value="#{entity.parentEntityId}" />
+      <f:param
+        name="tab"
+        value="#{constants.DETAILS}" />
+    </p:link>
+    <h:outputText
+      value="#{entity.parentEntityId}"
+      rendered="#{not entity.renderedParentEntityShowLink}" />
+  </p:column>
+  <ui:include src="/fragments/column/created.xhtml" />
+</ui:composition>

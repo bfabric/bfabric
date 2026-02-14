@@ -1,0 +1,166 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrict(identityManager.hasCurrentUserRole('statisticsReader') and configuration.statisticsEnabled)}" />
+  </f:metadata>
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.analysisOfOrderStateDurations}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <p>#{messages.orderDurationStatisticsIntro}</p>
+
+    <ui:fragment>
+      <p:spacer height="20" />
+      <h:panelGrid columns="2">
+        <h:panelGroup id="pieChartPanel">
+          <ui:include src="/statistics/fragments/technology-selector.xhtml" />
+          <c:choose>
+            <c:when test="#{not empty statisticsManager.orderDurationPieChart}">
+              <p:pieChart
+                model="#{pieChart.get(statisticsManager.orderDurationPieChart, messages.orderDurationPieTitle, 'right', ['009900', '006600', '00CCFF', '0066FF', '0033CC', '000099'])}"
+                style="width:400px" />
+            </c:when>
+            <c:otherwise>
+              <h:outputText value="#{messages.noDataAvailableForChosenTechnology}" style="color: #888; font-style: italic; font-size: 1.2em; padding: 16px; display: block; text-align: center;" />
+            </c:otherwise>
+          </c:choose>
+        </h:panelGroup>
+        <p:graphicImage
+          style="height:400px"
+          value="../images/orderstate_cropped.png"
+          stream="false" />
+      </h:panelGrid>
+
+      <h:panelGroup id="lineChartPanel">
+        <h:panelGrid columns="2" style="vertical-align:top;">
+          <h:panelGroup>
+            <c:choose>
+              <c:when
+                test="#{not empty statisticsManager.orderSubmittedToAccepted or not empty statisticsManager.orderAcceptedToArrived or not empty statisticsManager.orderArrivedToProcessed or not empty statisticsManager.orderProcessedToAnalyzed or not empty statisticsManager.orderAnalyzedToFinished or not empty statisticsManager.orderFinishedToClosed}">
+                <p:lineChart
+                  model="#{lineChart.get([statisticsManager.orderSubmittedToAccepted, statisticsManager.orderAcceptedToArrived, statisticsManager.orderArrivedToProcessed, statisticsManager.orderProcessedToAnalyzed, statisticsManager.orderAnalyzedToFinished, statisticsManager.orderFinishedToClosed], messages.orderDurationTitle, null, null, ['009900', '006600', '00CCFF', '0066FF', '0033CC', '000099'], [messages.submittedToAccepted, messages.acceptedToArrived, messages.arrivedToProcessed, messages.processedToAnalyzed, messages.analyzedToFinished, messages.finishedToClosed])}"
+                  style="height:500px; width:800px; vertical-align:top;" />
+              </c:when>
+              <c:otherwise>
+                <h:outputText value="#{messages.noDataAvailableForChosenTechnology}"
+                              style="color: #666666; font-style: italic; font-size: 1.2em; padding: 16px; display: block; text-align: center; vertical-align:top;" />
+              </c:otherwise>
+            </c:choose>
+          </h:panelGroup>
+          <h:panelGroup style="display:flex; flex-direction:column; align-items:center; height:500px;">
+            <div style="flex:1.5" />
+            <div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+              <p:button value="#{messages.average} #{messages.orderStateDurations} #{messages.inTabularForm}"
+                        href="../statistics/order-durations-average-per-task.html"
+                        target="_blank"
+                        style="width: 100%; min-width: 220px; font-size: 1.1em;" />
+              <p:button value="#{messages.orderDurations} #{messages.inTabularForm}"
+                        href="../statistics/order-durations-data.html"
+                        target="_blank"
+                        style="width: 100%; min-width: 220px; font-size: 1.1em;" />
+            </div>
+            <div style="flex:2" />
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderSubmittedToClosed, statisticsManager.numberOfOrdersPerYear], messages.submittedToClosed, null, null, ['333333', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px; margin-top:auto;" />
+          </h:panelGroup>
+        </h:panelGrid>
+        <p:spacer height="20" />
+        <div style="margin-bottom:8px;">
+          <ui:include src="/statistics/fragments/technology-selector.xhtml" />
+        </div>
+        <h:panelGrid columns="3">
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderSubmittedToAccepted, statisticsManager.numberOfOrdersPerYear], messages.submittedToAccepted, null, null, ['009900', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderAcceptedToArrived, statisticsManager.numberOfOrdersPerYear], messages.acceptedToArrived, null, null, ['006600', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderArrivedToProcessed, statisticsManager.numberOfOrdersPerYear], messages.arrivedToProcessed, null, null, ['00CCFF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+        </h:panelGrid>
+        <h:panelGrid columns="3">
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderProcessedToAnalyzed, statisticsManager.numberOfOrdersPerYear], messages.processedToAnalyzed, null, null, ['0066FF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderAnalyzedToFinished, statisticsManager.numberOfOrdersPerYear], messages.analyzedToFinished, null, null, ['0033CC', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderFinishedToClosed, statisticsManager.numberOfOrdersPerYear], messages.finishedToClosed, null, null, ['000099', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+        </h:panelGrid>
+        <h:panelGrid columns="3">
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderSubmittedToProcessing, statisticsManager.numberOfOrdersPerYear], messages.submittedToProcessing, null, null, ['00CCFF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderSubmittedToProcessed, statisticsManager.numberOfOrdersPerYear], messages.submittedToProcessed, null, null, ['00CCFF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderSubmittedToAnalyzing, statisticsManager.numberOfOrdersPerYear], messages.submittedToAnalyzing, null, null, ['0066FF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+        </h:panelGrid>
+        <h:panelGrid columns="3">
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderSubmittedToAnalyzed, statisticsManager.numberOfOrdersPerYear], messages.submittedToAnalyzed, null, null, ['0066FF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderSubmittedToFinished, statisticsManager.numberOfOrdersPerYear], messages.submittedToFinished, null, null, ['0033CC', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderArrivedToProcessing, statisticsManager.numberOfOrdersPerYear], messages.arrivedToProcessing, null, null, ['00CCFF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+        </h:panelGrid>
+        <h:panelGrid columns="3">
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderProcessingToProcessed, statisticsManager.numberOfOrdersPerYear], messages.processingToProcessed, null, null, ['00CCFF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderProcessedToAnalyzing, statisticsManager.numberOfOrdersPerYear], messages.processedToAnalyzing, null, null, ['0066FF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+          <h:panelGroup>
+            <p:lineChart
+              model="#{lineChart.get([statisticsManager.orderAnalyzingToAnalyzed, statisticsManager.numberOfOrdersPerYear], messages.analyzingToAnalyzed, null, null, ['0066FF', 'cccccc'], [messages.avgPerOrder, messages.numberOfOrders], false)}"
+              style="height:300px; width:400px" />
+          </h:panelGroup>
+        </h:panelGrid>
+      </h:panelGroup>
+    </ui:fragment>
+  </ui:define>
+</ui:composition>

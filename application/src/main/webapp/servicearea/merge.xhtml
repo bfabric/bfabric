@@ -1,0 +1,122 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mergeServiceAreas}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="merge">
+      <h:panelGrid
+        columns="4"
+        columnClasses=", textright padding-right-small, , textleft"
+        styleClass="align-middle">
+        <h:outputText value="#{messages.id}" />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{serviceAreaManager.serviceArea}" />
+        </ui:include>
+        <span />
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{serviceAreaManager.merged}" />
+        </ui:include>
+
+        <h:outputText value="#{messages.name}" />
+        <h:outputText value="#{serviceAreaManager.serviceArea.name}" />
+        <h:selectOneRadio
+          id="#{constants.NAME}"
+          layout="lineDirection"
+          value="#{serviceAreaManager.mergeSelection.name}">
+          <f:selectItem itemValue="#{serviceAreaManager.serviceArea.name}" />
+          <f:selectItem itemValue="#{serviceAreaManager.merged.name}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{serviceAreaManager.merged.name}" />
+
+        <c:if test="#{not empty serviceAreaManager.serviceArea.description or not empty serviceAreaManager.merged.description}">
+          <h:outputText value="#{messages.description}" />
+          <h:outputText value="#{serviceAreaManager.serviceArea.getDescriptionTrunc(40)}" title="#{serviceAreaManager.serviceArea.description}" />
+          <h:selectOneRadio
+            id="description"
+            layout="lineDirection"
+            value="#{serviceAreaManager.mergeSelection.description}">
+            <f:selectItem itemValue="#{serviceAreaManager.serviceArea.description}" />
+            <f:selectItem itemValue="#{serviceAreaManager.merged.description}" />
+          </h:selectOneRadio>
+          <h:outputText value="#{serviceAreaManager.merged.getDescriptionTrunc(40)}" title="#{serviceAreaManager.merged.description}" />
+        </c:if>
+
+        <h:outputText value="#{messages.enabled}" />
+        <h:outputText value="#{serviceAreaManager.serviceArea.enabled}" />
+        <h:selectOneRadio
+          id="enabled"
+          layout="lineDirection"
+          value="#{serviceAreaManager.mergeSelection.enabled}">
+          <f:selectItem itemValue="#{serviceAreaManager.serviceArea.enabled}" />
+          <f:selectItem itemValue="#{serviceAreaManager.merged.enabled}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{serviceAreaManager.merged.enabled}" />
+
+        <h:outputText value="#{messages.orderPosition}" />
+        <h:outputText value="#{serviceAreaManager.serviceArea.orderPosition}" />
+        <h:selectOneRadio
+          id="orderPosition"
+          layout="lineDirection"
+          value="#{serviceAreaManager.mergeSelection.orderPosition}">
+          <f:selectItem itemValue="#{serviceAreaManager.serviceArea.orderPosition}" />
+          <f:selectItem itemValue="#{serviceAreaManager.merged.orderPosition}" />
+        </h:selectOneRadio>
+        <h:outputText value="#{serviceAreaManager.merged.orderPosition}" />
+
+        <p:spacer height="10" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+        <h:outputText value="" />
+
+        <h:outputText value="#{messages.serviceTypes}" />
+        <h:outputText value="#{serviceAreaManager.serviceArea.serviceTypes.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceAreaManager.merged.serviceTypes.size()}" />
+
+        <h:outputText value="#{messages.services}" />
+        <h:outputText value="#{serviceList.getLazyModelByServiceAreaId(serviceAreaManager.serviceArea.id).size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceList.getLazyModelByServiceAreaId(serviceAreaManager.merged.id).size()}" />
+
+        <h:outputText value="#{messages.users}" />
+        <h:outputText value="#{serviceAreaManager.serviceArea.users.size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{serviceAreaManager.merged.users.size()}" />
+
+        <h:outputText value="#{messages.orders}" />
+        <h:outputText value="#{orderList.getLazyModelByServiceAreaId(serviceAreaManager.serviceArea.id).size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{orderList.getLazyModelByServiceAreaId(serviceAreaManager.merged.id).size()}" />
+
+        <h:outputText value="#{messages.charges}" />
+        <h:outputText value="#{chargeList.getLazyModelByServiceAreaId(serviceAreaManager.serviceArea.id).size()}" />
+        <h:outputText value="" />
+        <h:outputText value="#{chargeList.getLazyModelByServiceAreaId(serviceAreaManager.merged.id).size()}" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{serviceAreaManager.merge}"
+          value="#{messages.merge}"
+          update="@form" />
+        <p:commandButton
+          action="#{serviceAreaManager.getManageDuplicatesScreenRedirectURL()}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

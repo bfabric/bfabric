@@ -1,0 +1,11 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:commandButton
+    rendered="#{instance.userVisible}"
+    action="#{entityManager.switchUserBookable}"
+    value="#{instance.userBookable ? messages.notUserBookable : messages.userBookable}"
+    title="#{messages.switchStatus} #{instance.userBookable ? messages.notUserBookable : messages.userBookable}"
+    update="@form"
+    oncomplete="fixOversize();" />
+</ui:composition>

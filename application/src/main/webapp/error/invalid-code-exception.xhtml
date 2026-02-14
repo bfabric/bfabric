@@ -1,0 +1,19 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="postAddToView"
+      listener="#{sessionManager.initErrorMessages(pfExceptionHandler.type, pfExceptionHandler.message)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.invalidCodeException}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:outputText value="#{messages.invalidCodeExceptionHint}" />
+  </ui:define>
+</ui:composition>

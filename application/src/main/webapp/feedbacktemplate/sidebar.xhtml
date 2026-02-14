@@ -1,0 +1,48 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{feedbackTemplate.templateQuestions}" />
+    <ui:param
+      name="label"
+      value="#{messages.questions}" />
+    <ui:param
+      name="tab"
+      value="questions" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/feedbacks.xhtml" />
+  <ui:include src="/fragments/sidebar/feedbackanswers.xhtml" />
+
+  <c:if test="#{not empty feedbackTemplate.questions}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="label"
+        value="#{messages.feedbackAnswersChart}" />
+      <ui:param
+        name="tab"
+        value="chart" />
+      <ui:param
+        name="showAlways"
+        value="true" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{feedbackTemplate.enabled}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="label"
+        value="#{messages.requestFeedback}" />
+      <ui:param
+        name="tab"
+        value="request" />
+      <ui:param
+        name="showAlways"
+        value="true" />
+    </ui:include>
+  </c:if>
+</ui:composition>

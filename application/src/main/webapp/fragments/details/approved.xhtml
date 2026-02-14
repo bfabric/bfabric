@@ -1,0 +1,9 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.approved}">
+    <h:outputText value="#{messages.approved}" />
+    <h:outputText value="#{instance.approved}" styleClass="#{stringHelper.toGreenRed(instance.approved)}" />
+  </c:if>
+</ui:composition>

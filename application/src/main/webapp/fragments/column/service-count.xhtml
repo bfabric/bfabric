@@ -1,0 +1,10 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('serviceCount')}">
+    <p:column
+      field="#{fieldPrefix}services.size()"
+      headerText="#{messages.services}" />
+  </c:if>
+</ui:composition>

@@ -1,0 +1,18 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('qualityControlValues')}">
+    <p:column
+      headerText="#{messages.qualityControlValues}"
+      exportValue="#{entity.qualityControlValuesAsText}">
+      <ui:repeat
+        value="#{entity.qualityControlValues}"
+        var="item">
+        <h:outputText value="#{item.nameValue}" />
+        <br />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

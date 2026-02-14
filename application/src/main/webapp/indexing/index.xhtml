@@ -1,0 +1,53 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('dataCleaner')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.indexing}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form>
+      <h:panelGrid
+        columns="4"
+        styleClass="action">
+        <p:commandButton
+          actionListener="#{indexingManager.reindex}"
+          value="#{messages.reindex}" />
+      </h:panelGrid>
+      <h:panelGroup styleClass="height-10" />
+      <h:panelGrid
+        id="reindexClassesGrid"
+        columns="1">
+        <h:panelGroup rendered="#{not empty indexingManager.getIndexableClasses()}">
+          <p:selectManyCheckbox
+            id="clazzgrid"
+            value="#{indexingManager.selectedClasses}"
+            layout="grid"
+            columns="3">
+            <f:selectItems
+              value="#{indexingManager.getIndexableClasses()}"
+              var="item"
+              itemLabel="#{item}"
+              itemValue="#{item}" />
+            <p:ajax
+              event="change"
+              global="false"
+              update="reindexClassesGrid" />
+          </p:selectManyCheckbox>
+        </h:panelGroup>
+        <h:panelGroup styleClass="height-10" />
+        <p:commandButton
+          rendered="#{not empty indexingManager.selectedClasses}"
+          actionListener="#{indexingManager.reindexClasses}"
+          value="#{messages.reindexClasses}" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

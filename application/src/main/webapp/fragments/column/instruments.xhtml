@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('instruments')}">
+    <p:column
+      field="#{fieldPrefix}instrumentNamesAsString"
+      headerText="#{messages.instruments}"
+      exportValue="#{entity.instrumentNamesAsString}">
+      <ui:repeat
+        rendered="#{not empty entity.instruments}"
+        value="#{entity.instruments}"
+        var="item">
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+        </ui:include>
+        <br />
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

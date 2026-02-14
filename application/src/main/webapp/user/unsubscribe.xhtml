@@ -1,0 +1,18 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event type="preRenderView" listener="#{userAccountManager.unsubscribe}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.unsubscribe}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <div>
+      <p>#{userAccountManager.unsubscriptionMessage}</p>
+    </div>
+  </ui:define>
+</ui:composition>

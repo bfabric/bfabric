@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/column/entity-link-name.xhtml">
+      <ui:param name="field" value="#{fieldPrefix}contactInfo.name" />
+      <ui:param name="headerText" value="#{messages.contactInfo}" />
+      <ui:param name="instance" value="#{entity.contactInfo}" />
+      <ui:param name="styleClass" value="width-200 textEllipsis" />
+    </ui:include>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,57 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout/template.xhtml">
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.welcomeTo} #{configuration.deployerName}" />
+  </ui:define>
+
+  <ui:param name="sidebar" value="true" />
+
+  <ui:define name="body">
+    <c:set var="applicationName" value="#{configuration.applicationName}" />
+    <c:set var="deployerHomeURL" value="#{configuration.deployerHomeURL}" />
+
+    <ui:include src="/home-message.xhtml" />
+
+    <p>
+      The #{configuration.applicationName} platform enables efficient collaboration with the center: request and manage services, organize projects, and handle data produced at the facility. Key capabilities include:
+    </p>
+    <ul>
+      <li>Tracking communications and automated notifications</li>
+      <li>Instrument scheduling and access reservations</li>
+      <li>Provisioning analytical services and capturing generated data</li>
+      <li>Annotating raw and technical metadata</li>
+      <li>Secure search and controlled data access</li>
+      <li>Running and tracking data analysis workflows</li>
+    </ul>
+
+    <p>
+      For the latest service updates and sample submission instructions, contact your project or order coaches before sending materials or scheduling time-sensitive experiments.
+    </p>
+
+    <c:if test="#{not empty deployerHomeURL}">
+      <p>
+        Additional information is maintained at
+        <a href="#{deployerHomeURL}" target="_blank" rel="noopener">#{deployerHomeURL}</a>.
+      </p>
+    </c:if>
+
+    <p>
+      Log in using your #{applicationName} credentials. If you do not have an account, please register.
+    </p>
+
+    <c:if test="#{configuration.kpiHomePageEnabled}">
+      <br />
+      <h:panelGrid columns="2" title="#{messages.kpiHomeChartHint}">
+        <p:lineChart
+          model="#{lineChart.get([statisticsList.getUsersCreatedUntil(), statisticsList.getOrdersCreatedUntil(), statisticsList.getProjectsCreatedUntil()], messages.kpiOperationalIndicatorsUPO, messages.year, messages.total, null, [messages.users, messages.orders, messages.projects])}"
+          style="height:500px; width:500px" />
+        <p:lineChart
+          model="#{lineChart.get([statisticsList.getSamplesCreatedUntil(), statisticsList.getResourcesCreatedUntil(), statisticsList.getWorkunitsCreatedUntil()], messages.kpiOperationalIndicatorsSRW, messages.year, '', null, [messages.samples, messages.resources, messages.workunits])}"
+          style="height:500px; width:500px" />
+      </h:panelGrid>
+    </c:if>
+  </ui:define>
+</ui:composition>

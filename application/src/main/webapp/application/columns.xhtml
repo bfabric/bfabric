@@ -1,0 +1,116 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.Application"-->
+  <ui:include src="/fragments/column/checked.xhtml" />
+  <p:column
+    exportable="false"
+    rendered="#{not hideColumns.contains('run')}"
+    title="#{messages.notRunnableHint.replace('{0}', contextContainer.classLabelId).replace('{1}', entity.supervisor.name)}"
+    headerText="#{not hideColumns.contains('filterRunnable') ? messages.runnable : ''}">
+    <p:button
+      rendered="#{not showColumns.contains('runSucceedingWorkunit') and not showColumns.contains('runSucceedingDataset') and (hideColumns.contains('filterRunnable') or entity.runnable) and not entity.webApp}"
+      outcome="/workunit/edit.xhtml"
+      value="#{messages.run}"
+      title="#{messages.runApplicationHint.replace('{0}', entity.name).replace('{1}', empty entity.description ? '' : entity.description).replace('{2}', contextContainer.toString())}"
+      styleClass="appInline">
+      <f:param
+        name="creationType"
+        value="#{constants.CREATION_FROM_SCRATCH}" />
+      <f:param
+        name="applicationId"
+        value="#{entity.id}" />
+    </p:button>
+    <c:if test="#{showColumns.contains('runSucceedingWorkunit')}">
+      <p:button
+        rendered="#{(hideColumns.contains('filterRunnable') or entity.runnable) and not entity.webApp}"
+        outcome="/workunit/edit.xhtml"
+        value="#{messages.run}"
+        title="#{messages.runApplicationHint.replace('{0}', entity.name).replace('{1}', empty entity.description ? '' : entity.description).replace('{2}', contextContainer.toString())}"
+        styleClass="appInline">
+        <f:param
+          name="creationType"
+          value="#{constants.CREATION_FROM_SELECTED_WORKUNIT}" />
+        <f:param
+          name="selectedWorkunitId"
+          value="#{workunit.id}" />
+        <f:param
+          name="applicationId"
+          value="#{entity.id}" />
+      </p:button>
+    </c:if>
+    <c:if test="#{showColumns.contains('runSucceedingDataset')}">
+      <p:button
+        rendered="#{(hideColumns.contains('filterRunnable') or entity.runnable) and not entity.webApp}"
+        outcome="/workunit/edit.xhtml"
+        value="#{messages.run}"
+        title="#{messages.runApplicationHint.replace('{0}', entity.name).replace('{1}', empty entity.description ? '' : entity.description).replace('{2}', contextContainer.toString())}"
+        styleClass="appInline">
+        <f:param
+          name="creationType"
+          value="#{constants.CREATION_FROM_INPUT_DATASET}" />
+        <f:param
+          name="selectedDatasetId"
+          value="#{dataset.id}" />
+        <f:param
+          name="applicationId"
+          value="#{entity.id}" />
+      </p:button>
+    </c:if>
+    <ui:include src="/fragments/button/runWebUrl.xhtml">
+      <ui:param name="runOnEntity" value="#{instance}" />
+      <ui:param name="instance" value="#{entity}" />
+      <ui:param name="styleClass" value="appInline" />
+    </ui:include>
+  </p:column>
+  <p:column
+    rendered="#{not hideColumns.contains('entityId')}"
+    field="#{fieldPrefix}id"
+    headerText="#{messages.application} #{messages.id}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+    </ui:include>
+    <h:panelGroup rendered="#{entity.deletable}">
+      <i
+        class="fas fa-exclamation-circle pending"
+        title="#{messages.deletable}" />
+    </h:panelGroup>
+  </p:column>
+
+  <ui:include src="/fragments/column/name.xhtml" />
+  <ui:include src="/fragments/column/applicationtype.xhtml" />
+  <ui:include src="/fragments/column/applicationcategory.xhtml" />
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <ui:include src="/fragments/column/description.xhtml" />
+  <ui:include src="/fragments/column/workunit-count.xhtml" />
+  <ui:include src="/fragments/column/supervisor.xhtml" />
+  <ui:include src="/fragments/column/pageflow.xhtml" />
+  <ui:include src="/fragments/column/enabled.xhtml" />
+  <ui:include src="/fragments/column/valid.xhtml" />
+  <ui:include src="/fragments/column/hidden.xhtml" />
+  <ui:include src="/fragments/column/foremployeesonly.xhtml" />
+  <ui:include src="/fragments/column/notifyapplicationsupervisor.xhtml" />
+  <ui:include src="/fragments/column/notifycontainermember.xhtml" />
+  <ui:include src="/fragments/column/archiving.xhtml" />
+  <ui:include src="/fragments/column/annotationrequired.xhtml" />
+  <ui:include src="/fragments/column/importresourcesrequired.xhtml" />
+  <ui:include src="/fragments/column/help.xhtml" />
+  <ui:include src="/fragments/column/resourceRelativePathFilter.xhtml" />
+  <ui:include src="/fragments/column/entityClassName.xhtml" />
+  <ui:include src="/fragments/column/executable.xhtml" />
+  <ui:include src="/fragments/column/datasetTemplate.xhtml" />
+  <ui:include src="/fragments/column/wrappercreator.xhtml" />
+  <ui:include src="/fragments/column/submitter.xhtml" />
+  <ui:include src="/fragments/column/predecessor.xhtml" />
+  <ui:include src="/fragments/column/succeedingWebApp.xhtml" />
+  <ui:include src="/fragments/column/storage.xhtml" />
+  <ui:include src="/fragments/column/instrument.xhtml" />
+  <ui:include src="/fragments/column/parameters.xhtml" />
+  <ui:include src="/fragments/column/customattributes.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

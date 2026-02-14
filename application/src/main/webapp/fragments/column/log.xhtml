@@ -1,0 +1,11 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('log')}">
+    <p:column field="#{fieldPrefix}log" headerText="#{messages.log}" exportValue="#{entity.log}"
+              sortable="#{not empty sortable ? sortable : 'true'}" filterable="#{not empty filterable ? filterable : 'true'}">
+      <h:outputText value="#{stringHelper.truncate(entity.log, 50)}" title="#{entity.log}" />
+    </p:column>
+  </c:if>
+</ui:composition>

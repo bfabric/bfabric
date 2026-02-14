@@ -1,0 +1,46 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <p:column headerText="#{messages.name}">
+    <h:inputText id="#{constants.NAME}"
+                 value="#{entity.name}"
+                 disabled="#{not empty entity.optionValues}"
+                 maxlength="32"
+                 style="width: 300px">
+      <p:ajax event="change" global="false" />
+    </h:inputText>
+    <h:outputText id="nameUnique" rendered="#{not entity.nameUnique}" value="#{messages.notUniqueException}" styleClass="warning" />
+  </p:column>
+  <ui:include src="/fragments/column/required.xhtml" />
+  <p:column headerText="#{messages.optionValues}">
+    <h:outputText value="#{entity.optionValues.size()}" />
+  </p:column>
+  <p:column>
+    <f:facet name="header">
+      <p:commandLink rendered="#{empty parent.options}"
+                     actionListener="#{parent.addOption}"
+                     process="@form"
+                     update="@form"
+                     styleClass="font-larger">
+        <i class="fas fa-plus-square" />
+      </p:commandLink>
+    </f:facet>
+    <h:panelGrid columns="2" styleClass="noborder-rightpadding align-middle">
+      <p:commandLink actionListener="#{parent.addOption}"
+                     immediate="true"
+                     process="@form"
+                     update="@form"
+                     styleClass="font-larger">
+        <i class="fas fa-plus-square" />
+      </p:commandLink>
+      <p:commandLink actionListener="#{parent.removeOption(entity)}"
+                     immediate="true"
+                     process="@form"
+                     update="@form"
+                     styleClass="font-larger">
+        <i class="fas fa-minus-square" />
+      </p:commandLink>
+    </h:panelGrid>
+  </p:column>
+</ui:composition>

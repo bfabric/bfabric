@@ -1,0 +1,19 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+
+  <c:if test="#{event.repeaterEvent}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{event.repeater.repeaterEvents}" />
+      <ui:param
+        name="label"
+        value="#{messages.repeaterEvents}" />
+      <ui:param
+        name="tab"
+        value="repeaterevents" />
+    </ui:include>
+  </c:if>
+</ui:composition>

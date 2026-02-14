@@ -1,0 +1,305 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{samplePreparationProtocolManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <o:importConstants type="org.bfabric.enums.SamplePreparationProtocolDiscriminator" />
+      <o:importConstants type="org.bfabric.enums.SamplePreparationProtocolType" />
+
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{samplePreparationProtocol.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <c:if test="#{samplePreparationProtocol.deletable}">
+            <h:outputText value="#{messages.type}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="type"
+                value="#{samplePreparationProtocol.type}"
+                disabled="#{samplePreparationProtocol.attributesUpdatable}"
+                styleClass="editWidthExtraLarge">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItems
+                  value="#{SamplePreparationProtocolType.values()}"
+                  var="item"
+                  itemLabel="#{item}" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.discriminator}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="discriminator"
+                value="#{samplePreparationProtocol.discriminator}"
+                disabled="#{samplePreparationProtocol.attributesUpdatable}"
+                styleClass="editWidthExtraLarge">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItems
+                  value="#{SamplePreparationProtocolDiscriminator.values()}"
+                  var="item"
+                  itemLabel="#{item}" />
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="discriminatorDependentGrid" />
+              </h:selectOneMenu>
+            </ui:decorate>
+
+            <h:outputText value="#{messages.technologies}" />
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectManyCheckbox
+                id="technologies"
+                value="#{samplePreparationProtocol.technologies}"
+                collectionType="java.util.HashSet"
+                styleClass="rightpadding"
+                layout="#{collectionHelper.getCheckboxLayout(technologyList.getTechnologiesEnabledIncludingTechnologies(samplePreparationProtocol.technologies))}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{technologyList.getTechnologiesEnabledIncludingTechnologies(samplePreparationProtocol.technologies)}"
+                  var="item"
+                  itemLabel="#{item.nameWithEnabledMessage}"
+                  itemDescription="#{item.description}" />
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="#{constants.EDIT}:technologySpecific" />
+              </h:selectManyCheckbox>
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <c:if test="#{samplePreparationProtocol.deletable}">
+          <h:panelGroup id="technologySpecific">
+            <h:panelGrid
+              rendered="#{samplePreparationProtocol.strandednessRendered}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.strandedness}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <h:selectOneMenu
+                  id="strandedness"
+                  value="#{samplePreparationProtocol.strandedness}"
+                  styleClass="editWidthExtraLarge"
+                  converter="omnifaces.SelectItemsConverter">
+                  <f:selectItem
+                    itemLabel="#{messages.selectAnItem}"
+                    noSelectionOption="true" />
+                  <f:selectItems
+                    value="#{annotationList.getAnnotationsByType('Strandedness')}"
+                    var="item"
+                    itemLabel="#{item.name}" />
+                </h:selectOneMenu>
+              </ui:decorate>
+
+              <h:outputText value="#{messages.adapter1}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputText id="adapter1" value="#{samplePreparationProtocol.adapter1}" styleClass="editWidthExtraLarge">
+                </p:inputText>
+              </ui:decorate>
+
+
+              <h:outputText value="#{messages.adapter2}" />
+              <ui:decorate template="/fragments/edit.xhtml">
+                <p:inputText id="adapter2" value="#{samplePreparationProtocol.adapter2}" styleClass="editWidthExtraLarge">
+                  <p:keyFilter regEx="/#{constants.SEQUENCE_CHARACTERS}/i" preventPaste="false" />
+                </p:inputText>
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+        </c:if>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <c:if test="#{not samplePreparationProtocol.deletable}">
+            <h:outputText value="#{messages.type}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{samplePreparationProtocol.type}" />
+            </ui:decorate>
+
+            <h:outputText value="#{messages.discriminator}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{samplePreparationProtocol.discriminator}" />
+            </ui:decorate>
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="discriminatorDependentGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.instruments}" rendered="#{not SamplePreparationProtocolDiscriminator.SequencingApplication.equals(samplePreparationProtocol.discriminator)}" />
+          <h:panelGroup rendered="#{not SamplePreparationProtocolDiscriminator.SequencingApplication.equals(samplePreparationProtocol.discriminator)}">
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="selectedinstruments" />
+                <ui:param
+                  name="value"
+                  value="#{samplePreparationProtocol.instrumentsAsList}" />
+                <ui:param
+                  name="multiple"
+                  value="true" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{samplePreparationProtocolManager.getInstrumentsFiltered}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.displayName}" />
+                <ui:param
+                  name="includeColumns"
+                  value="/instrument/autocomplete-columns.xhtml" />
+                <ui:param
+                  name="hideColumns"
+                  value="label" />
+              </ui:include>
+              <ui:param name="componentId" value="selectedinstrumentsautocomplete" />
+              <ui:param name="required" value="#{SamplePreparationProtocolDiscriminator.Instrument.equals(samplePreparationProtocol.discriminator)}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <h:outputText
+            value="#{messages.sequencingApplications}"
+            rendered="#{SamplePreparationProtocolDiscriminator.SequencingApplication.equals(samplePreparationProtocol.discriminator)}" />
+          <h:panelGroup rendered="#{SamplePreparationProtocolDiscriminator.SequencingApplication.equals(samplePreparationProtocol.discriminator)}">
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="listContext"
+                value="selectedsequencingapplications" />
+              <ui:param
+                name="value"
+                value="#{samplePreparationProtocol.sequencingApplicationsAsList}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{samplePreparationProtocolManager.getSequencingApplicationFiltered}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+            </ui:include>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.sampleTypes}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="sampletype" />
+              <ui:param
+                name="value"
+                value="#{samplePreparationProtocol.sampleTypesAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{samplePreparationProtocolManager.getPossibleSampleTypes}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.predecessor}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="samplePreparationProtocol" />
+              <ui:param
+                name="value"
+                value="#{samplePreparationProtocol.predecessor}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{samplePreparationProtocolManager.getFilteredEnabledPotentialPredecessorProtocols}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+            </ui:include>
+          </ui:decorate>
+
+          <c:if test="#{identityManager.hasCurrentUserRole('samplePreparationProtocolManager')}">
+            <h:outputText value="#{messages.instrumentReadConfigurations}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="instrumentreadconfiguration" />
+                <ui:param
+                  name="value"
+                  value="#{samplePreparationProtocol.instrumentReadConfigurationsAsList}" />
+                <ui:param
+                  name="multiple"
+                  value="true" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{samplePreparationProtocolManager.getInstrumentReadConfigurationsFiltered}" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.displayName}" />
+              </ui:include>
+            </ui:decorate>
+          </c:if>
+          <c:if test="#{!identityManager.hasCurrentUserRole('samplePreparationProtocolManager')}">
+            <h:outputText value="#{messages.instrumentReadConfiguration}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{samplePreparationProtocol.instrumentReadConfigurationsDisplayNames}" />
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{samplePreparationProtocol.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{samplePreparationProtocol.enabled}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-edit-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

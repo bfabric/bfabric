@@ -1,0 +1,63 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('charges') and project.renderedCharges}">
+    <c:if test="#{project.orders.size() > 0 and chargeList.getLazyModelByContainers(project.associatedContainers).size() > 0}">
+      <ui:include src="/fragments/switch.xhtml">
+        <ui:param
+          name="widgetVarName"
+          value="'projectcharge'" />
+        <ui:param
+          name="type"
+          value="charge" />
+        <ui:param
+          name="count"
+          value="#{chargeList.getLazyModelByContainers(project.associatedContainers).size()}" />
+        <ui:param
+          name="update"
+          value="#{project.tableContext}chargetableform" />
+      </ui:include>
+    </c:if>
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="charge" />
+      <ui:param
+        name="tableContext"
+        value="#{project.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{chargeList.getLazyModelByContainerId(project.id, project.associatedContainers, projectManager.containerAll)}" />
+      <ui:param
+        name="hideColumns"
+        value="#{not entityManager.containerAll ? 'container' : ''}, orderDiscount" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+    <h:panelGrid
+      id="charges-tab-buttons"
+      columns="2"
+      styleClass="action">
+      <p:button
+        rendered="#{project.renderedChargeButton}"
+        outcome="/charge/edit.xhtml"
+        value="#{messages.create}">
+        <f:param
+          name="projectId"
+          value="#{project.id}" />
+      </p:button>
+      <p:commandButton
+        rendered="#{project.requestBookingButtonRendered}"
+        action="#{projectManager.requestBooking}"
+        value="#{messages.requestBooking}"
+        title="#{messages.requestBookingHint}"
+        update="charges-tab-buttons">
+        <ui:include src="/fragments/confirm-dialog-action.xhtml" />
+      </p:commandButton>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

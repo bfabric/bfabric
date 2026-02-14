@@ -1,0 +1,32 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid columns="2" columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+      <ui:include src="/fragments/details/instrument.xhtml" />
+      <ui:include src="/fragments/details/supplier.xhtml" />
+      <ui:include src="/fragments/details/articleNumber.xhtml" />
+      <ui:include src="/fragments/details/price-currency.xhtml" />
+      <ui:include src="/fragments/details/unit.xhtml" />
+      <ui:include src="/fragments/details/inventoryEnabled.xhtml" />
+      <ui:include src="/fragments/details/inventoryCount.xhtml" />
+      <ui:include src="/fragments/details/description-enabled-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid columns="5" styleClass="action">
+      <ui:include src="/fragments/button/edit-clone-links-delete-list.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid styleClass="content-subheader">
+      <h:panelGrid columns="5" styleClass="action">
+        <p:spinner id="inventoryCount" value="#{consumableManager.inventoryCount}" min="1" size="6" decimalPlaces="0" stepFactor="1" thousandSeparator="" styleClass="editWidthSmaller">
+          <p:ajax event="change" global="false" update="@([id$=checkOut])" />
+        </p:spinner>
+        <ui:include src="/fragments/button/checkIn.xhtml" />
+        <ui:include src="/fragments/button/checkOut.xhtml" />
+      </h:panelGrid>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

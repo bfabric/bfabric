@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.internal and identityManager.hasCurrentUserRole('containerManager')}">
+    <h:outputText value="#{messages.internal}" />
+    <h:outputText value="#{instance.internal}" styleClass="#{stringHelper.toGreenRed(instance.internal)}" />
+  </c:if>
+</ui:composition>

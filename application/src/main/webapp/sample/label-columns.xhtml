@@ -1,0 +1,67 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.ConverterTypeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+  <o:importConstants type="org.bfabric.enums.SampleFormEnum" />
+
+  <c:set var="type" value="#{sampleMultiplexIdBatchManager.getSampleTypeNameOfSamplesInEditList()}" scope="request" />
+  <c:set var="sampleEntity" value="#{entity}" />
+
+  <ui:include src="/fragments/column/parents.xhtml" />
+
+  <p:column id="#{constants.SAMPLE_NAME}#{constants.COLUMN}" headerText="#{messages.sampleName}" sortBy="#{entity.name}" filterable="false" exportHeaderValue="#{messages.sampleName}"
+            exportValue="#{entity.name}">
+    <div class="display">
+      <h:outputText id="#{constants.SAMPLE_NAME}#{constants.COLUMN}#{constants.INPUT}" value="#{entity.name}" />
+    </div>
+  </p:column>
+
+  <p:column id="#{constants.SAMPLE_TUBE_ID}#{constants.COLUMN}" headerText="#{messages.tubeId}" sortBy="#{entity.tubeIdPadded}" filterable="false" exportHeaderValue="#{messages.tubeId}"
+            exportValue="#{entity.tubeId}">
+    <div class="display">
+      <h:outputText value="#{entity.tubeId}" />
+    </div>
+  </p:column>
+
+  <c:forEach
+    items="#{sampleAttributeHelper.getAttributeEnumsExcluding(type, true, false, [SampleAttributeEnum.TUBE_ID, SampleAttributeEnum.QC_PASSED, SampleAttributeEnum.STATUS, SampleAttributeEnum.QUALITY_CONTROL_TYPE])}"
+    var="sampleAttributeEnum">
+    <ui:decorate template="/fragments/batch/sample-attribute-column.xhtml">
+      <ui:param
+        name="columnId"
+        value="#{sampleAttributeEnum.name}" />
+      <ui:param
+        name="rendered"
+        value="true" />
+      <ui:param
+        name="headerText"
+        value="#{sampleAttributeEnum.labelWithUnit}" />
+      <ui:param
+        name="displayRequired"
+        value="#{sampleAttributeHelper.isDisplayRequired(sampleAttributeEnum, type)}" />
+      <ui:param
+        name="displayRequiredCell"
+        value="#{sampleAttributeHelper.isDisplayRequiredCell(sampleAttributeEnum, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="cellInputEnabled"
+        value="#{sampleAttributeHelper.isCellInputEnabled(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="watermarkValue"
+        value="#{sampleAttributeHelper.getWatermarkValueForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="watermarkValueHint"
+        value="#{sampleAttributeHelper.getWatermarkValueHintForSampleAttribute(sampleAttributeEnum, sampleEntity.multiplexed, sampleEntity.sampleType.name, sampleEntity.sampleForm, sampleEntity.qualityControlType)}" />
+      <ui:param
+        name="value"
+        value="#{sampleEntity[fn:replace(sampleAttributeEnum.name.concat('DELIMITER_VALUE'),'DELIMITER_VALUE','')]}" />
+      <ui:param
+        name="sampleAttributeEnum"
+        value="#{sampleAttributeEnum}" />
+    </ui:decorate>
+  </c:forEach>
+</ui:composition>

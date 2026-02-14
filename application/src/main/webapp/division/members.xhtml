@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('members') and identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="user" />
+      <ui:param
+        name="tableContext"
+        value="#{division.tableContext}_member" />
+      <ui:param
+        name="tableContent"
+        value="#{division.members}" />
+      <ui:param
+        name="hideColumns"
+        value="organization, emailActive, emailVerified, computerLoginEnabled, dataAccessEnabled, computerLoginActivated, massMailEnabled, invalidLoginAttempts, LastLoginDate, LastActionTime" />
+      <ui:param
+        name="rowStyleClass"
+        value="#{entity.rowStyleClass}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

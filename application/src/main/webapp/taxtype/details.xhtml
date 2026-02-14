@@ -1,0 +1,46 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+
+      <h:outputText value="#{messages.tax}" />
+      <h:outputText value="#{taxType.tax}" />
+
+      <ui:include src="/fragments/details/description-enabled-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="5"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-clone-links-delete-list.xhtml" />
+    </h:panelGrid>
+
+    <!--
+        <h:outputLink value="#{request.contextPath}/download/cantest.txt">
+          <f:param name="selectedDownloadValue" value="foo1" />
+          Download
+        </h:outputLink>
+
+        <form action="#{request.contextPath}/download/cantest2.txt">
+          <input type="hidden" name="selectedDownloadValue" value="foo2" />
+          <input type="submit" value="Download" />
+        </form>
+
+        <h:outputLink value="#{request.contextPath}/filedownload/cantest.txt">
+          <f:param name="selectedDownloadValue" value="foo1" />
+          Download
+        </h:outputLink>
+
+        <form action="#{request.contextPath}/filedownload/cantest2.txt">
+          <input type="hidden" name="selectedDownloadValue" value="foo2" />
+          <input type="submit" value="Download" />
+        </form>
+    -->
+
+  </c:if>
+</ui:composition>

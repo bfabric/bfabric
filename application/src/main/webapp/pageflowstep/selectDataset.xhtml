@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <h:panelGroup
+    id="preselectedDatasets"
+    styleClass="topline">
+    <ui:include src="/fragments/datatable.xhtml">
+      <ui:param
+        name="tableContext"
+        value="selectDataset" />
+      <ui:param
+        name="tableContent"
+        value="#{workunit.selectableDatasets}" />
+      <ui:param
+        name="include"
+        value="/pageflowstep/selectDataset-columns.xhtml" />
+      <ui:param
+        name="filterValue"
+        value="#{contextManager.containerFilterValue}" />
+    </ui:include>
+  </h:panelGroup>
+
+  <h:panelGrid
+    columns="1"
+    styleClass="action">
+    <p:commandButton
+      action="#{workunitManager.cancel}"
+      value="#{messages.cancel}"
+      immediate="true" />
+  </h:panelGrid>
+</ui:composition>

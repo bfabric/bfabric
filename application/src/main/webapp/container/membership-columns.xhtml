@@ -1,0 +1,102 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.Membership"-->
+  <!--@elvariable id="parentContainer" type="org.bfabric.entity.Container"-->
+  <!--@elvariable id="parentContainerManager" type="org.bfabric.manager.ContainerManager"-->
+  <ui:include src="/fragments/column/lastname-userlink.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="user." />
+    <ui:param
+      name="entityValue"
+      value="#{entity.user}" />
+  </ui:include>
+  <ui:include src="/fragments/column/firstname-userlink.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="user." />
+    <ui:param
+      name="entityValue"
+      value="#{entity.user}" />
+  </ui:include>
+  <ui:include src="/fragments/column/login.xhtml">
+    <ui:param
+      name="fieldPrefix"
+      value="user." />
+    <ui:param
+      name="entityValue"
+      value="#{entity.user}" />
+  </ui:include>
+  <c:if test="#{not hideColumns.contains('role')}">
+    <p:column
+      field="role"
+      headerText="#{messages.role}">
+      <h:outputText
+        value="#{entity.role}"
+        styleClass="#{entity.role}" />
+    </p:column>
+  </c:if>
+  <c:if test="#{parentContainer.memberAddable}">
+    <p:column
+      rendered="#{showColumns.contains('switch')}"
+      exportable="false"
+      headerText="#{messages.switchRole}">
+      <p:commandButton
+        rendered="#{parentContainer.isMembershipRoleUpgradable(entity)}"
+        action="#{parentContainerManager.switchRole(entity)}"
+        value="#{messages.manager}"
+        title="#{messages.switchToManagerRoleHint}"
+        immediate="true"
+        update="@form"
+        styleClass="inline" />
+      <p:commandButton
+        rendered="#{parentContainer.isMembershipRoleDowngradable(entity)}"
+        action="#{parentContainerManager.switchRole(entity)}"
+        value="#{messages.member}"
+        title="#{messages.switchToMemberRoleHint}"
+        immediate="true"
+        update="@form"
+        styleClass="inline" />
+    </p:column>
+    <p:column
+      rendered="#{showColumns.contains('remove')}"
+      exportable="false"
+      headerText="#{messages.remove}">
+      <h:outputText
+        rendered="#{not parentContainer.isMembershipRemovable(entity)}"
+        value="#{parentContainer.getSpecificFunctionsFirst(entity.user)}"
+        title="#{messages.removeMemberSpecificFunctionHint} #{parentContainer.getSpecificFunctions(entity.user)}" />
+      <p:commandButton
+        rendered="#{parentContainer.isMembershipRemovable(entity)}"
+        action="#{parentContainerManager.removeMembership(entity)}"
+        value="#{messages.remove}"
+        immediate="true"
+        styleClass="inline" />
+    </p:column>
+    <p:column
+      rendered="#{showColumns.contains('addMember')}"
+      exportable="false"
+      headerText="#{messages.addFormerMember}">
+      <p:commandButton
+        action="#{parentContainerManager.addUserAsMember(entity.user)}"
+        value="#{messages.member}"
+        title="#{messages.addUserAsMemberHint}"
+        immediate="true"
+        styleClass="inline" />
+    </p:column>
+    <p:column
+      rendered="#{showColumns.contains('addMgr')}"
+      exportable="false"
+      headerText="#{messages.addFormerMember}">
+      <p:commandButton
+        action="#{parentContainerManager.addUserAsManager(entity.user)}"
+        value="#{messages.manager}"
+        title="#{messages.addUserAsManagerHint}"
+        immediate="true"
+        styleClass="inline" />
+    </p:column>
+  </c:if>
+</ui:composition>

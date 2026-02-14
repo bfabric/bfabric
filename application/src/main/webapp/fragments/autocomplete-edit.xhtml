@@ -1,0 +1,8 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:decorate template="/fragments/edit.xhtml">
+    <ui:param
+      name="componentId"
+      value="#{(not empty componentId) ? componentId : listContext.concat('autocomplete')}" />
+    <ui:include src="/fragments/autocomplete.xhtml" />
+  </ui:decorate>
+</ui:composition>

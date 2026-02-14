@@ -1,0 +1,132 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('containerManager')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.copyOfferedCharges}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form
+      id="copy-charges-to-container"
+      onsubmit="#{offerManager.resetRefererURL()}">
+      <h:panelGrid
+        id="containerPanel"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.from} #{messages.offer}" />
+        <ui:decorate template="/fragments/display.xhtml">
+          <ui:include src="/fragments/entity-link-displayname.xhtml">
+            <ui:param
+              name="instance"
+              value="#{offer}" />
+          </ui:include>
+        </ui:decorate>
+        <h:outputText value="#{messages.to} #{messages.container}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="container" />
+          <ui:param
+            name="value"
+            value="#{offerManager.container}" />
+          <ui:param
+            name="required"
+            value="true" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{containerList.getChargeAssignableContainers}" />
+          <o:methodParam
+            name="valueChangeListener"
+            value="#{offerManager.containerChanged}" />
+          <ui:param
+            name="ajaxChange"
+            value="true" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.id}" />
+          <ui:param
+            name="includeColumns"
+            value="/container/autocomplete-columns.xhtml" />
+          <ui:param
+            name="itemSelectUpdate"
+            value="@this, chargesPanel" />
+        </ui:include>
+      </h:panelGrid>
+      <h:panelGrid
+        id="chargesPanel"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.charges}" />
+        <h:panelGrid rendered="#{offerManager.container != null}">
+          <ui:include src="/fragments/autocomplete-required.xhtml">
+            <ui:param
+              name="listContext"
+              value="chargesTo" />
+            <ui:param
+              name="value"
+              value="#{offerManager.selectedChargesTo}" />
+            <o:methodParam
+              name="completeMethod"
+              value="#{offerManager.getChargesToList}" />
+            <ui:param
+              name="itemLabel"
+              value="#{item.name}" />
+            <ui:param
+              name="required"
+              value="true" />
+            <ui:param
+              name="multiple"
+              value="true" />
+            <ui:param
+              name="styleClass"
+              value="editWidthExtraLarge" />
+          </ui:include>
+        </h:panelGrid>
+        <h:panelGroup rendered="#{offerManager.container == null}">
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="-" />
+          </ui:decorate>
+        </h:panelGroup>
+        <h:panelGroup>
+          <h:outputText
+            value="Offer is expired! "
+            styleClass="warning"
+            rendered="#{offer.expired}" />
+          <h:outputText value="#{messages.apply}" />
+        </h:panelGroup>
+        <ui:decorate template="/fragments/edit.xhtml">
+          <h:selectOneRadio
+            id="useCurrentServicePrices"
+            value="#{offerManager.useCurrentServicePrices}">
+            <f:selectItem
+              itemLabel="offered"
+              itemValue="false" />
+            <f:selectItem
+              itemLabel="current service prices"
+              itemValue="true" />
+          </h:selectOneRadio>
+        </ui:decorate>
+      </h:panelGrid>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{offerManager.copyToCharges}"
+          value="#{messages.save}"
+          update="@form" />
+        <p:commandButton
+          action="#{offerManager.cancel}"
+          value="#{messages.cancel}"
+          immediate="true" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

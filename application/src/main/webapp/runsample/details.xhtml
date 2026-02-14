@@ -1,0 +1,27 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id.xhtml" />
+      <ui:include src="/fragments/details/run.xhtml" />
+      <ui:include src="/fragments/details/sample.xhtml" />
+      <ui:include src="/fragments/details/readcounttotal.xhtml" />
+      <ui:include src="/fragments/details/container.xhtml">
+        <ui:param
+          name="instance"
+          value="#{runSample.sample.container}" />
+      </ui:include>
+      <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="4"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-links-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

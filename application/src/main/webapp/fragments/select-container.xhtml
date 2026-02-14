@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:panelGrid
+    id="edit-container"
+    columns="2"
+    columnClasses="rtdm, ltd">
+    <h:outputText value="#{messages.container}" />
+    <ui:decorate template="#{required or requiredTemplate ? '/fragments/required.xhtml' : '/fragments/edit.xhtml'}">
+      <ui:include src="/fragments/autocomplete.xhtml">
+        <ui:param
+          name="listContext"
+          value="container" />
+        <ui:param
+          name="value"
+          value="#{entity.container}" />
+        <ui:param
+          name="required"
+          value="#{required}" />
+        <ui:param
+          name="disabled"
+          value="#{not containerEditable or entity.container != null and not entity.container.extensible}" />
+        <ui:param
+          name="itemLabel"
+          value="#{not empty value ? item.entityName.concat(' ').concat(item.id) : constants.EMPTY_STRING}" />
+        <ui:param
+          name="includeColumns"
+          value="/container/autocomplete-columns.xhtml" />
+      </ui:include>
+    </ui:decorate>
+  </h:panelGrid>
+</ui:composition>

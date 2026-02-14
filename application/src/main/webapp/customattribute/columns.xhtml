@@ -1,0 +1,10 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/column/id.xhtml" />
+  <ui:include src="/fragments/column/name-value.xhtml" />
+  <ui:include src="/fragments/column/parentclass.xhtml">
+    <ui:param
+      name="parentClassNames"
+      value="#{customAttributeList.parentClassNames}" />
+  </ui:include>
+  <ui:include src="/fragments/column/parentid.xhtml" />
+</ui:composition>

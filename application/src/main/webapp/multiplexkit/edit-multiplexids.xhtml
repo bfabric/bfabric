@@ -1,0 +1,140 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions"
+  template="/layout/template.xhtml">
+  <ui:param
+    name="entityManager"
+    value="#{multiplexKitManager}" />
+
+  <ui:define name="metadata">
+    <f:event type="preRenderView" listener="#{identityManager.restrict(multiplexKit.editable)}" />
+  </ui:define>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.edit} #{messages.multiplexIds} : #{multiplexKit.classLabel} #{multiplexKit.displayName}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <h:form id="#{constants.EDIT}">
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <h:panelGrid
+          columns="3"
+          styleClass="nospace topline">
+          <p:spinner
+            disabled="#{not empty multiplexKit.multiplexIds}"
+            value="#{multiplexKit.createMultiplexIdsNumber}"
+            min="1"
+            max="2000"
+            size="5"
+            decimalPlaces="0"
+            thousandSeparator="">
+            <p:ajax
+              event="change"
+              global="false" />
+          </p:spinner>
+          <p:commandButton
+            disabled="#{not empty multiplexKit.multiplexIds}"
+            action="#{multiplexKit.createMultiplexIds}"
+            value="#{messages.create} #{messages.multiplexIds}"
+            immediate="true"
+            styleClass="noleftborderselect"
+            global="false"
+            update="@form" />
+        </h:panelGrid>
+        <p:commandButton
+          actionListener="#{multiplexKit.multiplexIds.clear()}"
+          value="#{messages.clearAll}"
+          global="false"
+          update="@form">
+        </p:commandButton>
+      </h:panelGrid>
+
+      <h:panelGrid
+        id="multiplexIds"
+        columns="1">
+        <h:outputText value="#{messages.multiplexIds} (#{multiplexKit.multiplexIdsAsList.size()})" styleClass="bold" />
+        <pe:sheet
+          id="sheet"
+          widgetVar="sheetWidget"
+          value="#{multiplexKit.multiplexIdsAsList}"
+          var="item"
+          maxRows="#{multiplexKit.createMultiplexIdsNumber}"
+          resizableCols="false"
+          resizableRows="false"
+          rowKey="#{item.hashCode()}"
+          showRowHeaders="true"
+          fixedCols="2"
+          width="800"
+          styleClass="sheet">
+          <pe:sheetcolumn
+            headerText="#{messages.id}"
+            value="#{item.id eq 0 ? '' : item.id}"
+            sortBy="#{item.id}"
+            filterBy="#{item.id}"
+            readOnly="true" />
+          <pe:sheetcolumn
+            headerText="#{messages.name}"
+            value="#{item.name}"
+            required="true"
+            requiredMessage="#{messages.required}"
+            sortBy="#{item.name}"
+            filterBy="#{item.name}"
+            trimWhitespace="true" />
+          <pe:sheetcolumn
+            headerText="#{messages.type}"
+            value="#{item.type}"
+            sortBy="#{item.type}"
+            filterBy="#{item.type}"
+            trimWhitespace="true" />
+          <pe:sheetcolumn
+            headerText="#{messages.sequence}"
+            value="#{item.sequence}"
+            required="true"
+            requiredMessage="#{messages.required}"
+            sortBy="#{item.sequence}"
+            filterBy="#{item.sequence}"
+            trimWhitespace="true" />
+          <pe:sheetcolumn
+            headerText="#{messages.plateNumber}"
+            value="#{item.plateNumber}"
+            colType="numeric"
+            numericPattern="0"
+            sortBy="#{item.plateNumber}"
+            filterBy="#{item.plateNumber}" />
+          <pe:sheetcolumn
+            headerText="#{messages.platePosition}"
+            value="#{item.platePosition}"
+            sortBy="#{item.platePosition}"
+            filterBy="#{item.platePosition}"
+            trimWhitespace="true" />
+          <c:if test="#{multiplexKit.combinedMultiplexId}">
+            <pe:sheetcolumn
+              headerText="#{messages.combinedXAxis}"
+              value="#{item.combinedXAxis}"
+              colType="checkbox"
+              sortBy="#{item.combinedXAxis}"
+              filterBy="#{item.combinedXAxis}"
+              trimWhitespace="true" />
+          </c:if>
+        </pe:sheet>
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{multiplexKitManager.saveMultiplexIds()}"
+          value="#{messages.save}"
+          update="@form"
+          oncomplete="fixOversize();" />
+        <ui:include src="/fragments/button/cancel.xhtml" />
+      </h:panelGrid>
+    </h:form>
+  </ui:define>
+</ui:composition>

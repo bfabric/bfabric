@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <h:outputText value="#{messages.message}" />
+      <h:outputText
+        value="#{mail.message}"
+        escape="false"
+        styleClass="noMargin" />
+
+      <h:outputText value="#{messages.subject}" />
+      <h:outputText value="#{mail.subject}" />
+
+      <h:outputText value="#{messages.recipients}" />
+      <h:outputText value="#{mail.recipientsAddressList}" />
+
+      <ui:include src="/fragments/details/type.xhtml" />
+      <ui:include src="/fragments/details/parent.xhtml" />
+      <ui:include src="/fragments/details/created.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action">
+      <ui:include src="/fragments/button/list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

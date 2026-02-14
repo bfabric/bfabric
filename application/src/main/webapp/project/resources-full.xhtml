@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('resources') and project.accepted and projectManager.fullView}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="include"
+        value="/fragments/database-query-table-columns.xhtml" />
+      <ui:param
+        name="tableContext"
+        value="#{project.tableContext}_resource" />
+      <ui:param
+        name="tableContent"
+        value="#{resourceList.getLazyModelResourceSampleViewByContainerId(project.id)}" />
+      <ui:param
+        name="tableColumns"
+        value="#{resourceList.getLazyModelResourceSampleViewByContainerId(project.id).columns}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

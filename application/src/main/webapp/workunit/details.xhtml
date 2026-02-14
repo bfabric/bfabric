@@ -1,0 +1,61 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.details}">
+    <ui:include src="/workunit/details-content.xhtml" />
+    <h:panelGrid
+      columns="11"
+      styleClass="action">
+      <p:button
+        outcome="/workunit/edit.xhtml"
+        value="#{messages.rerunAnalysis}"
+        rendered="#{workunitManager.rerunnable}">
+        <f:param
+          name="id"
+          value="#{workunit.id}" />
+        <f:param
+          name="creationType"
+          value="#{constants.CREATION_FROM_RERUNNING}" />
+      </p:button>
+      <p:button
+        rendered="#{workunit.assignSamplesButtonRendered}"
+        outcome="/workunit/assignSamples.xhtml"
+        value="#{workunit.noResourceAnnotated ? messages.assignSamples : messages.reassignSamples}"
+        title="#{workunit.noResourceAnnotated ? messages.assignSamplesHint : messages.reassignSamplesHint}">
+        <f:param
+          name="id"
+          value="#{workunit.id}" />
+      </p:button>
+      <ui:include src="/fragments/button/edit.xhtml" />
+      <ui:include src="/fragments/button/edit-links.xhtml" />
+      <h:form rendered="#{workunit.markableDeleted}">
+        <p:commandButton
+          action="#{workunitManager.markDeleted}"
+          value="#{messages.markDeleted}"
+          title="#{messages.markDeletedWorkunitHint}">
+          <ui:include src="/fragments/confirm-dialog-mark-delete.xhtml" />
+        </p:commandButton>
+      </h:form>
+      <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+        <ui:include src="/fragments/button/list.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/delete.xhtml" />
+      <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+        <ui:include src="/fragments/button/list.xhtml" />
+      </c:if>
+      <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+      <ui:include src="/fragments/button/unarchive.xhtml" />
+      <ui:include src="/fragments/button/cancelUnarchive.xhtml" />
+      <ui:include src="/fragments/button/runSucceedingWebApp.xhtml" />
+    </h:panelGrid>
+    <ui:include src="/fragments/button/prevNextInContainer.xhtml" />
+    <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+    <ui:include src="/fragments/details/runnableApplications.xhtml">
+      <ui:param name="creationType" value="#{constants.CREATION_FROM_SELECTED_WORKUNIT}" />
+      <ui:param name="selectedWorkunitId" value="#{workunit.id}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

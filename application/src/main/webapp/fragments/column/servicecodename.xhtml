@@ -1,0 +1,35 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('serviceCode')}">
+    <!--@elvariable id="entity" type="org.bfabric.entity.AbstractCharge"-->
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}serviceCodeName"
+        headerText="#{messages.serviceCodeName}"
+        exportValue="#{entity.serviceCodeName}">
+        <p:link
+          rendered="#{not empty entity.serviceCode}"
+          outcome="#{entity.serviceCode.urlShowScreen}"
+          value="#{entity.serviceCodeName}">
+          <f:param
+            name="id"
+            value="#{entity.serviceCode.id}" />
+        </p:link>
+        <h:outputText rendered="#{empty entity.serviceCode}" value="#{entity.serviceCodeName}" />
+        <h:outputText value="&#160;" />
+        <h:panelGroup rendered="#{entity.serviceCodeChanged}">
+          <i class="fas fa-info-circle warn" title="#{messages.serviceCodeChangedHint}" />
+        </h:panelGroup>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}serviceCodeName"
+        headerText="#{messages.serviceCode}" />
+    </c:if>
+  </c:if>
+</ui:composition>

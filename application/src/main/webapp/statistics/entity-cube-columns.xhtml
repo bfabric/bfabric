@@ -1,0 +1,12 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <ui:include src="/statistics/fragments/column/year.xhtml" />
+  <p:column
+    sortBy="#{entity[1]}"
+    filterBy="#{entity[1]}"
+    headerText="#{messages.total}">
+    <h:outputText value="#{entity[1]}" />
+  </p:column>
+</ui:composition>

@@ -1,0 +1,80 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <table
+    class="overview align-middle"
+    cellpadding="0"
+    cellspacing="0">
+    <tr>
+      <td class="agendafirstcolumn"><p:datePicker
+        value="#{agendaEventManager.jumpDate}"
+        valueChangeListener="#{agendaEventManager.jumpDateChanged}"
+        immediate="true"
+        styleClass="editWidthSmall">
+        <p:ajax
+          event="dateSelect"
+          update="agendaBody"
+          immediate="true"
+          listener="#{agendaEventManager.jumpToDate}" />
+      </p:datePicker></td>
+      <td><h:panelGrid
+        columns="17"
+        cellpadding="0"
+        cellspacing="0"
+        columnClasses="agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink,agendaNaviLinkSpacer,agendaNaviLink">
+        <c:if test="#{agendaEventManager.previousNextButton}">
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaEventManager.getRedirectURL(3)}"
+            value="#{messages.previousInterval}" />
+          <h:outputText value="|" />
+        </c:if>
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaEventManager.getRedirectURL(5)}"
+          value="#{messages.previousWeek}" />
+        <h:outputText value="|" />
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaEventManager.getRedirectURL(-1)}"
+          value="#{messages.today}" />
+        <h:outputText value="|" />
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaEventManager.getRedirectURL(6)}"
+          value="#{messages.nextWeek}" />
+        <c:if test="#{agendaEventManager.previousNextButton}">
+          <h:outputText value="|" />
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaEventManager.getRedirectURL(4)}"
+            value="#{messages.nextInterval}" />
+        </c:if>
+        <p:spacer width="20" />
+        <c:if test="#{agendaEventManager.expandButton}">
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaEventManager.getRedirectURL(1)}"
+            value="#{messages.expand}"
+            title="#{messages.expandViewHint}" />
+          <h:outputText value="|" />
+        </c:if>
+        <p:link
+          styleClass="nowrap"
+          outcome="#{agendaEventManager.getRedirectURL(7)}"
+          value="#{messages.reset}"
+          title="#{messages.resetViewHint}" />
+        <c:if test="#{agendaEventManager.reduceButton}">
+          <h:outputText value="|" />
+          <p:link
+            styleClass="nowrap"
+            outcome="#{agendaEventManager.getRedirectURL(2)}"
+            value="#{messages.reduce}"
+            title="#{messages.reduceViewHint}" />
+        </c:if>
+      </h:panelGrid></td>
+    </tr>
+  </table>
+</ui:composition>

@@ -1,0 +1,28 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core">
+  <p:column
+    rendered="#{not hideColumns.contains('pageflow')}"
+    field="#{fieldPrefix}pageflow.name"
+    headerText="#{messages.pageflow}"
+    filterValue="#{pageflowName}"
+    filterMatchMode="exact"
+    exportValue="#{messages[entity.pageflow.name]}">
+    <f:facet name="filter">
+      <h:selectOneMenu
+        id="pageflow"
+        value="#{pageflowName}"
+        onchange="PF('#{tableContext}#{tableType}').filter()">
+        <f:selectItem itemLabel="#{messages.noFilter}" />
+        <f:selectItems
+          value="#{pageflowList.resultListOrderByName}"
+          var="item"
+          itemValue="#{item.name}"
+          itemLabel="#{messages[item.name]}" />
+      </h:selectOneMenu>
+    </f:facet>
+    <h:outputText value="#{messages[entity.pageflow.name]}" />
+  </p:column>
+</ui:composition>

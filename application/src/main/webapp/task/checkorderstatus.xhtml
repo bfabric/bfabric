@@ -1,0 +1,16 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/task/list-order-items.xhtml">
+    <ui:param
+      name="tasks"
+      value="#{messages.taskOrderCheckStatus}" />
+    <ui:param
+      name="tasksHint"
+      value="#{messages.taskOrderCheckStatusHint}" />
+    <ui:param
+      name="tasksList"
+      value="#{orderList.checkOrderStatusTasks}" />
+    <ui:param
+      name="tasksRendered"
+      value="#{configuration.orderEnabled and sidebarHelper.isTab('checkorderstatus')}" />
+  </ui:include>
+</ui:composition>

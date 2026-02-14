@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+  version="4.0"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+  <!--
+    Exceptions during render response can only be handled when the javax.faces.FACELETS_BUFFER_SIZE is large enough so that the so far rendered response until the occurrence of the
+    exception fits in there and can therefore safely be reset. The default value is -1, i.e., a buffer size will not be assigned on the response.
+  -->
+  <context-param>
+    <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
+    <param-value>65535</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.ENABLE_CDI_RESOLVER_CHAIN</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+    <param-value>.xhtml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Production</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+    <param-value>server</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.validator.ENABLE_VALIDATE_WHOLE_BEAN</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.TRANSFORM_METADATA</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <!-- Enable partial submit in PrimeFaces. This reduces the network traffic. -->
+  <context-param>
+    <param-name>primefaces.SUBMIT</param-name>
+    <param-value>partial</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.UPLOADER</param-name>
+    <param-value>auto</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.EXCEPTION_TYPES_TO_IGNORE_IN_LOGGING</param-name>
+    <param-value>org.jboss.weld.contexts.NonexistentConversationException</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.THEME</param-name>
+    <param-value>none</param-value>
+  </context-param>
+  <!-- Captcha keys for productive and demo systems -->
+  <context-param>
+    <param-name>primefaces.PRIVATE_CAPTCHA_KEY</param-name>
+    <param-value>6LfP2iQTAAAAAOXqskT_yIuIE1tZRmDrfgHdH5wj</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.PUBLIC_CAPTCHA_KEY</param-name>
+    <param-value>6LfP2iQTAAAAAFir0Btw5DJt0dp42P6kerSfifYN</param-value>
+  </context-param>
+  <!-- Enable Content Security Policy (CSP). Prevent cross-site scripting (XSS), clickjacking and other code injection attacks. -->
+  <context-param>
+    <param-name>primefaces.CSP</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <!--If you use the PrimeFaces Captcha component you must use a custom policy as follows-->
+  <context-param>
+    <param-name>primefaces.CSP_POLICY</param-name>
+    <param-value>worker-src 'self' blob:; frame-ancestors 'none'; script-src 'self' https: *.googleapis.com</param-value>
+  </context-param>
+  <!-- Moves all inline scripts to end of body tag for better performance and smaller HTML output. -->
+  <context-param>
+    <param-name>primefaces.MOVE_SCRIPTS_TO_BOTTOM</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.virusscan.CLAMAV_HOST</param-name>
+    <param-value>localhost</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.virusscan.CLAMAV_PORT</param-name>
+    <param-value>3310</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.virusscan.CLAMAV_TIMEOUT</param-name>
+    <param-value>20000</param-value>
+  </context-param>
+  <context-param>
+    <param-name>primefaces.FONT_AWESOME</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <filter>
+    <filter-name>Cache Control Filter</filter-name>
+    <filter-class>org.omnifaces.filter.CacheControlFilter</filter-class>
+    <init-param>
+      <param-name>expires</param-name>
+      <param-value>1d</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>Cache Control Filter</filter-name>
+    <url-pattern>*.js</url-pattern>
+    <url-pattern>*.gif</url-pattern>
+    <url-pattern>*.jpeg</url-pattern>
+    <url-pattern>*.jpg</url-pattern>
+    <url-pattern>*.png</url-pattern>
+    <url-pattern>*.ico</url-pattern>
+    <url-pattern>*.css</url-pattern>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Faces Servlet</servlet-name>
+    <url-pattern>*.xhtml</url-pattern>
+    <url-pattern>*.html</url-pattern>
+    <url-pattern>*.pdf</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>60</session-timeout> <!-- in minutes -->
+    <cookie-config>
+      <http-only>true</http-only>
+    </cookie-config>
+  </session-config>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <error-page>
+    <exception-type>org.bfabric.exception.InvalidCodeException</exception-type>
+    <location>/error/invalid-code-exception.html</location>
+  </error-page>
+  <error-page>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/error/index.html</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/error/404.html</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/error/500.html</location>
+  </error-page>
+  <security-constraint>
+    <display-name>Restrict raw XHTML Documents</display-name>
+    <web-resource-collection>
+      <web-resource-name>XHTML</web-resource-name>
+      <url-pattern>*.xhtml</url-pattern>
+    </web-resource-collection>
+    <auth-constraint />
+  </security-constraint>
+  <mime-mapping>
+    <extension>xhtml</extension>
+    <mime-type>application/xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>eot</extension>
+    <mime-type>application/vnd.ms-fontobject</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>otf</extension>
+    <mime-type>font/opentype</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>ttf</extension>
+    <mime-type>application/x-font-ttf</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>woff</extension>
+    <mime-type>application/x-font-woff</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>woff2</extension>
+    <mime-type>application/x-font-woff2</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>svg</extension>
+    <mime-type>image/svg+xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>ico</extension>
+    <mime-type>image/x-icon</mime-type>
+  </mime-mapping>
+</web-app>

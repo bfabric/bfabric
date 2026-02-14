@@ -1,0 +1,277 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <p:dialog
+    id="assignMultiplexIdsModalPanel"
+    widgetVar="assignMultiplexIdsModalDialog"
+    draggable="false"
+    resizable="false"
+    modal="true"
+    closable="false"
+    onShow="repositionDialog()">
+    <p:ajax
+      event="close"
+      global="false"
+      listener="#{plateManager.resetAssignMultiplexIdsModalPanel}" />
+    <f:facet name="header">
+      <h:outputText value="#{messages.assignMultiplexIds}" />
+    </f:facet>
+    <h:form id="assignMultiplexIds">
+      <h:panelGroup id="linkedMultiplexId">
+        <h:panelGrid
+          rendered="#{not plateManager.selectedMultiplexKitCombined and !(plateManager.multiplexIdsAssignability[0] and not plateManager.multiplexIdsAssignability[1] or not plateManager.multiplexIdsAssignability[0] and plateManager.multiplexIdsAssignability[1])}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.linkedMultiplexId}"
+            title="#{messages.linkedMultiplexIdHint}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneRadio
+              value="#{plateManager.linkedMultiplexId}"
+              valueChangeListener="#{plateManager.linkedMultiplexIdsChanged}">
+              <f:selectItem
+                itemLabel="#{messages.YES}"
+                itemValue="#{true}" />
+              <f:selectItem
+                itemLabel="#{messages.NO}"
+                itemValue="#{false}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="@this, assignMultiplexIds:multiplexIdGrid" />
+            </h:selectOneRadio>
+          </ui:decorate>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="multiplexIdGrid"
+        columns="2"
+        columnClasses="rtdm, ltd">
+        <h:outputText value="#{messages.assignMultiplexIdsTo}" />
+        <h:panelGroup>
+          <h:panelGroup rendered="#{not plateManager.linkedMultiplexId and plateManager.multiplexIdsAssignability[0] and plateManager.multiplexIdsAssignability[1]}">
+            <ui:decorate template="/fragments/required.xhtml">
+              <h:selectOneMenu
+                id="multiplexIdSelection"
+                value="#{plateManager.multiplexIdsAssignmentAttribute}"
+                valueChangeListener="#{plateManager.multiplexIdsAssignmentAttributeChanged}"
+                required="true"
+                styleClass="editWidthExtraLarge">
+                <f:selectItem
+                  itemLabel="#{messages.selectAnItem}"
+                  itemDisabled="true" />
+                <f:selectItem itemValue="#{messages.multiplexId}" />
+                <f:selectItem itemValue="#{messages.multiplexId2}" />
+                <p:ajax
+                  event="change"
+                  global="false"
+                  update="assignMultiplexIds:multiplexIdGroup" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>
+          <h:panelGroup
+            rendered="#{not empty plateManager.selectedMultiplexKit and plateManager.selectedMultiplexKit.combinedMultiplexId or plateManager.multiplexIdsAssignability[0] and plateManager.multiplexIdsAssignability[1] and plateManager.linkedMultiplexId or (plateManager.multiplexIdsAssignability[0] and not plateManager.multiplexIdsAssignability[1] or not plateManager.multiplexIdsAssignability[0] and plateManager.multiplexIdsAssignability[1])}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{plateManager.multiplexIdsAssignmentAttribute}" />
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGroup>
+
+        <h:outputText value="#{messages.multiplexKit}" />
+        <ui:include src="/fragments/autocomplete-required.xhtml">
+          <ui:param
+            name="listContext"
+            value="multiplexKit" />
+          <ui:param
+            name="required"
+            value="true" />
+          <ui:param
+            name="value"
+            value="#{plateManager.selectedMultiplexKit}" />
+          <o:methodParam
+            name="valueChangeListener"
+            value="#{plateManager.selectedMultiplexKitChangedListener}" />
+          <o:methodParam
+            name="completeMethod"
+            value="#{multiplexKitService.getFilteredEnabledOrderedByName}" />
+          <o:methodParam
+            name="itemSelectListener"
+            value="#{plateManager.selectedMultiplexKitChanged}" />
+          <ui:param
+            name="itemSelectUpdate"
+            value="assignMultiplexIds" />
+          <ui:param
+            name="ajaxClear"
+            value="true" />
+          <o:methodParam
+            name="clearListener"
+            value="#{plateManager.selectedMultiplexKitChanged}" />
+          <ui:param
+            name="clearUpdate"
+            value="assignMultiplexIds" />
+          <ui:param
+            name="itemLabel"
+            value="#{item.name}" />
+        </ui:include>
+      </h:panelGrid>
+
+      <h:panelGroup id="multiplexIdGroup">
+        <h:panelGrid
+          rendered="#{not empty plateManager.multiplexIdsAssignmentAttribute and not empty plateManager.selectedMultiplexKit}"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.initialMultiplexId}"
+            title="#{messages.initialMultiplexIdPlateHint}" />
+          <h:panelGroup rendered="#{not plateManager.selectedMultiplexKitCombined}">
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="listContext"
+                value="initialMultiplexId" />
+              <ui:param
+                name="required"
+                value="true" />
+              <ui:param
+                name="value"
+                value="#{plateManager.selectedInitialMultiplexIdForMultiplexIdAssignment}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{plateManager.getOrderedEnabledMultiplexIdsByPlateLayoutAndTypeFiltered}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="assignMultiplexIds:remarkGroup" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <ui:param
+                name="clearUpdate"
+                value="assignMultiplexIds:remarkGroup" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="includeColumns"
+                value="/multiplexid/autocomplete-columns.xhtml" />
+            </ui:include>
+          </h:panelGroup>
+
+          <!-- Combined multiplex ids -->
+          <h:panelGroup rendered="#{plateManager.selectedMultiplexKitCombined}">
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="listContext"
+                value="initialCombinedMultiplexId" />
+              <ui:param
+                name="required"
+                value="true" />
+              <ui:param
+                name="noConverter"
+                value="true" />
+              <ui:param
+                name="value"
+                value="#{plateManager.selectedInitialCombinedMultiplexIdForMultiplexIdAssignment}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{plateManager.getOrderedEnabledCombinedMultiplexIdsByPlateLayoutAndTypeFiltered}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="assignMultiplexIds:remarkGroup" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <ui:param
+                name="clearUpdate"
+                value="assignMultiplexIds:remarkGroup" />
+              <ui:param
+                name="itemLabel"
+                value="#{plateManager.combinedMultiplexIdNamesPrettyPrintMap[item]}" />
+            </ui:include>
+          </h:panelGroup>
+
+          <h:outputText value="#{messages.startPosition}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneMenu
+              id="startPosition"
+              value="#{plateManager.startPositionForMultiplexIdAssignment}"
+              title="#{messages.startPositionsForMultiplexIdAssignmentHint}"
+              required="true"
+              styleClass="editWidthExtraLarge">
+              <f:selectItem
+                itemLabel="#{messages.selectAnItem}"
+                itemDisabled="true" />
+              <f:selectItems
+                value="#{plateManager.startPositionsForMultiplexIdAssignment}"
+                var="item"
+                itemLabel="#{plate.plateLayout.getGridPosition(item + 1)}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="assignMultiplexIds:remarkGroup" />
+            </h:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText
+            value="#{messages.wrapAround}"
+            title="#{messages.multiplexIdAssignmentWrapAroundHint}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:selectOneRadio value="#{plateManager.multiplexIdAssignmentWrapAround}">
+              <f:selectItem
+                itemLabel="#{messages.NO}"
+                itemValue="#{false}" />
+              <f:selectItem
+                itemLabel="#{messages.YES}"
+                itemValue="#{true}" />
+              <p:ajax
+                event="change"
+                global="false"
+                update="assignMultiplexIds:remarkGroup" />
+            </h:selectOneRadio>
+          </ui:decorate>
+
+          <h:panelGroup id="remarkGroup">
+            <h:panelGrid
+              rendered="#{not empty plateManager.selectedInitialMultiplexIdForMultiplexIdAssignment or not empty plateManager.selectedInitialCombinedMultiplexIdForMultiplexIdAssignment}"
+              columns="2"
+              columnClasses="rtdm, ltd">
+              <h:outputText value="#{messages.remark}:" />
+              <ui:decorate template="/fragments/display.xhtml">
+                <h:outputText value="#{plateManager.remarkForMultiplexIdAssignment}" />
+              </ui:decorate>
+            </h:panelGrid>
+          </h:panelGroup>
+        </h:panelGrid>
+      </h:panelGroup>
+
+      <h:panelGroup>
+        <h:outputText
+          value="#{messages.savePlateHint}"
+          styleClass="warning"
+          rendered="#{plateManager.savePlateHintRendered and plate.sampleAssignmentEditable}" />
+      </h:panelGroup>
+
+      <h:panelGrid
+        id="actions"
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          action="#{plateManager.assignMultiplexIds}"
+          value="#{messages.assign}"
+          global="true"
+          update="assignMultiplexIds, @([id$=assignSamples]), @([id$=samplesView])"
+          oncomplete="hideDialogOnSuccess(args, 'assignMultiplexIdsModalDialog'); fixOversize();" />
+        <p:commandButton
+          action="#{plateManager.cancelAssignMultiplexIds}"
+          value="#{messages.cancel}"
+          resetValues="true"
+          process="@this"
+          update="assignMultiplexIds, @([id$=actionForm])"
+          global="false"
+          oncomplete="PF('assignMultiplexIdsModalDialog').hide(); fixOversize();" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

@@ -1,0 +1,61 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/statistics/fragments/column/year-quarter-month-week.xhtml" />
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.companyId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.companyName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[4]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[5]}" />
+    <ui:param
+      name="valueClass"
+      value="company" />
+  </ui:include>
+  <ui:include src="/fragments/column/value-id-name.xhtml">
+    <ui:param
+      name="headerTextId"
+      value="#{messages.divisionId}" />
+    <ui:param
+      name="headerTextName"
+      value="#{messages.divisionName}" />
+    <ui:param
+      name="valueId"
+      value="#{entity[6]}" />
+    <ui:param
+      name="valueName"
+      value="#{entity[7]}" />
+    <ui:param
+      name="valueClass"
+      value="division" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/integer.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.bookings}" />
+    <ui:param
+      name="value"
+      value="#{entity[8]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.amount} (#{messages.bookings}) CHF" />
+    <ui:param
+      name="value"
+      value="#{entity[9]}" />
+  </ui:include>
+  <ui:include src="/statistics/fragments/column/money.xhtml">
+    <ui:param
+      name="headerText"
+      value="#{messages.amount} (#{messages.charges}) CHF" />
+    <ui:param
+      name="value"
+      value="#{entity[10]}" />
+  </ui:include>
+</ui:composition>

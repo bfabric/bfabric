@@ -1,0 +1,60 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:o="http://omnifaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:event
+      type="preRenderView"
+      listener="#{identityManager.restrict(run.editable)}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{empty run.datasets ? messages.assignDatasets : messages.reassignDatasets}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/show-assign.xhtml">
+      <ui:param
+        name="entityName"
+        value="#{messages.datasets}" />
+      <ui:param
+        name="onSubmit"
+        value="#{runManager.resetRefererURL()}" />
+      <ui:param
+        name="tableType"
+        value="dataset" />
+      <!-- Parameters for the source table -->
+      <ui:param
+        name="sourceTableContent"
+        value="#{datasetList.lazyModel}" />
+      <ui:param
+        name="addButtonDisabled"
+        value="#{runManager.selectedDatasets.contains(entity)}" />
+      <ui:param
+        name="addAllButtonListener"
+        value="#{dataTableHelper.addAllEntitiesFromDataTableToSelection(runManager.selectedDatasets)}" />
+      <ui:param
+        name="addButtonListener"
+        value="#{runManager.addDatasetToSelection(entity)}" />
+      <!-- Parameters for the target table -->
+      <ui:param
+        name="targetTableContent"
+        value="#{runManager.selectedDatasets}" />
+      <ui:param
+        name="removeAllButtonListener"
+        value="#{dataTableHelper.removeAllEntitiesFromSelection(runManager.selectedDatasets)}" />
+      <ui:param
+        name="removeButtonListener"
+        value="#{dataTableHelper.removeEntityFromSelection(runManager.selectedDatasets, entity)}" />
+      <!-- Parameters for the assignment actions -->
+      <o:methodParam
+        name="saveAction"
+        value="#{runManager.assignDatasets}" />
+      <o:methodParam
+        name="cancelAction"
+        value="#{runManager.cancel}" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

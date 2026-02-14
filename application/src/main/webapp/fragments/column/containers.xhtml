@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('containers')}">
+    <p:column
+      field="containers.size()"
+      headerText="#{not empty label ? label : messages.containers}">
+      <h:outputText value="#{entity.containers.size()}" />
+      <h:outputText
+        rendered="#{not empty entity.containers}"
+        value=": " />
+      <ui:repeat
+        value="#{entity.containers}"
+        var="item">
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+          <ui:param
+            name="entityValue"
+            value="#{item.id}#{item.internal ? '*' : ''} " />
+          <ui:param
+            name="entityHint"
+            value="#{item.entityInfo}" />
+        </ui:include>
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

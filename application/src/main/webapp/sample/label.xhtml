@@ -1,0 +1,293 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <ui:define name="metadata">
+    <f:event
+      type="preRenderView"
+      listener="#{dataTableHelper.initializeSelectCheckboxColumn(['edit:sourcesampletable', 'edit:targetsampletable'])}" />
+  </ui:define>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.createMultiplexIdSamples}" />
+  </ui:define>
+
+  <ui:define name="pageTitleExtension">
+    <h:outputText value="&#160;#{messages.createMultiplexIdSamplesSuffix}" styleClass="item-disabled" />
+  </ui:define>
+
+  <ui:param name="bean" value="#{sampleMultiplexIdBatchManager}" />
+
+  <ui:define name="body">
+    <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+    <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+    <script>
+        //<![CDATA[
+        function isValidSubmit(args) {
+            return (args && !args.validationFailed);
+        }
+        //]]>
+    </script>
+    <h:form
+      id="#{constants.EDIT}"
+      onsubmit="#{sampleMultiplexIdBatchManager.resetRefererURL()}">
+      <h:panelGroup rendered="#{sampleMultiplexIdBatchManager.selectionMode}">
+        <h:panelGrid
+          id="selectedSampleTypeGrid"
+          columns="1">
+          <p:selectOneButton
+            disabled="#{not empty sampleMultiplexIdBatchManager.selectedSamples}"
+            value="#{sampleMultiplexIdBatchManager.selectedSampleType}"
+            unselectable="false">
+            <f:selectItems value="#{sampleTypeList.sampleTypeEnumsLabelable}" var="item" itemLabel="#{item.label}" />
+            <p:ajax
+              event="change"
+              global="true"
+              update="@form"
+              oncomplete="fixOversize(); PF('#{constants.SOURCE}#{constants.SAMPLE}').filter();" />
+          </p:selectOneButton>
+        </h:panelGrid>
+
+        <p:spacer height="10" />
+
+        <h:panelGroup id="assignGroup">
+          <h:panelGroup id="#{constants.ASSIGN}">
+            <c:set
+              var="sourceTableContent"
+              value="#{empty sampleMultiplexIdBatchManager.initialSamples ? (not empty sampleMultiplexIdBatchManager.selectedSampleType ? sampleList.getLazyModelByType(sampleMultiplexIdBatchManager.selectedSampleType.label) : sampleList.librariesLazyModel) : sampleMultiplexIdBatchManager.initialSamples}"
+              scope="request" />
+
+            <h:panelGroup id="#{constants.SOURCE}#{constants.GROUP}">
+              <h:panelGrid id="#{constants.SOURCE}">
+                <h:outputText
+                  rendered="#{sourceTableContent.size() > 0}"
+                  value="#{messages.available} #{messages.samples} (#{sourceTableContent.size()})"
+                  styleClass="bold" />
+                <ui:include src="/fragments/datatable.xhtml">
+                  <ui:param
+                    name="showEmpty"
+                    value="true" />
+                  <ui:param
+                    name="tableType"
+                    value="#{constants.SAMPLE}" />
+                  <ui:param
+                    name="tableContext"
+                    value="#{constants.SOURCE}" />
+                  <ui:param
+                    name="tableContent"
+                    value="#{sourceTableContent}" />
+                  <ui:param
+                    name="lazy"
+                    value="true" />
+                  <ui:param
+                    name="showColumns"
+                    value="#{constants.ADD}#{constants.BUTTON}#{constants.COLUMN}, #{constants.SELECT_CHECK_BOX_COLUMN}" />
+                  <ui:param
+                    name="specificColumns"
+                    value="#{[SampleAttributeEnum.GROUPING_VAR, SampleAttributeEnum.DESCRIPTION]}" />
+                  <ui:param
+                    name="addButtonDisabled"
+                    value="#{sampleMultiplexIdBatchManager.selectedSamples.contains(entity)}" />
+                  <o:methodParam
+                    name="addAllButtonListener"
+                    value="#{dataTableHelper.addAllEntitiesFromDataTableToSelection(sampleMultiplexIdBatchManager.selectedSamples)}" />
+                  <ui:param
+                    name="addAllButtonUpdate"
+                    value="#{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:#{constants.TARGET}#{constants.GROUP}, #{constants.EDIT}:#{constants.SOURCE}#{constants.GROUP}, #{constants.EDIT}:#{constants.BUTTONS}" />
+                  <o:methodParam
+                    name="addButtonListener"
+                    value="#{dataTableHelper.addEntityToSelection(sampleMultiplexIdBatchManager.selectedSamples, entity)}" />
+                  <ui:param
+                    name="addButtonUpdate"
+                    value="@this, #{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:#{constants.TARGET}#{constants.GROUP}, #{constants.EDIT}:#{constants.SOURCE}#{constants.BUTTONS}, #{constants.EDIT}:#{constants.BUTTONS}" />
+                  <ui:param
+                    name="filterValue"
+                    value="#{sampleMultiplexIdBatchManager.targetContainerId}" />
+                  <ui:param
+                    name="checkUpdate"
+                    value="#{constants.EDIT}:#{constants.SOURCE}#{constants.BUTTONS}" />
+                </ui:include>
+              </h:panelGrid>
+              <h:panelGrid
+                id="#{constants.SOURCE}#{constants.BUTTONS}"
+                columns="1"
+                styleClass="action">
+                <p:commandButton
+                  rendered="#{not empty dataTableHelper.tableIdMarkedEntities[(constants.EDIT).concat(':').concat(constants.SOURCE).concat(constants.SAMPLE).concat(constants.TABLE)]}"
+                  action="#{dataTableHelper.assignMarkedEntitiesToSelection((constants.EDIT).concat(':').concat(constants.SOURCE).concat(constants.SAMPLE).concat(constants.TABLE), (constants.EDIT).concat(':').concat(constants.TARGET).concat(constants.SAMPLE).concat(constants.TABLE), sampleMultiplexIdBatchManager.selectedSamples)}"
+                  value="#{messages.addMarkedSamples}"
+                  process="@this"
+                  update="#{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:#{constants.TARGET}#{constants.GROUP}, #{constants.EDIT}:#{constants.SOURCE}#{constants.BUTTONS}, #{constants.EDIT}:#{constants.BUTTONS}"
+                  oncomplete="fixOversize();" />
+              </h:panelGrid>
+            </h:panelGroup>
+
+            <p:spacer height="10" />
+
+            <h:panelGroup id="#{constants.TARGET}#{constants.GROUP}">
+              <h:panelGrid id="#{constants.TARGET}">
+                <h:outputText
+                  rendered="#{ourceTableContent.size() > 0 or not empty sampleMultiplexIdBatchManager.selectedSamples}"
+                  value="#{messages.selected} #{messages.samples} (#{sampleMultiplexIdBatchManager.selectedSamples.size()})"
+                  styleClass="bold" />
+                <ui:include src="/fragments/datatable.xhtml">
+                  <ui:param
+                    name="tableType"
+                    value="#{constants.SAMPLE}" />
+                  <ui:param
+                    name="tableContext"
+                    value="#{constants.TARGET}" />
+                  <ui:param
+                    name="tableContent"
+                    value="#{sampleMultiplexIdBatchManager.selectedSamples}" />
+                  <ui:param
+                    name="showColumns"
+                    value="#{constants.REMOVE}#{constants.BUTTON}#{constants.COLUMN}, #{constants.SELECT_CHECK_BOX_COLUMN}" />
+                  <ui:param
+                    name="hideColumns"
+                    value="specific" />
+                  <o:methodParam
+                    name="removeAllButtonListener"
+                    value="#{dataTableHelper.removeAllEntitiesFromSelection(sampleMultiplexIdBatchManager.selectedSamples)}" />
+                  <ui:param
+                    name="removeAllButtonUpdate"
+                    value="#{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+                  <o:methodParam
+                    name="removeButtonListener"
+                    value="#{dataTableHelper.removeEntityFromSelection(sampleMultiplexIdBatchManager.selectedSamples, entity)}" />
+                  <ui:param
+                    name="removeButtonUpdate"
+                    value="#{constants.EDIT}:selectedSampleTypeGrid, #{constants.EDIT}:#{constants.TARGET}, #{constants.EDIT}:#{constants.BUTTONS}" />
+                  <ui:param
+                    name="customRowsPerPageTemplate"
+                    value="5,10,20,50,100,200" />
+                  <ui:param
+                    name="sourceTableId"
+                    value="#{constants.EDIT}:#{constants.SOURCE}#{constants.SAMPLE}#{constants.TABLE}" />
+                  <ui:param
+                    name="checkUpdate"
+                    value="#{constants.EDIT}:#{constants.TARGET}#{constants.BUTTONS}" />
+                </ui:include>
+              </h:panelGrid>
+              <h:panelGrid
+                id="#{constants.TARGET}#{constants.BUTTONS}"
+                columns="1"
+                styleClass="action">
+                <p:commandButton
+                  rendered="#{not empty dataTableHelper.tableIdMarkedEntities[(constants.EDIT).concat(':').concat(constants.TARGET).concat(constants.SAMPLE).concat(constants.TABLE)]}"
+                  action="#{dataTableHelper.unAssignMarkedEntitiesFromSelection((constants.EDIT).concat(':').concat(constants.TARGET).concat(constants.SAMPLE).concat(constants.TABLE), (constants.EDIT).concat(':').concat(constants.SOURCE).concat(constants.SAMPLE).concat(constants.TABLE), sampleMultiplexIdBatchManager.selectedSamples)}"
+                  value="#{messages.removeMarkedSamples}"
+                  process="@this"
+                  update="#{constants.EDIT}"
+                  oncomplete="fixOversize();" />
+              </h:panelGrid>
+            </h:panelGroup>
+
+            <h:panelGrid
+              id="#{constants.BUTTONS}"
+              columns="2"
+              styleClass="action">
+              <p:commandButton
+                rendered="#{not empty sampleMultiplexIdBatchManager.selectedSamples}"
+                action="#{sampleMultiplexIdBatchManager.createLabeledSamples}"
+                value="#{messages.next}"
+                update="#{constants.EDIT}" />
+              <p:commandButton
+                action="#{sampleMultiplexIdBatchManager.cancel}"
+                value="#{messages.cancel}"
+                immediate="true" />
+            </h:panelGrid>
+          </h:panelGroup>
+        </h:panelGroup>
+      </h:panelGroup>
+      <h:panelGroup rendered="#{not sampleMultiplexIdBatchManager.selectionMode}">
+        <h:panelGroup styleClass="navigate-away-class">
+          <h:panelGroup id="edit-multiplex-labels-batchtable">
+            <ui:include src="/fragments/datatable.xhtml">
+              <ui:param
+                name="tableContext"
+                value="batch" />
+              <ui:param
+                name="tableContent"
+                value="#{sampleMultiplexIdBatchManager.editList}" />
+              <ui:param
+                name="include"
+                value="/sample/label-columns.xhtml" />
+              <ui:param
+                name="editable"
+                value="true" />
+              <o:methodParam
+                name="pageListener"
+                value="#{sampleMultiplexIdBatchManager.pageListener}" />
+              <ui:param
+                name="pageListenerGlobal"
+                value="true" />
+              <ui:param
+                name="customListingRows"
+                value="#{sampleMultiplexIdBatchManager.customListingRows}" />
+              <ui:param
+                name="customRowsPerPageTemplate"
+                value="5,10,20,50" />
+              <ui:param
+                name="maximumRowsPerPage"
+                value="50" />
+              <ui:param
+                name="styleClass"
+                value="batchEditTable" />
+            </ui:include>
+          </h:panelGroup>
+        </h:panelGroup>
+
+        <h:panelGrid
+          columns="4"
+          styleClass="action">
+          <p:commandButton
+            action="#{sampleMultiplexIdBatchManager.save}"
+            disabled="#{empty sampleMultiplexIdBatchManager.editList}"
+            value="#{messages.save}"
+            oncomplete="if(!isValidSubmit(args)){hasChanged=true;} fixOversize();"
+            onclick="hasChanged=false;"
+            update="#{constants.EDIT}">
+            <o:skipValidators />
+          </p:commandButton>
+          <p:commandButton
+            action="#{sampleMultiplexIdBatchManager.cancelLabelingSamples}"
+            value="#{messages.back}"
+            update="#{constants.EDIT}">
+            <o:skipValidators />
+          </p:commandButton>
+          <p:commandButton
+            action="#{sampleMultiplexIdBatchManager.cancel}"
+            value="#{messages.cancel}"
+            immediate="true" />
+          <p:commandButton
+            rendered="#{not empty sampleMultiplexIdBatchManager.editList}"
+            value="#{messages.assignMultiplexIds}"
+            title="#{messages.assignMultiplexIdsHint}"
+            actionListener="#{sampleMultiplexIdBatchManager.prepareMultiplexIdsModalPanel()}"
+            immediate="true"
+            oncomplete="PF('assignMultiplexIdsModalDialog').show();"
+            update="assignMultiplexIdsModalPanel">
+            <f:attribute
+              name="#{constants.TABLE_CLIENT_ID}"
+              value="#{constants.EDIT}:batchtable" />
+          </p:commandButton>
+        </h:panelGrid>
+      </h:panelGroup>
+    </h:form>
+
+    <ui:include src="/sample/assign-multiplexids-modal.xhtml" />
+    <ui:include src="/annotation/add-modal.xhtml">
+      <ui:param
+        name="manager"
+        value="#{bean}" />
+      <ui:param
+        name="updateOnSave"
+        value="@([id$=batchtable]), @([id$=addAnnotation])" />
+    </ui:include>
+  </ui:define>
+</ui:composition>

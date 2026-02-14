@@ -1,0 +1,32 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('mailReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.mails}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist.xhtml">
+      <ui:param
+        name="tableType"
+        value="mail" />
+    </ui:include>
+
+    <h:panelGrid
+      columns="1"
+      styleClass="action">
+      <p:button
+        outcome="/mail/send.xhtml"
+        value="#{messages.sendMail}"
+        title="#{messages.sendBatchMailHint}"
+        rendered="#{identityManager.hasCurrentUserRole('mailSender')}" />
+    </h:panelGrid>
+  </ui:define>
+</ui:composition>

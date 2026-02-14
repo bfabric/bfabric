@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    sortBy="#{entity[0]}"
+    filterBy="#{entity[0]}"
+    headerText="#{messages.entity}">
+    <h:outputText value="#{entity[0]}" />
+  </p:column>
+  <p:column
+    sortBy="#{entity[1]}"
+    filterBy="#{entity[1]}"
+    headerText="#{messages.total}">
+    <h:outputText value="#{entity[1]}" />
+  </p:column>
+  <p:column
+    sortBy="#{entity[2]}"
+    filterBy="#{entity[2]}"
+    headerText="#{messages.since}">
+    <h:outputText value="#{entity[2]}" />
+  </p:column>
+</ui:composition>

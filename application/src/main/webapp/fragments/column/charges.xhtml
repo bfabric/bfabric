@@ -1,0 +1,24 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('chargeCount')}">
+    <p:column
+      sortable="#{not tableReference.lazy}"
+      filterable="#{not tableReference.lazy}"
+      sortBy="#{collectionHelper.printIds(entity.charges)}"
+      filterBy="#{collectionHelper.printIds(entity.charges)}"
+      headerText="#{messages.charges}"
+      exportValue="#{collectionHelper.printIds(entity.charges)}">
+      <ui:repeat
+        value="#{entity.charges}"
+        var="item">
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+        </ui:include>
+      </ui:repeat>
+    </p:column>
+  </c:if>
+</ui:composition>

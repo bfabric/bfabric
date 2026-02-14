@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('url')}">
+    <p:column
+      field="#{fieldPrefix}url"
+      headerText="#{messages.url}">
+      <p:link
+        rendered="#{not empty entity.url and entity.validUrl}"
+        value="#{stringHelper.truncate(entity.url, 40)}"
+        title="#{entity.url}"
+        href="#{entity.url}"
+        target="_blank"
+        rel="noopener" />
+      <h:panelGroup rendered="#{not empty entity.url and not entity.validUrl}">
+        <div title="#{messages.invalidUrl}">
+          <h:outputText value="#{entity.url} " />
+          <i class="fas fa-exclamation-circle warning" />
+        </div>
+      </h:panelGroup>
+    </p:column>
+  </c:if>
+</ui:composition>

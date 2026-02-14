@@ -1,0 +1,16 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column exportable="false">
+    <p:commandButton
+      action="#{app.setStorage(entity)}"
+      immediate="true"
+      value="#{messages.select}"
+      styleClass="inline"
+      global="false"
+      oncomplete="PF('selectStorageModalDialog').hide()"
+      update="@([id$=storage])" />
+  </p:column>
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/containerfolderprefix.xhtml" />
+</ui:composition>

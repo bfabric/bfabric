@@ -1,0 +1,13 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="label"
+      value="#{not empty label ? label : messages.timeline}" />
+    <ui:param
+      name="tab"
+      value="#{not empty tab ? tab : 'timeline'}" />
+    <ui:param
+      name="showAlways"
+      value="#{not empty showAlways ? showAlways : true}" />
+  </ui:include>
+</ui:composition>

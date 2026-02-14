@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.coach}">
+    <h:outputText value="#{messages.coach}" />
+    <h:panelGroup>
+      <ui:include src="/fragments/user-link.xhtml">
+        <ui:param
+          name="instance"
+          value="#{instance.coach}" />
+      </ui:include>
+      <h:panelGroup rendered="#{not instance.coachValid}">
+        <i
+          class="fas fa-exclamation-circle warning"
+          title="#{messages.coachInvalidHint}" />
+      </h:panelGroup>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

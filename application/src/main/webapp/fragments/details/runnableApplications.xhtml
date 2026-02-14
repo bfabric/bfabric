@@ -1,0 +1,35 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="instance" type="org.bfabric.entity.AbstractEntity"-->
+  <c:if test="#{instance.runnableApplicationsRendered}">
+    <c:if test="#{not instance.runnableWebAppsRendered}">
+      <h:panelGrid styleClass="content-subheader">
+        <h:outputText value="#{messages.applications}" styleClass="bold" />
+      </h:panelGrid>
+    </c:if>
+    <h:panelGrid styleClass="#{instance.runnableWebAppsRendered ? 'content-subheader' : ''}">
+      <h:panelGrid columns="2" columnClasses="align-middle">
+        <c:forEach items="#{instance.runnableApplicationsGroupedByCategory}" var="itemCategory">
+          <h:outputText value="#{itemCategory.key}" />
+          <h:panelGrid columns="6">
+            <c:forEach items="#{itemCategory.value}" var="item">
+              <p:button outcome="/workunit/edit.xhtml" value="#{item.name}" styleClass="appName">
+                <f:param name="applicationId" value="#{item.id}" />
+                <f:param name="creationType" value="#{not empty creationType ? creationType : constants.CREATION_FROM_SCRATCH}" />
+                <c:if test="#{not empty selectedDatasetId}">
+                  <f:param name="selectedDatasetId" value="#{selectedDatasetId}" />
+                </c:if>
+                <c:if test="#{not empty selectedWorkunitId}">
+                  <f:param name="selectedWorkunitId" value="#{selectedWorkunitId}" />
+                </c:if>
+              </p:button>
+            </c:forEach>
+          </h:panelGrid>
+        </c:forEach>
+      </h:panelGrid>
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

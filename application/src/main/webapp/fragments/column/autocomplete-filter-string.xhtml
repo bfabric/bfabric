@@ -1,0 +1,26 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <f:facet name="filter">
+    <p:autoComplete
+      onchange="PF('#{tableContext}#{tableType}').filter()"
+      title="#{not empty autocompleteHint ? autocompleteHint : messages.autocompleteHint}"
+      placeholder="#{not empty placeHolder ? placeHolder : messages.subjectAutocompletePlaceholder}"
+      completeMethod="#{completeMethod}"
+      emptyMessage="#{not empty emptyMessage ? emptyMessage : messages.noResultFound}"
+      var="item"
+      itemValue="#{item}"
+      itemLabel="#{stringHelper.truncate(item, not empty prefixLength ? prefixLength : 64)}"
+      forceSelection="false"
+      queryDelay="#{queryDelay == null ? 200 : queryDelay}"
+      scrollHeight="#{scrollHeight == null ? 388 : scrollHeight}"
+      autoHighlight="false">
+      <p:ajax
+        event="itemSelect"
+        global="false"
+        update="@this"
+        oncomplete="PF('#{tableContext}#{tableType}').filter(); fixOversize(); " />
+    </p:autoComplete>
+  </f:facet>
+</ui:composition>

@@ -1,0 +1,109 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{sidebarHelper.isTab('dashboard')}">
+    <div class="cardBox">
+      <ui:include src="/fragments/dashboard/members-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/orders-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/comments-cardbox.xhtml" />
+
+      <c:if test="#{configuration.dataManagementEnabled}">
+        <ui:include src="/fragments/dashboard/samples-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/workunits-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/resources-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/datasets-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/associateddatasets-cardbox.xhtml" />
+      </c:if>
+
+      <ui:include src="/fragments/dashboard/workflows-cardbox.xhtml" />
+
+      <c:if test="#{configuration.labEnabled and project.hasCurrentUserRole('labManager')}">
+        <ui:include src="/fragments/dashboard/plates-cardbox.xhtml" />
+        <ui:include src="/fragments/dashboard/runs-cardbox.xhtml" />
+      </c:if>
+
+      <ui:include src="/fragments/dashboard/offers-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/charges-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/bookings-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/instrumentreservations-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/feedbacks-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/mails-cardbox.xhtml" />
+      <ui:include src="/fragments/dashboard/reviews-cardbox.xhtml" />
+    </div>
+
+    <ui:include src="/fragments/dashboard/last.xhtml" />
+    <ui:include src="/fragments/dashboard/members.xhtml" />
+
+    <div class="hide-table-header dashboard-grid">
+      <div class="cardBoxDetails cardBoxShadow">
+        <div class="card-header"><h3><h:outputText value="#{messages.details}" title="#{messages.details}" />
+          <p:link styleClass="iconBox">
+            <f:param name="id" value="#{project.id}" />
+            <f:param name="tab" value="details" />
+            <i class="fas fa-up-right-from-square" />
+          </p:link>
+        </h3></div>
+        <table class="content-table">
+          <c:if test="#{not empty project.startDate}">
+            <tr>
+              <td class="header-table"><h:outputText value="#{messages.date}" /></td>
+              <td><h:outputText value="#{project.startDate}" /> <i class="fas fa-minus" /> <h:outputText value=" #{project.endDate}" /></td>
+            </tr>
+          </c:if>
+
+          <ui:include src="/fragments/dashboard-box.xhtml">
+            <ui:param name="messages" value="#{messages.executionPeriod}" />
+            <ui:param name="value" value="#{project.executionPeriod.intervalAsString}" />
+          </ui:include>
+
+          <ui:include src="/fragments/dashboard-box.xhtml">
+            <ui:param name="messages" value="#{messages.technologies}" />
+            <ui:param name="value" value="#{project.technologiesAsString}" />
+          </ui:include>
+
+          <ui:include src="/fragments/dashboard-box.xhtml">
+            <ui:param name="messages" value="#{messages.summary}" />
+            <ui:param name="value" value="#{stringHelper.truncate(project.summaryTrimmed, 400)}" />
+            <ui:param name="title" value="#{project.summary}" />
+          </ui:include>
+
+          <tr>
+            <td class="header-table"><h:outputText value="#{messages.description}" title="#{messages.editProjectDescriptionHint}" /></td>
+            <td>
+              <h:form>
+                <p:commandLink ajax="false" value="#{project.description.name}">
+                  <p:fileDownload value="#{project.description.defaultStreamedContent}" />
+                </p:commandLink>
+              </h:form>
+            </td>
+          </tr>
+          <ui:include src="/fragments/dashboard-box.xhtml">
+            <ui:param name="messages" value="#{messages.createdBy}" />
+            <ui:param name="value" value="#{project.createdByFull}" />
+          </ui:include>
+          <c:if test="#{project.internal}">
+            <tr>
+              <td class="header-table"><h:outputText value="#{messages.internal}" /></td>
+              <td><h:panelGroup> <h:outputText value="#{project.internal}" styleClass="#{stringHelper.toGreenRed(project.internal)}" /> </h:panelGroup></td>
+            </tr>
+          </c:if>
+          <c:if test="#{project.orderDataOnly}">
+            <tr>
+              <td class="header-table">
+                <h:outputText value="#{messages.orderDataOnly}" />
+              </td>
+              <td>
+                <h:panelGroup>
+                  <h:outputText value="#{project.orderDataOnly}" styleClass="#{stringHelper.toGreenRed(project.orderDataOnly)}" />
+                </h:panelGroup>
+              </td>
+            </tr>
+          </c:if>
+        </table>
+      </div>
+      <ui:include src="/fragments/dashboard/affiliation.xhtml" />
+    </div>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    sortBy="#{valueId}"
+    filterBy="#{not empty valueId ? valueId : '_'}"
+    headerText="#{headerTextId}"
+    filterMatchMode="exact">
+    <p:link
+      rendered="#{not empty valueId}"
+      outcome="/#{valueClass}/show.xhtml"
+      value="#{valueId}"
+      style="float:right">
+      <f:param
+        name="id"
+        value="#{valueId}" />
+    </p:link>
+  </p:column>
+</ui:composition>

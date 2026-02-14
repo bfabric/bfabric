@@ -1,0 +1,36 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  template="/layout/template.xhtml">
+  <f:metadata>
+    <f:viewAction action="#{identityManager.restrictRole('applicationReader')}" />
+  </f:metadata>
+
+  <ui:define name="pageTitle">
+    <h:outputText value="#{messages.applications}" />
+  </ui:define>
+
+  <ui:define name="body">
+    <ui:include src="/fragments/lazylist-with-create.xhtml">
+      <ui:param
+        name="tableType"
+        value="application" />
+      <ui:param
+        name="showColumns"
+        value="predecessor, storage, instrument" />
+      <ui:param
+        name="hideColumns"
+        value="run" />
+    </ui:include>
+
+    <c:if test="#{not empty sessionManager.technologyFilterName}">
+      <script>$(document).ready(function () {
+          if (PF('allapplication')) {
+              PF('allapplication').filter();
+          }
+      });</script>
+    </c:if>
+  </ui:define>
+</ui:composition>

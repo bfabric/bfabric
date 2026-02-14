@@ -1,0 +1,23 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{not empty instance.samplePreparationProtocols}">
+    <h:outputText value="#{messages.samplePreparationProtocols}" />
+    <h:panelGroup styleClass="inner-repeat">
+      <ui:repeat
+        value="#{instance.samplePreparationProtocols}"
+        var="item">
+        <ui:include src="/fragments/entity-link.xhtml">
+          <ui:param
+            name="instance"
+            value="#{item}" />
+          <ui:param
+            name="entityValue"
+            value="#{item.displayName}" />
+        </ui:include>
+        <br />
+      </ui:repeat>
+    </h:panelGroup>
+  </c:if>
+</ui:composition>

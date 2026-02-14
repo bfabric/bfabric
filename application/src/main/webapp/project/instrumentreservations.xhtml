@@ -1,0 +1,53 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{configuration.instrumentReservationEnabled and sidebarHelper.isTab('instrumentreservations') and project.acceptedButNotPublished}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="instrumentreservation" />
+      <ui:param
+        name="tableContext"
+        value="#{project.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{instrumentReservationList.getLazyModelByContainerIdJoined(project.id)}" />
+      <ui:param
+        name="hideColumns"
+        value="container" />
+    </ui:include>
+    <h:panelGrid
+      columns="4"
+      styleClass="action">
+      <c:if test="#{identityManager.hasCurrentUserRole('containerManager')}">
+        <p:button
+          outcome="/instrumentreservation/edit.xhtml"
+          value="#{messages.create}"
+          rendered="#{project.extensible}">
+          <f:param
+            name="containerId"
+            value="#{project.id}" />
+        </p:button>
+        <c:if test="#{instrumentReservationList.getLazyModelByContainerIdJoined(project.id).size() > 0}">
+          <h:form rendered="#{project.extensible}">
+            <p:commandButton
+              action="#{projectManager.chargeSelectedInstrumentReservations(dataTableHelper.selectedEntities)}"
+              value="#{messages.charge} #{instrumentReservationList.getLazyModelByContainerIdJoined(project.id).size()}"
+              title="#{messages.chargeSelectedInstrumentReservationsHint}" />
+          </h:form>
+          <h:form rendered="#{instrumentReservationList.getLazyModelByContainerIdJoined(project.id).size() > 0}">
+            <p:commandButton
+              ajax="false"
+              actionListener="#{project.exportAndDownloadIcs(dataTableHelper.selectedEntities)}"
+              value="#{messages.exportICSExport}"
+              title="#{messages.exportICSHint}" />
+          </h:form>
+        </c:if>
+      </c:if>
+      <p:button outcome="/instrumentschedule/list.xhtml" value="#{messages.showInstrumentReservationInOverview}" title="#{messages.showInstrumentReservationInOverviewHint}" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

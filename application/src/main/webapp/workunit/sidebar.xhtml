@@ -1,0 +1,93 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml" />
+
+  <ui:include src="/fragments/sidebar/applications.xhtml">
+    <ui:param
+      name="content"
+      value="#{workunit.runnableApplications}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/parameters.xhtml" />
+  <ui:include src="/fragments/sidebar/comments.xhtml" />
+  <ui:include src="/fragments/sidebar/resources.xhtml" />
+  <ui:include src="/fragments/sidebar/workflows.xhtml" />
+  <ui:include src="/fragments/sidebar/workflowsteps.xhtml" />
+
+  <c:if test="#{not empty workunit.inputDataset and not empty workunit.inputDataset.inputResources}">
+    <ui:include src="/fragments/sidebar/set.xhtml">
+      <ui:param
+        name="content"
+        value="#{workunit.inputDataset.inputResources}" />
+      <ui:param
+        name="label"
+        value="#{messages.inputResources}" />
+      <ui:param
+        name="tab"
+        value="datasetinputresources" />
+    </ui:include>
+  </c:if>
+
+  <c:if test="#{not empty workunit.inputResources and (empty workunit.inputDataset or empty workunit.inputDataset.inputResources)}">
+    <ui:include src="/fragments/sidebar/inputresources.xhtml" />
+  </c:if>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('admin') and not empty workunit.importResources}">
+    <ui:include src="/fragments/sidebar/importresources.xhtml" />
+  </c:if>
+
+  <ui:include src="/fragments/sidebar/executables.xhtml" />
+  <ui:include src="/fragments/sidebar/externaljobs.xhtml" />
+  <ui:include src="/fragments/sidebar/jobs.xhtml" />
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{workunitList.getLazyModelSucceedingWorkunitsByWorkunitId(workunit.id)}" />
+    <ui:param
+      name="label"
+      value="#{messages.succeedingWorkunits}" />
+    <ui:param
+      name="hint"
+      value="#{messages.workunitSucceedingWorkunitsHint}" />
+    <ui:param
+      name="tab"
+      value="succeedingworkunits" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{datasetList.getLazyModelSucceedingDatasetsByWorkunitId(workunit.id)}" />
+    <ui:param
+      name="label"
+      value="#{messages.succeedingDatasets}" />
+    <ui:param
+      name="hint"
+      value="#{messages.workunitSucceedingDatasetsHint}" />
+    <ui:param
+      name="tab"
+      value="succeedingdatasets" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/set.xhtml">
+    <ui:param
+      name="content"
+      value="#{workunit.associatedComments}" />
+    <ui:param
+      name="label"
+      value="#{messages.associatedComments}" />
+    <ui:param
+      name="tab"
+      value="associatedcomments" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/mails.xhtml" />
+  <ui:include src="/fragments/sidebar/tree.xhtml" />
+
+  <c:if test="#{workunit.renderedRefresh}">
+    <ui:include src="/fragments/button/refresh.xhtml" />
+    <span />
+  </c:if>
+</ui:composition>

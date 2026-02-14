@@ -1,0 +1,849 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <o:importConstants type="org.bfabric.enums.SampleTypeEnum" />
+  <o:importConstants type="org.bfabric.enums.StatusEnum" />
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGroup id="show-order">
+      <ui:include src="/home-message.xhtml" />
+
+      <h:panelGrid
+        columns="2"
+        columnClasses="rtd, ltd">
+        <ui:include src="/fragments/details/id.xhtml">
+          <ui:param
+            name="showOldId"
+            value="#{not empty order.oldId}" />
+        </ui:include>
+
+        <ui:include src="/fragments/details/status.xhtml" />
+        <ui:include src="/fragments/details/express.xhtml" />
+        <ui:include src="/fragments/details/internal.xhtml" />
+        <ui:include src="/fragments/details/executionperiod.xhtml" />
+        <ui:include src="/fragments/details/coach.xhtml" />
+        <ui:include src="/fragments/details/coachbackup.xhtml" />
+        <ui:include src="/fragments/details/bioinformatician.xhtml" />
+        <ui:include src="/fragments/details/project.xhtml" />
+        <ui:include src="/fragments/details/servicetype.xhtml" />
+
+        <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+          <ui:include src="/fragments/details/requiresproject.xhtml" />
+          <ui:include src="/fragments/details/processessamples.xhtml" />
+          <ui:include src="/fragments/details/sampletype.xhtml" />
+          <ui:include src="/fragments/details/servicecolumnenabled.xhtml" />
+          <ui:include src="/fragments/details/processesplates.xhtml" />
+          <ui:include src="/fragments/details/platesubmissionproposallimit.xhtml" />
+          <ui:include src="/fragments/details/initialcustomstatus.xhtml" />
+        </c:if>
+
+        <ui:include src="/fragments/details/technologies.xhtml" />
+        <ui:include src="/fragments/details/sequencingapplication.xhtml" />
+        <ui:include src="/fragments/details/instrument.xhtml" />
+        <ui:include src="/fragments/details/instrumentdatapackage.xhtml" />
+
+        <c:if test="#{not empty order.totalNumberOfInstrumentDataPackages}">
+          <h:outputText value="#{messages.totalNumberOfInstrumentDataPackages}" title="#{messages.totalNumberOfInstrumentDataPackagesHint}" />
+          <h:outputText value="#{order.totalNumberOfInstrumentDataPackages}" title="#{messages.totalNumberOfInstrumentDataPackagesHint}" />
+        </c:if>
+
+        <ui:include src="/fragments/details/instrumentreadconfiguration.xhtml" />
+        <ui:include src="/fragments/details/consumable.xhtml" />
+
+        <c:if test="#{not empty order.numberOfRunsSequencing}">
+          <h:outputText value="#{messages.numberOfRunsSequencing}" />
+          <h:outputText value="#{order.numberOfRunsSequencing}" />
+        </c:if>
+
+        <c:if test="#{not empty order.numberOfRunsTapeStation}">
+          <h:outputText value="#{messages.numberOfRunsTapeStation}" />
+          <h:outputText value="#{order.numberOfRunsTapeStation}" />
+        </c:if>
+
+        <c:if test="#{not empty order.userBenchUsage}">
+          <h:outputText value="#{messages.userBenchUsage}" />
+          <h:outputText value="#{order.userBenchUsage}" />
+        </c:if>
+
+        <c:if test="#{not empty order.kitsUsed}">
+          <h:outputText value="#{messages.kitsUsed}" />
+          <h:outputText value="#{order.kitsUsed}" />
+        </c:if>
+
+        <ui:include src="/fragments/details/libraryprotocol.xhtml" />
+        <ui:include src="/fragments/details/libraryProtocolOptionValues.xhtml" />
+
+        <c:if test="#{not empty order.numberOfPlates}">
+          <h:outputText value="#{messages.numberOfPlates}" />
+          <h:outputText value="#{order.numberOfPlates}" />
+        </c:if>
+
+        <c:if test="#{not empty order.numberOfSamples}">
+          <h:outputText value="#{messages.numberOfTubes}" />
+          <h:outputText value="#{order.numberOfSamples}" />
+        </c:if>
+
+        <c:if test="#{not empty order.nuclei}">
+          <h:outputText value="#{messages.cellsNuclei}" />
+          <h:outputText value="#{order.nuclei ? messages.nuclei : messages.cells}" />
+        </c:if>
+
+        <c:if test="#{not empty order.numberOfCellsNuclei}">
+          <h:outputText value="#{messages.numberOfCellsNuclei}" />
+          <h:outputText value="#{order.numberOfCellsNuclei}" />
+        </c:if>
+
+        <c:if test="#{not empty order.insertSize}">
+          <h:outputText value="#{messages.insertSize}" />
+          <h:outputText value="#{order.insertSize}" />
+        </c:if>
+
+        <c:if test="#{not empty order.phiX}">
+          <h:outputText value="#{messages.phiX}" />
+          <h:outputText
+            value="#{order.phiX}"
+            styleClass="warn" />
+        </c:if>
+
+        <c:if test="#{not empty order.customOption}">
+          <h:outputText value="#{messages.customOptions}" />
+          <h:outputText
+            value="#{order.customOption}"
+            styleClass="#{order.customOption ? 'warn' : ''}" />
+
+          <c:if test="#{not empty order.customPrimer}">
+            <h:outputText value="#{messages.customPrimers}" />
+            <h:outputText
+              value="#{order.customPrimer}"
+              styleClass="#{order.customPrimer ? 'warn' : ''}" />
+
+            <c:if test="#{not empty order.index1}">
+              <h:outputText value="#{messages.index1}" />
+              <h:outputText
+                value="#{order.index1}"
+                styleClass="#{order.customPrimer ? 'warn' : ''}" />
+            </c:if>
+
+            <c:if test="#{not empty order.index2}">
+              <h:outputText value="#{messages.index2}" />
+              <h:outputText
+                value="#{order.index2}"
+                styleClass="#{order.customPrimer ? 'warn' : ''}" />
+            </c:if>
+
+            <c:if test="#{not empty order.read1}">
+              <h:outputText value="#{messages.read1}" />
+              <h:outputText
+                value="#{order.read1}"
+                styleClass="#{order.customPrimer ? 'warn' : ''}" />
+            </c:if>
+
+            <c:if test="#{not empty order.read2}">
+              <h:outputText value="#{messages.read2}" />
+              <h:outputText
+                value="#{order.read2}"
+                styleClass="#{order.customPrimer ? 'warn' : ''}" />
+            </c:if>
+          </c:if>
+
+          <c:if test="#{not empty order.darkCycle}">
+            <h:outputText value="#{messages.darkCycles}" />
+            <h:outputText
+              value="#{order.darkCycle}"
+              styleClass="#{order.darkCycle ? 'warn' : ''}" />
+
+            <c:if test="#{not empty order.numberOfCyclesRead1}">
+              <h:outputText value="#{messages.numberOfCyclesRead1}" />
+              <h:outputText
+                value="#{order.numberOfCyclesRead1}"
+                styleClass="#{order.darkCycle ? 'warn' : ''}" />
+            </c:if>
+
+            <c:if test="#{not empty order.numberOfCyclesRead2}">
+              <h:outputText value="#{messages.numberOfCyclesRead2}" />
+              <h:outputText
+                value="#{order.numberOfCyclesRead2}"
+                styleClass="#{order.darkCycle ? 'warn' : ''}" />
+            </c:if>
+          </c:if>
+
+          <c:if test="#{not empty order.requestBclFile}">
+            <h:outputText value="#{messages.requestBclFiles}" />
+            <h:outputText
+              value="#{order.requestBclFile}"
+              styleClass="#{order.requestBclFile ? 'warn' : ''}" />
+          </c:if>
+        </c:if>
+
+        <c:if test="#{not empty order.numberOfChips}">
+          <h:outputText value="#{messages.numberOfChips}" />
+          <h:outputText value="#{order.numberOfChips}" />
+        </c:if>
+
+        <ui:include src="/fragments/details/multiplexkit.xhtml" />
+
+        <c:if test="#{not empty order.fastaSequence}">
+          <h:outputText value="#{messages.fastaSequence}" />
+          <h:panelGroup>
+            <h:inputTextarea
+              rendered="#{order.fastaSequence.length() gt 500}"
+              value="#{order.fastaSequence}"
+              rows="10"
+              readonly="true"
+              styleClass="editWidthExtraLarge" />
+            <h:outputText
+              rendered="#{order.fastaSequence.length() le 500}"
+              value="#{order.fastaSequence}"
+              styleClass="preformat" />
+            <h:outputText
+              rendered="#{not order.validFastaSequence}"
+              value="#{messages.invalid}"
+              styleClass="warning" />
+          </h:panelGroup>
+        </c:if>
+
+        <c:if test="#{not empty order.bioSafetyLevel2PrecautionsRequired and order.bioSafetyLevel2PrecautionsRequired or order.serviceType.isOrderAttribute('bioSafetyLevel2PrecautionsRequired')}">
+          <h:outputText value="#{messages.bioSafetyLevel2PrecautionsRequired}" />
+          <h:panelGroup
+            styleClass="#{stringHelper.toGreenRed(not order.bioSafetyLevel2PrecautionsRequired)}">
+            <h:outputText value="#{stringHelper.toYesNo(order.bioSafetyLevel2PrecautionsRequired)}" />
+            <h:panelGroup rendered="#{order.bioSafetyLevel2PrecautionsRequired}">
+              <i class="fas fa-warning" />
+            </h:panelGroup>
+          </h:panelGroup>
+        </c:if>
+
+        <c:if test="#{not empty order.samplesContainTransgenes and (order.samplesContainTransgenes or order.serviceType.isOrderAttribute('samplesContainTransgenes'))}">
+          <h:outputText value="#{messages.samplesContainTransgenes}" />
+          <h:panelGroup styleClass="#{stringHelper.toGreenRed(not order.samplesContainTransgenes)}">
+            <h:outputText value="#{stringHelper.toYesNo(order.samplesContainTransgenes)}" />
+          </h:panelGroup>
+        </c:if>
+
+        <c:if test="#{not empty order.numberOfReplicates}">
+          <h:outputText value="#{messages.numberOfReplicates}" />
+          <h:outputText value="#{order.numberOfReplicates}" />
+        </c:if>
+
+        <c:if test="#{not empty order.demultiplexing}">
+          <h:outputText value="#{messages.demultiplexing}" />
+          <h:outputText value="#{order.demultiplexing.name}" />
+        </c:if>
+
+        <c:if test="#{not empty order.dataProduced}">
+          <h:outputText value="#{messages.dataProduced}" />
+          <h:outputText value="#{order.dataProduced}" />
+        </c:if>
+
+        <c:if test="#{not empty order.hoursRequested}">
+          <h:outputText value="#{messages.hoursRequested}" />
+          <h:outputText value="#{order.hoursRequested}" />
+        </c:if>
+
+        <c:if test="#{not empty order.storageModel}">
+          <h:outputText value="#{messages.storageModel}" />
+          <h:outputText value="#{order.storageModel.fullName}" />
+        </c:if>
+
+        <ui:include src="/fragments/details/instrumentdatadelivery.xhtml" />
+        <ui:include src="/fragments/details/remarks.xhtml" />
+        <ui:include src="/fragments/details/summary.xhtml" />
+        <ui:include src="/fragments/details/sampleRetention.xhtml" />
+        <ui:include src="/fragments/details/mailTrackingNumber.xhtml" />
+        <ui:include src="/fragments/details/requester.xhtml" />
+        <ui:include src="/fragments/details/contact.xhtml" />
+        <ui:include src="/fragments/details/budgetofficer.xhtml" />
+        <ui:include src="/fragments/details/discussedwith.xhtml" />
+        <ui:include src="/fragments/details/affiliation.xhtml" />
+        <c:if test="#{not empty order.postalAddress}">
+          <h:outputText value="#{messages.billingAddress}" />
+          <h:outputText value="#{order.postalAddress}" />
+        </c:if>
+
+        <c:if test="#{order.billingOrganizationType.financeSourceRequired}">
+          <ui:include src="/fragments/details/billingaccount.xhtml" />
+          <ui:include src="/fragments/details/eugrant.xhtml" />
+        </c:if>
+
+        <ui:include src="/fragments/details/offer.xhtml" />
+
+        <ui:include src="/fragments/details/vatnumber.xhtml">
+          <ui:param
+            name="instance"
+            value="#{order.billingInfo}" />
+        </ui:include>
+
+        <ui:include src="/fragments/details/referencenumber.xhtml">
+          <ui:param
+            name="instance"
+            value="#{order.billingInfo}" />
+        </ui:include>
+
+        <c:if test="#{order.discounted}">
+          <h:outputText value="#{messages.orderDiscount}" />
+          <h:outputText value="#{order.discount} %">
+            <f:convertNumber pattern="0.00" />
+          </h:outputText>
+        </c:if>
+
+        <ui:include src="/fragments/details/commentspinned.xhtml">
+          <ui:param
+            name="styleClass"
+            value="warn" />
+        </ui:include>
+        <ui:include src="/fragments/details/links-customattributes-created-modified.xhtml" />
+      </h:panelGrid>
+
+      <h:panelGrid
+        columns="10"
+        styleClass="action">
+        <ui:include src="/fragments/button/edit.xhtml" />
+        <ui:include src="/fragments/button/edit-links.xhtml" />
+        <c:if test="#{not empty order.defaultFeedbackTemplateId}">
+          <p:button
+            outcome="/feedback/submit.xhtml"
+            value="#{messages.feedback}"
+            title="#{messages.feedbackProvisionHint}"
+            rendered="#{order.renderedFeedbackButton}">
+            <f:param
+              name="containerId"
+              value="#{order.id}" />
+            <f:param
+              name="defaultFeedbackTemplateId"
+              value="#{order.defaultFeedbackTemplateId}" />
+          </p:button>
+        </c:if>
+        <ui:include src="/fragments/button/track-container.xhtml" />
+        <ui:include src="/fragments/button/delete.xhtml" />
+        <ui:include src="/fragments/button/list.xhtml">
+          <ui:param
+            name="rendered"
+            value="#{identityManager.hasCurrentUserRole('containerReader')}" />
+        </ui:include>
+        <ui:include src="/fragments/button/export-and-download-xml.xhtml" />
+        <c:if test="#{identityManager.hasCurrentUserRole('runManager') and order.hasLabeledSamples()}">
+          <p:button
+            outcome="/sample/multiplex.xhtml"
+            value="#{messages.multiplexSample}"
+            title="#{messages.multiplexSampleHint.replace('{0}', 'order')}">
+            <f:param
+              name="targetContainerId"
+              value="#{order.id}" />
+          </p:button>
+        </c:if>
+        <c:if test="#{identityManager.hasCurrentUserRole('runManager') and order.labelable}">
+          <p:button
+            outcome="/sample/label.xhtml"
+            value="#{messages.createMultiplexIdSamples}"
+            title="#{messages.createMultiplexIdSamplesHint}">
+            <f:param
+              name="targetContainerId"
+              value="#{order.id}" />
+          </p:button>
+        </c:if>
+        <p:commandButton rendered="#{order.setMailTrackingNumberRendered}"
+                         value="#{empty order.mailTrackingNumber ? messages.set : messages.reset} #{messages.mailTrackingNumber}"
+                         immediate="true" oncomplete="PF('mailTrackingNumberDialog').show();" update="mailTrackingNumberPanel" />
+      </h:panelGrid>
+
+      <h:panelGroup rendered="#{order.serviceType.initialCustomStatus and order.hasBeenAccepted() and not order.inFinalState and identityManager.hasCurrentUserRole('containerManager')}"
+                    styleClass="warning">
+        <h:outputText rendered="#{empty order.coachBackup}" value="#{messages.orderCoachBackupRequiredHint}" />
+        <br />
+        <h:outputText rendered="#{empty order.bioinformatician}" value="#{messages.orderBioinformaticianRequiredHint}" />
+        <br />
+      </h:panelGroup>
+
+      <h:panelGroup id="orderItemsGroup">
+        <c:if test="#{not empty order.orderItems or order.processesSamples}">
+          <o:importConstants type="org.bfabric.enums.SampleAttributeEnum" />
+          <h:panelGrid
+            columns="2"
+            styleClass="content-subheader">
+            <h:outputText value="#{messages.orderItems} (#{order.orderItems.size()})" />
+            <h:outputText
+              rendered="#{not empty order.coupledMessage}"
+              value="&#160;#{order.coupledMessage}"
+              styleClass="warn" />
+          </h:panelGrid>
+
+          <h:panelGroup rendered="#{not empty order.orderItems and order.pending and (empty order.processPlatesAndSubmittable or order.processPlatesAndSubmittable)}">
+            <h:outputText
+              value="#{messages.orderPendingHint}"
+              styleClass="warning" />
+            <br />
+          </h:panelGroup>
+
+          <h:panelGroup rendered="#{not empty order.orderItems and order.submitted}">
+            <h:outputText
+              value="#{messages.orderSubmittedHint}"
+              styleClass="warning" />
+            <br />
+          </h:panelGroup>
+
+          <h:panelGroup rendered="#{not empty order.orderItems and order.isReusingSamplesFromAnotherContainer()}">
+            <h:outputText
+              value="#{messages.reusingSamplesFromAnotherContainerHint}"
+              styleClass="warning" />
+            <br />
+          </h:panelGroup>
+
+          <h:panelGroup rendered="#{not empty order.orderItems and not empty order.processPlatesAndSubmittable and not order.processPlatesAndSubmittable}">
+            <h:outputText
+              value="#{messages.orderPendingAndSubmittableHint}"
+              styleClass="warning" />
+            <br />
+          </h:panelGroup>
+
+          <h:panelGroup id="processesSamples" rendered="#{order.processesSamples}">
+            <h:panelGroup rendered="#{empty order.sampleType}">
+              <h:outputText
+                value="#{messages.orderItemsRequiredHint}"
+                styleClass="warning" />
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty order.sampleType}">
+              <h:outputText
+                value="#{messages.orderItemsMissingHint}"
+                styleClass="warning"
+                rendered="#{empty order.orderItems}" />
+
+              <style>
+                  #{order.generatedRowStyleClassCoupledStyleSheet}
+              </style>
+
+              <ui:include src="/fragments/show-datatable.xhtml">
+                <ui:param
+                  name="tableType"
+                  value="orderitem" />
+                <ui:param
+                  name="tableContext"
+                  value="#{order.tableContext}" />
+                <ui:param
+                  name="tableContent"
+                  value="#{order.orderItems}" />
+                <ui:param
+                  name="orderEntity"
+                  value="#{order}" />
+                <ui:param
+                  name="filterable"
+                  value="false" />
+                <ui:param
+                  name="specificColumns"
+                  value="#{order.processesPlates or order.sampleTypeSpecificAttributesEditable ? null : [SampleAttributeEnum.MOLARITY]}" />
+                <ui:param
+                  name="hideColumns"
+                  value="chargeCount, #{order.processesPlates ? 'tubeId, analysisReasons' : ''}" />
+                <ui:param
+                  name="showColumns"
+                  value="#{order.processesPlates and identityManager.hasCurrentUserRole('containerManager') ? 'entityId' : ''}, #{not empty orderManager.showUserSubmittedEditColumn and orderManager.showUserSubmittedEditColumn ? 'userSubmittedEdit' : ''}" />
+                <ui:param
+                  name="rowTitle"
+                  value="#{entity.rowTitleCoupled}" />
+                <ui:param
+                  name="rowStyleClass"
+                  value="#{entity.rowStyleClass}" />
+              </ui:include>
+
+              <h:form>
+                <h:panelGrid
+                  columns="4"
+                  styleClass="action">
+                  <c:if test="#{not order.processesPlates}">
+                    <p:button
+                      rendered="#{order.updatable}"
+                      outcome="/orderitem/edit-batch-with-create.xhtml"
+                      value="#{empty order.orderItems ? messages.add : messages.edit} #{messages.orderItems}">
+                      <f:param
+                        name="id"
+                        value="#{order.id}" />
+                      <c:if test="#{empty order.orderItems and not empty order.numberOfSamples}">
+                        <f:param
+                          name="initializeItems"
+                          value="true" />
+                      </c:if>
+                    </p:button>
+                    <p:commandButton
+                      rendered="#{not empty orderManager.samplesInMultiplex}"
+                      action="#{orderManager.setShowSamplesInMultiplex(not orderManager.showSamplesInMultiplex)}"
+                      value="#{not orderManager.showSamplesInMultiplex ? messages.show : messages.hide} #{messages.samplesInMultiplex} #{not orderManager.showSamplesInMultiplex ? '('.concat(orderManager.samplesInMultiplex.size()).concat(')') : ''}"
+                      title="#{messages.showSamplesInMultiplexHint}"
+                      global="true"
+                      oncomplete="if(PF('#{order.tableContext}sample')){PF('#{order.tableContext}sample').clearFilters();}; fixOversize();"
+                      process="@this"
+                      update="@this, samplesInMultiplexGroup" />
+                  </c:if>
+                  <c:if test="#{order.processesPlates}">
+                    <p:button
+                      rendered="#{order.updatable}"
+                      outcome="/orderitem/edit-batch-with-create-plate.xhtml"
+                      value="#{empty order.orderItems ? messages.add : messages.edit} #{messages.orderItems}">
+                      <f:param
+                        name="id"
+                        value="#{order.id}" />
+                      <c:if test="#{empty order.orderItems and not empty order.numberOfPlates}">
+                        <f:param
+                          name="initializeItems"
+                          value="true" />
+                      </c:if>
+                    </p:button>
+                    <p:commandButton
+                      rendered="#{not empty orderManager.getSamplePlatePositionsOnPlate()}"
+                      action="#{orderManager.setShowSamplePlatePositionsOnPlate(not orderManager.showSamplePlatePositionsOnPlate)}"
+                      value="#{not orderManager.showSamplePlatePositionsOnPlate ? messages.show : messages.hide} #{messages.samples} on #{messages.plate}"
+                      title="#{messages.showSamplePlatePositionsOnPlateHint}"
+                      global="true"
+                      oncomplete="if(PF('#{order.tableContext}sampleplateposition')){PF('#{order.tableContext}sampleplateposition').clearFilters();}; fixOversize();"
+                      process="@this"
+                      update="@this, samplePlatePositionsOnPlateGroup">
+                    </p:commandButton>
+                  </c:if>
+                </h:panelGrid>
+              </h:form>
+
+              <h:panelGroup id="samplesInMultiplexGroup">
+                <c:if test="#{not order.processesPlates}">
+                  <h:panelGrid
+                    rendered="#{not empty orderManager.samplesInMultiplex and orderManager.showSamplesInMultiplex}"
+                    styleClass="content-subheader">
+                    <h:outputText value="#{messages.samplesInMultiplex} (#{orderManager.samplesInMultiplex.size()})" />
+                  </h:panelGrid>
+
+                  <h:panelGroup rendered="#{not empty orderManager.samplesInMultiplex and orderManager.showSamplesInMultiplex}">
+                    <ui:include src="/fragments/show-datatable.xhtml">
+                      <ui:param
+                        name="showOnlySampleTypeSpecificColumns"
+                        value="true" />
+                      <!-- Note: If the multiplexed sample itself should also be shown, change it to value="#{{SampleTypeEnum.USER_LIBRARY_IN_POOL.getLabel(), order.sampleType.name}}" -->
+                      <ui:param
+                        name="types"
+                        value="#{{SampleTypeEnum.USER_LIBRARY_IN_POOL.getLabel()}}" />
+                      <ui:param
+                        name="tableType"
+                        value="sample" />
+                      <ui:param
+                        name="tableContext"
+                        value="#{order.tableContext}" />
+                      <ui:param
+                        name="tableContent"
+                        value="#{orderManager.samplesInMultiplex}" />
+                      <ui:param
+                        name="hideColumns"
+                        value="tubeId,parents,container,listOrders,parentsSize,childrenSize,resources,resourceCount,workflow,workflowstep,workflowSteps,customAttributes,qualityControlValues" />
+                    </ui:include>
+                  </h:panelGroup>
+                </c:if>
+              </h:panelGroup>
+
+              <h:panelGroup id="samplePlatePositionsOnPlateGroup">
+                <c:if test="#{order.processesPlates and not empty order.samplesOnPlate and orderManager.showSamplePlatePositionsOnPlate}">
+                  <h:panelGrid styleClass="content-subheader">
+                    <h:outputText value="#{messages.samplesOnPlate} (#{order.samplesOnPlate.size()})" />
+                  </h:panelGrid>
+                  <ui:include src="/fragments/show-datatable.xhtml">
+                    <ui:param
+                      name="tableType"
+                      value="sample" />
+                    <ui:param
+                      name="tableContext"
+                      value="samplesOnPlate" />
+                    <ui:param
+                      name="tableContent"
+                      value="#{order.samplesOnPlate}" />
+                    <ui:param
+                      name="specificColumns"
+                      value="#{sampleAttributeHelper.getAttributeEnumsExcluding(order.sampleType.name, true, false, [SampleAttributeEnum.MULTIPLEXED])}" />
+                    <ui:param
+                      name="hideColumns"
+                      value="parents,container,listOrders,parentsSize,childrenSize,resources,resourceCount,workflow,workflowstep,workflowSteps,customAttributes,qualityControlValues,replaces" />
+                    <ui:param
+                      name="showColumns"
+                      value="userSubmitted,sample" />
+                  </ui:include>
+                </c:if>
+              </h:panelGroup>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty order.samplesUserDecisionRequired}">
+              <p:spotlight target="samplesUserDecisionRequired" widgetVar="spotSamplesUserDecisionRequired" />
+              <script>$(document).ready(function () {
+                  function scrollToSamplesUserDecisionRequired() {
+                      let toScrollTo = document.getElementById('samplesUserDecisionRequired');
+                      if (toScrollTo != null) {
+                          toScrollTo.scrollIntoView()
+                      }
+                  }
+
+                  if (PF('spotSamplesUserDecisionRequired')) {
+                      scrollToSamplesUserDecisionRequired();
+                      PF('spotSamplesUserDecisionRequired').show();
+                      setTimeout(function () {
+                          PF('spotSamplesUserDecisionRequired').hide();
+                      }, 1000);
+                  }
+              });</script>
+
+              <h:panelGrid id="samplesUserDecisionRequired" columns="2" styleClass="content-subheader">
+                <h:outputText value="#{messages.userDecisionRequired} (#{order.samplesUserDecisionRequired.size()})" styleClass="warning bold" />
+                <p>
+                  <h:outputText value="#{messages.userDecisionOptionsHint}" />
+                </p>
+              </h:panelGrid>
+              <ui:include src="/fragments/show-datatable.xhtml">
+                <ui:param name="include" value="/sample/userDecision-columns.xhtml" />
+                <ui:param name="sampleAttributeEnums"
+                          value="#{sampleAttributeHelper.getAttributeEnumsExcluding(order.samplesUserDecisionRequired, [SampleAttributeEnum.TUBE_ID, SampleAttributeEnum.MULTIPLEXED, SampleAttributeEnum.MULTIPLEX_ID_2])}" />
+                <ui:param name="tableType" value="sample" />
+                <ui:param name="tableContext" value="#{order.tableContext}_sampleUserDecisionRequired" />
+                <ui:param name="tableContent" value="#{order.samplesUserDecisionRequired}" />
+                <ui:param name="filterable" value="false" />
+                <ui:param name="showButtons" value="true" />
+                <ui:param name="hideColumns" value="replaces, entityId" />
+              </ui:include>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty order.sampleReplacements}">
+              <h:panelGrid columns="2" styleClass="content-subheader">
+                <h:outputText value="#{messages.sampleReplacements} (#{order.sampleReplacements.size()})" />
+              </h:panelGrid>
+              <ui:include src="/fragments/show-datatable.xhtml">
+                <ui:param name="include" value="/sample/userDecision-columns.xhtml" />
+                <ui:param name="sampleAttributeEnums"
+                          value="#{sampleAttributeHelper.getAttributeEnumsExcluding(order.sampleReplacements, [SampleAttributeEnum.TUBE_ID, SampleAttributeEnum.MULTIPLEXED, SampleAttributeEnum.MULTIPLEX_ID_2])}" />
+                <ui:param name="tableType" value="sample" />
+                <ui:param name="tableContext" value="#{order.tableContext}_replacements" />
+                <ui:param name="tableContent" value="#{order.sampleReplacements}" />
+                <ui:param name="filterable" value="false" />
+                <ui:param name="hideColumns" value="entityId" />
+                <ui:param name="showEditButton" value="true" />
+              </ui:include>
+
+              <!--
+                            <p:commandButton
+                              id="editReplacementSamples"
+                              disabled="#{orderItemBatchManager.sampleNamesGenerated}"
+                              value="#{messages.editReplacementSamples}"
+                              actionListener="#{orderItemBatchManager.prepareEditReplacementSamplesModalPanel()}"
+                              immediate="true"
+                              oncomplete="PF('editReplacementSamplesModalDialog').show();"
+                              update="editReplacementSamplesModalPanel">
+                              <f:attribute name="sampleAttributeEnums"
+                                           value="#{sampleAttributeHelper.getAttributeEnumsExcluding(order.sampleReplacements, [SampleAttributeEnum.TUBE_ID, SampleAttributeEnum.MULTIPLEXED, SampleAttributeEnum.MULTIPLEX_ID_2])}" />
+                            </p:commandButton>
+              -->
+
+              <h:panelGroup rendered="#{order.submitReplacementsButtonRendered}">
+                <p>
+                  <h:outputText value="#{messages.submitReplacementsButtonHint}" styleClass="warn" />
+                </p>
+                <p:commandButton action="#{orderManager.submitReplacements}" value="#{messages.submitReplacements}" global="true" process="@this" update="@this" />
+              </h:panelGroup>
+
+              <h:panelGroup rendered="#{order.submitReplacementsSendHintRendered}">
+                <p>
+                  <h:outputText value="#{messages.submitReplacementsSendHint}" styleClass="warn" />
+                </p>
+              </h:panelGroup>
+            </h:panelGroup>
+          </h:panelGroup>
+        </c:if>
+
+        <h:panelGroup rendered="#{order.renderedHasSameServiceSampleCombinationHint}">
+          <p>
+            <h:outputText value="#{messages.hasSameServiceSampleCombinationOrderHint}" styleClass="warning" />
+          </p>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{orderItemPlateBatchManager.samplePlateHasEmptyPositionsInBetweenWarningRendered}">
+          <p>
+            <h:outputText value="#{messages.samplePlateHasEmptyPositionsInBetweenFound}" styleClass="warning" />
+          </p>
+        </h:panelGroup>
+      </h:panelGroup>
+
+      <h:panelGrid styleClass="content-subheader">
+        <h:outputText value="#{messages.status}" />
+      </h:panelGrid>
+
+      <ui:include src="/fragments/show-datatable.xhtml">
+        <ui:param
+          name="include"
+          value="/status/columns.xhtml" />
+        <ui:param
+          name="tableContext"
+          value="order" />
+        <ui:param
+          name="tableContent"
+          value="#{order.allStates}" />
+        <ui:param
+          name="paginator"
+          value="false" />
+      </ui:include>
+
+      <c:if test="#{order.pending}">
+        <p:spotlight
+          target="nextStateButtons"
+          widgetVar="spotNextStatusButtons" />
+        <script>$(document).ready(function () {
+            function scrollToOrderPending() {
+                let toScrollTo = document.getElementById('nextStateButtons');
+                if (toScrollTo != null) {
+                    toScrollTo.scrollIntoView()
+                }
+            }
+
+            if (PF('spotNextStatusButtons')) {
+                scrollToOrderPending();
+                PF('spotNextStatusButtons').show();
+                setTimeout(function () {
+                    PF('spotNextStatusButtons').hide();
+                }, 1000);
+            }
+        });</script>
+      </c:if>
+
+      <h:form id="nextStateButtons">
+        <c:if test="#{order.processed and not empty order.bioinformatician and not order.bioinformatician.equals(currentUser)}">
+          <p:spacer height="10" />
+          <div>
+            <h:selectBooleanCheckbox id="replaceBioinformatician" value="#{order.replaceBioinformatician}" />
+            <h:outputText value="&#160;#{messages.replaceBioinformatician.replace('{0}', order.bioinformatician.fullName)}" styleClass="warn" />
+          </div>
+        </c:if>
+        <h:panelGrid
+          columns="14"
+          styleClass="action align-middle">
+          <c:forEach
+            items="#{order.nextStates}"
+            varStatus="nextStatusVar"
+            var="nextStatus">
+            <p:commandButton
+              id="nextStatusButton#{nextStatusVar.index}"
+              action="#{orderManager.changeStatus(nextStatus)}"
+              value="#{messages[nextStatus.action.concat('Order')]}"
+              disabled="#{messages[nextStatus.action.concat('Order')] eq messages.acceptOrder and order.acceptableNextState and not order.acceptable}"
+              title="#{messages[nextStatus.action.concat('OrderHint')]}"
+              update="orderItemsGroup, @form"
+              oncomplete="fixOversize();"
+              style="#{order.submittable and nextStatus eq StatusEnum.SUBMITTED ? 'background-color: #090; color: #eee' : ''}" />
+          </c:forEach>
+          <p:commandButton
+            action="#{orderManager.changeStatus(StatusEnum.CANCELED)}"
+            value="#{messages.cancelOrder}"
+            title="#{messages.cancelOrderHint}"
+            rendered="#{order.cancelable}" />
+          <p:commandButton
+            action="#{orderManager.rollbackStatus}"
+            value="#{messages.rollbackStatus}"
+            title="#{messages.rollbackStatusHint}"
+            rendered="#{order.rollbackable}" />
+          <p:commandButton
+            rendered="#{order.customStatusCreatable}"
+            actionListener="#{orderManager.prepareCustomStatusModalDialog}"
+            value="#{messages.addCustomStatus}"
+            immediate="true"
+            oncomplete="PF('customStatusModalDialog').show();"
+            update="customStatusModalPanel" />
+          <c:if test="#{order.renderedChargeAllItemsHint}">
+            <p:commandButton
+              value="#{messages.finish}"
+              disabled="true" />
+            <h:outputText
+              value="#{messages.chargeAllItemsHint}"
+              styleClass="warning" />
+          </c:if>
+          <c:if test="#{order.renderedBookAllBillableChargesHint}">
+            <p:commandButton
+              value="#{messages.close}"
+              disabled="true" />
+            <h:outputText
+              value="#{messages.bookAllBillableChargesHint}"
+              styleClass="warning" />
+          </c:if>
+          <c:if test="#{order.renderHasBookingsWithoutSAPNumberHint}">
+            <p:commandButton
+              value="#{messages.close}"
+              disabled="true" />
+            <h:outputText
+              value="#{messages.bookingsWithoutSAPNumberHint}"
+              styleClass="warning" />
+          </c:if>
+          <c:if test="#{order.renderedSendEmailCheckbox}">
+            <h:selectBooleanCheckbox
+              id="sendMail"
+              value="#{order.sendMail}">
+              <p:ajax
+                event="change"
+                listener="#{order.sendMailChanged}"
+                immediate="true" />
+            </h:selectBooleanCheckbox>
+            <h:outputText value="#{messages.sendEmailNotification}" />
+          </c:if>
+        </h:panelGrid>
+
+        <h:panelGroup rendered="#{order.pending and (empty order.processPlatesAndSubmittable or order.processPlatesAndSubmittable)}">
+          <h:outputText
+            value="#{messages.orderPendingHint}"
+            styleClass="warning" />
+          <br />
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{not empty order.processPlatesAndSubmittable and not order.processPlatesAndSubmittable}">
+          <h:outputText
+            value="#{messages.orderPendingAndSubmittableHint}"
+            styleClass="warning" />
+          <br />
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{order.processesSamples and order.accepted and not order.hasBeenArrived()}">
+          <h:outputText
+            value="#{messages.orderSamplesNotArrivedYetHint}"
+            styleClass="warning" />
+          <br />
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{order.acceptableNextState and not order.acceptable}">
+          <h:outputText
+            value="#{messages.orderNotAcceptableYetHint}"
+            styleClass="warning" />
+          <br />
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{order.samplesRequiringSameDayProcessingHint}">
+          <p>
+            <h:outputText value="#{messages.samplesRequiringSameDayProcessingHint}" styleClass="warning" />
+          </p>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{order.renderedCustomStateSendMail}">
+          <p>
+            <h:outputText value="#{messages.sendMailCustomStateTransitionHint}" styleClass="warn" />
+          </p>
+          <p:commandButton action="#{orderManager.sendMailCustomStateTransition}" value="#{messages.sendMailCustomStateTransition}" global="true" process="@this" update="@this" />
+        </h:panelGroup>
+
+        <!-- Do not remove: When there is an automatic feed of the paid information, this hint would become useful. Currently it makes no sense to show this since almost all bookings are marked as unpaid!
+                        <h:panelGroup rendered="#{order.closed}">
+                          <h:outputText
+                            value="#{messages.bookingsNonPaidHint}"
+                            styleClass="warning" /><br />
+                        </h:panelGroup>
+        -->
+      </h:form>
+    </h:panelGroup>
+
+    <c:if test="#{order.extensible}">
+      <ui:include src="/fragments/details/runnableWebApps.xhtml" />
+    </c:if>
+
+    <ui:include src="/order/mailTrackingNumber-modal.xhtml" />
+    <ui:include src="/fragments/customcontainerstatus-modal.xhtml">
+      <ui:param
+        name="statusEnumList"
+        value="#{orderList.orderStatusEnums}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

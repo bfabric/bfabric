@@ -1,0 +1,25 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.details}">
+    <h:panelGrid
+      columns="2"
+      columnClasses="rtd, ltd">
+      <ui:include src="/fragments/details/id-name.xhtml" />
+
+      <c:if test="#{not empty accessRequestProfile.accessGranted}">
+        <h:outputText value="#{messages.accessGranted}" />
+        <h:outputText value="#{accessRequestProfile.accessGranted}" />
+      </c:if>
+
+      <ui:include src="/fragments/details/description-enabled-links-customattributes-created-modified.xhtml" />
+    </h:panelGrid>
+
+    <h:panelGrid
+      columns="3"
+      styleClass="action">
+      <ui:include src="/fragments/button/edit-delete-list.xhtml" />
+    </h:panelGrid>
+  </c:if>
+</ui:composition>

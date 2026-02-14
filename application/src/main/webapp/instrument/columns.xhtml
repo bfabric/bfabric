@@ -1,0 +1,114 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.Instrument"-->
+  <c:if test="#{showColumns.contains('selection') and identityManager.hasCurrentUserRole('instrumentManager')}">
+    <p:column id="#{constants.SELECT_CHECK_BOX_COLUMN}" exportable="false">
+      <f:facet name="header">
+        <h:panelGrid columns="1" styleClass="nospace noborder">
+          <h:outputText value="#{messages.select}" />
+          <h:panelGrid columns="2" styleClass="select-icon">
+            <p:commandLink
+              actionListener="#{userManager.checkAllInstruments(true)}"
+              immediate="true"
+              global="false"
+              update="@form"
+              oncomplete="fixOversize();">
+              <f:attribute name="#{constants.TABLE_CLIENT_ID}" value="#{tableReference.clientId}" />
+              <i class="far fa-check-square" />
+            </p:commandLink>
+            <p:commandLink
+              actionListener="#{userManager.checkAllInstruments(false)}"
+              immediate="true"
+              global="false"
+              update="@form"
+              oncomplete="fixOversize();">
+              <f:attribute name="#{constants.TABLE_CLIENT_ID}" value="#{tableReference.clientId}" />
+              <i class="far fa-square" />
+            </p:commandLink>
+          </h:panelGrid>
+        </h:panelGrid>
+      </f:facet>
+      <h:selectBooleanCheckbox id="#{constants.SELECT_CHECK_BOX}" value="#{userManager.selectedInstrumentsMap[entity]}">
+        <p:ajax
+          event="change"
+          global="false"
+          ignoreAutoUpdate="true"
+          partialSubmit="true"
+          listener="#{userManager.assignTrainedInstrument(entity, userManager.selectedInstrumentsMap[entity])}"
+          update="@this, @([id$=buttons])"
+          oncomplete="fixOversize();" />
+      </h:selectBooleanCheckbox>
+    </p:column>
+  </c:if>
+
+  <ui:include src="/fragments/column/id-name.xhtml" />
+  <ui:include src="/fragments/column/label.xhtml" />
+  <ui:include src="/fragments/column/parentinstrument.xhtml" />
+  <ui:include src="/fragments/column/supervisor.xhtml" />
+  <ui:include src="/fragments/column/admin.xhtml" />
+  <ui:include src="/fragments/column/technologies.xhtml" />
+  <c:if test="#{not empty reduced and reduced}">
+    <ui:include src="/fragments/column/instrumentstatusinfo-available.xhtml" />
+  </c:if>
+  <c:if test="#{empty reduced or not reduced}">
+    <ui:include src="/fragments/column/state-count.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-up.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-uptime-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-uptimetotal-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-bookable.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-bookabletime-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-bookabletimetotal-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-available.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-availabletime-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-availabletimetotal-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-uservisible.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-uservisibletime-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-uservisibletimetotal-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-userbookable.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-userbookabletime-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-userbookabletimetotal-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-runenabled.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-runenabledtime-now.xhtml" />
+    <ui:include src="/fragments/column/instrumentstatusinfo-runenabledtimetotal-now.xhtml" />
+    <ui:include src="/fragments/column/reservation-count.xhtml" />
+    <ui:include src="/fragments/column/servicetypes.xhtml" />
+    <p:column
+      field="#{fieldPrefix}service.displayName"
+      headerText="#{messages.defaultService}">
+      <h:outputText
+        value="#{entity.service.displayName}"
+        rendered="#{not identityManager.hasCurrentUserRole('instrumentReader')}" />
+      <ui:include src="/fragments/entity-link-displayname.xhtml">
+        <ui:param
+          name="rendered"
+          value="#{identityManager.hasCurrentUserRole('instrumentReader') and not empty entity.service}" />
+        <ui:param
+          name="entity"
+          value="#{entity.service}" />
+      </ui:include>
+    </p:column>
+    <ui:include src="/fragments/column/booker-count.xhtml" />
+    <ui:include src="/fragments/column/traineduser-count.xhtml" />
+    <ui:include src="/fragments/column/operator-count.xhtml" />
+    <ui:include src="/fragments/column/samplepreparationprotocol-count.xhtml" />
+    <ui:include src="/fragments/column/serialnumber.xhtml" />
+    <ui:include src="/fragments/column/inventorynumber.xhtml" />
+    <ui:include src="/fragments/column/location.xhtml" />
+    <ui:include src="/fragments/column/computer.xhtml" />
+    <ui:include src="/fragments/column/installationdate.xhtml" />
+    <ui:include src="/fragments/column/purchaseddate.xhtml" />
+    <ui:include src="/fragments/column/purchasedprice.xhtml" />
+    <ui:include src="/fragments/column/currency.xhtml" />
+    <ui:include src="/fragments/column/seller.xhtml" />
+    <ui:include src="/fragments/column/sellercontact.xhtml" />
+    <ui:include src="/fragments/column/annotation.xhtml" />
+    <ui:include src="/fragments/column/description.xhtml" />
+    <ui:include src="/fragments/column/customattributes.xhtml" />
+  </c:if>
+  <ui:include src="/fragments/column/avatar.xhtml" />
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

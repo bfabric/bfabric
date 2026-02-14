@@ -1,0 +1,90 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:p="http://primefaces.org/ui">
+  <p:column
+    rendered="#{showColumns.contains('addMoveButtons')}"
+    exportable="false"
+    styleClass="nowrap"
+    headerText="#{messages.move}">
+    <p:commandLink
+      action="#{feedbackTemplateManager.moveOrderPositionStart(entity)}"
+      title="#{messages.moveOrderPositionStartHint}"
+      update="#{tableContext}#{tableType}tableform">
+      <i class="fas fa-arrow-circle-up" />
+    </p:commandLink>
+    <p:commandLink
+      action="#{feedbackTemplateManager.moveOrderPositionUp(entity)}"
+      title="#{messages.moveOrderPositionUpHint}"
+      update="#{tableContext}#{tableType}tableform">
+      <i class="fas fa-chevron-circle-up" />
+    </p:commandLink>
+    <p:commandLink
+      action="#{feedbackTemplateManager.moveOrderPositionDown(entity)}"
+      title="#{messages.moveOrderPositionDownHint}"
+      update="#{tableContext}#{tableType}tableform">
+      <i class="fas fa-chevron-circle-down" />
+    </p:commandLink>
+    <p:commandLink
+      action="#{feedbackTemplateManager.moveOrderPositionEnd(entity)}"
+      title="#{messages.moveOrderPositionEndHint}"
+      update="#{tableContext}#{tableType}tableform">
+      <i class="fas fa-arrow-circle-down" />
+    </p:commandLink>
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('addQuestionButton')}"
+    exportable="false"
+    headerText="#{messages.available}">
+    <p:commandButton
+      id="addQuestionButton"
+      value="#{messages.add}"
+      title="#{messages.addFeedbackQuestionToTemplateHint}"
+      action="#{feedbackTemplate.addQuestion(entity)}"
+      disabled="#{feedbackTemplate.questions.contains(entity)}"
+      disableOnAjax="false"
+      immediate="true"
+      update="@([id$=feedback-questions])"
+      process="@this"
+      styleClass="inline" />
+  </p:column>
+  <p:column
+    rendered="#{showColumns.contains('removeQuestionButton')}"
+    exportable="false"
+    headerText="#{messages.selected}">
+    <p:commandButton
+      id="removeQuestionButton"
+      value="#{messages.remove}"
+      title="#{messages.removeFeedbackQuestionFromTemplateHint}"
+      action="#{feedbackTemplate.removeQuestion(entity)}"
+      immediate="true"
+      update="@([id$=feedback-questions])"
+      process="@this"
+      styleClass="inline" />
+  </p:column>
+
+  <ui:include src="/fragments/column/id.xhtml" />
+
+  <p:column
+    field="#{fieldPrefix}value"
+    headerText="#{messages.question}">
+    <ui:include src="/fragments/entity-link.xhtml">
+      <ui:param
+        name="instance"
+        value="#{entity}" />
+      <ui:param
+        name="entityValue"
+        value="#{entity.value}" />
+    </ui:include>
+  </p:column>
+
+  <ui:include src="/fragments/column/feedbackquestiontype.xhtml" />
+  <ui:include src="/fragments/column/feedbackanswerrequired.xhtml" />
+
+  <p:column
+    sortable="#{empty lazy}"
+    filterable="#{empty lazy}"
+    field="#{fieldPrefix}templates.size()"
+    headerText="#{messages.templates}" />
+
+  <ui:include src="/fragments/column/created-modified.xhtml" />
+</ui:composition>

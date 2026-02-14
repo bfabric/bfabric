@@ -1,0 +1,21 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{instance.budgetLimitEditable}">
+    <h:outputText value="#{messages.budgetLimit}" title="#{messages.budgetLimitHint}" />
+    <ui:decorate template="/fragments/edit.xhtml">
+      <h:inputText id="budgetLimit" value="#{instance.budgetLimit}" title="#{messages.budgetLimitHint}" styleClass="editWidthExtraLarge">
+        <f:convertNumber pattern="0.00" />
+        <p:ajax event="change" global="false" update="budgetLimit budgetRemaining" />
+      </h:inputText>
+    </ui:decorate>
+    <h:outputText value="#{messages.budgetRemaining}" title="#{messages.budgetRemainingHint}" />
+    <ui:decorate template="/fragments/display.xhtml">
+      <h:outputText id="budgetRemaining" value="#{instance.budgetRemaining}" title="#{messages.budgetRemainingHint}" styleClass="#{instance.budgetWarning}">
+        <f:convertNumber pattern="0.00" />
+      </h:outputText>
+    </ui:decorate>
+  </c:if>
+</ui:composition>

@@ -1,0 +1,45 @@
+<!--
+    This modal panel is used to confirm the order change.
+-->
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui">
+
+  <p:dialog
+    id="anonymizeDialog"
+    widgetVar="anonymizeDialog"
+    dynamic="true"
+    closable="false"
+    resizable="false"
+    modal="true"
+    onShow="repositionDialog()">
+    <f:facet name="header">
+      <h:outputText value="#{messages.anonymize}" />
+    </f:facet>
+    <h:form id="confirmAnonymizeForm">
+      <h:panelGrid>
+        <h:outputFormat
+          value="#{messages.confirmAnonymizeMessage}"
+          escape="false" />
+      </h:panelGrid>
+      <h:panelGrid
+        columns="2"
+        styleClass="action">
+        <p:commandButton
+          value="#{messages.yes}"
+          actionListener="#{user.anonymize}"
+          global="false"
+          update="edit"
+          oncomplete="PF('anonymizeDialog').hide()" />
+        <p:commandButton
+          actionListener="cancel"
+          value="#{messages.no}"
+          global="false"
+          immediate="true"
+          oncomplete="PF('anonymizeDialog').hide()" />
+      </h:panelGrid>
+    </h:form>
+  </p:dialog>
+</ui:composition>

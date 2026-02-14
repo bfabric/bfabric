@@ -1,0 +1,37 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+  <!--@elvariable id="entity" type="org.bfabric.entity.DatasetItem"-->
+  <!--@elvariable id="attribute" type="org.bfabric.entity.DatasetAttribute"-->
+  <!--@elvariable id="fieldEntity" type="org.bfabric.entity.AbstractEntity"-->
+  <p:column styleClass="nowrap background-cell" exportable="false" sortBy="#{entity.position}">
+    <h:outputText value="#{entity.position}" />
+  </p:column>
+  <c:set value="#{entity.getValueByAttribute(attribute)}" var="fieldValue" />
+  <c:set value="#{entity.getSortValueByAttribute(attribute)}" var="sortValue" />
+  <c:set value="#{attribute.getFullShowScreenPath(fieldValue)}" var="fullShowScreenPath" />
+  <c:set value="#{attribute.getEntity(fieldValue)}" var="fieldEntity" />
+  <p:columns value="#{dataset.attributes}"
+             var="attribute"
+             sortBy="#{sortValue}"
+             filterBy="#{fieldValue}"
+             columnIndexVar="colIndex"
+             exportValue="#{fieldValue}">
+    <f:facet name="header">
+      <h:outputText value="#{attribute.name}" title="#{attribute.entityInfo}" />
+    </f:facet>
+    <h:outputText rendered="#{(empty fullShowScreenPath or empty fieldEntity) and fieldValue.length() le 100}"
+                  value="#{fieldValue}"
+                  styleClass="preformat" />
+    <h:outputText rendered="#{(empty fullShowScreenPath or empty fieldEntity) and fieldValue.length() gt 100}"
+                  value="#{stringHelper.truncate(fieldValue, 40, 40)}"
+                  title="#{fieldValue}"
+                  styleClass="preformat" />
+    <p:link rendered="#{not empty fullShowScreenPath and not empty fieldEntity}"
+            outcome="#{fullShowScreenPath}"
+            value="#{fieldValue}"
+            title="#{fieldEntity.entityInfo}" />
+  </p:columns>
+</ui:composition>

@@ -1,0 +1,7 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+  <h:outputText value="#{messages.description}" />
+  <ui:decorate template="/fragments/edit.xhtml">
+    <h:inputTextarea id="description" value="#{instance.description}" rows="3" styleClass="editWidthExtraLarge" />
+  </ui:decorate>
+</ui:composition>

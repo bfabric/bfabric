@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <c:if test="#{sidebarHelper.isTab('mails') and (rendered or (empty rendered and instance.readable))}">
+    <ui:include src="/fragments/show-datatable.xhtml">
+      <ui:param
+        name="tableType"
+        value="mail" />
+      <ui:param
+        name="tableContext"
+        value="#{instance.tableContext}" />
+      <ui:param
+        name="tableContent"
+        value="#{mailList.getMailsLazyModelByParent(instance)}" />
+      <ui:param
+        name="hideColumns"
+        value="parentId" />
+    </ui:include>
+  </c:if>
+</ui:composition>

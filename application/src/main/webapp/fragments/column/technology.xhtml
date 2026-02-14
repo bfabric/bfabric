@@ -1,0 +1,51 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('technology')}">
+    <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}technology.name"
+        headerText="#{messages.technology}"
+        filterMatchMode="exact">
+        <f:facet name="filter">
+          <h:selectOneMenu
+            id="containerReaderTechnology"
+            onchange="PF('#{tableContext}#{tableType}').filter()">
+            <f:selectItem itemLabel="#{messages.noFilter}" />
+            <f:selectItems
+              value="#{technologyList.resultList}"
+              var="item"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </f:facet>
+        <ui:include src="/fragments/entity-link-name.xhtml">
+          <ui:param
+            name="instance"
+            value="#{entity.technology}" />
+        </ui:include>
+      </p:column>
+    </c:if>
+    <c:if test="#{not identityManager.hasCurrentUserRole('containerReader')}">
+      <p:column
+        field="#{fieldPrefix}technology.name"
+        headerText="#{messages.technology}"
+        filterMatchMode="exact">
+        <f:facet name="filter">
+          <h:selectOneMenu
+            id="nonContainerReaderTechnology"
+            onchange="PF('#{tableContext}#{tableType}').filter()">
+            <f:selectItem itemLabel="#{messages.noFilter}" />
+            <f:selectItems
+              value="#{technologyList.resultList}"
+              var="item"
+              itemLabel="#{item.name}" />
+          </h:selectOneMenu>
+        </f:facet>
+        <h:outputText value="#{entity.technology.name}" />
+      </p:column>
+    </c:if>
+  </c:if>
+</ui:composition>

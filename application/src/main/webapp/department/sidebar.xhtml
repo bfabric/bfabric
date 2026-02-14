@@ -1,0 +1,41 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+  <ui:include src="/fragments/sidebar/details.xhtml">
+    <ui:param
+      name="logRendered"
+      value="#{identityManager.hasCurrentUserRole('affiliationReader')}" />
+  </ui:include>
+
+  <ui:include src="/fragments/sidebar/institutes.xhtml">
+    <ui:param
+      name="content"
+      value="#{department.allInstitutes}" />
+  </ui:include>
+
+  <c:if test="#{identityManager.hasCurrentUserRole('containerReader')}">
+    <ui:include src="/fragments/sidebar/members.xhtml">
+      <ui:param
+        name="content"
+        value="#{userList.getUsersByDepartmentId(department.id)}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/projects.xhtml">
+      <ui:param
+        name="content"
+        value="#{projectList.getLazyModelByDepartmentId(department.id)}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/orders.xhtml">
+      <ui:param
+        name="content"
+        value="#{orderList.getLazyModelByDepartmentId(department.id)}" />
+    </ui:include>
+
+    <ui:include src="/fragments/sidebar/bookedcharges.xhtml">
+      <ui:param
+        name="content"
+        value="#{statisticsList.getBookedChargeDepartment(department.id)}" />
+    </ui:include>
+  </c:if>
+</ui:composition>

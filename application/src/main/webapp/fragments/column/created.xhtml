@@ -1,0 +1,20 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui">
+  <c:if test="#{not hideColumns.contains('createdBy')}">
+    <p:column
+      sortable="#{empty sortable ? true : sortable}"
+      filterable="#{empty filterable ? true : filterable}"
+      field="#{fieldPrefix}createdBy"
+      headerText="#{messages.createdBy}" />
+  </c:if>
+  <c:if test="#{not hideColumns.contains('createdOn')}">
+    <p:column
+      sortable="#{empty sortable ? true : sortable}"
+      filterable="#{empty filterable ? true : filterable}"
+      filterValue="#{filterValueCreated}"
+      field="#{fieldPrefix}created"
+      headerText="#{messages.created}" />
+  </c:if>
+</ui:composition>

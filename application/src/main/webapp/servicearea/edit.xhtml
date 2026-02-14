@@ -1,0 +1,116 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{serviceAreaManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form id="#{constants.EDIT}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{serviceArea.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.users}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="serviceArea" />
+              <ui:param
+                name="value"
+                value="#{serviceArea.usersAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{serviceAreaManager.getUsers}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.name}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{serviceArea.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.contactInfo}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:selectOneMenu id="contactInfo" value="#{serviceArea.contactInfo}" filter="true" filterMatchMode="contains"
+                             styleClass="editWidthExtraLarge" converter="omnifaces.SelectItemsConverter">
+              <f:selectItem itemLabel="" />
+              <f:selectItems value="#{contactInfoList.resultListEnabled}" var="item" itemLabel="#{item.displayName}" />
+            </p:selectOneMenu>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{serviceArea.enabled}" />
+          </ui:decorate>
+
+          <c:if test="#{serviceArea.managed}">
+            <h:outputText value="#{messages.propagateEnabled}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <h:panelGrid
+                columns="2"
+                styleClass="noborder-rightpadding, align-middle">
+                <p:selectOneButton
+                  id="propagateEnabled"
+                  value="#{serviceArea.propagateEnabled}">
+                  <f:selectItem
+                    itemLabel="#{messages.no}"
+                    itemValue="#{false}" />
+                  <f:selectItem
+                    itemLabel="#{messages.yes}"
+                    itemValue="#{true}" />
+                </p:selectOneButton>
+                <p:tooltip
+                  for="propagateEnabled"
+                  showDelay="500"
+                  value="#{messages.propagateEnabledHint}" />
+                <h:outputText value="&#160;#{serviceArea.serviceTypes.size()} #{messages.serviceTypes} / #{serviceArea.services.size()} #{messages.services}" />
+              </h:panelGrid>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.enabledForOffer}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabledForOffer"
+              value="#{serviceArea.enabledForOffer}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

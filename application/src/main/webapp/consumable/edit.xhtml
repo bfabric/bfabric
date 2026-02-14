@@ -1,0 +1,212 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{consumableManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="#{constants.EDIT}"
+        onsubmit="#{consumableManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.name}" />
+          <ui:decorate template="/fragments/required.xhtml">
+            <h:inputText
+              id="#{constants.NAME}"
+              value="#{consumable.name}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.instrument}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="instrument" />
+              <ui:param
+                name="value"
+                value="#{consumable.instrument}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{consumableManager.getInstruments}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.supplier}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:param
+              name="componentId"
+              value="supplierautocomplete" />
+            <h:panelGrid
+              id="supplierGrid"
+              columns="2"
+              styleClass="noborder"
+              columnClasses="rightpadding,"
+              title="#{messages.editSupplierHint}">
+              <ui:include src="/fragments/autocomplete.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="supplier" />
+                <ui:param
+                  name="value"
+                  value="#{consumable.supplier}" />
+                <o:methodParam
+                  name="completeMethod"
+                  value="#{supplierManager.getSupplierFiltered}" />
+                <ui:param
+                  name="ajaxChange"
+                  value="true" />
+                <ui:param
+                  name="includeColumns"
+                  value="/supplier/autocomplete-columns.xhtml" />
+                <ui:param
+                  name="itemLabel"
+                  value="#{item.name}" />
+                <ui:param
+                  name="inputStyle"
+                  value="min-width:450px" />
+                <ui:param
+                  name="styleClass"
+                  value="editWidthExtraLarge" />
+              </ui:include>
+              <p:commandLink
+                action="#{consumableManager.createNewSupplier}"
+                title="#{messages.addNewSupplierHint}"
+                immediate="true"
+                oncomplete="PF('addSupplierDialog').show()"
+                update="addSupplier, addSupplierHeader">
+                <ui:include src="/fragments/add-button-icon.xhtml" />
+              </p:commandLink>
+            </h:panelGrid>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.articleNumber}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="articleNumber"
+              value="#{consumable.articleNumber}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="priceGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.price}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <p:inputNumber
+              thousandSeparator=""
+              id="price"
+              value="#{consumable.price}"
+              valueChangeListener="#{consumable.priceChanged}"
+              styleClass="editWidthExtraLarge">
+              <p:ajax
+                event="change"
+                immediate="true"
+                update="priceGrid, currencyGrid" />
+            </p:inputNumber>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          id="currencyGrid"
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText
+            value="#{messages.currency}"
+            rendered="#{not empty consumable.price}" />
+          <h:panelGroup rendered="#{not empty consumable.price}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:selectOneMenu
+                id="currency"
+                value="#{consumable.currency}"
+                converter="omnifaces.SelectItemsConverter">
+                <f:selectItems
+                  value="#{currencyList.resultListOrderByCode}"
+                  var="item"
+                  itemLabel="#{item.code}" />
+                <p:ajax
+                  event="change"
+                  immediate="true"
+                  update="currencyGrid" />
+              </h:selectOneMenu>
+            </ui:decorate>
+          </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.unit}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputText
+              id="unit"
+              value="#{consumable.unit}"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.description}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:inputTextarea
+              id="description"
+              value="#{consumable.description}"
+              rows="3"
+              styleClass="editWidthExtraLarge" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.enabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="enabled"
+              value="#{consumable.enabled}" />
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid columns="2" columnClasses="rtdm, ltd">
+          <h:outputText value="#{messages.inventoryEnabled}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <h:selectBooleanCheckbox
+              id="inventoryEnabled" value="#{consumable.inventoryEnabled}" valueChangeListener="#{consumable.inventoryEnabledChanged}">
+              <p:ajax event="change" process="@this" update="#{constants.EDIT}:inventoryGrid" />
+            </h:selectBooleanCheckbox>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGroup id="inventoryGrid">
+          <h:panelGrid columns="2" columnClasses="rtdm, ltd" rendered="#{consumable.inventoryEnabled}">
+            <h:outputText value="#{messages.inventoryCount}" />
+            <ui:decorate template="/fragments/edit.xhtml">
+              <p:spinner id="inventoryCount" value="#{consumable.inventoryCount}" min="0" size="6" decimalPlaces="0" stepFactor="1" thousandSeparator="" styleClass="editWidthSmaller">
+                <p:ajax event="change" global="false" />
+              </p:spinner>
+            </ui:decorate>
+          </h:panelGrid>
+        </h:panelGroup>
+
+        <ui:include src="/fragments/edit/customattributes.xhtml" />
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+      <ui:include src="/supplier/add-modal.xhtml">
+        <ui:param
+          name="manager"
+          value="#{consumableManager}" />
+      </ui:include>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>

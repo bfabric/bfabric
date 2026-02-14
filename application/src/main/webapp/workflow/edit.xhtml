@@ -1,0 +1,202 @@
+<ui:composition
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+  xmlns:o="http://omnifaces.org/ui">
+  <ui:param
+    name="entityManager"
+    value="#{workflowManager}" />
+
+  <ui:decorate template="/fragments/edit-screen.xhtml">
+    <ui:define name="body">
+      <h:form
+        id="edit"
+        onsubmit="#{workflowManager.resetRefererURL()}">
+        <h:panelGrid
+          columns="2"
+          columnClasses="rtdm, ltd">
+          <h:outputText value="#{workflow.container.classLabel}" />
+          <ui:decorate template="/fragments/display.xhtml">
+            <h:outputText value="#{workflow.container.id}" />
+          </ui:decorate>
+
+          <h:outputText value="#{messages.workflowTemplate}" />
+          <h:panelGroup rendered="#{empty workflow.workflowSteps}">
+            <ui:include src="/fragments/autocomplete-required.xhtml">
+              <ui:param
+                name="listContext"
+                value="workflowTemplate" />
+              <ui:param
+                name="value"
+                value="#{workflow.workflowTemplate}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workflowManager.getEnabledWorkflowTemplatesByContainer}" />
+              <ui:param
+                name="itemSelectUpdate"
+                value="@this" />
+              <ui:param
+                name="ajaxClear"
+                value="true" />
+              <ui:param
+                name="clearUpdate"
+                value="@this" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+            </ui:include>
+          </h:panelGroup>
+          <h:panelGroup rendered="#{not empty workflow.workflowSteps}">
+            <ui:decorate template="/fragments/display.xhtml">
+              <h:outputText value="#{workflow.workflowTemplate.name}" />
+            </ui:decorate>
+          </h:panelGroup>
+
+          <c:if test="#{not empty workflow.container.orderItems or not empty workflow.orderItems}">
+            <h:outputText value="#{messages.orderItem}" />
+            <ui:decorate template="/fragments/display.xhtml">
+              <ui:include src="/fragments/picklist.xhtml">
+                <ui:param
+                  name="listContext"
+                  value="orderItems" />
+                <ui:param
+                  name="dualListModel"
+                  value="#{workflowManager.orderItemsModel}" />
+                <ui:param
+                  name="include"
+                  value="/fragments/column/display-name.xhtml" />
+              </ui:include>
+            </ui:decorate>
+          </c:if>
+
+          <h:outputText value="#{messages.container} #{messages.filter}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="selectedcontainers" />
+              <ui:param
+                name="value"
+                value="#{workflowManager.selectedContainersAsList}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workflowManager.getSelectableContainers}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.id}" />
+              <ui:param
+                name="includeColumns"
+                value="/container/autocomplete-columns.xhtml" />
+              <ui:param
+                name="styleClass"
+                value="editWidthExtraLarge disableItems" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.datasets}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="dataset" />
+              <ui:param
+                name="value"
+                value="#{workflow.datasetsAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workflowManager.getDatasets}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthHuge" />
+              <ui:param
+                name="includeColumns"
+                value="/dataset/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.samples}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="sample" />
+              <ui:param
+                name="value"
+                value="#{workflow.samplesAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workflowManager.getSamples}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthHuge" />
+              <ui:param
+                name="includeColumns"
+                value="/sample/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.workunits}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param
+                name="listContext"
+                value="workunit" />
+              <ui:param
+                name="value"
+                value="#{workflow.workunitsAsList}" />
+              <o:methodParam
+                name="completeMethod"
+                value="#{workflowManager.getWorkunits}" />
+              <ui:param
+                name="itemLabel"
+                value="#{item.displayName}" />
+              <ui:param
+                name="multiple"
+                value="true" />
+              <ui:param
+                name="styleClass"
+                value="editWidthHuge" />
+              <ui:param
+                name="includeColumns"
+                value="/workunit/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+
+          <h:outputText value="#{messages.plates}" />
+          <ui:decorate template="/fragments/edit.xhtml">
+            <ui:include src="/fragments/autocomplete.xhtml">
+              <ui:param name="listContext" value="plate" />
+              <ui:param name="value" value="#{workflow.platesAsList}" />
+              <o:methodParam name="completeMethod" value="#{workflowManager.getPlates}" />
+              <ui:param name="itemLabel" value="#{item.displayName}" />
+              <ui:param name="multiple" value="true" />
+              <ui:param name="styleClass" value="editWidthHuge" />
+              <ui:param name="includeColumns" value="/plate/autocomplete-columns.xhtml" />
+            </ui:include>
+          </ui:decorate>
+        </h:panelGrid>
+
+        <h:panelGrid
+          columns="2"
+          styleClass="action">
+          <ui:decorate template="/fragments/button/save-cancel.xhtml" />
+        </h:panelGrid>
+      </h:form>
+    </ui:define>
+  </ui:decorate>
+</ui:composition>
