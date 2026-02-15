@@ -25,3 +25,9 @@ B-Fabric is an information platform for managing research data and processes, wi
 ## Documentation
 
 An installation and development guide is available in `docs/home.md`. For user documentation and more information, visit https://www.bfabric.org.
+
+## Support
+
+For questions, issues, or contributions, please use the project's issue tracker on GitHub.
+
+For professional consulting services related to installation, configuration, customization, or integration of B-Fabric, please contact bfabric.system@gmail.com.
